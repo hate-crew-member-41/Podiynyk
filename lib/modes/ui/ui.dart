@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../database/entities/subject.dart';
 import '../../database/models/appearance.dart';
-import 'section.dart';
+
 import 'sections/subjects.dart';
 import 'sections/group.dart';
 

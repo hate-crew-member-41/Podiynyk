@@ -7,6 +7,10 @@ fonts/
 *.drawio
 *.txt
 
+# old versions of some files
+lib/modes/registration
+lib/modes/overview
+
 # Miscellaneous
 *.class
 *.log

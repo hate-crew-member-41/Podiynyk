@@ -5,7 +5,7 @@ import '../../../database/entities/subject.dart';
 import '../../../database/entities/role.dart';
 import '../../../database/models/user.dart';
 import '../../../database/models/group.dart';
-import '../section.dart';
+
 import '../dedicated_widget.dart';
 
 

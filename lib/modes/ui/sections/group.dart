@@ -6,6 +6,7 @@ import '../../../database/entities/groupmate.dart' show Groupmate;
 import '../../../database/models/user.dart';
 import '../../../database/models/group.dart';
 import '../../../database/models/appearance.dart';
+
 import '../dedicated_widget.dart';
 
 

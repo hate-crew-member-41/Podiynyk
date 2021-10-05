@@ -3,13 +3,14 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'models/user.dart';
+import 'models/group.dart';
+import 'models/appearance.dart';
+
 import 'entities/role.dart';
 import 'entities/groupmate.dart';
 import 'entities/event.dart';
 import 'entities/info_record.dart';
-import 'models/user.dart';
-import 'models/group.dart';
-import 'models/appearance.dart';
 
 
 class Database {
@@ -17,22 +18,16 @@ class Database {
 	final user = User(), appearance = Appearance();
 	late Group group;
 
-	Database() { this.group = Group(user); }
+	Database() {
+		this.group = Group(user);
+	}
 
 	Future<void> open(context) async {
 		await Future.wait([
 			Firebase.initializeApp().then((_) {
 				_cloud = FirebaseFirestore.instance;
 			}),
-			// Hive.initFlutter().then((_) => Future.wait([
-			// 	user.open(), group.open(), appearance.open()
-			// ]))
-			Hive.initFlutter()
-			.then((_) => Hive.deleteBoxFromDisk('user'))
-			.then((_) => Hive.deleteBoxFromDisk('appearance'))
-			.then((_) => Hive.deleteBoxFromDisk('group'))
-			.then((_) => Hive.deleteBoxFromDisk('groupCollections'))
-			.then((_) => Future.wait([
+			Hive.initFlutter().then((_) => Future.wait([  // todo: consider keeping them closed when possible
 				user.open(), group.open(), appearance.open()
 			]))
 		]);
