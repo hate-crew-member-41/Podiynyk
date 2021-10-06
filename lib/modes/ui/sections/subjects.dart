@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../database/entities/subject.dart';
-import '../../../database/entities/role.dart';
+import 'ui_section.dart';
+import 'widgets/dedicated_widget.dart';
+
 import '../../../database/models/user.dart';
 import '../../../database/models/group_data.dart';
 
-import '../dedicated_widget.dart';
+import '../../../database/entities/subject.dart';
+import '../../../database/entities/role.dart';
 
 
-class SubjectsSection extends StatelessWidget {
+class SubjectsSection extends UISection {
+	@override
 	final name = 'предмети';
 
 	@override
@@ -43,12 +46,10 @@ class SubjectsSection extends StatelessWidget {
 		pageBodyBuilder: () => _pageBodyBuilder(subject)
 	);
 
-	ListTile _closedTile(Subject subject) {
-		return ListTile(
-			title: Text(subject.label ?? subject.name),
-			subtitle: Text("${subject.eventCount} events")
-		);
-	}
+	ListTile _closedTile(Subject subject) => ListTile(
+		title: Text(subject.label ?? subject.name),
+		subtitle: Text("${subject.eventCount} events")
+	);
 
 	ListTile _pageHeadBuilder(Subject subject, bool userIsLeader) => ListTile(
 		title: Text(subject.label ?? subject.name),

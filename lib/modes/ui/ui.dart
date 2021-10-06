@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../database/models/appearance.dart';
 
+import 'sections/ui_section.dart';
 import 'sections/subjects.dart';
 import 'sections/group.dart';
 
@@ -10,10 +11,12 @@ import 'sections/group.dart';
 class UIModel with ChangeNotifier {
 	// todo: create an abstract class or interface and make the sections its children
 	// change dynamic type to the abstract class or the interface here and UIDrawerTile.build.section
-	dynamic section = SubjectsSection();
+	UISection _section = SubjectsSection();
+
+	UISection get section => _section;
 
 	void show(dynamic section) {
-		this.section = section;
+		_section = section;
 		notifyListeners();
 	}
 }
@@ -57,13 +60,13 @@ class UI extends StatelessWidget {
 
 class UIDrawerTile extends StatelessWidget {
 	final IconData icon;
-	final Widget Function() sectionBuilder;
+	final UISection Function() sectionBuilder;
 
 	const UIDrawerTile({required this.icon, required this.sectionBuilder});
 
 	@override
 	Widget build(BuildContext context) {
-		dynamic section = sectionBuilder();
+		UISection section = sectionBuilder();
 
 		return ListTile(
 			leading: Icon(

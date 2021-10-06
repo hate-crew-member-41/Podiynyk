@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../database/entities/role.dart' show Role;
-import '../../../database/entities/groupmate.dart' show Groupmate;
+import 'ui_section.dart';
+import 'widgets/dedicated_widget.dart';
+
 import '../../../database/models/user.dart';
 import '../../../database/models/group_data.dart';
 import '../../../database/models/appearance.dart';
 
-import '../dedicated_widget.dart';
+import '../../../database/entities/role.dart' show Role;
+import '../../../database/entities/groupmate.dart' show Groupmate;
 
 
-class GroupSection extends StatelessWidget {
+class GroupSection extends UISection {
+	@override
 	final name = "група";
 
 	@override
