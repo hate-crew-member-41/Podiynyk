@@ -5,11 +5,7 @@ build/
 fonts/
 
 *.drawio
-*.txt
-
-# old versions of some files
-lib/modes/registration
-lib/modes/overview
+ideas.txt
 
 # Miscellaneous
 *.class

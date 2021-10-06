@@ -1,0 +1,31 @@
+"Hive" is used for the local database (see docs.hivedb.dev).
+Below are the Boxes that the app stores local data in.
+
+
+Box<dynamic> 'user' {
+	'name': String,
+	'groupId': String,
+	'role': Role
+}
+
+Box<String> 'studentLabels' {
+	$student-name: String,
+	...
+}
+
+Box<String> 'subjectLabels' {
+	$student-name: String,
+	...
+}
+
+Box<dynamic> 'appearance' {
+	'isDark': bool,
+	'hue': double,
+	'saturation': double,
+}
+
+ephemeral Box<String> 'registration' {
+	'heiId': String,
+	'departmentId': String,
+	'group': String
+}
