@@ -16,7 +16,11 @@ class User {
 
 	Map<String, String> get studentLabels => _studentLabelsBox.toMap().cast<String, String>();
 
+	Future<void> removeStudentLabel(String name) => _studentLabelsBox.delete(name);
+
 	Map<String, String> get subjectLabels => _subjectLabelsBox.toMap().cast<String, String>();
+
+	Future<void> removeSubjectLabel(String name) => _studentLabelsBox.delete(name);
 
 	Future<void> open() async {
 		List<dynamic> boxes = await Future.wait([
@@ -29,5 +33,4 @@ class User {
 		_subjectLabelsBox = boxes[2];
 	}
 
-	Future<void> removeLabel(String name) => _studentLabelsBox.delete(name);
 }

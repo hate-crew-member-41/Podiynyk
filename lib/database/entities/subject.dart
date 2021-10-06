@@ -1,14 +1,13 @@
 class Subject {
 	final String id, name;
-	final int numEvents, percentage, numEventsSoFar;
-  final String? label;
+	final String? label;
+	final int numEvents, numEventsSoFar;
 
 	const Subject({
 		required this.id,
 		required this.name,
+		required this.label,
 		required this.numEvents,
-    required this.percentage,
-		required this.numEventsSoFar,
-		required this.label
+		required this.numEventsSoFar
 	});
 }

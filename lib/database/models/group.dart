@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../entities/role.dart' show Role;
 import '../entities/subject.dart';
 import '../entities/groupmate.dart' show Groupmate;
+
 import 'user.dart';
 
 
@@ -34,32 +35,43 @@ class Group {
 	}
 
 	Future<void> syncUserRole() async {
-		DocumentSnapshot<Map<String, dynamic>> students = await _collection('students').get();
+		var students = await _collection('students').get();
 		int roleIndex = int.parse(students[_user.name]);
 		_user.role = Role.values[roleIndex];
 	}
 
 	Future<List<Subject>> subjects() async {
-		DocumentSnapshot<Map<String, dynamic>> collection = await _collection('subjects').get();
-		// return collection.data()!.entries.map<Subject>((subject) => Subject(
-		// 	id: subject.key,
-		// 	name: subject.value['name'],
-		// 	numEvents: subject.value['now'],
-		// 	numEventsSoFar: subject.value['total']
-		// )).toList();
+		var rawSubjects = await _collection('subjects').get();
+		var subjects = rawSubjects.data()!.cast<String, Map<String, dynamic>>();
+
+		var labels = _user.subjectLabels;
+
+		labels.keys.where(
+			(name) => !subjects.containsKey(name)
+		).forEach((name) {
+			_user.removeSubjectLabel(name);
+		});
+
+		return subjects.entries.map<Subject>((subject) => Subject(
+			id: subject.key,
+			name: subject.value['name'],
+			label: labels[subject.key],
+			numEvents: subject.value['now'],
+			numEventsSoFar: subject.value['total']
+		)).toList();
 	}
 
 	Future<List<Groupmate>> groupmates() async {
-		DocumentSnapshot<Map<String, dynamic>> students = await _collection('students').get();
-		Map<String, String> groupmates = students.data()!.cast<String, String>();
+		var rawGroupmates = await _collection('students').get();
+		var groupmates = rawGroupmates.data()!.cast<String, String>();
 		groupmates.remove(_user.name);
 
-		Map<String, String> labels = _user.studentLabels;
+		var labels = _user.studentLabels;
 
 		labels.keys.where(
 			(name) => !groupmates.containsKey(name)
 		).forEach((name) {
-			_user.removeLabel(name);
+			_user.removeStudentLabel(name);
 		});
 
 		return groupmates.entries.map<Groupmate>((groupmate) => Groupmate(
@@ -85,7 +97,7 @@ class GroupId {
 	GroupId(this._box);
 
 	// bool get isSet => _box.get('id') != null;
-  // temporary, until the registration process is done
+	// temporary, until the registration process is done
 	bool get isSet => true;
 
 	String get eduId => _box.get('eduId');
@@ -104,7 +116,7 @@ class GroupId {
 
 	// @override
 	// String toString() => _box.get('id');
-  // temporary, until the registration process is done
+	// temporary, until the registration process is done
 	@override
 	String toString() => '0.16.ів92';
 }

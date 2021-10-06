@@ -46,16 +46,14 @@ class SubjectsSection extends StatelessWidget {
 	ListTile _closedTile(Subject subject) {
 		return ListTile(
 			title: Text(subject.label ?? subject.name),
-			subtitle: Text('${subject.numEvents} events (${subject.percentage} %)')
+			subtitle: Text("${subject.numEvents} events")
 		);
 	}
 
 	ListTile _pageHeadBuilder(Subject subject, bool userIsLeader) => ListTile(
 		title: Text(subject.label ?? subject.name),
-		subtitle: Text('${subject.numEvents} events (${subject.percentage} %), ${subject.numEventsSoFar} so far'),
+		subtitle: Text("${subject.numEvents} events, ${subject.numEventsSoFar} so far"),
 	);
 
-	Column _pageBodyBuilder(Subject subject) => Column(
-
-	);
+	Column _pageBodyBuilder(Subject subject) => Column();
 }
