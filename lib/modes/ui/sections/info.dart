@@ -10,7 +10,7 @@
 // class InfoSection extends StatelessWidget {
 // 	@override
 // 	Widget build(BuildContext context) {
-// 		List<InfoRecord> info = context.select<Group, List<InfoRecord>>(  (group) => group.info );
+// 		List<InfoRecord> info = context.select<Group, List<InfoRecord>>( (group) => group.info );
 // 		if (info.isEmpty) return Center(child: Text('інформації немає :('));
 // 		return ListView(children: info.map<OpenContainer>(_tile).toList());
 // 	}

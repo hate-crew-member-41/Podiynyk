@@ -10,6 +10,10 @@ class User {
 
 	String get name => _detailsBox.get('name');
 	set name(String name) => _detailsBox.put('name', name);
+
+	// String? get groupId => _detailsBox.get('groupId');
+	// temporary, until the identification process is implemented
+	String? get groupId => '0.16.ів92';
 	
 	Role get role => _detailsBox.get('role');
 	set role(Role role) => _detailsBox.put('role', role);
@@ -33,4 +37,8 @@ class User {
 		_subjectLabelsBox = boxes[2];
 	}
 
+	Future<void> initGroupId(String heiId, String departmentId, String groupName) {
+		String pureGroupName = groupName.toLowerCase().replaceAll(' ', '').replaceAll('-', '');
+		return _detailsBox.put('groupId', '$heiId.$departmentId.$pureGroupName');
+	}
 }

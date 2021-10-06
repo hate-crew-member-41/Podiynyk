@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'database/models/user.dart';
-import 'database/models/group.dart';
+import 'database/models/group_data.dart';
 import 'database/models/appearance.dart';
 import 'database/database.dart';
 
@@ -18,18 +18,19 @@ class AppModel with ChangeNotifier {
 	AppModel(BuildContext context) {
 		() async {
 			await database.open(context);
-			if (database.group.id.isSet) await database.group.syncUserRole();
+			_setInitialMode();
 		}();
+	}
+
+	void _setInitialMode() {
+		if (database.user.groupId != null) mode = UI();
+		// todo: add the else block after the identification process is implemented
 	}
 
 	Widget get mode => _currentMode;
 	set mode(Widget mode) {
 		this._currentMode = mode;
 		notifyListeners();
-	}
-
-	Future<void> endIdentification() async {
-		this.mode = UI();
 	}
 }
 
@@ -46,7 +47,7 @@ class App extends StatelessWidget {
 						providers: [
 							Provider<Database>.value(value: app.database),
 							Provider<User>.value(value: app.database.user),
-							Provider<Group>.value(value: app.database.group),
+							Provider<GroupData>.value(value: app.database.groupData),
 							Provider<Appearance>.value(value: app.database.appearance)
 						]
 					)

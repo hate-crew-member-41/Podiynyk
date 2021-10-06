@@ -8,10 +8,10 @@ class Event {
 	final String? note;
 
 	const Event({
-    	required this.id, 
-  		required this.content,
-  		required this.datetime,
-  		required this.note
+		required this.id, 
+		required this.content,
+		required this.datetime,
+		required this.note
 	});
 }
 

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../database/entities/role.dart' show Role;
 import '../../../database/entities/groupmate.dart' show Groupmate;
 import '../../../database/models/user.dart';
-import '../../../database/models/group.dart';
+import '../../../database/models/group_data.dart';
 import '../../../database/models/appearance.dart';
 
 import '../dedicated_widget.dart';
@@ -16,7 +16,7 @@ class GroupSection extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return FutureBuilder<List<Groupmate>>(
-			future: context.read<Group>().groupmates(),
+			future: context.read<GroupData>().groupmates(),
 			builder: _sectionBuilder
 		);
 	}

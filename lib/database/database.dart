@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'models/user.dart';
-import 'models/group.dart';
+import 'models/group_data.dart';
 import 'models/appearance.dart';
 
 import 'entities/role.dart';
@@ -16,27 +16,27 @@ import 'entities/info_record.dart';
 class Database {
 	late FirebaseFirestore _cloud;
 	final user = User(), appearance = Appearance();
-	late Group group;
+	late GroupData _groupData;
 
 	Database() {
-		this.group = Group(user);
+		_groupData = GroupData(user);
 	}
 
-	Future<void> open(context) async {
-		await Future.wait([
-			Firebase.initializeApp().then((_) {
-				_cloud = FirebaseFirestore.instance;
-			}),
-			Hive.initFlutter().then((_) => Future.wait([  // todo: consider keeping them closed when possible
-				user.open(), group.open(), appearance.open()
-			]))
-		]);
+	GroupData get groupData => _groupData;
 
+	Future<void> open(context) async {
 		for (var adapter in <TypeAdapter>[
 			RoleAdapter(), GroupmateAdapter(), EventAdapter(), InfoRecordAdapter()
 		]) Hive.registerAdapter<dynamic>(adapter);
 
-		if (!group.id.isSet) await appearance.initialize(context);
+		await Future.wait([
+			Firebase.initializeApp().then((_) {
+				_cloud = FirebaseFirestore.instance;
+			}),
+			Hive.initFlutter().then((_) => Future.wait([  // todo: consider making the boxes lazy
+				user.open(), appearance.open(context)
+			]))
+		]);
 	}
 
 	Future<Map<String, String>> heis() async {

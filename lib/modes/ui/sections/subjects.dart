@@ -4,18 +4,18 @@ import 'package:provider/provider.dart';
 import '../../../database/entities/subject.dart';
 import '../../../database/entities/role.dart';
 import '../../../database/models/user.dart';
-import '../../../database/models/group.dart';
+import '../../../database/models/group_data.dart';
 
 import '../dedicated_widget.dart';
 
 
 class SubjectsSection extends StatelessWidget {
-  final name = 'предмети';
+	final name = 'предмети';
 
 	@override
 	Widget build(BuildContext context) {
 		return FutureBuilder<List<Subject>>(
-			future: context.read<Group>().subjects(),
+			future: context.read<GroupData>().subjects(),
 			builder: _sectionBuilder
 		);
 	}
@@ -46,13 +46,13 @@ class SubjectsSection extends StatelessWidget {
 	ListTile _closedTile(Subject subject) {
 		return ListTile(
 			title: Text(subject.label ?? subject.name),
-			subtitle: Text("${subject.numEvents} events")
+			subtitle: Text("${subject.eventCount} events")
 		);
 	}
 
 	ListTile _pageHeadBuilder(Subject subject, bool userIsLeader) => ListTile(
 		title: Text(subject.label ?? subject.name),
-		subtitle: Text("${subject.numEvents} events, ${subject.numEventsSoFar} so far"),
+		subtitle: Text("${subject.eventCount} events, ${subject.totalEventCount} so far"),
 	);
 
 	Column _pageBodyBuilder(Subject subject) => Column();

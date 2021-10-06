@@ -9,9 +9,9 @@ class Groupmate {
 	final String? label;
 
 	const Groupmate({
-    	required this.name,
-    	required this.role,
-    	required this.label
+		required this.name,
+		required this.role,
+		required this.label
 	});
 }
 
