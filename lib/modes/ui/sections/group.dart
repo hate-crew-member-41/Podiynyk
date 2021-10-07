@@ -25,11 +25,12 @@ class GroupSection extends UISection {
 	}
 
 	Widget _sectionBuilder(BuildContext context, AsyncSnapshot<List<Groupmate>> snapshot) {
-		if (snapshot.connectionState == ConnectionState.waiting) return Center(child: Text('спільногрупники летять із хмари'));
+		if (snapshot.connectionState == ConnectionState.waiting) return Center(child: Text('летять із хмари'));
 
 		if (snapshot.hasData) {
 			bool userIsLeader = context.read<User>().role == Role.leader;
 			Color nonOrdinaryColor = context.read<Appearance>().enabled;
+
 			return ListView(
 				children: snapshot.data!.map<DedicatedWidget>(
 					(groupmate) => _tile(groupmate, userIsLeader, nonOrdinaryColor)

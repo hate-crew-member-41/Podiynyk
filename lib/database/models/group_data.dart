@@ -1,14 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'user.dart';
+
 import '../entities/role.dart' show Role;
 import '../entities/subject.dart';
 import '../entities/groupmate.dart' show Groupmate;
 
-import 'user.dart';
-
 
 class GroupData {
 	final User _user;
+
 	GroupData(this._user) {
 		if (_user.groupId != null) _syncUserRole();
 	}

@@ -2,9 +2,9 @@ import 'package:hive/hive.dart';
 
 
 enum Role {
-	ordinary,  // views events, info, messages | answers questions
-	trusted,  // ordinary + adds/deletes events, info | sends messages | asks questions
-	leader  // trusted + adds/removes trusted students
+	ordinary,  // multiple in a group | views events, info, messages; answers questions
+	trusted,  // multiple in a group | [ordinary] + adds/deletes events, info; sends messages; asks questions
+	leader  // one in a group | [trusted] + adds/removes [trusted] students
 }
 
 class RoleAdapter extends TypeAdapter<Role> {

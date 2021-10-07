@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../database/models/appearance.dart';
-
 import 'sections/ui_section.dart';
 import 'sections/subjects.dart';
 import 'sections/group.dart';
 
+import '../../database/models/appearance.dart';
+
 
 class UIModel with ChangeNotifier {
-	// todo: create an abstract class or interface and make the sections its children
-	// change dynamic type to the abstract class or the interface here and UIDrawerTile.build.section
 	UISection _section = SubjectsSection();
 
 	UISection get section => _section;

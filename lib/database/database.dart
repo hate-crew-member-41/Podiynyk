@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,29 +16,34 @@ import 'entities/info_record.dart';
 
 class Database {
 	late FirebaseFirestore _cloud;
-	final user = User(), appearance = Appearance();
+	final user = User();
+	final appearance = Appearance();
 	late GroupData _groupData;
-
-	Database() {
-		_groupData = GroupData(user);
-	}
 
 	GroupData get groupData => _groupData;
 
-	Future<void> open(context) async {
-		for (var adapter in <TypeAdapter>[
-			RoleAdapter(), GroupmateAdapter(), EventAdapter(), InfoRecordAdapter()
-		]) Hive.registerAdapter<dynamic>(adapter);
+	Future<void> open(BuildContext context) async {
+		_registerLocalAdapters();
+		await _initDatabases(context);
 
-		await Future.wait([
-			Firebase.initializeApp().then((_) {
-				_cloud = FirebaseFirestore.instance;
-			}),
-			Hive.initFlutter().then((_) => Future.wait([  // todo: consider making the boxes lazy
-				user.open(), appearance.open(context)
-			]))
-		]);
+		_groupData = GroupData(user);
 	}
+
+	void _registerLocalAdapters() {
+		Hive.registerAdapter(RoleAdapter());
+		Hive.registerAdapter(GroupmateAdapter());
+		Hive.registerAdapter(EventAdapter());
+		Hive.registerAdapter(InfoRecordAdapter());
+	}
+
+	Future<void> _initDatabases(BuildContext context) => Future.wait([
+		Firebase.initializeApp().then((_) {
+			_cloud = FirebaseFirestore.instance;
+		}),
+		Hive.initFlutter().then((_) => Future.wait([
+			user.open(), appearance.open(context)
+		]))
+	]);
 
 	Future<Map<String, String>> heis() async {
 		DocumentSnapshot<Map<String, dynamic>> index = await _cloud.doc('HEIs/index').get();
