@@ -21,7 +21,7 @@ class DedicatedWidget extends StatelessWidget {
 				mainAxisAlignment: MainAxisAlignment.center,
 				children: [
 					pageHeadBuilder(),
-					SizedBox(height: 50.0),
+					SizedBox(height: 50),
 					pageBodyBuilder()
 				]
 			)

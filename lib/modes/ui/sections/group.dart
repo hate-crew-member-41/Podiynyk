@@ -29,11 +29,11 @@ class GroupSection extends UISection {
 
 		if (snapshot.hasData) {
 			bool userIsLeader = context.read<User>().role == Role.leader;
-			Color nonOrdinaryColor = context.read<Appearance>().enabled;
+			Color nonOrdinaryStudentColor = context.read<Appearance>().enabled;
 
 			return ListView(
-				children: snapshot.data!.map<DedicatedWidget>(
-					(groupmate) => _tile(groupmate, userIsLeader, nonOrdinaryColor)
+				children: snapshot.data!.map<Widget>(
+					(groupmate) => _tile(groupmate, userIsLeader, nonOrdinaryStudentColor)
 				).toList()
 			);
 		}
@@ -43,62 +43,40 @@ class GroupSection extends UISection {
 
 	// todo: hide the buttons after any is pressed,
 	// make the UI respond to the Futures returned by Group.(changeRole, makeLeader)
-	DedicatedWidget _tile(Groupmate groupmate, bool userIsLeader, Color nonOrdinaryColor) => DedicatedWidget(
-		closedBuilder: (_, __) => _closedTile(groupmate, nonOrdinaryColor),
-		pageHeadBuilder: () => _pageHeadBuilder(groupmate),
-		pageBodyBuilder: () => _pageBodyBuilder(userIsLeader, groupmate)
-	);
+	Widget _tile(Groupmate groupmate, bool userIsLeader, Color nonOrdinaryStudentColor) {
+		var title = Text(groupmate.label ?? groupmate.name);
 
-	ListTile _closedTile(Groupmate groupmate, Color nonOrdinaryColor) => ListTile(
-		title: Text(groupmate.label ?? groupmate.name),
-		subtitle: groupmate.role == Role.leader ? Text("староста") : null,
-		tileColor: groupmate.role.index == Role.ordinary.index ? null : nonOrdinaryColor
-	);
+		var tile = ListTile(
+			title: title,
+			subtitle: groupmate.role == Role.leader ? Text("староста") : null,
+			tileColor: groupmate.role.index == Role.ordinary.index ? null : nonOrdinaryStudentColor
+		);
 
-	Text _pageHeadBuilder(Groupmate groupmate) => Text(groupmate.label ?? groupmate.name);
+		return userIsLeader ? tile : DedicatedWidget(
+			closedBuilder: (_, __) => tile,
+			pageHeadBuilder: () => title,
+			pageBodyBuilder: () => Column(children: _roleButtons(groupmate))
+		);
+	}
 
-	Column _pageBodyBuilder(bool userIsLeader, Groupmate groupmate) => Column(
-		children: [
-			if (userIsLeader) ...[
-				if (groupmate.role == Role.ordinary) TextButton(
-					child: Text("make trusted"),
-					onPressed: () {
-						print('"make trusted" has been pressed');
-					}
-				)
-				else TextButton(
-					child: Text("make ordinary"),
-					onPressed: () {
-						print('"make ordinary" has been pressed');
-					}
-				),
-				TextButton(
-					child: Text("make the leader"),
-					onPressed: () {
-						print('"make the leader" has been pressed');
-					}
-				)
-			],
-			if (groupmate.label == null) TextButton(
-				child: Text("add a label"),
-				onPressed: () {
-					print('"add a label" has been pressed');
-				}
-			)
-			else ...[
-				TextButton(
-					child: Text("change the label"),
-					onPressed: () {
-						print('"change the label" has been pressed');
-					}
-				),
-				TextButton(
-					child: Text("remove the label"),
-					onPressed: () {
-						print('"remove the label" has been pressed');
-					}
-				)
-			]
-		]
-	);
+	List<TextButton> _roleButtons(Groupmate groupmate) => [
+		if (groupmate.role == Role.ordinary) TextButton(
+			child: Text("довірити"),
+			onPressed: () {
+				print('"${groupmate.name}"."довірити"');
+			}
+		)
+		else TextButton(
+			child: Text("зневірити"),
+			onPressed: () {
+				print('"${groupmate.name}"."зневірити"');
+			}
+		),
+		TextButton(
+			child: Text("зробити старостою"),
+			onPressed: () {
+				print('"${groupmate.name}"."зробити старостою"');
+			}
+		)
+	];
 }

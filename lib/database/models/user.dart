@@ -14,7 +14,7 @@ class User {
 	// String? get groupId => _detailsBox.get('groupId');
 	// temporary, until the identification process is implemented
 	String? get groupId => '0.16.ів92';
-	
+
 	Role get role => _detailsBox.get('role');
 	set role(Role role) => _detailsBox.put('role', role);
 
