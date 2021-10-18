@@ -14,15 +14,15 @@ class GroupData {
 		if (_user.groupId != null) _syncUserRole();
 	}
 
-	DocumentReference<Map<String, dynamic>> _collection(String collection) {
-		return FirebaseFirestore.instance.doc('$collection/${_user.groupId!}');
-	}
-
 	Future<void> _syncUserRole() async {
 		var students = await _collection('students').get();
 		int roleIndex = int.parse(students[_user.name]);
 		_user.role = Role.values[roleIndex];
 	}
+
+	DocumentReference<Map<String, dynamic>> _collection(String name) => FirebaseFirestore.instance.doc(
+		'$name/${_user.groupId!}'
+	);
 
 	Future<List<Subject>> subjects() async {
 		var rawSubjects = await _collection('subjects').get();
@@ -64,4 +64,13 @@ class GroupData {
 			label: labels[groupmate.key]
 		)).toList();
 	}
+
+	Future<void> changeRole(String name, Role role) => _collection('students').update({
+		name: role.index.toString()
+	});
+
+	Future<void> makeLeader(String name) => _collection('students').update({
+		name: Role.leader.index.toString(),
+		_user.name: Role.trusted.index.toString()
+	});
 }

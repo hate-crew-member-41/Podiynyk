@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:animations/animations.dart';
 
 import 'ui_section.dart';
-import 'widgets/dedicated_widget.dart';
+import 'widgets/groupmate_page.dart';
 
 import '../../../database/models/user.dart';
 import '../../../database/models/group_data.dart';
@@ -29,11 +30,10 @@ class GroupSection extends UISection {
 
 		if (snapshot.hasData) {
 			bool userIsLeader = context.read<User>().role == Role.leader;
-			Color nonOrdinaryStudentColor = context.read<Appearance>().enabled;
 
 			return ListView(
 				children: snapshot.data!.map<Widget>(
-					(groupmate) => _tile(groupmate, userIsLeader, nonOrdinaryStudentColor)
+					(groupmate) => _tile(context, groupmate, userIsLeader)
 				).toList()
 			);
 		}
@@ -41,42 +41,30 @@ class GroupSection extends UISection {
 		return Text(snapshot.error!.toString());
 	}
 
-	// todo: hide the buttons after any is pressed,
-	// make the UI respond to the Futures returned by Group.(changeRole, makeLeader)
-	Widget _tile(Groupmate groupmate, bool userIsLeader, Color nonOrdinaryStudentColor) {
+	// todo: make the UI respond to the Futures returned by Group.(changeRole, makeLeader)
+	Widget _tile(BuildContext context, Groupmate groupmate, bool userIsLeader) {
+		var appearance = context.read<Appearance>();
+
 		var title = Text(groupmate.label ?? groupmate.name);
 
 		var tile = ListTile(
 			title: title,
 			subtitle: groupmate.role == Role.leader ? Text("староста") : null,
-			tileColor: groupmate.role.index == Role.ordinary.index ? null : nonOrdinaryStudentColor
+			tileColor: appearance.studentColor(groupmate.role)
 		);
 
-		return userIsLeader ? tile : DedicatedWidget(
+		return !userIsLeader ? tile : OpenContainer(
+			transitionDuration: Duration(seconds: 1),
 			closedBuilder: (_, __) => tile,
-			pageHeadBuilder: () => title,
-			pageBodyBuilder: () => Column(children: _roleButtons(groupmate))
+			openBuilder: (_, close) => MultiProvider(
+				// re-providing the models because the page is opened in a separate route
+				child: GroupmatePage(groupmate.label ?? groupmate.name, groupmate.role, close),
+				providers: [
+					Provider<GroupData>.value(value: context.read<GroupData>()),
+					Provider<User>.value(value: context.read<User>()),
+					Provider<Appearance>.value(value: context.read<Appearance>())
+				]
+			)
 		);
 	}
-
-	List<TextButton> _roleButtons(Groupmate groupmate) => [
-		if (groupmate.role == Role.ordinary) TextButton(
-			child: Text("довірити"),
-			onPressed: () {
-				print('"${groupmate.name}"."довірити"');
-			}
-		)
-		else TextButton(
-			child: Text("зневірити"),
-			onPressed: () {
-				print('"${groupmate.name}"."зневірити"');
-			}
-		),
-		TextButton(
-			child: Text("зробити старостою"),
-			onPressed: () {
-				print('"${groupmate.name}"."зробити старостою"');
-			}
-		)
-	];
 }

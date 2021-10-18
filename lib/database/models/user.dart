@@ -15,7 +15,8 @@ class User {
 	// temporary, until the identification process is implemented
 	String? get groupId => '0.16.ів92';
 
-	Role get role => _detailsBox.get('role');
+	//Role get role => _detailsBox.get('role');
+	Role get role => Role.leader;
 	set role(Role role) => _detailsBox.put('role', role);
 
 	Map<String, String> get studentLabels => _studentLabelsBox.toMap().cast<String, String>();
@@ -32,6 +33,7 @@ class User {
 			Hive.openBox<String>('studentLabels'),
 			Hive.openBox<String>('subjectLabels')
 		]);
+		
 		_detailsBox = boxes[0];
 		_studentLabelsBox = boxes[1];
 		_subjectLabelsBox = boxes[2];

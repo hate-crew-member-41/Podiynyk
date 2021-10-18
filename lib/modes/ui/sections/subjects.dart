@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'ui_section.dart';
-import 'widgets/dedicated_widget.dart';
+import 'widgets/groupmate_page.dart';
 
 import '../../../database/models/user.dart';
 import '../../../database/models/group_data.dart';
@@ -31,7 +31,7 @@ class SubjectsSection extends UISection {
 			bool userIsLeader = context.read<User>().role == Role.leader;
 
 			return ListView(
-				children: subjects.map<DedicatedWidget>(
+				children: subjects.map<Widget>(
 					(subject) => _tile(subject, userIsLeader)
 				).toList()
 			);
@@ -40,11 +40,7 @@ class SubjectsSection extends UISection {
 		return Text(snapshot.error!.toString());
 	}
 
-	DedicatedWidget _tile(Subject subject, bool userIsLeader) => DedicatedWidget(
-		closedBuilder: (_, __) => _closedTile(subject),
-		pageHeadBuilder: () => _pageHeadBuilder(subject, userIsLeader),
-		pageBodyBuilder: () => _pageBodyBuilder(subject)
-	);
+	Widget _tile(Subject subject, bool userIsLeader) => _closedTile(subject);
 
 	ListTile _closedTile(Subject subject) => ListTile(
 		title: Text(subject.label ?? subject.name),
