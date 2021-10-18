@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 
-import 'role.dart' show Role;
+import 'package:podiynyk/database/entities/role.dart' show Role;
 
 
 class Groupmate {

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'sections/ui_section.dart';
-import 'sections/subjects.dart';
-import 'sections/group.dart';
+import 'package:podiynyk/modes/ui/sections/ui_section.dart';
+import 'package:podiynyk/modes/ui/sections/subjects.dart';
+import 'package:podiynyk/modes/ui/sections/group.dart';
 
-import '../../database/models/appearance.dart';
+import 'package:podiynyk/database/models/appearance.dart';
 
 
 class UIModel with ChangeNotifier {

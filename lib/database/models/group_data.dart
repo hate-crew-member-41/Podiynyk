@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'user.dart';
+import 'package:podiynyk/database/models/user.dart';
 
-import '../entities/role.dart' show Role;
-import '../entities/subject.dart';
-import '../entities/groupmate.dart' show Groupmate;
+import 'package:podiynyk/database/entities/role.dart' show Role;
+import 'package:podiynyk/database/entities/subject.dart';
+import 'package:podiynyk/database/entities/groupmate.dart' show Groupmate;
 
 
 class GroupData {

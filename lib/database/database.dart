@@ -4,14 +4,14 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'models/user.dart';
-import 'models/group_data.dart';
-import 'models/appearance.dart';
+import 'package:podiynyk/database/models/user.dart';
+import 'package:podiynyk/database/models/group_data.dart';
+import 'package:podiynyk/database/models/appearance.dart';
 
-import 'entities/role.dart';
-import 'entities/groupmate.dart';
-import 'entities/event.dart';
-import 'entities/info_record.dart';
+import 'package:podiynyk/database/entities/role.dart';
+import 'package:podiynyk/database/entities/groupmate.dart';
+import 'package:podiynyk/database/entities/event.dart';
+import 'package:podiynyk/database/entities/info_record.dart';
 
 
 class Database {

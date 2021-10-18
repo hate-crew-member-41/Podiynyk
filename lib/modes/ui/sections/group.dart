@@ -5,12 +5,12 @@ import 'package:animations/animations.dart';
 import 'ui_section.dart';
 import 'widgets/groupmate_page.dart';
 
-import '../../../database/models/user.dart';
-import '../../../database/models/group_data.dart';
-import '../../../database/models/appearance.dart';
+import 'package:podiynyk/database/models/user.dart';
+import 'package:podiynyk/database/models/group_data.dart';
+import 'package:podiynyk/database/models/appearance.dart';
 
-import '../../../database/entities/role.dart' show Role;
-import '../../../database/entities/groupmate.dart' show Groupmate;
+import 'package:podiynyk/database/entities/role.dart' show Role;
+import 'package:podiynyk/database/entities/groupmate.dart' show Groupmate;
 
 
 class GroupSection extends UISection {

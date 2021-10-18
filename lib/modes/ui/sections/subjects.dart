@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'ui_section.dart';
-import 'widgets/groupmate_page.dart';
+import 'package:podiynyk/modes/ui/sections/ui_section.dart';
+import 'package:podiynyk/modes/ui/sections/widgets/groupmate_page.dart';
 
-import '../../../database/models/user.dart';
-import '../../../database/models/group_data.dart';
+import 'package:podiynyk/database/models/user.dart';
+import 'package:podiynyk/database/models/group_data.dart';
 
-import '../../../database/entities/subject.dart';
-import '../../../database/entities/role.dart';
+import 'package:podiynyk/database/entities/subject.dart';
+import 'package:podiynyk/database/entities/role.dart';
 
 
 class SubjectsSection extends UISection {
