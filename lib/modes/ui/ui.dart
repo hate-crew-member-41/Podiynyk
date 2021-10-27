@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:podiynyk/modes/ui/sections/ui_section.dart';
-import 'package:podiynyk/modes/ui/sections/subjects.dart';
-import 'package:podiynyk/modes/ui/sections/group.dart';
+import 'package:podiynyk/modes/ui/sections/subjects/subjects.dart';
+import 'package:podiynyk/modes/ui/sections/group/group.dart';
 
 import 'package:podiynyk/database/models/appearance.dart';
 

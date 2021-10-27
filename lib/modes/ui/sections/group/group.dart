@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:animations/animations.dart';
 
-import 'ui_section.dart';
-import 'widgets/groupmate_page.dart';
+import 'package:podiynyk/modes/ui/sections/ui_section.dart';
+import 'package:podiynyk/modes/ui/sections/group/groupmate_page.dart';
 
 import 'package:podiynyk/database/models/user.dart';
 import 'package:podiynyk/database/models/group_data.dart';
@@ -41,7 +41,6 @@ class GroupSection extends UISection {
 		return Text(snapshot.error!.toString());
 	}
 
-	// todo: make the UI respond to the Futures returned by Group.(changeRole, makeLeader)
 	Widget _tile(BuildContext context, Groupmate groupmate, bool userIsLeader) {
 		var appearance = context.read<Appearance>();
 
@@ -57,7 +56,7 @@ class GroupSection extends UISection {
 			transitionDuration: Duration(seconds: 1),
 			closedBuilder: (_, __) => tile,
 			openBuilder: (_, close) => MultiProvider(
-				// re-providing the models because the page is opened in a separate route
+				// re-providing the models because the page is opened in a different route
 				child: GroupmatePage(groupmate.label ?? groupmate.name, groupmate.role, close),
 				providers: [
 					Provider<GroupData>.value(value: context.read<GroupData>()),
