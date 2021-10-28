@@ -12,8 +12,7 @@ class UIModel with ChangeNotifier {
 	UISection _section = SubjectsSection();
 
 	UISection get section => _section;
-
-	void show(dynamic section) {
+	set section(UISection section) {
 		_section = section;
 		notifyListeners();
 	}
@@ -74,7 +73,7 @@ class UIDrawerTile extends StatelessWidget {
 			title: Text(section.name),
 			focusColor: context.read<Appearance>().appBar,
 			onTap: () {
-				context.read<UIModel>().show(section);
+				context.read<UIModel>().section = section;
 				Navigator.of(context).pop();
 			}
 		);
