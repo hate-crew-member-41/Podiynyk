@@ -5,21 +5,21 @@ import 'package:podiynyk/database/entities/role.dart' show Role;
 
 
 class Appearance {
-	late Box<dynamic> _box;
+	static late Box<dynamic> _box;
 
-	bool get isDark => _box.get('isDark');
-	Color get background => isDark ? _color(0.1) : _color(1.0);
-	Color get appBar => isDark ? _color(0.3) : _color(0.4);
-	Color get highlight => isDark ? _color(0.2) : _color(0.9);
-	Color get contrast => isDark ? _color(0.8) : _color(0.2);
+	static bool get isDark => _box.get('isDark');
+	static Color get background => isDark ? _color(0.1) : _color(1.0);
+	static Color get appBar => isDark ? _color(0.3) : _color(0.4);
+	static Color get highlight => isDark ? _color(0.2) : _color(0.9);
+	static Color get contrast => isDark ? _color(0.8) : _color(0.2);
 
-	Future<void> open(BuildContext context) async {
+	static Future<void> open(BuildContext context) async {
 		bool boxExists = await Hive.boxExists('appearance');
 		_box = await Hive.openBox<dynamic>('appearance');
 		if (!boxExists) _init(context);
 	}
 
-	Future<void> _init(BuildContext context) async {
+	static Future<void> _init(BuildContext context) async {
 		bool isDark = Theme.of(context).brightness == Brightness.dark;
 		double hue, saturation;
 
@@ -39,9 +39,9 @@ class Appearance {
 		});
 	}
 	
-	Color studentColor(Role role) => role == Role.ordinary ? background : highlight;
+	static Color studentColor(Role role) => role == Role.ordinary ? background : highlight;
 
-	Color _color(double value) => HSVColor.fromAHSV(
+	static Color _color(double value) => HSVColor.fromAHSV(
 		1.0, _box.get('hue'), _box.get('saturation'), value
 	).toColor();
 }

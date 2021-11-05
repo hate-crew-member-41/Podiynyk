@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'package:podiynyk/modes/ui/sections/ui_section.dart';
-import 'package:podiynyk/modes/ui/sections/group/groupmate_tile.dart';
 
 import 'package:podiynyk/database/models/user.dart';
 import 'package:podiynyk/database/models/group_data.dart';
@@ -18,7 +16,7 @@ class SubjectsSection extends UISection {
 	@override
 	Widget build(BuildContext context) {
 		return FutureBuilder<List<Subject>>(
-			future: context.read<GroupData>().subjects(),
+			future: GroupData.subjects(),
 			builder: _sectionBuilder
 		);
 	}
@@ -28,7 +26,7 @@ class SubjectsSection extends UISection {
 
 		if (snapshot.hasData) {
 			List<Subject> subjects = snapshot.data!;
-			bool userIsLeader = context.read<User>().role == Role.leader;
+			bool userIsLeader = User.role == Role.leader;
 
 			return ListView(
 				children: subjects.map<Widget>(

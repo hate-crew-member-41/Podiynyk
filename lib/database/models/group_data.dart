@@ -8,32 +8,30 @@ import 'package:podiynyk/database/entities/groupmate.dart' show Groupmate;
 
 
 class GroupData {
-	final User _user;
-
-	GroupData(this._user) {
-		if (_user.groupId != null) _syncUserRole();
+	GroupData() {
+		if (User.groupId != null) _syncUserRole();
 	}
 
 	Future<void> _syncUserRole() async {
 		var students = await _collection('students').get();
-		int roleIndex = int.parse(students[_user.name]);
-		_user.role = Role.values[roleIndex];
+		int roleIndex = int.parse(students[User.name]);
+		User.role = Role.values[roleIndex];
 	}
 
-	DocumentReference<Map<String, dynamic>> _collection(String name) => FirebaseFirestore.instance.doc(
-		'$name/${_user.groupId!}'
+	static DocumentReference<Map<String, dynamic>> _collection(String name) => FirebaseFirestore.instance.doc(
+		'$name/${User.groupId!}'
 	);
 
-	Future<List<Subject>> subjects() async {
+	static Future<List<Subject>> subjects() async {
 		var rawSubjects = await _collection('subjects').get();
 		var subjects = rawSubjects.data()!.cast<String, Map<String, dynamic>>();
 
-		var labels = _user.subjectLabels;
+		var labels = User.subjectLabels;
 
 		labels.keys.where(
 			(name) => !subjects.containsKey(name)
 		).forEach((name) {
-			_user.removeSubjectLabel(name);
+			User.removeSubjectLabel(name);
 		});
 
 		return subjects.entries.map<Subject>((subject) => Subject(
@@ -45,17 +43,17 @@ class GroupData {
 		)).toList();
 	}
 
-	Future<List<Groupmate>> groupmates() async {
+	static Future<List<Groupmate>> groupmates() async {
 		var rawGroupmates = await _collection('students').get();
 		var groupmates = rawGroupmates.data()!.cast<String, String>();
-		groupmates.remove(_user.name);
+		groupmates.remove(User.name);
 
-		var labels = _user.studentLabels;
+		var labels = User.studentLabels;
 
 		labels.keys.where(
 			(name) => !groupmates.containsKey(name)
 		).forEach((name) {
-			_user.removeStudentLabel(name);
+			User.removeStudentLabel(name);
 		});
 
 		return groupmates.entries.map<Groupmate>((groupmate) => Groupmate(
@@ -65,12 +63,12 @@ class GroupData {
 		)).toList();
 	}
 
-	Future<void> changeRole(String name, Role role) => _collection('students').update({
+	static Future<void> changeRole(String name, Role role) => _collection('students').update({
 		name: role.index.toString()
 	});
 
-	Future<void> makeLeader(String name) => _collection('students').update({
+	static Future<void> makeLeader(String name) => _collection('students').update({
 		name: Role.leader.index.toString(),
-		_user.name: Role.trusted.index.toString()
+		User.name: Role.trusted.index.toString()
 	});
 }

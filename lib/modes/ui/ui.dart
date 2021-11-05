@@ -24,12 +24,12 @@ class UI extends StatelessWidget {
 	Widget build(BuildContext context) {
 		return ChangeNotifierProvider<UIModel>(
 			create: (_) => UIModel(),
-			child: Consumer2<Appearance, UIModel>(builder: (context, appearance, ui, __) => Scaffold(
+			child: Consumer<UIModel>(builder: (context, ui, __) => Scaffold(
 				appBar: AppBar(
-					backgroundColor: appearance.appBar,
+					backgroundColor: Appearance.appBar,
 					title: Text(ui.section.name)
 				),
-				backgroundColor: appearance.background,
+				backgroundColor: Appearance.background,
 				body: ui.section,
 				drawer: Drawer(
 					child: Center(
@@ -68,10 +68,10 @@ class UIDrawerTile extends StatelessWidget {
 		return ListTile(
 			leading: Icon(
 				icon,
-				color: context.read<Appearance>().contrast
+				color: Appearance.contrast
 			),
 			title: Text(section.name),
-			focusColor: context.read<Appearance>().appBar,
+			focusColor: Appearance.appBar,
 			onTap: () {
 				context.read<UIModel>().section = section;
 				Navigator.of(context).pop();

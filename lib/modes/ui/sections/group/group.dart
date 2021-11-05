@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:animations/animations.dart';
 
 import 'package:podiynyk/modes/ui/sections/ui_section.dart';
 import 'package:podiynyk/modes/ui/sections/group/groupmate_tile.dart';
 
 import 'package:podiynyk/database/models/user.dart';
 import 'package:podiynyk/database/models/group_data.dart';
-import 'package:podiynyk/database/models/appearance.dart';
 
 import 'package:podiynyk/database/entities/role.dart' show Role;
 import 'package:podiynyk/database/entities/groupmate.dart' show Groupmate;
@@ -20,7 +17,7 @@ class GroupSection extends UISection {
 	@override
 	Widget build(BuildContext context) {
 		return FutureBuilder<List<Groupmate>>(
-			future: context.read<GroupData>().groupmates(),
+			future: GroupData.groupmates(),
 			builder: _sectionBuilder
 		);
 	}
@@ -35,7 +32,7 @@ class GroupSection extends UISection {
 				(groupmate) => GroupmateTile(
 					name: groupmate.label ?? groupmate.name,
 					initialRole: groupmate.role,
-					isInteractive: context.read<User>().role == Role.leader,
+					isInteractive: User.role == Role.leader,
 				)
 			).toList()
 		);
