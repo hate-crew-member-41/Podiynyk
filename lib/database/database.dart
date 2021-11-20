@@ -1,16 +1,18 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-import 'package:podiynyk/database/models/user.dart';
 import 'package:podiynyk/database/models/appearance.dart';
+import 'package:podiynyk/database/models/user.dart';
 
-import 'package:podiynyk/database/entities/role.dart';
-import 'package:podiynyk/database/entities/groupmate.dart';
 import 'package:podiynyk/database/entities/event.dart';
+import 'package:podiynyk/database/entities/groupmate.dart';
 import 'package:podiynyk/database/entities/info_record.dart';
+import 'package:podiynyk/database/entities/role.dart';
 
 
 class Database {

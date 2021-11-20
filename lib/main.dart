@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 
-import 'package:podiynyk/database/models/user.dart';
-import 'package:podiynyk/database/database.dart';
+import 'database/database.dart';
+import 'database/models/user.dart';
 
-import 'package:podiynyk/modes/loading/loading.dart';
-import 'package:podiynyk/modes/ui/ui.dart';
+import 'modes/loading/loading.dart';
+import 'modes/ui/ui.dart';
 
 
 class AppModel with ChangeNotifier {

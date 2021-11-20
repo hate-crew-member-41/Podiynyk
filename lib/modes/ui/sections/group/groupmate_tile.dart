@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:animations/animations.dart';
 
-import 'package:podiynyk/database/models/user.dart';
-import 'package:podiynyk/database/models/group_data.dart';
 import 'package:podiynyk/database/models/appearance.dart';
+import 'package:podiynyk/database/models/group_data.dart';
+import 'package:podiynyk/database/models/user.dart';
 
 import 'package:podiynyk/database/entities/role.dart' show Role;
 

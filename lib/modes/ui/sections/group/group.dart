@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/modes/ui/sections/ui_section.dart';
-import 'package:podiynyk/modes/ui/sections/group/groupmate_tile.dart';
-
-import 'package:podiynyk/database/models/user.dart';
 import 'package:podiynyk/database/models/group_data.dart';
+import 'package:podiynyk/database/models/user.dart';
 
-import 'package:podiynyk/database/entities/role.dart' show Role;
 import 'package:podiynyk/database/entities/groupmate.dart' show Groupmate;
+import 'package:podiynyk/database/entities/role.dart' show Role;
+
+import '../ui_section.dart';
+import 'groupmate_tile.dart';
 
 
 class GroupSection extends UISection {

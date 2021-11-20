@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/modes/ui/sections/ui_section.dart';
-
-import 'package:podiynyk/database/models/user.dart';
 import 'package:podiynyk/database/models/group_data.dart';
+import 'package:podiynyk/database/models/user.dart';
 
-import 'package:podiynyk/database/entities/subject.dart';
 import 'package:podiynyk/database/entities/role.dart';
+import 'package:podiynyk/database/entities/subject.dart';
+
+import '../ui_section.dart';
 
 
 class SubjectsSection extends UISection {
@@ -22,7 +22,7 @@ class SubjectsSection extends UISection {
 	}
 
 	Widget _sectionBuilder(BuildContext context, AsyncSnapshot<List<Subject>> snapshot) {
-		if (snapshot.connectionState == ConnectionState.waiting) return Center(child: Text('предмети летять із хмари'));
+		if (snapshot.connectionState == ConnectionState.waiting) return Center(child: Text('летять із хмари'));
 
 		if (snapshot.hasData) {
 			List<Subject> subjects = snapshot.data!;
