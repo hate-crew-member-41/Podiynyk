@@ -39,7 +39,7 @@ class Appearance {
 			'saturation': saturation,
 		});
 	}
-	
+
 	static Color studentColor(Role role) => role == Role.ordinary ? background : highlight;
 
 	static Color _color(double value) => HSVColor.fromAHSV(
