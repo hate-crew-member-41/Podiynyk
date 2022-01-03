@@ -6,9 +6,6 @@ ios/
 firebase/firebase_podiynyk_key.json
 firebase/HEIs/
 
-# Design sketches
-design/design.drawio
-
 # The previous version of the project
 old/
 
@@ -16,6 +13,7 @@ old/
 app/analysis_options.yaml
 
 # Miscellaneous
+*.drawio
 *.class
 *.log
 *.pyc
