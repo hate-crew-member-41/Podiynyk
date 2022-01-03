@@ -8,6 +8,8 @@ class MessagesSection extends Section {
 	final String name = "messages";
 	@override
 	final IconData icon = Icons.messenger;
+	@override
+	final bool hasAddAction = true;
 
 	const MessagesSection();
 

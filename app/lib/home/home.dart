@@ -29,6 +29,10 @@ class _HomeState extends State<Home> {
 				))
 			),
 			body: _section,
+			floatingActionButton: _section.hasAddAction ? FloatingActionButton(
+				child: const Icon(Icons.add),
+				onPressed: _section.addAction
+			) : null,
 			drawer: Drawer(
 				child: Column(
 					mainAxisAlignment: MainAxisAlignment.center,

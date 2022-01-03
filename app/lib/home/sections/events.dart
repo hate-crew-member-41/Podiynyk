@@ -8,6 +8,8 @@ class EventsSection extends Section {
 	final String name = "events";
 	@override
 	final IconData icon = Icons.event_note;
+	@override
+	final bool hasAddAction = true;
 
 	const EventsSection();
 

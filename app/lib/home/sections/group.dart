@@ -8,6 +8,8 @@ class GroupSection extends Section {
 	final String name = "group";
 	@override
 	final IconData icon = Icons.people;
+	@override
+	final bool hasAddAction = true;
 
 	const GroupSection();
 

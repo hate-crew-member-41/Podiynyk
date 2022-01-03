@@ -8,6 +8,8 @@ class SettingsSection extends Section {
 	final String name = "settings";
 	@override
 	final IconData icon = Icons.settings;
+	@override
+	final bool hasAddAction = false;
 
 	const SettingsSection();
 

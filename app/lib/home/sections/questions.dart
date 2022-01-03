@@ -8,6 +8,8 @@ class QuestionsSection extends Section {
 	final String name = "questions";
 	@override
 	final IconData icon = Icons.question_answer;
+	@override
+	final bool hasAddAction = true;
 
 	const QuestionsSection();
 

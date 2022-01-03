@@ -8,6 +8,8 @@ class AgendaSection extends Section {
 	final String name = "agenda";
 	@override
 	final IconData icon = Icons.remove_red_eye;
+	@override
+	final bool hasAddAction = true;
 
 	const AgendaSection();
 
