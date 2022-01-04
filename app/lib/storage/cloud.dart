@@ -1,5 +1,3 @@
-import 'dart:math' show min, max;
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'entities.dart';
@@ -14,6 +12,7 @@ class Cloud {
 	static final _cloud = FirebaseFirestore.instance;
 
 	static late Role _role;
+	/// The user's [role] in the group.
 	static Role get role => _role;
 
 	/// The [roles] of the group's students. Updates the user's [Role].
@@ -28,36 +27,86 @@ class Cloud {
 		return roles;
 	}
 
+	// todo: make addSubject and addEvent share logic (define _addEntity)
 	/// Adds a new subject with the given [name].
-	static Future<void> addSubject(String name) {
+	static Future<void> addSubject({required String name}) {
 		final document = _document('subjects');
 
 		return _cloud.runTransaction((transaction) async {
-			final rawSubjects = await transaction.get(document);
-			if (
-				rawSubjects.exists &&
-				rawSubjects.data()!.values.map((subject) => subject['name']).contains(name)
-			) return;
-
+			final subjectsSnapshot = await transaction.get(document);
 			int id = 0;
-			if (rawSubjects.exists) {
-				final takenIds = rawSubjects.data()!.keys;
+
+			if (subjectsSnapshot.exists) {
+				final rawSubjects = subjectsSnapshot.data()!;
+
+				for (final subject in rawSubjects.values) {
+					if (subject['name'] == name) return;
+				}
+
+				final takenIds = rawSubjects.keys;
 				while (takenIds.contains(id.toString())) id++;
 			}
 
-			final newSubject = {id.toString(): {
+			final subject = {id.toString(): {
 				'name': name,
 				'total_event_count': 0
 			}};
 
-			if (rawSubjects.exists) {
-				transaction.update(document, newSubject);
+			if (subjectsSnapshot.exists) {
+				transaction.update(document, subject);
 			}
 			else {
-				transaction.set(document, newSubject);
+				transaction.set(document, subject);
 			}
 		});
 	}
 
+	/// Adds a new event with the given arguments.
+	static Future<void> addEvent({
+		required String name,
+		required String subject,
+		required DateTime date,
+		String? note
+	}) async {
+		final document = _document('events');
+
+		final id = await _cloud.runTransaction((transaction) async {
+			final eventsSnapshot = await transaction.get(document);
+			int intId = 0;
+
+			if (eventsSnapshot.exists) {
+				final rawEvents = eventsSnapshot.data()!;
+
+				for (final event in rawEvents.values) {
+					if (event['name'] == name && event['subject'] == subject) return null;
+				}
+
+				final takenIds = rawEvents.keys;
+				while (takenIds.contains(intId.toString())) intId++;
+			}
+
+			final id = intId.toString();
+			final event = {id: {
+				'name': name,
+				'subject': subject,
+				'date': date,
+			}};
+
+			if (eventsSnapshot.exists) {
+				transaction.update(document, event);
+			}
+			else {
+				transaction.set(document, event);
+			}
+
+			return id;
+		});
+
+		if (note != null && id != null) {
+			document.collection('details').doc(id).set({'note': note});
+		}
+	}
+
+	/// [DocumentReference] to the group's document for the given [dataType].
 	static Document _document(String dataType) => _cloud.collection(dataType).doc(Local.groupId);
 }

@@ -29,6 +29,7 @@ class SubjectsSection extends Section {
 }
 
 
+// todo: make NewSubjectPage and NewEventPage share code (define NewEntityPage class)
 class NewSubjectPage extends StatelessWidget {
 	final _nameField = TextEditingController();
 
@@ -40,10 +41,9 @@ class NewSubjectPage extends StatelessWidget {
 			onDoubleTap: () => _addSubject(context),
 			child: Scaffold(
 				body: Center(
-					child: TextField(  // todo: add auto-fill hints?
+					child: TextField(
 						controller: _nameField,
 						decoration: const InputDecoration(hintText: "Name"),
-						showCursor: false,
 					)
 				)
 			)
@@ -53,6 +53,6 @@ class NewSubjectPage extends StatelessWidget {
 	void _addSubject(BuildContext context) {
 		if (_nameField.text.isEmpty) return;
 		Navigator.of(context).pop();
-		Cloud.addSubject(_nameField.text);
+		Cloud.addSubject(name: _nameField.text);
 	}
 }
