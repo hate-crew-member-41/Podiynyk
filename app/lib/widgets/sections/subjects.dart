@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:podiynyk/storage/cloud.dart';
+
 import 'section.dart';
 
 
@@ -51,6 +53,6 @@ class NewSubjectPage extends StatelessWidget {
 	void _addSubject(BuildContext context) {
 		if (_nameField.text.isEmpty) return;
 		Navigator.of(context).pop();
-		// todo: add the subject
+		Cloud.addSubject(_nameField.text);
 	}
 }
