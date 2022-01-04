@@ -8,5 +8,5 @@ abstract class Section extends StatelessWidget {
 
 	const Section();
 
-	void addAction() {}
+	void addAction(BuildContext context) {}
 }

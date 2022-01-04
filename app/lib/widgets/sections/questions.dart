@@ -5,11 +5,11 @@ import 'section.dart';
 
 class QuestionsSection extends Section {
 	@override
-	final String name = "questions";
+	final name = "questions";
 	@override
-	final IconData icon = Icons.question_answer;
+	final icon = Icons.question_answer;
 	@override
-	final bool hasAddAction = true;
+	final hasAddAction = true;
 
 	const QuestionsSection();
 

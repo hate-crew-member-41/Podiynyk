@@ -5,11 +5,11 @@ import 'section.dart';
 
 class SettingsSection extends Section {
 	@override
-	final String name = "settings";
+	final name = "settings";
 	@override
-	final IconData icon = Icons.settings;
+	final icon = Icons.settings;
 	@override
-	final bool hasAddAction = false;
+	final hasAddAction = false;
 
 	const SettingsSection();
 

@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'section.dart';
 
 
-class AgendaSection extends Section {
+class GroupSection extends Section {
 	@override
-	final String name = "agenda";
+	final name = "group";
 	@override
-	final IconData icon = Icons.remove_red_eye;
+	final icon = Icons.people;
 	@override
-	final bool hasAddAction = true;
+	final hasAddAction = true;
 
-	const AgendaSection();
+	const GroupSection();
 
 	@override
 	Widget build(BuildContext context) {

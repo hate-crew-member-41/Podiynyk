@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'section.dart';
 
 
-class EventsSection extends Section {
+class MessagesSection extends Section {
 	@override
-	final String name = "events";
+	final name = "messages";
 	@override
-	final IconData icon = Icons.event_note;
+	final icon = Icons.messenger;
 	@override
-	final bool hasAddAction = true;
+	final hasAddAction = true;
 
-	const EventsSection();
+	const MessagesSection();
 
 	@override
 	Widget build(BuildContext context) {

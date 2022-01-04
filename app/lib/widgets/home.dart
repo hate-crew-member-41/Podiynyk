@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/entities.dart';
+
 import 'sections/agenda.dart';
 import 'sections/events.dart';
 import 'sections/group.dart';
@@ -11,6 +14,8 @@ import 'sections/settings.dart';
 
 
 class Home extends StatefulWidget {
+	const Home();
+
 	@override
 	State<Home> createState() => _HomeState();
 }
@@ -29,9 +34,9 @@ class _HomeState extends State<Home> {
 				))
 			),
 			body: _section,
-			floatingActionButton: _section.hasAddAction ? FloatingActionButton(
+			floatingActionButton: _section.hasAddAction && Cloud.role >= Role.trusted ? FloatingActionButton(
 				child: const Icon(Icons.add),
-				onPressed: _section.addAction
+				onPressed: () => _section.addAction(context)
 			) : null,
 			drawer: Drawer(
 				child: Column(
