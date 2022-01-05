@@ -5,7 +5,7 @@ import 'local.dart';
 
 typedef Document = DocumentReference<Map<String, dynamic>>;
 typedef Roles = Map<String, Role>;
-typedef Subjects = Map<String, Map<String, Object>>;
+typedef Entities = Map<String, Map<String, Object>>;
 
 
 class Cloud {
@@ -61,6 +61,47 @@ class Cloud {
 		});
 	}
 
+	/// The names of the group's subjects.
+	static Future<List<String>> subjectNames() async {
+		final subjectsSnapshot = await _document('subjects').get();
+		return subjectsSnapshot.exists ? [
+			for (final subject in subjectsSnapshot.data()!.values) subject['name']
+		] : [];
+	}
+
+	/// The group's [subjects].
+	static Future<List<Subject>> subjects() async {
+		final snapshots = await Future.wait([
+			_document('subjects').get(),
+			_document('events').get()
+		]);
+		final subjects = (snapshots.first.data() ?? {}) as Entities;
+		final events = (snapshots.last.data() ?? {}) as Entities;
+
+		final nextEventDates = <String, DateTime>{};
+		final eventCounts = {for (final name in subjects.keys) name: 0};
+
+		for (final event in events.values) {
+			final subject = event['subject'] as String;
+			final date = event['date'] as DateTime;
+
+			nextEventDates.update(
+				subject,
+				(subjectNextEventDate) => date.isAfter(subjectNextEventDate) ? date : subjectNextEventDate,
+				ifAbsent: () => date
+			);
+			eventCounts.update(subject, (count) => ++count);
+		}
+
+		return [for (final subject in subjects.entries) Subject(
+			name: subject.key,
+			nextEventDate: nextEventDates[subject.key]!,
+			eventCount: eventCounts[subject.key]!,
+			totalEventCount: subject.value['total_event_count'] as int
+		)];
+	}
+
+	// todo: increments the subject's total_event_count
 	/// Adds a new event with the given arguments.
 	static Future<void> addEvent({
 		required String name,
