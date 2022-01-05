@@ -17,7 +17,7 @@ class Cloud {
 
 	/// The [roles] of the group's students. Updates the user's [Role].
 	static Future<Roles> roles() async {
-		final rawRoles = await _document('students').get();
+		final rawRoles = await _document(Collection.students).get();
 		final roles = {
 			for (final studentRole in rawRoles.data()!.entries)
 			studentRole.key: Role.values[studentRole.value as int]
@@ -30,7 +30,7 @@ class Cloud {
 	// todo: make addSubject and addEvent share logic (define _addEntity)
 	/// Adds a new subject with the given [name].
 	static Future<void> addSubject({required String name}) {
-		final document = _document('subjects');
+		final document = _document(Collection.subjects);
 
 		return _cloud.runTransaction((transaction) async {
 			final subjectsSnapshot = await transaction.get(document);
@@ -40,7 +40,7 @@ class Cloud {
 				final rawSubjects = subjectsSnapshot.data()!;
 
 				for (final subject in rawSubjects.values) {
-					if (subject['name'] == name) return;
+					if (subject[Field.name] == name) return;
 				}
 
 				final takenIds = rawSubjects.keys;
@@ -48,8 +48,8 @@ class Cloud {
 			}
 
 			final subject = {id.toString(): {
-				'name': name,
-				'total_event_count': 0
+				Field.name: name,
+				Field.totalEventCount: 0
 			}};
 
 			if (subjectsSnapshot.exists) {
@@ -63,17 +63,17 @@ class Cloud {
 
 	/// The names of the group's subjects.
 	static Future<List<String>> subjectNames() async {
-		final subjectsSnapshot = await _document('subjects').get();
+		final subjectsSnapshot = await _document(Collection.subjects).get();
 		return subjectsSnapshot.exists ? [
-			for (final subject in subjectsSnapshot.data()!.values) subject['name']
+			for (final subject in subjectsSnapshot.data()!.values) subject[Field.name]
 		] : [];
 	}
 
 	/// The group's [subjects].
 	static Future<List<Subject>> subjects() async {
 		final snapshots = await Future.wait([
-			_document('subjects').get(),
-			_document('events').get()
+			_document(Collection.subjects).get(),
+			_document(Collection.events).get()
 		]);
 		final subjects = (snapshots.first.data() ?? {}) as Entities;
 		final events = (snapshots.last.data() ?? {}) as Entities;
@@ -82,8 +82,8 @@ class Cloud {
 		final eventCounts = {for (final name in subjects.keys) name: 0};
 
 		for (final event in events.values) {
-			final subject = event['subject'] as String;
-			final date = event['date'] as DateTime;
+			final subject = event[Field.subject] as String;
+			final date = event[Field.date] as DateTime;
 
 			nextEventDates.update(
 				subject,
@@ -97,7 +97,7 @@ class Cloud {
 			name: subject.key,
 			nextEventDate: nextEventDates[subject.key]!,
 			eventCount: eventCounts[subject.key]!,
-			totalEventCount: subject.value['total_event_count'] as int
+			totalEventCount: subject.value[Field.totalEventCount] as int
 		)];
 	}
 
@@ -108,7 +108,7 @@ class Cloud {
 		required DateTime date,
 		String? note
 	}) async {
-		final document = _document('events');
+		final document = _document(Collection.events);
 
 		final id = await _cloud.runTransaction((transaction) async {
 			final eventsSnapshot = await transaction.get(document);
@@ -118,24 +118,24 @@ class Cloud {
 				final rawEvents = eventsSnapshot.data()!;
 
 				for (final event in rawEvents.values) {
-					if (event['name'] == name && event['subject'] == subject) return null;
+					if (event[Field.name] == name && event[Field.subject] == subject) return null;
 				}
 
 				final takenIds = rawEvents.keys;
 				while (takenIds.contains(intId.toString())) intId++;
 			}
 
-			final subjectsDocument = _document('subjects');
+			final subjectsDocument = _document(Collection.subjects);
 			final subjectsSnapshot = await transaction.get(subjectsDocument);
 			final subjectId = subjectsSnapshot.data()!.entries.firstWhere(
-				(subjectEntry) => subjectEntry.value['name'] == subject
+				(subjectEntry) => subjectEntry.value[Field.name] == subject
 			).key;
 
 			final id = intId.toString();
 			final event = {id: {
-				'name': name,
-				if (subject != null) 'subject': subject,
-				'date': date,
+				Field.name: name,
+				if (subject != null) Field.subject: subject,
+				Field.date: date,
 			}};
 
 			if (eventsSnapshot.exists) {
@@ -144,16 +144,32 @@ class Cloud {
 			else {
 				transaction.set(document, event);
 			}
-			transaction.update(subjectsDocument, {'$subjectId.total_event_count': FieldValue.increment(1)});
+			transaction.update(subjectsDocument, {'$subjectId.${Field.totalEventCount}': FieldValue.increment(1)});
 
 			return id;
 		});
 
 		if (note != null && id != null) {
-			document.collection('details').doc(id).set({'note': note});
+			document.collection(Collection.details).doc(id).set({Field.note: note});
 		}
 	}
 
-	/// [DocumentReference] to the group's document for the given [dataType].
-	static Document _document(String dataType) => _cloud.collection(dataType).doc(Local.groupId);
+	/// [DocumentReference] to the group's document for the given [entities].
+	static Document _document(String entities) => _cloud.collection(entities).doc(Local.groupId);
+}
+
+
+class Collection {
+	static const students = 'students';
+	static const subjects = 'subjects';
+	static const events = 'events';
+	static const details = 'details';
+}
+
+class Field {
+	static const name = 'name';
+	static const totalEventCount = 'totalEventCount';
+	static const subject = 'subject';
+	static const date = 'date';
+	static const note = 'note';
 }
