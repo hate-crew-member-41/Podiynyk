@@ -22,7 +22,7 @@ class EventsSection extends Section {
 	@override
 	void addAction(BuildContext context) {
 		Navigator.of(context).push(MaterialPageRoute(
-			builder: (context) => NewEventPage.independentEvent()
+			builder: (context) => NewEventPage.noSubjectEvent()
 		));
 	}
 }

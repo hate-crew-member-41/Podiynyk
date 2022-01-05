@@ -35,32 +35,66 @@ class AgendaSection extends Section {
 	Widget build(BuildContext context) {
 		return Center(child: Icon(icon));
 	}
+}
+
+
+class AddEventButton extends StatefulWidget {
+	const AddEventButton();
 
 	@override
-	void addAction(BuildContext context) {
-		Navigator.of(context).push(MaterialPageRoute(
-			builder: (context) => NewEventPage()
-		));
+	_AddEventButtonState createState() => _AddEventButtonState();
+}
+
+class _AddEventButtonState extends State<AddEventButton> {
+	late bool _isVisible;
+	late List<String> _subjectNames;
+
+	@override
+	void initState() {
+		_isVisible = false;
+		Cloud.subjectNames().then((subjectNames) => setState(() {
+			_isVisible = true;
+			_subjectNames = subjectNames;
+		}));
+
+		super.initState();
+	}
+
+	@override
+	Widget build(BuildContext context) {
+		return Visibility(
+			visible: _isVisible,
+			child: AnimatedOpacity(
+				opacity: _isVisible ? 1 : 0,
+				duration: const Duration(milliseconds: 200),
+				child: FloatingActionButton(
+					child: const Icon(Icons.add),
+					onPressed: () {
+						Navigator.of(context).push(MaterialPageRoute(
+							builder: (context) => NewEventPage(_subjectNames)
+						));
+					}
+				)
+			)
+		);
 	}
 }
 
 
-// todo: make the widget stateful even though mutable [subject] and [_date] do not change the appearance?
-class NewEventPage extends StatelessWidget {
+class NewEventPage extends StatefulWidget {
 	late final bool _askSubject;
 	late final bool _subjectRequired;
-
-	String? _subject;
-	DateTime? _date;
+	late final String? _subject;
 
 	final _nameField = TextEditingController();
 	final _subjectField = TextEditingController();
 	final _dateField = TextEditingController();
 	final _noteField = TextEditingController();
 
-	NewEventPage() {
+	NewEventPage(List<String> subjectNames) {
 		_askSubject = true;
 		_subjectRequired = false;
+		_subject = null;
 	}
 
 	NewEventPage.subjectEvent(String subject) {
@@ -69,9 +103,24 @@ class NewEventPage extends StatelessWidget {
 		_subject = subject;
 	}
 
-	NewEventPage.independentEvent() {
+	NewEventPage.noSubjectEvent() {
 		_askSubject = false;
 		_subjectRequired = false;
+		_subject = null;
+	}
+
+	@override
+	State<NewEventPage> createState() => _NewEventPageState();
+}
+
+class _NewEventPageState extends State<NewEventPage> {
+	String? _subject;
+	DateTime? _date;
+
+	@override
+	void initState() {
+		_subject = widget._subject;
+		super.initState();
 	}
 
 	@override
@@ -84,23 +133,23 @@ class NewEventPage extends StatelessWidget {
 						shrinkWrap: true,
 						children: [
 							TextField(
-								controller: _nameField,
+								controller: widget._nameField,
 								decoration: const InputDecoration(hintText: "Name")
 							),
-							if (_askSubject) TextField(  // todo: validate
-								controller: _subjectField,
+							if (widget._askSubject) TextField(  // todo: validate
+								controller: widget._subjectField,
 								decoration: const InputDecoration(hintText: "Subject")
 							),
 							GestureDetector(  // the onTap of a disabled TextField never happens
 								onTap: () => _askDate(context),
 								child: TextField(
-									controller: _dateField,
+									controller: widget._dateField,
 									enabled: false,
 									decoration: const InputDecoration(hintText: "Date")
 								)
 							),
 							TextField(
-								controller: _noteField,
+								controller: widget._noteField,
 								decoration: const InputDecoration(hintText: "Note")
 							)
 						]
@@ -120,7 +169,7 @@ class NewEventPage extends StatelessWidget {
 		);
 		if (_date != null) {
 			await _askTime(context);
-			_dateField.text = _date!.forEvent();
+			widget._dateField.text = _date!.forEvent();
 		}
 	}
 
@@ -135,13 +184,13 @@ class NewEventPage extends StatelessWidget {
 	}
 
 	void _addEvent(BuildContext context) {
-		if (_askSubject) {
-			final inputSubject = _subjectField.text;
+		if (widget._askSubject) {
+			final inputSubject = widget._subjectField.text;
 			_subject = inputSubject.isNotEmpty ? inputSubject : null;
 		}
 		if (
-			_nameField.text.isEmpty ||
-			(_subjectRequired && _subject == null) ||
+			widget._nameField.text.isEmpty ||
+			(widget._subjectRequired && _subject == null) ||
 			_date == null
 		) return;
 
@@ -150,9 +199,9 @@ class NewEventPage extends StatelessWidget {
 		// todo: show the result of the request on the page?
 		Navigator.of(context).pop();
 
-		final note = _noteField.text;
+		final note = widget._noteField.text;
 		Cloud.addEvent(
-			name: _nameField.text,
+			name: widget._nameField.text,
 			subject: _subject,
 			date: _date!,
 			note: note.isNotEmpty ? note : null

@@ -34,10 +34,7 @@ class _HomeState extends State<Home> {
 				))
 			),
 			body: _section,
-			floatingActionButton: _section.hasAddAction && Cloud.role >= Role.trusted ? FloatingActionButton(
-				child: const Icon(Icons.add),
-				onPressed: () => _section.addAction(context)
-			) : null,
+			floatingActionButton: _floatingActionButton(context),
 			drawer: Drawer(
 				child: Column(
 					mainAxisAlignment: MainAxisAlignment.center,
@@ -53,6 +50,17 @@ class _HomeState extends State<Home> {
 				)
 			)
 		);
+	}
+
+	Widget? _floatingActionButton(BuildContext context) {
+		if (!_section.hasAddAction || Cloud.role < Role.trusted) return null;
+
+		if (_section is! AgendaSection) return FloatingActionButton(
+			child: const Icon(Icons.add),
+			onPressed: () => _section.addAction(context)
+		);
+
+		return const AddEventButton();
 	}
 
 	ListTile _drawerTile(Section section) => ListTile(
