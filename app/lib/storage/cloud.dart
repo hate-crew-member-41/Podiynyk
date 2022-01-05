@@ -126,6 +126,12 @@ class Cloud {
 				while (takenIds.contains(intId.toString())) intId++;
 			}
 
+			final subjectsDocument = _document('subjects');
+			final subjectsSnapshot = await transaction.get(subjectsDocument);
+			final subjectId = subjectsSnapshot.data()!.entries.firstWhere(
+				(subjectEntry) => subjectEntry.value['name'] == subject
+			).key;
+
 			final id = intId.toString();
 			final event = {id: {
 				'name': name,
@@ -139,6 +145,7 @@ class Cloud {
 			else {
 				transaction.set(document, event);
 			}
+			transaction.update(subjectsDocument, {'$subjectId.total_event_count': FieldValue.increment(1)});
 
 			return id;
 		});
