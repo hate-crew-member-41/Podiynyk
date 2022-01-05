@@ -27,14 +27,15 @@ class Cloud {
 		return roles;
 	}
 
-	// todo: make addSubject and addEvent share logic (define _addEntity)
+	// todo: make [add{entity}]s share code (define _addEntity)
+
 	/// Adds a new subject with the given [name].
 	static Future<void> addSubject({required String name}) {
 		final document = _document(Collection.subjects);
 
 		return _cloud.runTransaction((transaction) async {
 			final subjectsSnapshot = await transaction.get(document);
-			int id = 0;
+			int intId = 0;
 
 			if (subjectsSnapshot.exists) {
 				final rawSubjects = subjectsSnapshot.data()!;
@@ -44,10 +45,10 @@ class Cloud {
 				}
 
 				final takenIds = rawSubjects.keys;
-				while (takenIds.contains(id.toString())) id++;
+				while (takenIds.contains(intId.toString())) intId++;
 			}
 
-			final subject = {id.toString(): {
+			final subject = {intId.toString(): {
 				Field.name: name,
 				Field.totalEventCount: 0
 			}};
@@ -154,6 +155,45 @@ class Cloud {
 		}
 	}
 
+	static Future<void> addMessage({
+		required String subject,
+		required String content
+	}) async {
+		final document = _document(Collection.messages);
+
+		final id = await _cloud.runTransaction((transaction) async {
+			final messagesSnapshot = await transaction.get(document);
+			int intId = 0;
+
+			if (messagesSnapshot.exists) {
+				final rawMessages = messagesSnapshot.data()!;
+
+				for (final existingSubject in rawMessages.values) {
+					if (existingSubject == subject) return null;
+				}
+
+				final takenIds = rawMessages.keys;
+				while (takenIds.contains(intId.toString())) intId++;
+			}
+
+			final id = intId.toString();
+			final messageSubject = {id: subject};
+
+			if (messagesSnapshot.exists) {
+				transaction.update(document, messageSubject);
+			}
+			else {
+				transaction.set(document, messageSubject);
+			}
+
+			return id;
+		});
+
+		if (id != null) {
+			document.collection(Collection.details).doc(id).set({Field.content: content});
+		}
+	}
+
 	/// [DocumentReference] to the group's document for the given [entities].
 	static Document _document(String entities) => _cloud.collection(entities).doc(Local.groupId);
 }
@@ -164,6 +204,7 @@ class Collection {
 	static const subjects = 'subjects';
 	static const events = 'events';
 	static const details = 'details';
+	static const messages = 'messages';
 }
 
 class Field {
@@ -172,4 +213,5 @@ class Field {
 	static const subject = 'subject';
 	static const date = 'date';
 	static const note = 'note';
+	static const content = 'content';
 }

@@ -58,9 +58,9 @@ class NewMessagePage extends StatelessWidget {
 	void _addMessage(BuildContext context) {
 		if (_subjectField.text.isEmpty || _contentField.text.isEmpty) return;
 		Navigator.of(context).pop();
-		// Cloud.addMessage(
-		// 	subject: _subjectField.text,
-		// 	content: _contentField.text
-		// );
+		Cloud.addMessage(
+			subject: _subjectField.text,
+			content: _contentField.text
+		);
 	}
 }
