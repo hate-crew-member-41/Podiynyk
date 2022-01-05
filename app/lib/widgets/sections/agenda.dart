@@ -62,11 +62,11 @@ class _AddEventButtonState extends State<AddEventButton> {
 
 	@override
 	Widget build(BuildContext context) {
-		return Visibility(
-			visible: _isVisible,
-			child: AnimatedOpacity(
-				opacity: _isVisible ? 1 : 0,
-				duration: const Duration(milliseconds: 200),
+		return AnimatedOpacity(
+			opacity: _isVisible ? 1 : 0,
+			duration: const Duration(milliseconds: 200),
+			child: Visibility(
+				visible: _isVisible,
 				child: FloatingActionButton(
 					child: const Icon(Icons.add),
 					onPressed: () {
@@ -97,6 +97,7 @@ class NewEventPage extends StatefulWidget {
 		_subjectRequired = false;
 		_subject = null;
 		_subjects = subjects;
+		_subjects!.sort();
 	}
 
 	NewEventPage.subjectEvent(String subject) {

@@ -27,7 +27,7 @@ class _HomeState extends State<Home> {
 	Widget build(BuildContext context) {
 		return Scaffold(
 			appBar: AppBar(
-				title: Text(_section.name),  // todo: make it show the number the section wants to
+				// title: Text(),  // todo: make it show the number the section wants to
 				leading: Builder(builder: (context) => GestureDetector(
 					child: Icon(_section.icon),
 					onTap: () => Scaffold.of(context).openDrawer()

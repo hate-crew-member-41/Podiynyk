@@ -5,7 +5,7 @@ import 'local.dart';
 
 typedef Document = DocumentReference<Map<String, dynamic>>;
 typedef Roles = Map<String, Role>;
-typedef Entities = Map<String, Map<String, Object>>;
+typedef Events = Map<String, Map<String, Object>>;
 
 
 class Cloud {
@@ -30,10 +30,10 @@ class Cloud {
 	// todo: make [add{entity}]s share code (define _addEntity)
 
 	/// Adds a new subject with the given [name].
-	static Future<void> addSubject({required String name}) {
+	static Future<void> addSubject({required String name}) async {
 		final document = _document(Collection.subjects);
 
-		return _cloud.runTransaction((transaction) async {
+		final id = await _cloud.runTransaction((transaction) async {
 			final subjectsSnapshot = await transaction.get(document);
 			int intId = 0;
 
@@ -41,17 +41,15 @@ class Cloud {
 				final rawSubjects = subjectsSnapshot.data()!;
 
 				for (final subject in rawSubjects.values) {
-					if (subject[Field.name] == name) return;
+					if (subject == name) return null;
 				}
 
 				final takenIds = rawSubjects.keys;
 				while (takenIds.contains(intId.toString())) intId++;
 			}
 
-			final subject = {intId.toString(): {
-				Field.name: name,
-				Field.totalEventCount: 0
-			}};
+			final id = intId.toString();
+			final subject = {id: name};
 
 			if (subjectsSnapshot.exists) {
 				transaction.update(document, subject);
@@ -59,15 +57,19 @@ class Cloud {
 			else {
 				transaction.set(document, subject);
 			}
+
+			return id;
 		});
+
+		if (id != null) {
+			document.collection(Collection.details).doc(id).set({Field.totalEventCount: 0});
+		}
 	}
 
 	/// The names of the group's subjects.
 	static Future<List<String>> subjectNames() async {
 		final subjectsSnapshot = await _document(Collection.subjects).get();
-		return subjectsSnapshot.exists ? [
-			for (final subject in subjectsSnapshot.data()!.values) subject[Field.name]
-		] : [];
+		return subjectsSnapshot.exists ? List<String>.from(subjectsSnapshot.data()!.values) : [];
 	}
 
 	/// The group's [subjects].
@@ -76,29 +78,22 @@ class Cloud {
 			_document(Collection.subjects).get(),
 			_document(Collection.events).get()
 		]);
-		final subjects = (snapshots.first.data() ?? {}) as Entities;
-		final events = (snapshots.last.data() ?? {}) as Entities;
+		final subjects = (snapshots.first.data() ?? {}).keys;
+		final events = (snapshots.last.data() ?? {}) as Events;
 
-		final nextEventDates = <String, DateTime>{};
-		final eventCounts = {for (final name in subjects.keys) name: 0};
+		final subjectsEvents = {for (final subject in subjects) subject: <Event>[]};
 
 		for (final event in events.values) {
-			final subject = event[Field.subject] as String;
-			final date = event[Field.date] as DateTime;
-
-			nextEventDates.update(
-				subject,
-				(subjectNextEventDate) => date.isAfter(subjectNextEventDate) ? date : subjectNextEventDate,
-				ifAbsent: () => date
-			);
-			eventCounts.update(subject, (count) => ++count);
+			subjectsEvents[event[Field.subject]]!.add(Event(
+				name: event[Field.name] as String,
+				subject: event[Field.subject] as String?,
+				date: event[Field.date] as DateTime
+			));
 		}
 
-		return [for (final subject in subjects.entries) Subject(
-			name: subject.key,
-			nextEventDate: nextEventDates[subject.key]!,
-			eventCount: eventCounts[subject.key]!,
-			totalEventCount: subject.value[Field.totalEventCount] as int
+		return [for (final subject in subjects) Subject(
+			name: subject,
+			events: subjectsEvents[subject]!
 		)];
 	}
 
@@ -129,7 +124,7 @@ class Cloud {
 			final subjectsDocument = _document(Collection.subjects);
 			final subjectsSnapshot = await transaction.get(subjectsDocument);
 			final subjectId = subjectsSnapshot.data()!.entries.firstWhere(
-				(subjectEntry) => subjectEntry.value[Field.name] == subject
+				(subjectEntry) => subjectEntry.value == subject
 			).key;
 
 			final id = intId.toString();
@@ -145,7 +140,9 @@ class Cloud {
 			else {
 				transaction.set(document, event);
 			}
-			transaction.update(subjectsDocument, {'$subjectId.${Field.totalEventCount}': FieldValue.increment(1)});
+			subjectsDocument.collection(Collection.details).doc(subjectId).update({
+				Field.totalEventCount: FieldValue.increment(1)
+			});
 
 			return id;
 		});

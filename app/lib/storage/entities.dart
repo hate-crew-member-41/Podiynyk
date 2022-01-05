@@ -17,14 +17,23 @@ extension Comparing on Role {
 
 class Subject {
 	final String name;
-	final DateTime nextEventDate;
-	final int eventCount;
-	final int totalEventCount;
+	final List<Event> events;
 
 	const Subject({
 		required this.name,
-		required this.nextEventDate,
-		required this.eventCount,
-		required this.totalEventCount
+		required this.events
+	});
+}
+
+
+class Event {
+	final String name;
+	final String? subject;
+	final DateTime date;
+
+	const Event({
+		required this.name,
+		required this.subject,
+		required this.date
 	});
 }

@@ -9,7 +9,7 @@ class GroupSection extends Section {
 	@override
 	final icon = Icons.people;
 	@override
-	final hasAddAction = true;
+	final hasAddAction = false;
 
 	const GroupSection();
 
