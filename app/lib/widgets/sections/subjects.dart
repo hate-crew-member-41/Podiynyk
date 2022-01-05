@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/cloud.dart' show Cloud;
 
 import 'section.dart';
 
@@ -29,7 +29,7 @@ class SubjectsSection extends Section {
 }
 
 
-// todo: make NewSubjectPage and NewEventPage share code (define NewEntityPage class)
+// todo: make [New{entity}Page]s share code (define NewEntityPage class)
 class NewSubjectPage extends StatelessWidget {
 	final _nameField = TextEditingController();
 
@@ -38,12 +38,10 @@ class NewSubjectPage extends StatelessWidget {
 		return GestureDetector(
 			onDoubleTap: () => _addSubject(context),
 			child: Scaffold(
-				body: Center(
-					child: TextField(
-						controller: _nameField,
-						decoration: const InputDecoration(hintText: "Name"),
-					)
-				)
+				body: Center(child: TextField(
+					controller: _nameField,
+					decoration: const InputDecoration(hintText: "Name"),
+				))
 			)
 		);
 	}

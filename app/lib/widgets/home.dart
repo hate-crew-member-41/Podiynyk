@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/storage/cloud.dart';
-import 'package:podiynyk/storage/entities.dart';
+import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import 'package:podiynyk/storage/entities.dart' show Role, Comparing;
 
 import 'sections/agenda.dart';
 import 'sections/events.dart';

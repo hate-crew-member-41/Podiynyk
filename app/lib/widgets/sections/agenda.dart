@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/cloud.dart' show Cloud;
 
 import 'section.dart';
 
@@ -132,37 +132,35 @@ class _NewEventPageState extends State<NewEventPage> {
 		return GestureDetector(
 			onDoubleTap: () => _addEvent(context),
 			child: Scaffold(
-				body: Center(
-					child: ListView(
-						shrinkWrap: true,
-						children: [
-							TextField(
-								controller: widget._nameField,
-								decoration: const InputDecoration(hintText: "Name")
+				body: Center(child: ListView(
+					shrinkWrap: true,
+					children: [
+						TextField(
+							controller: widget._nameField,
+							decoration: const InputDecoration(hintText: "Name")
+						),
+						if (widget._askSubject) GestureDetector(  // TextField.onTap is not called if the field is disabled
+							onTap: () => _askSubject(context),
+							child: TextField(
+								controller: widget._subjectField,
+								enabled: false,
+								decoration: const InputDecoration(hintText: "Subject")
 							),
-							if (widget._askSubject) GestureDetector(  // TextField.onTap is not called if the field is disabled
-								onTap: () => _askSubject(context),
-								child: TextField(
-									controller: widget._subjectField,
-									enabled: false,
-									decoration: const InputDecoration(hintText: "Subject")
-								),
-							),
-							GestureDetector(
-								onTap: () => _askDate(context),
-								child: TextField(
-									controller: widget._dateField,
-									enabled: false,
-									decoration: const InputDecoration(hintText: "Date")
-								)
-							),
-							TextField(
-								controller: widget._noteField,
-								decoration: const InputDecoration(hintText: "Note")
+						),
+						GestureDetector(
+							onTap: () => _askDate(context),
+							child: TextField(
+								controller: widget._dateField,
+								enabled: false,
+								decoration: const InputDecoration(hintText: "Date")
 							)
-						]
-					)
-				)
+						),
+						TextField(
+							controller: widget._noteField,
+							decoration: const InputDecoration(hintText: "Note")
+						)
+					]
+				))
 			)
 		);
 	}
