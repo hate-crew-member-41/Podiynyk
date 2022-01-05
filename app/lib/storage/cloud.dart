@@ -101,7 +101,6 @@ class Cloud {
 		)];
 	}
 
-	// todo: increments the subject's total_event_count
 	/// Adds a new event with the given arguments.
 	static Future<void> addEvent({
 		required String name,

@@ -33,8 +33,6 @@ class SubjectsSection extends Section {
 class NewSubjectPage extends StatelessWidget {
 	final _nameField = TextEditingController();
 
-	NewSubjectPage();
-
 	@override
 	Widget build(BuildContext context) {
 		return GestureDetector(

@@ -47,14 +47,14 @@ class AddEventButton extends StatefulWidget {
 
 class _AddEventButtonState extends State<AddEventButton> {
 	late bool _isVisible;
-	late List<String> _subjectNames;
+	late List<String> _subjects;
 
 	@override
 	void initState() {
 		_isVisible = false;
 		Cloud.subjectNames().then((subjectNames) => setState(() {
 			_isVisible = true;
-			_subjectNames = subjectNames;
+			_subjects = subjectNames;
 		}));
 
 		super.initState();
@@ -71,7 +71,7 @@ class _AddEventButtonState extends State<AddEventButton> {
 					child: const Icon(Icons.add),
 					onPressed: () {
 						Navigator.of(context).push(MaterialPageRoute(
-							builder: (context) => NewEventPage(_subjectNames)
+							builder: (context) => NewEventPage(_subjects)
 						));
 					}
 				)
@@ -85,28 +85,32 @@ class NewEventPage extends StatefulWidget {
 	late final bool _askSubject;
 	late final bool _subjectRequired;
 	late final String? _subject;
+	late final List<String>? _subjects;
 
 	final _nameField = TextEditingController();
 	final _subjectField = TextEditingController();
 	final _dateField = TextEditingController();
 	final _noteField = TextEditingController();
 
-	NewEventPage(List<String> subjectNames) {
+	NewEventPage(List<String> subjects) {
 		_askSubject = true;
 		_subjectRequired = false;
 		_subject = null;
+		_subjects = subjects;
 	}
 
 	NewEventPage.subjectEvent(String subject) {
 		_askSubject = false;
 		_subjectRequired = true;
 		_subject = subject;
+		_subjects = null;
 	}
 
 	NewEventPage.noSubjectEvent() {
 		_askSubject = false;
 		_subjectRequired = false;
 		_subject = null;
+		_subjects = null;
 	}
 
 	@override
@@ -136,9 +140,13 @@ class _NewEventPageState extends State<NewEventPage> {
 								controller: widget._nameField,
 								decoration: const InputDecoration(hintText: "Name")
 							),
-							if (widget._askSubject) TextField(  // todo: validate
-								controller: widget._subjectField,
-								decoration: const InputDecoration(hintText: "Subject")
+							if (widget._askSubject) GestureDetector(  // the onTap of a disabled TextField never happens
+								onTap: () => _askSubject(context),
+								child: TextField(  // todo: validate
+									controller: widget._subjectField,
+									enabled: false,
+									decoration: const InputDecoration(hintText: "Subject")
+								),
 							),
 							GestureDetector(  // the onTap of a disabled TextField never happens
 								onTap: () => _askDate(context),
@@ -157,6 +165,24 @@ class _NewEventPageState extends State<NewEventPage> {
 				)
 			)
 		);
+	}
+
+	void _askSubject(BuildContext context) {
+		Navigator.of(context).push(MaterialPageRoute(
+			builder: (context) => Scaffold(
+				body: Center(child: ListView(
+					shrinkWrap: true,
+					children: [for (final subject in widget._subjects!) ListTile(
+						title: Text(subject),
+						onTap: () {
+							_subject = subject;
+							widget._subjectField.text = subject;
+							Navigator.of(context).pop();
+						}
+					)]
+				))
+			)
+		));
 	}
 
 	void _askDate(BuildContext context) async {
