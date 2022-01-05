@@ -64,7 +64,7 @@ class Cloud {
 	/// Adds a new event with the given arguments.
 	static Future<void> addEvent({
 		required String name,
-		required String subject,
+		String? subject,
 		required DateTime date,
 		String? note
 	}) async {
@@ -88,7 +88,7 @@ class Cloud {
 			final id = intId.toString();
 			final event = {id: {
 				'name': name,
-				'subject': subject,
+				if (subject != null) 'subject': subject,
 				'date': date,
 			}};
 
