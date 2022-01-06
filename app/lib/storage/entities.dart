@@ -37,3 +37,14 @@ class Event {
 		required this.date
 	});
 }
+
+
+class Message {
+	final String subject;
+	final DateTime date;
+
+	const Message({
+		required this.subject,
+		required this.date
+	});
+}

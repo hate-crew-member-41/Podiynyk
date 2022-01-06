@@ -14,7 +14,7 @@ class Cloud {
 	/// The user's [Role] in the group.
 	static Role get role => _role;
 
-	/// The [Roles] of the group's students. Updates the user's [Role].
+	/// The [Role]s of the group's students. Updates the user's [Role].
 	static Future<Roles> roles() async {
 		final snapshot = await _document(Entities.students).get();
 		final roles = {
@@ -26,7 +26,7 @@ class Cloud {
 		return roles;
 	}
 
-	/// Adds a subject with the [name] unless it exists.
+	/// Adds a [Subject] with the [name] unless it exists.
 	static Future<void> addSubject({required String name}) async => await _addEntity(
 		entities: Entities.subjects,
 		existingEquals: (existingSubject) => existingSubject == name,
@@ -40,7 +40,7 @@ class Cloud {
 		return snapshot.exists ? (List<String>.from(snapshot.data()!.values)..sort()) : <String>[];
 	}
 
-	/// The group's [subjects].
+	/// The group's [Subject]s.
 	static Future<List<Subject>> subjects() async {
 		final snapshots = await Future.wait([
 			_document(Entities.subjects).get(),
@@ -65,7 +65,7 @@ class Cloud {
 		)]..sort((a, b) => a.name.compareTo(b.name));
 	}
 
-	/// Adds an event with the arguments unless it exists.
+	/// Adds an [Event] with the arguments unless it exists.
 	static Future<void> addEvent({
 		required String name,
 		String? subject,
@@ -97,6 +97,7 @@ class Cloud {
 		}
 	}
 
+	/// The group's [Event]s.
 	static Future<List<Event>> events() async {
 		final snapshot = await _document(Entities.events).get();
 		if (!snapshot.exists) return <Event>[];
@@ -108,16 +109,33 @@ class Cloud {
 		)]..sort((a, b) => a.date.compareTo(b.date));
 	}
 
-	/// Adds a message with the arguments unless it exists.
+	/// Adds a [Message] with the arguments unless it exists.
 	static Future<void> addMessage({
 		required String subject,
-		required String content
+		required String content,
 	}) async => await _addEntity(
 		entities: Entities.messages,
 		existingEquals: (existingSubject) => existingSubject == subject,
-		entity: subject,
-		details: {Field.content.name: content},
+		entity: {
+			Field.subject.name: subject,
+			Field.date.name: DateTime.now()
+		},
+		details: {
+			Field.content.name: content,
+			Field.author.name: Local.name
+		},
 	);
+
+	/// The group's [Message]s.
+	static Future<List<Message>> messages() async {
+		final snapshot = await _document(Entities.messages).get();
+		if (!snapshot.exists) return <Message>[];
+
+		return [for (final message in snapshot.data()!.values) Message(
+			subject: message[Field.subject.name],
+			date: message[Field.date.name]
+		)]..sort((a, b) => b.date.compareTo(a.date));
+	}
 
 	/// Adds the [entity] unless it exists, with the given [details] unless they are `null`.
 	/// Returns whether the [entity] was written.
@@ -183,5 +201,6 @@ enum Field {
 	subject,
 	date,
 	note,
-	content
+	content,
+	author
 }
