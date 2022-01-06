@@ -32,7 +32,7 @@ class Cloud {
 		entities: Collection.subjects,
 		existingEquals: (existingSubject) => existingSubject == name,
 		entity: name,
-		details: {Field.totalEventCount: 0}
+		details: {Field.totalEventCount.name: 0}
 	);
 
 	/// The names of the group's subjects.
@@ -53,10 +53,10 @@ class Cloud {
 		final subjectsEvents = {for (final subject in subjectNames) subject: <Event>[]};
 
 		for (final event in eventEntries.values) {
-			subjectsEvents[event[Field.subject]]!.add(Event(
-				name: event[Field.name] as String,
-				subject: event[Field.subject] as String?,
-				date: event[Field.date] as DateTime
+			subjectsEvents[event[Field.subject.name]]!.add(Event(
+				name: event[Field.name.name] as String,
+				subject: event[Field.subject.name] as String?,
+				date: event[Field.date.name] as DateTime
 			));
 		}
 
@@ -75,13 +75,13 @@ class Cloud {
 	}) async {
 		final wasWritten = await _addEntity(
 			entities: Collection.events,
-			existingEquals: (existingEvent) => existingEvent[Field.name] == name && existingEvent[Field.subject] == subject,
+			existingEquals: (existingEvent) => existingEvent[Field.name.name] == name && existingEvent[Field.subject.name] == subject,
 			entity: {
-				Field.name: name,
-				if (subject != null) Field.subject: subject,
-				Field.date: date,
+				Field.name.name: name,
+				if (subject != null) Field.subject.name: subject,
+				Field.date.name: date,
 			},
-			details: note != null ? {Field.note: note} : null,
+			details: note != null ? {Field.note.name: note} : null,
 		);
 
 		if (wasWritten) {
@@ -92,8 +92,8 @@ class Cloud {
 				(subjectEntry) => subjectEntry.value == subject
 			).key;
 
-			document.collection(Collection.details).doc(subjectId).update({
-				Field.totalEventCount: FieldValue.increment(1)
+			document.collection(Collection.details.name).doc(subjectId).update({
+				Field.totalEventCount.name: FieldValue.increment(1)
 			});
 		}
 	}
@@ -106,13 +106,13 @@ class Cloud {
 		entities: Collection.messages,
 		existingEquals: (existingSubject) => existingSubject == subject,
 		entity: subject,
-		details: {Field.content: content},
+		details: {Field.content.name: content},
 	);
 
 	/// Adds the [entity] unless it exists, with the given [details] unless they are `null`.
 	/// Returns whether the [entity] was written.
 	static Future<bool> _addEntity({
-		required String entities,
+		required Collection entities,
 		required bool Function(dynamic existingEntity) existingEquals,
 		required Object entity,
 		Map<String, Object>? details
@@ -148,30 +148,30 @@ class Cloud {
 		});
 
 		final wasWritten = id != null;
-		if (details != null && wasWritten) document.collection(Collection.details).doc(id).set(details);
+		if (details != null && wasWritten) document.collection(Collection.details.name).doc(id).set(details);
 		return wasWritten;
 	}
 
 	/// [DocumentReference] to the document with the group's [entities].
-	static Document _document(String entities) => _cloud.collection(entities).doc(Local.groupId);
+	static Document _document(Collection entities) => _cloud.collection(entities.name).doc(Local.groupId);
 }
 
 
 /// The [Collection]s used in [FirebaseFirestore].
-class Collection {
-	static const students = 'students';
-	static const subjects = 'subjects';
-	static const events = 'events';
-	static const details = 'details';
-	static const messages = 'messages';
+enum Collection {
+	students,
+	subjects,
+	events,
+	details,
+	messages
 }
 
-/// The fields used in [FirebaseFirestore].
-class Field {
-	static const name = 'name';
-	static const totalEventCount = 'totalEventCount';
-	static const subject = 'subject';
-	static const date = 'date';
-	static const note = 'note';
-	static const content = 'content';
+/// The [Field]s used in [FirebaseFirestore].
+enum Field {
+	name,
+	totalEventCount,
+	subject,
+	date,
+	note,
+	content
 }
