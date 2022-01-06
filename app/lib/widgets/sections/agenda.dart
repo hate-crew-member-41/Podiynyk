@@ -17,13 +17,13 @@ class AgendaSection extends CloudListSection<Event> {
 	const AgendaSection();
 
 	@override
-	get future => Cloud.events();
+	Future<List<Event>> get future => Cloud.events();
 
 	@override
-	tile(event) => ListTile(
+	ListTile tile(Event event) => ListTile(
 		title: Text(event.name),
 		subtitle: event.subject != null ? Text(event.subject!) : null,
-		trailing: Text(event.date.dateRepr),
+		trailing: Text(event.date.dateRepr)
 	);
 }
 

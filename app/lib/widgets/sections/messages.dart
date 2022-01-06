@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import 'package:podiynyk/storage/entities.dart' show Message;
 
 import 'section.dart';
 
 
-class MessagesSection extends Section {
+class MessagesSection extends CloudListSection<Message> {
 	@override
 	final name = "messages";
 	@override
@@ -16,9 +17,13 @@ class MessagesSection extends Section {
 	const MessagesSection();
 
 	@override
-	Widget build(BuildContext context) {
-		return Center(child: Icon(icon));
-	}
+	Future<List<Message>> get future => Cloud.messages();
+
+	@override
+	ListTile tile(Message message) => ListTile(
+		title: Text(message.subject),
+		trailing: Text(message.date.dateRepr)
+	);
 
 	@override
 	void addAction(BuildContext context) {

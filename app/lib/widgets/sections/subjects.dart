@@ -18,13 +18,13 @@ class SubjectsSection extends CloudListSection<Subject> {
 	const SubjectsSection();
 
 	@override
-	get future => Cloud.subjects();
+	Future<List<Subject>> get future => Cloud.subjects();
 
 	@override
-	tile(subject) => ListTile(
+	ListTile tile(Subject subject) => ListTile(
 		title: Text(subject.name),
 		subtitle: Text(_eventCount(subject.events.length)),
-		trailing: Text(_nextEvent(subject).date.dateRepr),
+		trailing: Text(_nextEvent(subject).date.dateRepr)
 	);
 
 	String _eventCount(int eventCount) {
