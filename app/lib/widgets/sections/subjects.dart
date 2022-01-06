@@ -47,8 +47,10 @@ class NewSubjectPage extends StatelessWidget {
 	}
 
 	void _addSubject(BuildContext context) {
-		if (_nameField.text.isEmpty) return;
+		final name = _nameField.text;
+		if (name.isEmpty) return;
+
 		Navigator.of(context).pop();
-		Cloud.addSubject(name: _nameField.text);
+		Cloud.addSubject(name: name);
 	}
 }

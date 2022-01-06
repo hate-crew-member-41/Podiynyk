@@ -6,6 +6,8 @@ class Loading extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
-		return const Center(child: Text("waking up"));
+		return const Scaffold(
+			body: Center(child: Text("waking up"))
+		);
 	}
 }

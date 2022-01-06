@@ -47,14 +47,14 @@ class AddEventButton extends StatefulWidget {
 
 class _AddEventButtonState extends State<AddEventButton> {
 	late bool _isVisible;
-	late List<String> _subjects;
+	late List<String> _subjectNames;
 
 	@override
 	void initState() {
 		_isVisible = false;
 		Cloud.subjectNames().then((subjectNames) => setState(() {
 			_isVisible = true;
-			_subjects = subjectNames;
+			_subjectNames = subjectNames;
 		}));
 
 		super.initState();
@@ -71,7 +71,7 @@ class _AddEventButtonState extends State<AddEventButton> {
 					child: const Icon(Icons.add),
 					onPressed: () {
 						Navigator.of(context).push(MaterialPageRoute(
-							builder: (context) => NewEventPage(_subjects)
+							builder: (context) => NewEventPage(_subjectNames)
 						));
 					}
 				)
@@ -85,33 +85,33 @@ class NewEventPage extends StatefulWidget {
 	late final bool _askSubject;
 	late final bool _subjectRequired;
 	late final String? _subject;
-	late final List<String>? _subjects;
+	late final List<String>? _subjectNames;
 
 	final _nameField = TextEditingController();
 	final _subjectField = TextEditingController();
 	final _dateField = TextEditingController();
 	final _noteField = TextEditingController();
 
-	NewEventPage(List<String> subjects) {
+	NewEventPage(List<String> subjectNames) {
 		_askSubject = true;
 		_subjectRequired = false;
 		_subject = null;
-		_subjects = subjects;
-		_subjects!.sort();
+		_subjectNames = subjectNames;
+		_subjectNames!.sort();
 	}
 
 	NewEventPage.subjectEvent(String subject) {
 		_askSubject = false;
 		_subjectRequired = true;
 		_subject = subject;
-		_subjects = null;
+		_subjectNames = null;
 	}
 
 	NewEventPage.noSubjectEvent() {
 		_askSubject = false;
 		_subjectRequired = false;
 		_subject = null;
-		_subjects = null;
+		_subjectNames = null;
 	}
 
 	@override
@@ -119,12 +119,12 @@ class NewEventPage extends StatefulWidget {
 }
 
 class _NewEventPageState extends State<NewEventPage> {
-	String? _subject;
+	String? _subjectName;
 	DateTime? _date;
 
 	@override
 	void initState() {
-		_subject = widget._subject;
+		_subjectName = widget._subject;
 		super.initState();
 	}
 
@@ -171,11 +171,11 @@ class _NewEventPageState extends State<NewEventPage> {
 			builder: (context) => Scaffold(
 				body: Center(child: ListView(
 					shrinkWrap: true,
-					children: [for (final subject in widget._subjects!) ListTile(
-						title: Text(subject),
+					children: [for (final name in widget._subjectNames!) ListTile(
+						title: Text(name),
 						onTap: () {
-							_subject = subject;
-							widget._subjectField.text = subject;
+							_subjectName = name;
+							widget._subjectField.text = name;
 							Navigator.of(context).pop();
 						}
 					)]
@@ -209,13 +209,14 @@ class _NewEventPageState extends State<NewEventPage> {
 	}
 
 	void _addEvent(BuildContext context) {
+		final name = widget._nameField.text, note = widget._noteField.text;
 		if (widget._askSubject) {
 			final inputSubject = widget._subjectField.text;
-			_subject = inputSubject.isNotEmpty ? inputSubject : null;
+			_subjectName = inputSubject.isNotEmpty ? inputSubject : null;
 		}
 		if (
-			widget._nameField.text.isEmpty ||
-			(widget._subjectRequired && _subject == null) ||
+			name.isEmpty ||
+			(widget._subjectRequired && _subjectName == null) ||
 			_date == null
 		) return;
 
@@ -224,10 +225,9 @@ class _NewEventPageState extends State<NewEventPage> {
 		// todo: show the result of the request on the page?
 		Navigator.of(context).pop();
 
-		final note = widget._noteField.text;
 		Cloud.addEvent(
-			name: widget._nameField.text,
-			subject: _subject,
+			name: name,
+			subject: _subjectName,
 			date: _date!,
 			note: note.isNotEmpty ? note : null
 		);

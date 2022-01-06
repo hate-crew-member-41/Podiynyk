@@ -12,10 +12,10 @@ class Cloud {
 	static final _cloud = FirebaseFirestore.instance;
 
 	static late Role _role;
-	/// The user's [role] in the group.
+	/// The user's [Role] in the group.
 	static Role get role => _role;
 
-	/// The [roles] of the group's students. Updates the user's [Role].
+	/// The [Roles] of the group's students. Updates the user's [Role].
 	static Future<Roles> roles() async {
 		final rawRoles = await _document(Collection.students).get();
 		final roles = {
@@ -29,7 +29,7 @@ class Cloud {
 
 	// todo: make [add{entity}]s share code (define _addEntity)
 
-	/// Adds a new subject with the given [name].
+	/// Adds a subject with the given [name] unless it exists.
 	static Future<void> addSubject({required String name}) async {
 		final document = _document(Collection.subjects);
 
@@ -38,24 +38,24 @@ class Cloud {
 			int intId = 0;
 
 			if (subjectsSnapshot.exists) {
-				final rawSubjects = subjectsSnapshot.data()!;
+				final subjectEntries = subjectsSnapshot.data()!;
 
-				for (final subject in rawSubjects.values) {
-					if (subject == name) return null;
+				for (final subjectName in subjectEntries.values) {
+					if (subjectName == name) return null;
 				}
 
-				final takenIds = rawSubjects.keys;
+				final takenIds = subjectEntries.keys;
 				while (takenIds.contains(intId.toString())) intId++;
 			}
 
 			final id = intId.toString();
-			final subject = {id: name};
+			final subjectEntry = {id: name};
 
 			if (subjectsSnapshot.exists) {
-				transaction.update(document, subject);
+				transaction.update(document, subjectEntry);
 			}
 			else {
-				transaction.set(document, subject);
+				transaction.set(document, subjectEntry);
 			}
 
 			return id;
@@ -78,12 +78,12 @@ class Cloud {
 			_document(Collection.subjects).get(),
 			_document(Collection.events).get()
 		]);
-		final subjects = (snapshots.first.data() ?? {}).keys;
-		final events = (snapshots.last.data() ?? {}) as Events;
+		final subjectNames = (snapshots.first.data() ?? {}).values;
+		final eventEntries = (snapshots.last.data() ?? {}) as Events;
 
-		final subjectsEvents = {for (final subject in subjects) subject: <Event>[]};
+		final subjectsEvents = {for (final subject in subjectNames) subject: <Event>[]};
 
-		for (final event in events.values) {
+		for (final event in eventEntries.values) {
 			subjectsEvents[event[Field.subject]]!.add(Event(
 				name: event[Field.name] as String,
 				subject: event[Field.subject] as String?,
@@ -91,13 +91,13 @@ class Cloud {
 			));
 		}
 
-		return [for (final subject in subjects) Subject(
-			name: subject,
-			events: subjectsEvents[subject]!
+		return [for (final subjectName in subjectNames) Subject(
+			name: subjectName,
+			events: subjectsEvents[subjectName]!
 		)];
 	}
 
-	/// Adds a new event with the given arguments.
+	/// Adds an event with the given arguments unless it exists.
 	static Future<void> addEvent({
 		required String name,
 		String? subject,
@@ -111,13 +111,13 @@ class Cloud {
 			int intId = 0;
 
 			if (eventsSnapshot.exists) {
-				final rawEvents = eventsSnapshot.data()!;
+				final eventEntries = eventsSnapshot.data()!;
 
-				for (final event in rawEvents.values) {
-					if (event[Field.name] == name && event[Field.subject] == subject) return null;
+				for (final existingEvent in eventEntries.values) {
+					if (existingEvent[Field.name] == name && existingEvent[Field.subject] == subject) return null;
 				}
 
-				final takenIds = rawEvents.keys;
+				final takenIds = eventEntries.keys;
 				while (takenIds.contains(intId.toString())) intId++;
 			}
 
@@ -128,17 +128,17 @@ class Cloud {
 			).key;
 
 			final id = intId.toString();
-			final event = {id: {
+			final eventEntry = {id: {
 				Field.name: name,
 				if (subject != null) Field.subject: subject,
 				Field.date: date,
 			}};
 
 			if (eventsSnapshot.exists) {
-				transaction.update(document, event);
+				transaction.update(document, eventEntry);
 			}
 			else {
-				transaction.set(document, event);
+				transaction.set(document, eventEntry);
 			}
 			subjectsDocument.collection(Collection.details).doc(subjectId).update({
 				Field.totalEventCount: FieldValue.increment(1)
@@ -152,6 +152,7 @@ class Cloud {
 		}
 	}
 
+	/// Adds a message with the given arguments unless it exists.
 	static Future<void> addMessage({
 		required String subject,
 		required String content
@@ -163,24 +164,24 @@ class Cloud {
 			int intId = 0;
 
 			if (messagesSnapshot.exists) {
-				final rawMessages = messagesSnapshot.data()!;
+				final messageEntries = messagesSnapshot.data()!;
 
-				for (final existingSubject in rawMessages.values) {
-					if (existingSubject == subject) return null;
+				for (final existingMessageSubject in messageEntries.values) {
+					if (existingMessageSubject == subject) return null;
 				}
 
-				final takenIds = rawMessages.keys;
+				final takenIds = messageEntries.keys;
 				while (takenIds.contains(intId.toString())) intId++;
 			}
 
 			final id = intId.toString();
-			final messageSubject = {id: subject};
+			final messageEntry = {id: subject};
 
 			if (messagesSnapshot.exists) {
-				transaction.update(document, messageSubject);
+				transaction.update(document, messageEntry);
 			}
 			else {
-				transaction.set(document, messageSubject);
+				transaction.set(document, messageEntry);
 			}
 
 			return id;
@@ -191,11 +192,12 @@ class Cloud {
 		}
 	}
 
-	/// [DocumentReference] to the group's document for the given [entities].
+	/// [DocumentReference] to the document with the given [entities] of the group.
 	static Document _document(String entities) => _cloud.collection(entities).doc(Local.groupId);
 }
 
 
+/// The [Collection]s used in [FirebaseFirestore].
 class Collection {
 	static const students = 'students';
 	static const subjects = 'subjects';
@@ -204,6 +206,7 @@ class Collection {
 	static const messages = 'messages';
 }
 
+/// The fields used in [FirebaseFirestore].
 class Field {
 	static const name = 'name';
 	static const totalEventCount = 'totalEventCount';

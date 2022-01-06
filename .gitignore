@@ -1,10 +1,13 @@
-build/
-android/
-ios/
+app/build/
+app/android/
+app/ios/
 
 # Working with Firebase with Admin SDK
 firebase/firebase_podiynyk_key.json
 firebase/HEIs/
+
+# A script for code statistics
+app/code_stats.py
 
 # The previous version of the project
 old/
