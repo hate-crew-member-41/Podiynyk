@@ -46,22 +46,22 @@ class Cloud {
 			_document(Entities.subjects).get(),
 			_document(Entities.events).get()
 		]);
-		final subjectNames = (snapshots.first.data() ?? {}).values;
+		final names = (snapshots.first.data() ?? {}).values;
 		final eventEntries = (snapshots.last.data() ?? {});
 
-		final subjectsEvents = {for (final subject in subjectNames) subject: <Event>[]};
+		final events = {for (final name in names) name: <Event>[]};
 
-		for (final event in eventEntries.values) {
-			subjectsEvents[event[Field.subject.name]]!.add(Event(
+		for (final event in eventEntries.values.where((event) => event.containsKey(Field.subject.name))) {
+			events[event[Field.subject.name]]!.add(Event(
 				name: event[Field.name.name],
 				subject: event[Field.subject.name],
-				date: event[Field.date.name]
+				date: event[Field.date.name].toDate()
 			));
 		}
 
-		return [for (final subjectName in subjectNames) Subject(
-			name: subjectName,
-			events: subjectsEvents[subjectName]!
+		return [for (final name in names) Subject(
+			name: name,
+			events: events[name]!
 		)]..sort((a, b) => a.name.compareTo(b.name));
 	}
 
@@ -105,7 +105,7 @@ class Cloud {
 		return [for (final event in snapshot.data()!.values) Event(
 			name: event[Field.name.name],
 			subject: event[Field.subject.name],
-			date: event[Field.date.name]
+			date: event[Field.date.name].toDate()
 		)]..sort((a, b) => a.date.compareTo(b.date));
 	}
 
@@ -133,7 +133,7 @@ class Cloud {
 
 		return [for (final message in snapshot.data()!.values) Message(
 			subject: message[Field.subject.name],
-			date: message[Field.date.name]
+			date: message[Field.date.name].toDate()
 		)]..sort((a, b) => b.date.compareTo(a.date));
 	}
 
