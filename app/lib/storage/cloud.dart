@@ -27,44 +27,13 @@ class Cloud {
 		return roles;
 	}
 
-	// todo: make [add{entity}]s share code (define _addEntity)
-
-	/// Adds a subject with the given [name] unless it exists.
-	static Future<void> addSubject({required String name}) async {
-		final document = _document(Collection.subjects);
-
-		final id = await _cloud.runTransaction((transaction) async {
-			final subjectsSnapshot = await transaction.get(document);
-			int intId = 0;
-
-			if (subjectsSnapshot.exists) {
-				final subjectEntries = subjectsSnapshot.data()!;
-
-				for (final subjectName in subjectEntries.values) {
-					if (subjectName == name) return null;
-				}
-
-				final takenIds = subjectEntries.keys;
-				while (takenIds.contains(intId.toString())) intId++;
-			}
-
-			final id = intId.toString();
-			final subjectEntry = {id: name};
-
-			if (subjectsSnapshot.exists) {
-				transaction.update(document, subjectEntry);
-			}
-			else {
-				transaction.set(document, subjectEntry);
-			}
-
-			return id;
-		});
-
-		if (id != null) {
-			document.collection(Collection.details).doc(id).set({Field.totalEventCount: 0});
-		}
-	}
+	/// Adds a subject with the [name] unless it exists.
+	static Future<void> addSubject({required String name}) async => await _addEntity(
+		entities: Collection.subjects,
+		existingEquals: (existingSubject) => existingSubject == name,
+		entity: name,
+		details: {Field.totalEventCount: 0}
+	);
 
 	/// The names of the group's subjects.
 	static Future<List<String>> subjectNames() async {
@@ -97,102 +66,93 @@ class Cloud {
 		)];
 	}
 
-	/// Adds an event with the given arguments unless it exists.
+	/// Adds an event with the arguments unless it exists.
 	static Future<void> addEvent({
 		required String name,
 		String? subject,
 		required DateTime date,
 		String? note
 	}) async {
-		final document = _document(Collection.events);
+		final wasWritten = await _addEntity(
+			entities: Collection.events,
+			existingEquals: (existingEvent) => existingEvent[Field.name] == name && existingEvent[Field.subject] == subject,
+			entity: {
+				Field.name: name,
+				if (subject != null) Field.subject: subject,
+				Field.date: date,
+			},
+			details: note != null ? {Field.note: note} : null,
+		);
 
-		final id = await _cloud.runTransaction((transaction) async {
-			final eventsSnapshot = await transaction.get(document);
-			int intId = 0;
+		if (wasWritten) {
+			final document = _document(Collection.subjects);
 
-			if (eventsSnapshot.exists) {
-				final eventEntries = eventsSnapshot.data()!;
-
-				for (final existingEvent in eventEntries.values) {
-					if (existingEvent[Field.name] == name && existingEvent[Field.subject] == subject) return null;
-				}
-
-				final takenIds = eventEntries.keys;
-				while (takenIds.contains(intId.toString())) intId++;
-			}
-
-			final subjectsDocument = _document(Collection.subjects);
-			final subjectsSnapshot = await transaction.get(subjectsDocument);
+			final subjectsSnapshot = await document.get();
 			final subjectId = subjectsSnapshot.data()!.entries.firstWhere(
 				(subjectEntry) => subjectEntry.value == subject
 			).key;
 
-			final id = intId.toString();
-			final eventEntry = {id: {
-				Field.name: name,
-				if (subject != null) Field.subject: subject,
-				Field.date: date,
-			}};
-
-			if (eventsSnapshot.exists) {
-				transaction.update(document, eventEntry);
-			}
-			else {
-				transaction.set(document, eventEntry);
-			}
-			subjectsDocument.collection(Collection.details).doc(subjectId).update({
+			document.collection(Collection.details).doc(subjectId).update({
 				Field.totalEventCount: FieldValue.increment(1)
 			});
-
-			return id;
-		});
-
-		if (note != null && id != null) {
-			document.collection(Collection.details).doc(id).set({Field.note: note});
 		}
 	}
 
-	/// Adds a message with the given arguments unless it exists.
+	/// Adds a message with the arguments unless it exists.
 	static Future<void> addMessage({
 		required String subject,
 		required String content
+	}) async => await _addEntity(
+		entities: Collection.messages,
+		existingEquals: (existingSubject) => existingSubject == subject,
+		entity: subject,
+		details: {Field.content: content},
+	);
+
+	/// Adds the [entity] unless it exists, with the given [details] unless they are `null`.
+	/// Returns whether the [entity] was written.
+	static Future<bool> _addEntity({
+		required String entities,
+		required bool Function(dynamic existingEntity) existingEquals,
+		required Object entity,
+		Map<String, Object>? details
 	}) async {
-		final document = _document(Collection.messages);
+		final document = _document(entities);
 
 		final id = await _cloud.runTransaction((transaction) async {
-			final messagesSnapshot = await transaction.get(document);
+			final entitiesSnapshot = await transaction.get(document);
 			int intId = 0;
 
-			if (messagesSnapshot.exists) {
-				final messageEntries = messagesSnapshot.data()!;
+			if (entitiesSnapshot.exists) {
+				final entityEntries = entitiesSnapshot.data()!;
 
-				for (final existingMessageSubject in messageEntries.values) {
-					if (existingMessageSubject == subject) return null;
+				for (final existingEntity in entityEntries.values) {
+					if (existingEquals(existingEntity)) return null;
 				}
 
-				final takenIds = messageEntries.keys;
+				final takenIds = entityEntries.keys;
 				while (takenIds.contains(intId.toString())) intId++;
 			}
 
 			final id = intId.toString();
-			final messageEntry = {id: subject};
+			final entityEntry = {id: entity};
 
-			if (messagesSnapshot.exists) {
-				transaction.update(document, messageEntry);
+			if (entitiesSnapshot.exists) {
+				transaction.update(document, entityEntry);
 			}
 			else {
-				transaction.set(document, messageEntry);
+				transaction.set(document, entityEntry);
 			}
 
 			return id;
 		});
 
-		if (id != null) {
-			document.collection(Collection.details).doc(id).set({Field.content: content});
-		}
+		final wasWritten = id != null;
+		if (details != null && wasWritten) document.collection(Collection.details).doc(id).set(details);
+		return wasWritten;
 	}
 
-	/// [DocumentReference] to the document with the given [entities] of the group.
+	/// [DocumentReference] to the document with the group's [entities].
 	static Document _document(String entities) => _cloud.collection(entities).doc(Local.groupId);
 }
 

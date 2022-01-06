@@ -20,14 +20,15 @@ class Home extends StatefulWidget {
 	State<Home> createState() => _HomeState();
 }
 
+// todo: consider the alternatives
 class _HomeState extends State<Home> {
 	Section _section = const AgendaSection();
 
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(
-			appBar: AppBar(
-				// title: Text(),  // todo: make it show the number the section wants to
+			appBar: AppBar(  // todo: make it show the number the section wants to
+				title: Text(_section.name),
 				leading: Builder(builder: (context) => GestureDetector(
 					child: Icon(_section.icon),
 					onTap: () => Scaffold.of(context).openDrawer()
