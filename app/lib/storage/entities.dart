@@ -8,7 +8,7 @@ enum Role {
 	leader,
 }
 
-extension Comparing on Role {
+extension Compared on Role {
 	bool operator <(Role comparedTo) {
 		return index < comparedTo.index;
 	}
@@ -36,6 +36,8 @@ class Event {
 		required this.subject,
 		required this.date
 	});
+
+	bool isBefore(Event event) => date.isBefore(event.date);
 }
 
 

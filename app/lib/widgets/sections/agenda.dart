@@ -6,25 +6,7 @@ import 'package:podiynyk/storage/entities.dart' show Event;
 import 'section.dart';
 
 
-extension on int {
-	String get twoDigitRepr => toString().padLeft(2, '0');
-}
-
-extension on DateTime {
-	String get dateRepr => '${day.twoDigitRepr}.${month.twoDigitRepr}';
-
-	String forEvent() {
-		String repr = dateRepr;
-		if (hour != 0 || minute != 0) {
-			repr += ', ${hour.twoDigitRepr}:${minute.twoDigitRepr}';
-		}
-
-		return repr;
-	}
-}
-
-
-class AgendaSection extends Section {
+class AgendaSection extends CloudListSection<Event> {
 	@override
 	final name = "agenda";
 	@override
@@ -35,26 +17,14 @@ class AgendaSection extends Section {
 	const AgendaSection();
 
 	@override
-	Widget build(BuildContext context) {
-		return FutureBuilder(
-			future: Cloud.events(),
-			builder: _builder
-		);
-	}
+	get future => Cloud.events();
 
-	Widget _builder(BuildContext context, AsyncSnapshot<List<Event>> snapshot) {
-		if (snapshot.connectionState == ConnectionState.waiting) return Center(child: Icon(icon));
-
-		// if (snapshot.hasError)  // todo: consider handling
-
-		return ListView(
-			children: [for (final event in snapshot.data!) ListTile(
-				title: Text(event.name),
-				subtitle: event.subject != null ? Text(event.subject!) : null,
-				trailing: Text(event.date.dateRepr),
-			)],
-		);
-	}
+	@override
+	tile(event) => ListTile(
+		title: Text(event.name),
+		subtitle: event.subject != null ? Text(event.subject!) : null,
+		trailing: Text(event.date.dateRepr),
+	);
 }
 
 
