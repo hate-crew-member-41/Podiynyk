@@ -97,7 +97,6 @@ class NewEventPage extends StatefulWidget {
 		_subjectRequired = false;
 		_subject = null;
 		_subjectNames = subjectNames;
-		_subjectNames!.sort();
 	}
 
 	NewEventPage.subjectEvent(String subject) {

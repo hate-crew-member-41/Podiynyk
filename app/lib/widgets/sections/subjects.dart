@@ -29,7 +29,6 @@ class SubjectsSection extends Section {
 }
 
 
-// todo: make [New{entity}Page]s share code (define NewEntityPage class)
 class NewSubjectPage extends StatelessWidget {
 	final _nameField = TextEditingController();
 
