@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import 'package:podiynyk/storage/entities.dart' show Event;
 
 import 'section.dart';
 
@@ -10,13 +11,15 @@ extension on int {
 }
 
 extension on DateTime {
+	String get dateRepr => '${day.twoDigitRepr}.${month.twoDigitRepr}';
+
 	String forEvent() {
-		String string = '${day.twoDigitRepr}.${month.twoDigitRepr}';
+		String repr = dateRepr;
 		if (hour != 0 || minute != 0) {
-			string += ', ${hour.twoDigitRepr}:${minute.twoDigitRepr}';
+			repr += ', ${hour.twoDigitRepr}:${minute.twoDigitRepr}';
 		}
 
-		return string;
+		return repr;
 	}
 }
 
@@ -33,7 +36,24 @@ class AgendaSection extends Section {
 
 	@override
 	Widget build(BuildContext context) {
-		return Center(child: Icon(icon));
+		return FutureBuilder(
+			future: Cloud.events(),
+			builder: _builder
+		);
+	}
+
+	Widget _builder(BuildContext context, AsyncSnapshot<List<Event>> snapshot) {
+		if (snapshot.connectionState == ConnectionState.waiting) return Center(child: Icon(icon));
+
+		// if (snapshot.hasError)  // todo: consider handling
+
+		return ListView(
+			children: [for (final event in snapshot.data!) ListTile(
+				title: Text(event.name),
+				subtitle: event.subject != null ? Text(event.subject!) : null,
+				trailing: Text(event.date.dateRepr),
+			)],
+		);
 	}
 }
 
@@ -56,7 +76,6 @@ class _AddEventButtonState extends State<AddEventButton> {
 			_isVisible = true;
 			_subjectNames = subjectNames;
 		}));
-
 		super.initState();
 	}
 
