@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/storage/cloud.dart' show Cloud;
-import 'package:podiynyk/storage/entities.dart' show Role, Compared;
-
-import 'sections/agenda.dart' show AgendaSection, AddEventButton;
+import 'sections/agenda.dart' show AgendaSection;
 import 'sections/events.dart';
 import 'sections/group.dart';
 import 'sections/messages.dart' show MessagesSection;
