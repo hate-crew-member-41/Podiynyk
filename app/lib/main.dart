@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart' show Firebase;
+
+import 'storage/cloud.dart' show Cloud;
 
 import 'widgets/home.dart';
 import 'widgets/loading.dart';
-import 'storage/cloud.dart';
 
 
 void main() {
@@ -17,10 +17,10 @@ class App extends StatelessWidget {
 		return MaterialApp(
 			title: 'Podiynyk',
 			home: FutureBuilder(
-				future: Firebase.initializeApp().then((_) => Cloud.roles()),
+				future: Cloud.init(),
 				builder: (context, snapshot) {
 					if (snapshot.connectionState == ConnectionState.waiting) return const Loading();
-					// todo: think about handling the error
+					if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 					return const Home();
 				},
 			)

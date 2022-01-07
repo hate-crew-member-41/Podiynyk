@@ -1,29 +1,40 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'entities.dart';
 import 'local.dart';
-
-typedef Document = DocumentReference<Map<String, dynamic>>;
-typedef Roles = Map<String, Role>;
 
 
 class Cloud {
 	static final _cloud = FirebaseFirestore.instance;
 
+	static Future<void> init() async {
+		await Firebase.initializeApp();
+		await Cloud.students();
+	}
+
 	static late Role _role;
 	/// The user's [Role] in the group.
 	static Role get role => _role;
 
-	/// The [Role]s of the group's students. Updates the user's [Role].
-	static Future<Roles> roles() async {
+	/// The group's [Student]s. Updates the user's [Role].
+	static Future<List<Student>> students() async {
 		final snapshot = await _document(Entities.students).get();
-		final roles = {
-			for (final studentRole in snapshot.data()!.entries)
-			studentRole.key: Role.values[studentRole.value as int]
-		};
+		final entries = snapshot.data()!;
+		final students = [
+			for (final role in [Role.ordinary, Role.trusted])
+				for (final name in entries[role.name]) Student(
+					name: name,
+					role: role
+				),
+			Student(
+				name: entries[Role.leader.name],
+				role: Role.leader
+			)
+		]..sort((a, b) => a.name.compareTo(b.name));
 
-		_role = roles[Local.name]!;
-		return roles;
+		_role = students.firstWhere((student) => student.name == Local.name).role;
+		return students;
 	}
 
 	/// Adds a [Subject] with the [name] unless it exists.
@@ -181,11 +192,12 @@ class Cloud {
 	}
 
 	/// [DocumentReference] to the document with the group's [entities].
-	static Document _document(Entities entities) => _cloud.collection(entities.name).doc(Local.groupId);
+	static DocumentReference<Map<String, dynamic>> _document(Entities entities) =>
+		_cloud.collection(entities.name).doc(Local.groupId);
 }
 
 
-/// The [Entities]s used in [FirebaseFirestore].
+/// The group's [Entities]s stored in [FirebaseFirestore].
 enum Entities {
 	students,
 	subjects,
