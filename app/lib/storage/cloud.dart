@@ -8,33 +8,30 @@ import 'local.dart';
 class Cloud {
 	static final _cloud = FirebaseFirestore.instance;
 
+	/// Initializes [Firebase] and synchronizes the user's [Role] in the group.
 	static Future<void> init() async {
 		await Firebase.initializeApp();
-		await Cloud.students();
+		await _syncRole();
 	}
 
 	static late Role _role;
 	/// The user's [Role] in the group.
 	static Role get role => _role;
 
-	/// The group's [Student]s. Updates the user's [Role].
-	static Future<List<Student>> students() async {
+	/// Synchronizes the user's [Role] in the group.
+	static Future<void> _syncRole() async {
 		final snapshot = await _document(Entities.students).get();
-		final entries = snapshot.data()!;
-		final students = [
-			for (final role in [Role.ordinary, Role.trusted])
-				for (final name in entries[role.name]) Student(
-					name: name,
-					role: role
-				),
-			Student(
-				name: entries[Role.leader.name],
-				role: Role.leader
-			)
-		]..sort((a, b) => a.name.compareTo(b.name));
+		final students = snapshot.data()!;
 
-		_role = students.firstWhere((student) => student.name == Local.name).role;
-		return students;
+		if (students[Role.ordinary.name].contains(Local.name)) {
+			_role = Role.ordinary;
+		}
+		else if (students[Role.trusted.name].contains(Local.name)) {
+			_role = Role.trusted;
+		}
+		else {
+			_role = Role.leader;
+		}
 	}
 
 	/// Adds a [Subject] with the [name] unless it exists.
@@ -163,13 +160,13 @@ class Cloud {
 			int intId = 0;
 
 			if (entitiesSnapshot.exists) {
-				final entityEntries = entitiesSnapshot.data()!;
+				final entries = entitiesSnapshot.data()!;
 
-				for (final existingEntity in entityEntries.values) {
+				for (final existingEntity in entries.values) {
 					if (existingEquals(existingEntity)) return null;
 				}
 
-				final takenIds = entityEntries.keys;
+				final takenIds = entries.keys;
 				while (takenIds.contains(intId.toString())) intId++;
 			}
 
@@ -189,6 +186,29 @@ class Cloud {
 		final wasWritten = id != null;
 		if (details != null && wasWritten) document.collection(Entities.details.name).doc(id).set(details);
 		return wasWritten;
+	}
+
+	/// The group's [Student]s. Updates the user's [Role].
+	static Future<List<Student>> students() async {
+		final snapshot = await _document(Entities.students).get();
+		final entries = snapshot.data()!;
+		final students = [
+			for (final name in entries[Role.ordinary.name]) Student(
+				name: name,
+				role: Role.ordinary
+			),
+			for (final name in entries[Role.trusted.name]) Student(
+				name: name,
+				role: Role.trusted
+			),
+			Student(
+				name: entries[Role.leader.name],
+				role: Role.leader
+			)
+		]..sort((a, b) => a.name.compareTo(b.name));
+
+		_role = students.firstWhere((student) => student.name == Local.name).role;
+		return students;
 	}
 
 	/// [DocumentReference] to the document with the group's [entities].

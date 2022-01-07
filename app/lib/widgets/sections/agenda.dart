@@ -6,18 +6,16 @@ import 'package:podiynyk/storage/entities.dart' show Event;
 import 'section.dart';
 
 
-class AgendaSection extends CloudListSection<Event> {
+class AgendaSection extends ExtendableListSection<Event> {
 	@override
 	final name = "agenda";
 	@override
 	final icon = Icons.remove_red_eye;
-	@override
-	final hasAddAction = true;
 
 	const AgendaSection();
 
 	@override
-	Future<List<Event>> get future => Cloud.events();
+	Future<List<Event>> get entities => Cloud.events();
 
 	@override
 	ListTile tile(Event event) => ListTile(
@@ -25,6 +23,12 @@ class AgendaSection extends CloudListSection<Event> {
 		subtitle: event.subject != null ? Text(event.subject!) : null,
 		trailing: Text(event.date.dateRepr)
 	);
+
+	@override
+	Widget floatingActionButton(BuildContext context) => const AddEventButton();
+
+	@override
+	Widget get newEntityPage => throw UnimplementedError();
 }
 
 
@@ -117,42 +121,36 @@ class _NewEventPageState extends State<NewEventPage> {
 	}
 
 	@override
-	Widget build(BuildContext context) {
-		return GestureDetector(
-			onDoubleTap: () => _addEvent(context),
-			child: Scaffold(
-				body: Center(child: ListView(
-					shrinkWrap: true,
-					children: [
-						TextField(
-							controller: widget._nameField,
-							decoration: const InputDecoration(hintText: "Name")
-						),
-						if (widget._askSubject) GestureDetector(  // TextField.onTap is not called if the field is disabled
-							onTap: () => _askSubject(context),
-							child: TextField(
-								controller: widget._subjectField,
-								enabled: false,
-								decoration: const InputDecoration(hintText: "Subject")
-							),
-						),
-						GestureDetector(
-							onTap: () => _askDate(context),
-							child: TextField(
-								controller: widget._dateField,
-								enabled: false,
-								decoration: const InputDecoration(hintText: "Date")
-							)
-						),
-						TextField(
-							controller: widget._noteField,
-							decoration: const InputDecoration(hintText: "Note")
-						)
-					]
-				))
+	Widget build(BuildContext context) => NewEntityPage(
+		addEntity: _add,
+		children: [
+			TextField(
+				controller: widget._nameField,
+				decoration: const InputDecoration(hintText: "name")
+			),
+			if (widget._askSubject) GestureDetector(  // TextField.onTap is not called if the field is disabled
+				onTap: () => _askSubject(context),
+				child: TextField(
+					controller: widget._subjectField,
+					enabled: false,
+					decoration: const InputDecoration(hintText: "subject")
+				),
+			),
+			GestureDetector(
+				onTap: () => _askDate(context),
+				child: TextField(
+					controller: widget._dateField,
+					enabled: false,
+					decoration: const InputDecoration(hintText: "date")
+				)
+			),
+			TextField(
+				controller: widget._noteField,
+				decoration: const InputDecoration(hintText: "note")
 			)
-		);
-	}
+		]
+	);
+
 
 	void _askSubject(BuildContext context) {
 		Navigator.of(context).push(MaterialPageRoute(
@@ -196,7 +194,7 @@ class _NewEventPageState extends State<NewEventPage> {
 		}
 	}
 
-	void _addEvent(BuildContext context) {
+	void _add(BuildContext context) {
 		final name = widget._nameField.text, note = widget._noteField.text;
 		if (widget._askSubject) {
 			final inputSubject = widget._subjectField.text;

@@ -6,18 +6,16 @@ import 'package:podiynyk/storage/entities.dart' show Message;
 import 'section.dart';
 
 
-class MessagesSection extends CloudListSection<Message> {
+class MessagesSection extends ExtendableListSection<Message> {
 	@override
 	final name = "messages";
 	@override
 	final icon = Icons.messenger;
-	@override
-	final hasAddAction = true;
 
 	const MessagesSection();
 
 	@override
-	Future<List<Message>> get future => Cloud.messages();
+	Future<List<Message>> get entities => Cloud.messages();
 
 	@override
 	ListTile tile(Message message) => ListTile(
@@ -26,11 +24,7 @@ class MessagesSection extends CloudListSection<Message> {
 	);
 
 	@override
-	void addAction(BuildContext context) {
-		Navigator.of(context).push(MaterialPageRoute(
-			builder: (context) => NewMessagePage()
-		));
-	}
+	Widget get newEntityPage => NewMessagePage();
 }
 
 
@@ -39,28 +33,21 @@ class NewMessagePage extends StatelessWidget {
 	final _contentField = TextEditingController();
 
 	@override
-	Widget build(BuildContext context) {
-		return GestureDetector(
-			onDoubleTap: () => _addMessage(context),
-			child: Scaffold(
-				body: Center(child: ListView(
-					shrinkWrap: true,
-					children: [
-						TextField(
-							controller: _subjectField,
-							decoration: const InputDecoration(hintText: "Subject"),
-						),
-						TextField(
-							controller: _contentField,
-							decoration: const InputDecoration(hintText: "Content"),
-						)
-					]
-				))
+	Widget build(BuildContext context) => NewEntityPage(
+		addEntity: _add,
+		children: [
+			TextField(
+				controller: _subjectField,
+				decoration: const InputDecoration(hintText: "subject"),
+			),
+			TextField(
+				controller: _contentField,
+				decoration: const InputDecoration(hintText: "content"),
 			)
-		);
-	}
+		]
+	);
 
-	void _addMessage(BuildContext context) {
+	void _add(BuildContext context) {
 		final subject = _subjectField.text, content = _contentField.text;
 		if (subject.isEmpty || content.isEmpty) return;
 

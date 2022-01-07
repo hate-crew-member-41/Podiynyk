@@ -6,19 +6,16 @@ import 'package:podiynyk/storage/entities.dart' show Subject, Event;
 import 'section.dart';
 
 
-class SubjectsSection extends CloudListSection<Subject> {
+class SubjectsSection extends ExtendableListSection<Subject> {
 	@override
 	final name = "subjects";
 	@override
 	final icon = Icons.school;
-	@override
-	final hasAddAction = true;
-	@override
 
 	const SubjectsSection();
 
 	@override
-	Future<List<Subject>> get future => Cloud.subjects();
+	Future<List<Subject>> get entities => Cloud.subjects();
 
 	@override
 	ListTile tile(Subject subject) => ListTile(
@@ -40,11 +37,7 @@ class SubjectsSection extends CloudListSection<Subject> {
 	);
 
 	@override
-	void addAction(BuildContext context) {
-		Navigator.of(context).push(MaterialPageRoute(
-			builder: (context) => NewSubjectPage()
-		));
-	}
+	Widget get newEntityPage => NewSubjectPage();
 }
 
 
@@ -52,19 +45,15 @@ class NewSubjectPage extends StatelessWidget {
 	final _nameField = TextEditingController();
 
 	@override
-	Widget build(BuildContext context) {
-		return GestureDetector(
-			onDoubleTap: () => _addSubject(context),
-			child: Scaffold(
-				body: Center(child: TextField(
-					controller: _nameField,
-					decoration: const InputDecoration(hintText: "Name"),
-				))
-			)
-		);
-	}
+	Widget build(BuildContext context) => NewEntityPage(
+		addEntity: _add,
+		children: [TextField(
+			controller: _nameField,
+			decoration: const InputDecoration(hintText: "name"),
+		)]
+	);
 
-	void _addSubject(BuildContext context) {
+	void _add(BuildContext context) {
 		final name = _nameField.text;
 		if (name.isEmpty) return;
 

@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/entities.dart' show Role, Compared;
 
-import 'sections/agenda.dart';
+import 'sections/agenda.dart' show AgendaSection, AddEventButton;
 import 'sections/events.dart';
 import 'sections/group.dart';
-import 'sections/messages.dart';
-import 'sections/questions.dart';
+import 'sections/messages.dart' show MessagesSection;
+import 'sections/questions.dart' show QuestionsSection;
 import 'sections/section.dart';
-import 'sections/subjects.dart';
+import 'sections/subjects.dart' show SubjectsSection;
 import 'sections/settings.dart';
 
 
@@ -20,7 +20,7 @@ class Home extends StatefulWidget {
 	State<Home> createState() => _HomeState();
 }
 
-// todo: consider the alternatives
+// todo: consider the alternative designs
 class _HomeState extends State<Home> {
 	Section _section = const AgendaSection();
 
@@ -35,7 +35,9 @@ class _HomeState extends State<Home> {
 				))
 			),
 			body: _section,
-			floatingActionButton: _floatingActionButton(context),
+			floatingActionButton: _section is ExtendableListSection ?
+				(_section as ExtendableListSection).floatingActionButton(context) : null,
+			// floatingActionButton: _floatingActionButton(context),
 			drawer: Drawer(
 				child: Column(
 					mainAxisAlignment: MainAxisAlignment.center,
@@ -51,17 +53,6 @@ class _HomeState extends State<Home> {
 				)
 			)
 		);
-	}
-
-	Widget? _floatingActionButton(BuildContext context) {
-		if (!_section.hasAddAction || Cloud.role < Role.trusted) return null;
-
-		if (_section is! AgendaSection) return FloatingActionButton(
-			child: const Icon(Icons.add),
-			onPressed: () => _section.addAction(context)
-		);
-
-		return const AddEventButton();
 	}
 
 	ListTile _drawerTile(Section section) => ListTile(

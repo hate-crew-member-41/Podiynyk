@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'section.dart';
+import 'section.dart' show Section;
 
 
 class SettingsSection extends Section {
@@ -8,8 +8,6 @@ class SettingsSection extends Section {
 	final name = "settings";
 	@override
 	final icon = Icons.settings;
-	@override
-	final hasAddAction = false;
 
 	const SettingsSection();
 

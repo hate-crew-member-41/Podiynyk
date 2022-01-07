@@ -20,7 +20,7 @@ class App extends StatelessWidget {
 				future: Cloud.init(),
 				builder: (context, snapshot) {
 					if (snapshot.connectionState == ConnectionState.waiting) return const Loading();
-					if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+					// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 					return const Home();
 				},
 			)

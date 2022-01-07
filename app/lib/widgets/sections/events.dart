@@ -7,18 +7,16 @@ import 'agenda.dart' show NewEventPage;
 import 'section.dart';
 
 
-class EventsSection extends CloudListSection<Event> {
+class EventsSection extends ExtendableListSection<Event> {
 	@override
 	final name = "events";
 	@override
 	final icon = Icons.event_note;
-	@override
-	final hasAddAction = true;
 
 	const EventsSection();
 
 	@override
-	Future<List<Event>> get future => Cloud.events().then(
+	Future<List<Event>> get entities => Cloud.events().then(
 		(events) => List<Event>.from(events.where((event) => event.subject == null))
 	);
 
@@ -29,9 +27,5 @@ class EventsSection extends CloudListSection<Event> {
 	);
 
 	@override
-	addAction(context) {
-		Navigator.of(context).push(MaterialPageRoute(
-			builder: (context) => NewEventPage.noSubjectEvent()
-		));
-	}
+	Widget get newEntityPage => NewEventPage.noSubjectEvent();
 }

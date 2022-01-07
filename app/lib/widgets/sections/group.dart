@@ -11,13 +11,11 @@ class GroupSection extends CloudListSection<Student> {
 	final name = "group";
 	@override
 	final icon = Icons.people;
-	@override
-	final hasAddAction = false;
 
 	const GroupSection();
 
 	@override
-	Future<List<Student>> get future => Cloud.students();
+	Future<List<Student>> get entities => Cloud.students();
 
 	@override
 	ListTile tile(Student student) => ListTile(

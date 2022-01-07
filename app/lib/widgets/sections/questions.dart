@@ -3,18 +3,26 @@ import 'package:flutter/material.dart';
 import 'section.dart';
 
 
-class QuestionsSection extends Section {
+// todo: specify the type argument
+class QuestionsSection extends ExtendableListSection {
 	@override
 	final name = "questions";
 	@override
 	final icon = Icons.question_answer;
-	@override
-	final hasAddAction = true;
 
 	const QuestionsSection();
 
+	// todo: define, specify the type parameter
 	@override
-	Widget build(BuildContext context) {
-		return Center(child: Icon(icon));
+	Future<List> get entities => (() async => [])();
+
+	// todo: define
+	@override
+	ListTile tile(entity) {
+		throw UnimplementedError();
 	}
+
+	// todo: define
+	@override
+	Widget get newEntityPage => throw UnimplementedError();
 }

@@ -22,11 +22,8 @@ extension EventDate on DateTime {
 abstract class Section extends StatelessWidget {
 	abstract final String name;
 	abstract final IconData icon;
-	abstract final bool hasAddAction;
 
 	const Section();
-
-	void addAction(BuildContext context) {}
 }
 
 // todo: add an empty tile (the floating action button covers the last one)
@@ -37,12 +34,12 @@ abstract class CloudListSection<E> extends Section {
 	@override
 	Widget build(BuildContext context) {
 		return FutureBuilder(
-			future: future,
+			future: entities,
 			builder: _builder
 		);
 	}
 
-	Future<List<E>> get future;
+	Future<List<E>> get entities;
 
 	Widget _builder(BuildContext context, AsyncSnapshot<List<E>> snapshot) {
 		if (snapshot.connectionState == ConnectionState.waiting) return Center(child: Icon(icon));
@@ -55,4 +52,45 @@ abstract class CloudListSection<E> extends Section {
 	}
 
 	ListTile tile(E entity);
+}
+
+abstract class ExtendableListSection<E> extends CloudListSection<E> {
+	const ExtendableListSection();
+
+	Widget floatingActionButton(BuildContext context) => FloatingActionButton(
+		child: const Icon(Icons.add),
+		onPressed: () => showNewEntityPage(context)
+	);
+
+	void showNewEntityPage(BuildContext context) {
+		Navigator.of(context).push(MaterialPageRoute(
+			builder: (context) => newEntityPage
+		));
+	}
+
+	Widget get newEntityPage;
+}
+
+
+class NewEntityPage extends StatelessWidget {
+	final List<Widget> children;
+	final void Function(BuildContext context) addEntity;
+
+	const NewEntityPage({
+		required this.children,
+		required this.addEntity
+	});
+
+	@override
+	Widget build(BuildContext context) {
+		return GestureDetector(
+			onDoubleTap: () => addEntity(context),
+			child: Scaffold(
+				body: Center(child: ListView(
+					shrinkWrap: true,
+					children: children
+				))
+			)
+		);
+	}
 }
