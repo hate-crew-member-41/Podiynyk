@@ -1,20 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/entities.dart' show Event;
 
 import 'section.dart';
-
-
-class AgendaData with ChangeNotifier {
-	List<String>? subjectNames;
-
-	Future<void> fetchSubjectNames() async {
-		subjectNames = await Cloud.subjectNames();
-		notifyListeners();
-	}
-}
 
 
 class AgendaSection extends ExtendableListSection<Event> {
@@ -36,40 +25,34 @@ class AgendaSection extends ExtendableListSection<Event> {
 	);
 
 	@override
-	Widget floatingActionButton(BuildContext context) => ChangeNotifierProvider<AgendaData>(
-		create: (_) => AgendaData()..fetchSubjectNames(),
-		builder: (context, _) => AddEventButton(onTap: showNewEntityPage)
-	);
-
-	@override
-	Widget get newEntityPage => NewEventPage();
+	Widget addEntityButton(BuildContext context) => const AddEventButton();
 }
 
 
 class AddEventButton extends StatefulWidget {
-	final void Function(BuildContext context) onTap;
-
-	const AddEventButton({required this.onTap});
+	const AddEventButton();
 
 	@override
 	_AddEventButtonState createState() => _AddEventButtonState();
 }
 
 class _AddEventButtonState extends State<AddEventButton> {
+	List<String>? _subjectNames;
+
+	@override
+	void initState() {
+		Cloud.subjectNames().then((subjectNames) => setState(() => _subjectNames = subjectNames));
+		super.initState();
+	}
+
 	@override
 	Widget build(BuildContext context) {
-		final isVisible = context.watch<AgendaData>().subjectNames != null;
+		final isVisible = _subjectNames != null;
 
 		return AnimatedOpacity(
 			opacity: isVisible ? 1 : 0,
 			duration: const Duration(milliseconds: 200),
-			child: Visibility(
-				visible: isVisible,
-				child: FloatingActionButton(
-					child: const Icon(Icons.add),
-					onPressed: () => widget.onTap(context)
-				)
-			)
+			child: isVisible ? AddEntityButton(newEntityPage: NewEventPage(_subjectNames!)) : null
 		);
 	}
 }
@@ -79,28 +62,32 @@ class NewEventPage extends StatefulWidget {
 	late final bool _askSubject;
 	late final bool _subjectRequired;
 	late final String? _subject;
+	late final List<String>? _subjectNames;
 
 	final _nameField = TextEditingController();
 	final _subjectField = TextEditingController();
 	final _dateField = TextEditingController();
 	final _noteField = TextEditingController();
 
-	NewEventPage() {
+	NewEventPage(List<String> subjectNames) {
 		_askSubject = true;
 		_subjectRequired = false;
 		_subject = null;
+		_subjectNames = subjectNames;
 	}
 
 	NewEventPage.subjectEvent(String subject) {
 		_askSubject = false;
 		_subjectRequired = true;
 		_subject = subject;
+		_subjectNames = null;
 	}
 
 	NewEventPage.noSubjectEvent() {
 		_askSubject = false;
 		_subjectRequired = false;
 		_subject = null;
+		_subjectNames = null;
 	}
 
 	@override
@@ -154,8 +141,7 @@ class _NewEventPageState extends State<NewEventPage> {
 			builder: (context) => Scaffold(
 				body: Center(child: ListView(
 					shrinkWrap: true,
-					// tofix: the context does not have the Provider<AgendaSection>
-					children: [for (final name in context.read<AgendaData>().subjectNames!) ListTile(
+					children: [for (final name in widget._subjectNames!) ListTile(
 						title: Text(name),
 						onTap: () {
 							_subjectName = name;

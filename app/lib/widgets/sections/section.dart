@@ -57,18 +57,22 @@ abstract class CloudListSection<E> extends Section {
 abstract class ExtendableListSection<E> extends CloudListSection<E> {
 	const ExtendableListSection();
 
-	Widget floatingActionButton(BuildContext context) => FloatingActionButton(
-		child: const Icon(Icons.add),
-		onPressed: () => showNewEntityPage(context)
-	);
+	Widget addEntityButton(BuildContext context);
+}
 
-	void showNewEntityPage(BuildContext context) {
-		Navigator.of(context).push(MaterialPageRoute(
-			builder: (context) => newEntityPage
-		));
+
+class AddEntityButton extends StatelessWidget {
+	final Widget newEntityPage;
+
+	const AddEntityButton({required this.newEntityPage});
+
+	@override
+	Widget build(BuildContext context) {
+		return FloatingActionButton(
+			child: const Icon(Icons.add),
+			onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => newEntityPage))
+		);
 	}
-
-	Widget get newEntityPage;
 }
 
 

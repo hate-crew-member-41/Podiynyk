@@ -24,7 +24,7 @@ class MessagesSection extends ExtendableListSection<Message> {
 	);
 
 	@override
-	Widget get newEntityPage => NewMessagePage();
+	Widget addEntityButton(BuildContext context) => AddEntityButton(newEntityPage: NewMessagePage());
 }
 
 

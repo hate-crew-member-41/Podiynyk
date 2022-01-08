@@ -33,7 +33,7 @@ class _HomeState extends State<Home> {
 			),
 			body: _section,
 			floatingActionButton: _section is ExtendableListSection ?
-				(_section as ExtendableListSection).floatingActionButton(context) : null,
+				(_section as ExtendableListSection).addEntityButton(context) : null,
 			// floatingActionButton: _floatingActionButton(context),
 			drawer: Drawer(
 				child: Column(

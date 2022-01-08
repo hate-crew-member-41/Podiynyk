@@ -24,5 +24,5 @@ class QuestionsSection extends ExtendableListSection {
 
 	// todo: define
 	@override
-	Widget get newEntityPage => throw UnimplementedError();
+	Widget addEntityButton(BuildContext context) => throw UnimplementedError();
 }
