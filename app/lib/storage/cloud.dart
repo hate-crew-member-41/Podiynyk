@@ -145,6 +145,14 @@ class Cloud {
 		)]..sort((a, b) => b.date.compareTo(a.date));
 	}
 
+	// todo: define
+	static Future<void> addQuestion() async {}
+
+	// todo: define
+	static Future<List<Question>> questions() async {
+		return [];
+	}
+
 	/// Adds the [entity] unless it exists, with the given [details] unless they are `null`.
 	/// Returns whether the [entity] was written.
 	static Future<bool> _addEntity({

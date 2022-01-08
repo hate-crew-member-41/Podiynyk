@@ -12,13 +12,12 @@ class MessagesSection extends ExtendableListSection<Message> {
 	@override
 	final icon = Icons.messenger;
 
-	const MessagesSection();
+	MessagesSection() {
+		futureEntities = Cloud.messages();
+	}
 
 	@override
-	Future<List<Message>> get entities => Cloud.messages();
-
-	@override
-	ListTile tile(Message message) => ListTile(
+	ListTile tile(BuildContext context, Message message) => ListTile(
 		title: Text(message.subject),
 		trailing: Text(message.date.dateRepr)
 	);

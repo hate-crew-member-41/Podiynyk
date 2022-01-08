@@ -58,3 +58,9 @@ class Message {
 		required this.date
 	});
 }
+
+
+// todo: define
+class Question {
+	const Question();
+}

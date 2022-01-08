@@ -10,15 +10,14 @@ class AgendaSection extends ExtendableListSection<Event> {
 	@override
 	final name = "agenda";
 	@override
-	final icon = Icons.remove_red_eye;
+	final icon = Icons.event_note;
 
-	const AgendaSection();
+	AgendaSection() {
+		futureEntities = Cloud.events();
+	}
 
 	@override
-	Future<List<Event>> get entities => Cloud.events();
-
-	@override
-	ListTile tile(Event event) => ListTile(
+	ListTile tile(BuildContext context, Event event) => ListTile(
 		title: Text(event.name),
 		subtitle: event.subject != null ? Text(event.subject!) : null,
 		trailing: Text(event.date.dateRepr)
@@ -164,7 +163,7 @@ class _NewEventPageState extends State<NewEventPage> {
 		);
 		if (_date != null) {
 			await _askTime(context);
-			widget._dateField.text = _date!.forEvent();
+			widget._dateField.text = _date!.eventRepr;
 		}
 	}
 

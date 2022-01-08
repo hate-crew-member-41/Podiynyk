@@ -8,7 +8,7 @@ extension Formatted on int {
 extension EventDate on DateTime {
 	String get dateRepr => '${day.twoDigitRepr}.${month.twoDigitRepr}';
 
-	String forEvent() {
+	String get eventRepr {
 		String repr = dateRepr;
 		if (hour != 0 || minute != 0) {
 			repr += ', ${hour.twoDigitRepr}:${minute.twoDigitRepr}';
@@ -26,36 +26,37 @@ abstract class Section extends StatelessWidget {
 	const Section();
 }
 
-// todo: add an empty tile (the floating action button covers the last one)
-// todo: display the added entity in the list (it is not rebuilt, but should it be?)
 abstract class CloudListSection<E> extends Section {
-	const CloudListSection();
+	late final Future<List<E>> futureEntities;
 
 	@override
 	Widget build(BuildContext context) {
 		return FutureBuilder(
-			future: entities,
-			builder: _builder
+			future: futureEntities,
+			builder: _section
 		);
 	}
 
-	Future<List<E>> get entities;
-
-	Widget _builder(BuildContext context, AsyncSnapshot<List<E>> snapshot) {
+	Widget _section(BuildContext context, AsyncSnapshot<List<E>> snapshot) {
+		// todo: what is shown while awaiting
 		if (snapshot.connectionState == ConnectionState.waiting) return Center(child: Icon(icon));
 
 		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
+		// idea: consider an AnimatedOpacity animation with a different delay for each tile
 		return ListView(
-			children: [for (final entity in snapshot.data!) tile(entity)],
+			children: [
+				for (final entity in snapshot.data!) tile(context, entity),
+				const ListTile()
+			],
 		);
 	}
 
-	ListTile tile(E entity);
+	ListTile tile(BuildContext context, E entity);
 }
 
 abstract class ExtendableListSection<E> extends CloudListSection<E> {
-	const ExtendableListSection();
+	ExtendableListSection();
 
 	Widget addEntityButton(BuildContext context);
 }
@@ -70,7 +71,9 @@ class AddEntityButton extends StatelessWidget {
 	Widget build(BuildContext context) {
 		return FloatingActionButton(
 			child: const Icon(Icons.add),
-			onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => newEntityPage))
+			onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+				builder: (context) => newEntityPage
+			))
 		);
 	}
 }
@@ -88,6 +91,7 @@ class NewEntityPage extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return GestureDetector(
+			// todo: display the new entity in the list (consider updating the list instead of rebuilding to prevent unnecessary)
 			onDoubleTap: () => addEntity(context),
 			child: Scaffold(
 				body: Center(child: ListView(

@@ -11,17 +11,16 @@ class EventsSection extends ExtendableListSection<Event> {
 	@override
 	final name = "events";
 	@override
-	final icon = Icons.event_note;
+	final icon = Icons.calendar_today;
 
-	const EventsSection();
+	EventsSection() {
+		futureEntities = Cloud.events().then((events) =>
+			List<Event>.from(events.where((event) => event.subject == null))
+		);
+	}
 
 	@override
-	Future<List<Event>> get entities => Cloud.events().then(
-		(events) => List<Event>.from(events.where((event) => event.subject == null))
-	);
-
-	@override
-	ListTile tile(Event event) => ListTile(
+	ListTile tile(BuildContext context, Event event) => ListTile(
 		title: Text(event.name),
 		trailing: Text(event.date.dateRepr)
 	);

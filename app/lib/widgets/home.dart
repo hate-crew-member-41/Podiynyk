@@ -19,36 +19,48 @@ class Home extends StatefulWidget {
 
 // todo: consider the alternative designs
 class _HomeState extends State<Home> {
-	Section _section = const AgendaSection();
+	Section _section = AgendaSection();
 
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(
-			appBar: AppBar(  // todo: make it show the number the section wants to
-				title: Text(_section.name),
-				leading: Builder(builder: (context) => GestureDetector(
-					child: Icon(_section.icon),
-					onTap: () => Scaffold.of(context).openDrawer()
+			appBar: AppBar(
+				automaticallyImplyLeading: false,
+				title: Builder(builder: (context) => Row(
+					mainAxisAlignment: MainAxisAlignment.spaceBetween,
+					children: [
+						GestureDetector(
+							child: Text(_section.name),
+							onTap: () => Scaffold.of(context).openDrawer()
+						),
+						Row(children: [
+							if (_section is CloudListSection) EntityCount(_section as CloudListSection),
+							Padding(
+								padding: const EdgeInsets.only(left: 8),
+								child: Icon(_section.icon)
+							)
+						])
+					]
 				))
 			),
 			body: _section,
-			floatingActionButton: _section is ExtendableListSection ?
-				(_section as ExtendableListSection).addEntityButton(context) : null,
-			// floatingActionButton: _floatingActionButton(context),
 			drawer: Drawer(
 				child: Column(
 					mainAxisAlignment: MainAxisAlignment.center,
 					children: [
-						_drawerTile(const AgendaSection()),
-						_drawerTile(const SubjectsSection()),
-						_drawerTile(const EventsSection()),
-						_drawerTile(const MessagesSection()),
-						_drawerTile(const QuestionsSection()),
-						_drawerTile(const GroupSection()),
+						_drawerTile(AgendaSection()),
+						_drawerTile(SubjectsSection()),
+						_drawerTile(EventsSection()),
+						_drawerTile(MessagesSection()),
+						_drawerTile(QuestionsSection()),
+						_drawerTile(GroupSection()),
 						_drawerTile(const SettingsSection())
 					]
 				)
-			)
+			),
+			drawerEdgeDragWidth: 150,
+			floatingActionButton: _section is ExtendableListSection ?
+				(_section as ExtendableListSection).addEntityButton(context) : null
 		);
 	}
 
@@ -60,4 +72,46 @@ class _HomeState extends State<Home> {
 			Navigator.of(context).pop();
 		}
 	);
+}
+
+
+class EntityCount extends StatefulWidget {
+	final CloudListSection _section;
+
+	const EntityCount(this._section);
+
+	@override
+	_EntityCountState createState() => _EntityCountState();
+}
+
+class _EntityCountState extends State<EntityCount> {
+	bool _isActual = false;
+	int? _count;
+
+	@override
+	void initState() {
+		scheduleRebuild();
+		super.initState();
+	}
+
+	@override
+	void didUpdateWidget(covariant EntityCount oldWidget) {
+		_isActual = false;
+		scheduleRebuild();
+		super.didUpdateWidget(oldWidget);
+	}
+
+	void scheduleRebuild() => widget._section.futureEntities.then((entities) => setState(() {
+		_isActual = true;
+		_count = entities.length;
+	}));
+
+	@override
+	Widget build(BuildContext context) {
+		return AnimatedOpacity(
+			opacity: _isActual ? 1 : 0,
+			duration: const Duration(milliseconds: 200),
+			child: Text(_count.toString())
+		);
+	}
 }

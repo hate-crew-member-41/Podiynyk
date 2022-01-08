@@ -1,28 +1,29 @@
 import 'package:flutter/material.dart';
 
+import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import 'package:podiynyk/storage/entities.dart' show Question;
+
 import 'section.dart';
 
 
-// todo: specify the type argument
-class QuestionsSection extends ExtendableListSection {
+class QuestionsSection extends ExtendableListSection<Question> {
 	@override
 	final name = "questions";
 	@override
 	final icon = Icons.question_answer;
 
-	const QuestionsSection();
-
-	// todo: define, specify the type parameter
-	@override
-	Future<List> get entities => (() async => [])();
+	QuestionsSection() {
+		// todo: define
+		futureEntities = Cloud.questions();
+	}
 
 	// todo: define
 	@override
-	ListTile tile(entity) {
+	ListTile tile(BuildContext context, Question entity) {
 		throw UnimplementedError();
 	}
 
 	// todo: define
 	@override
-	Widget addEntityButton(BuildContext context) => throw UnimplementedError();
+	Widget addEntityButton(BuildContext context) => const AddEntityButton(newEntityPage: Scaffold());
 }

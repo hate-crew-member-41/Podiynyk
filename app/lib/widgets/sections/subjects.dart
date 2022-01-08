@@ -12,13 +12,12 @@ class SubjectsSection extends ExtendableListSection<Subject> {
 	@override
 	final icon = Icons.school;
 
-	const SubjectsSection();
+	SubjectsSection() {
+		futureEntities = Cloud.subjects();
+	}
 
 	@override
-	Future<List<Subject>> get entities => Cloud.subjects();
-
-	@override
-	ListTile tile(Subject subject) => ListTile(
+	ListTile tile(BuildContext context, Subject subject) => ListTile(
 		title: Text(subject.name),
 		subtitle: Text(_eventCount(subject.events.length)),
 		trailing: Text(_nextEvent(subject).date.dateRepr)
