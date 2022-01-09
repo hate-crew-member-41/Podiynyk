@@ -130,7 +130,7 @@ class Cloud {
 		},
 		details: {
 			Field.content.name: content,
-			Field.author.name: Local.name
+			Field.author.name: Local.name!
 		},
 	);
 

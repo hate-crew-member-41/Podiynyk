@@ -6,8 +6,9 @@ class Loading extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
+		// idea: use the user's color
 		return const Scaffold(
-			body: Center(child: Text("waking up"))
+			body: Center(child: Text('waking up'))
 		);
 	}
 }
