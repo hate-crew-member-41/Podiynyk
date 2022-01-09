@@ -17,11 +17,15 @@ class SubjectsSection extends ExtendableListSection<Subject> {
 	}
 
 	@override
-	ListTile tile(BuildContext context, Subject subject) => ListTile(
-		title: Text(subject.name),
-		subtitle: Text(_eventCount(subject.events.length)),
-		trailing: Text(_nextEvent(subject).date.dateRepr)
-	);
+	ListTile tile(BuildContext context, Subject subject) {
+		final nextEvent = _nextEvent(subject);
+
+		return ListTile(
+			title: Text(subject.name),
+			subtitle: Text(_eventCount(subject.events.length)),
+			trailing: nextEvent != null ? Text(nextEvent.date.dateRepr) : null
+		);
+	}
 
 	String _eventCount(int eventCount) {
 		switch (eventCount.compareTo(1)) {
@@ -31,9 +35,10 @@ class SubjectsSection extends ExtendableListSection<Subject> {
 		}
 	}
 
-	Event _nextEvent(Subject subject) => subject.events.reduce(
-		(nextEvent, event) => event.isBefore(nextEvent) ? event : nextEvent
-	);
+	Event? _nextEvent(Subject subject) {
+		if (subject.events.isEmpty) return null;
+		return subject.events.reduce((nextEvent, event) =>  event.isBefore(nextEvent) ? event : nextEvent);
+	}
 
 	@override
 	Widget addEntityButton(BuildContext context) => AddEntityButton(newEntityPage: NewSubjectPage());

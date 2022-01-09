@@ -6,14 +6,15 @@ extension Formatted on int {
 }
 
 extension EventDate on DateTime {
-	String get dateRepr => '${day.twoDigitRepr}.${month.twoDigitRepr}';
+	String get dateRepr {
+		String repr = '${day.twoDigitRepr}.${month.twoDigitRepr}';
+		if (year != DateTime.now().year) repr += '.${year.twoDigitRepr}';
+		return repr;
+	}
 
 	String get eventRepr {
 		String repr = dateRepr;
-		if (hour != 0 || minute != 0) {
-			repr += ', ${hour.twoDigitRepr}:${minute.twoDigitRepr}';
-		}
-
+		if (hour != 0 || minute != 0) repr += ', ${hour.twoDigitRepr}:${minute.twoDigitRepr}';
 		return repr;
 	}
 }
