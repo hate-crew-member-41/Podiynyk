@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/storage/entities.dart' show Student;
-import 'package:podiynyk/storage/local.dart';
+import 'package:podiynyk/storage/entities.dart' show Student, Role;
 
 
 class StudentPage extends StatelessWidget {
@@ -15,25 +14,20 @@ class StudentPage extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return GestureDetector(
-			onLongPress: () {},  // todo: show the options
+			onLongPress: () {},  // todo: the options
 			child: Scaffold(
 				body: Column(
 					mainAxisAlignment: MainAxisAlignment.center,
 					crossAxisAlignment: CrossAxisAlignment.start,
 					children: [
-						TextField(
+						TextField(  // todo: adding a label
 							controller: _nameField,
 							decoration: const InputDecoration(hintText: "name"),
-							onSubmitted: _addLabel,
 						),
-						Text(_student.role.name)
+						if (_student.role != Role.ordinary) Text(_student.role.name)
 					]
 				)
 			)
 		);
-	}
-
-	void _addLabel(String label) {
-		if (label != _student.name) Local.addStudentLabel(_student.name, label);
 	}
 }

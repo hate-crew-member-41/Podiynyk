@@ -1,3 +1,6 @@
+import 'cloud.dart' show Cloud;
+
+
 class Student {
 	final String name;
 	final Role role;
@@ -19,7 +22,6 @@ enum Role {
 
 extension Compared on Role {
 	bool operator <(Role comparedTo) => index < comparedTo.index;
-	bool operator >(Role comparedTo) => index > comparedTo.index;
 }
 
 
@@ -27,7 +29,7 @@ class Subject {
 	final String name;
 	final List<Event> events;
 
-	const Subject({
+	Subject({
 		required this.name,
 		required this.events
 	});
@@ -50,13 +52,20 @@ class Event {
 
 
 class Message {
+	final String id;
 	final String subject;
 	final DateTime date;
 
-	const Message({
+	String? content;
+	String? author;
+
+	Message({
+		required this.id,
 		required this.subject,
 		required this.date
 	});
+
+	Future<void> addDetails() => Cloud.addMessageDetails(this);
 }
 
 

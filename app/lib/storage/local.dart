@@ -14,11 +14,11 @@ class Local {
 	static bool get userIsIdentified => groupId != null;
 
 	// static String get groupId => _user.get(Field.groupId.name);
-	// todo: change after identification is implemented
+	// todo: switch after identification is implemented
 	static String? get groupId => 'test.group.id';
 
 	// static String get name => _user.get(Field.name.name);
-	// todo: change after identification is implemented
+	// todo: switch after identification is implemented
 	static String? get name => 'Test Name 1';
 
 	static Future<void> addStudentLabel(String name, String label) => _studentLabels.put(name, label);

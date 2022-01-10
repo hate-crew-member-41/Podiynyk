@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
 
-import '../section.dart' show EventDate;
+import '../section.dart' show EntityDate;
 import 'entity.dart';
 
 
@@ -112,7 +112,7 @@ class _NewEventPageState extends State<NewEventPage> {
 		);
 		if (_date != null) {
 			await _askTime(context);
-			widget._dateField.text = _date!.eventRepr;
+			widget._dateField.text = _date!.fullRepr;
 		}
 	}
 

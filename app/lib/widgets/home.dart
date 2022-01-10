@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'sections/agenda.dart' show AgendaSection;
+import 'sections/agenda.dart';
 import 'sections/events.dart';
 import 'sections/group.dart';
-import 'sections/messages.dart' show MessagesSection;
-import 'sections/questions.dart' show QuestionsSection;
+import 'sections/messages.dart';
+import 'sections/questions.dart';
 import 'sections/section.dart';
-import 'sections/subjects.dart' show SubjectsSection;
+import 'sections/subjects.dart';
 import 'sections/settings.dart';
 
 
@@ -17,7 +17,7 @@ class Home extends StatefulWidget {
 	State<Home> createState() => _HomeState();
 }
 
-// todo: consider the alternative designs
+// todo: consider the entity counts with the icons instead of the floating action buttons
 class _HomeState extends State<Home> {
 	Section _section = AgendaSection();
 

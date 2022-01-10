@@ -134,15 +134,23 @@ class Cloud {
 		},
 	);
 
-	/// The group's [Message]s.
+	/// The group's [Message]s without the details.
 	static Future<List<Message>> messages() async {
 		final snapshot = await _document(Entities.messages).get();
 		if (!snapshot.exists) return <Message>[];
 
-		return [for (final message in snapshot.data()!.values) Message(
-			subject: message[Field.subject.name],
-			date: message[Field.date.name].toDate()
+		return [for (final entry in snapshot.data()!.entries) Message(
+			id: entry.key,
+			subject: entry.value[Field.subject.name],
+			date: entry.value[Field.date.name].toDate()
 		)]..sort((a, b) => b.date.compareTo(a.date));
+	}
+
+	static Future<void> addMessageDetails(Message message) async {
+		final snapshot = await _document(Entities.messages).collection(Entities.details.name).doc(message.id).get();
+		
+		message.content = snapshot[Field.content.name];
+		message.author = snapshot[Field.author.name];
 	}
 
 	// todo: define
