@@ -4,6 +4,7 @@ import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/entities.dart' show Message;
 
 import 'section.dart';
+import 'new_entity_pages/message.dart';
 
 
 class MessagesSection extends ExtendableListSection<Message> {
@@ -27,33 +28,4 @@ class MessagesSection extends ExtendableListSection<Message> {
 }
 
 
-class NewMessagePage extends StatelessWidget {
-	final _subjectField = TextEditingController();
-	final _contentField = TextEditingController();
 
-	@override
-	Widget build(BuildContext context) => NewEntityPage(
-		addEntity: _add,
-		children: [
-			TextField(
-				controller: _subjectField,
-				decoration: const InputDecoration(hintText: "subject"),
-			),
-			TextField(
-				controller: _contentField,
-				decoration: const InputDecoration(hintText: "content"),
-			)
-		]
-	);
-
-	void _add(BuildContext context) {
-		final subject = _subjectField.text, content = _contentField.text;
-		if (subject.isEmpty || content.isEmpty) return;
-
-		Navigator.of(context).pop();
-		Cloud.addMessage(
-			subject: subject,
-			content: content,
-		);
-	}
-}

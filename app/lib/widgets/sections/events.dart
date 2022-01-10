@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/entities.dart' show Event;
 
-import 'agenda.dart' show NewEventPage;
 import 'section.dart';
+import 'new_entity_pages/event.dart';
 
 
 class EventsSection extends ExtendableListSection<Event> {

@@ -4,6 +4,7 @@ import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/entities.dart' show Subject, Event;
 
 import 'section.dart';
+import 'new_entity_pages/subject.dart';
 
 
 class SubjectsSection extends ExtendableListSection<Subject> {
@@ -45,23 +46,4 @@ class SubjectsSection extends ExtendableListSection<Subject> {
 }
 
 
-class NewSubjectPage extends StatelessWidget {
-	final _nameField = TextEditingController();
 
-	@override
-	Widget build(BuildContext context) => NewEntityPage(
-		addEntity: _add,
-		children: [TextField(
-			controller: _nameField,
-			decoration: const InputDecoration(hintText: "name"),
-		)]
-	);
-
-	void _add(BuildContext context) {
-		final name = _nameField.text;
-		if (name.isEmpty) return;
-
-		Navigator.of(context).pop();
-		Cloud.addSubject(name: name);
-	}
-}
