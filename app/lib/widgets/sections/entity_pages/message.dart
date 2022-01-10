@@ -20,7 +20,6 @@ class MessagePage extends StatefulWidget {
 class _MessagePageState extends State<MessagePage> {
 	@override
 	void initState() {
-		
 		widget._message.addDetails().whenComplete(() => setState(() {}));
 		super.initState();
 	}

@@ -37,17 +37,23 @@ class Subject {
 
 
 class Event {
+	final String id;
 	final String name;
 	final String? subject;
 	final DateTime date;
 
-	const Event({
+	String? note;
+
+	Event({
+		required this.id,
 		required this.name,
 		required this.subject,
 		required this.date
 	});
 
 	bool isBefore(Event event) => date.isBefore(event.date);
+
+	Future<void> addDetails() => Cloud.addEventDetails(this);
 }
 
 

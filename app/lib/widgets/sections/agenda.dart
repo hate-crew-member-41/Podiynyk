@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/entities.dart' show Event;
 
-import 'section.dart';
+import 'entity_pages/event.dart';
 import 'new_entity_pages/event.dart';
+import 'section.dart';
 
 
 class AgendaSection extends ExtendableListSection<Event> {
@@ -21,7 +22,10 @@ class AgendaSection extends ExtendableListSection<Event> {
 	ListTile tile(BuildContext context, Event event) => ListTile(
 		title: Text(event.name),
 		subtitle: event.subject != null ? Text(event.subject!) : null,
-		trailing: Text(event.date.dateRepr)
+		trailing: Text(event.date.dateRepr),
+		onTap: () => Navigator.of(context).push(MaterialPageRoute(
+			builder: (context) => EventPage(event)
+		))
 	);
 
 	@override

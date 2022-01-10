@@ -48,7 +48,7 @@ class Cloud {
 		return snapshot.exists ? (List<String>.from(snapshot.data()!.values)..sort()) : <String>[];
 	}
 
-	/// The group's [Subject]s.
+	/// The group's [Subject]s without the details.
 	static Future<List<Subject>> subjects() async {
 		final snapshots = await Future.wait([
 			_document(Entities.subjects).get(),
@@ -59,11 +59,12 @@ class Cloud {
 
 		final events = {for (final name in names) name: <Event>[]};
 
-		for (final event in eventEntries.values.where((event) => event.containsKey(Field.subject.name))) {
-			events[event[Field.subject.name]]!.add(Event(
-				name: event[Field.name.name],
-				subject: event[Field.subject.name],
-				date: event[Field.date.name].toDate()
+		for (final entry in eventEntries.entries.where((entry) => entry.value.containsKey(Field.subject.name))) {
+			events[entry.value[Field.subject.name]]!.add(Event(
+				id: entry.key,
+				name: entry.value[Field.name.name],
+				subject: entry.value[Field.subject.name],
+				date: entry.value[Field.date.name].toDate()
 			));
 		}
 
@@ -110,11 +111,19 @@ class Cloud {
 		final snapshot = await _document(Entities.events).get();
 		if (!snapshot.exists) return <Event>[];
 
-		return [for (final event in snapshot.data()!.values) Event(
-			name: event[Field.name.name],
-			subject: event[Field.subject.name],
-			date: event[Field.date.name].toDate()
+		return [for (final entry in snapshot.data()!.entries) Event(
+			id: entry.key,
+			name: entry.value[Field.name.name],
+			subject: entry.value[Field.subject.name],
+			date: entry.value[Field.date.name].toDate()
 		)]..sort((a, b) => a.date.compareTo(b.date));
+	}
+
+	static Future<void> addEventDetails(Event event) async {
+		final snapshot = await _document(Entities.events).collection(Entities.details.name).doc(event.id).get();
+		if (!snapshot.exists) return;
+
+		event.note = snapshot[Field.note.name];
 	}
 
 	/// Adds a [Message] with the arguments unless it exists.
