@@ -19,7 +19,7 @@ class MessagesSection extends ExtendableListSection<Message> {
 	}
 
 	@override
-	ListTile tile(BuildContext context, Message message) => ListTile(
+	Widget tile(BuildContext context, Message message) => ListTile(
 		title: Text(message.subject),
 		trailing: Text(message.date.dateRepr),
 		onTap: () => Navigator.of(context).push(MaterialPageRoute(

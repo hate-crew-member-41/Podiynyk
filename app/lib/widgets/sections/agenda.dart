@@ -19,17 +19,30 @@ class AgendaSection extends ExtendableListSection<Event> {
 	}
 
 	@override
-	ListTile tile(BuildContext context, Event event) => ListTile(
-		title: Text(event.name),
-		subtitle: event.subject != null ? Text(event.subject!) : null,
-		trailing: Text(event.date.dateRepr),
-		onTap: () => Navigator.of(context).push(MaterialPageRoute(
-			builder: (context) => EventPage(event)
-		))
-	);
+	Widget tile(BuildContext context, Event event) => EventTile(event, showSubject: true);
 
 	@override
 	Widget addEntityButton(BuildContext context) => const AddEventButton();
+}
+
+
+class EventTile extends StatelessWidget {
+	final Event _event;
+	final bool showSubject;
+
+	const EventTile(this._event, {required this.showSubject});
+
+	@override
+	Widget build(BuildContext context) {
+		return ListTile(
+			title: Text(_event.name),
+			subtitle: showSubject && _event.subject != null ? Text(_event.subject!) : null,
+			trailing: Text(_event.date.dateRepr),
+			onTap: () => Navigator.of(context).push(MaterialPageRoute(
+				builder: (context) => EventPage(_event)
+			))
+		);
+	}
 }
 
 

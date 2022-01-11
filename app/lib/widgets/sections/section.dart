@@ -53,7 +53,7 @@ abstract class CloudListSection<E> extends Section {
 		);
 	}
 
-	ListTile tile(BuildContext context, E entity);
+	Widget tile(BuildContext context, E entity);
 }
 
 abstract class ExtendableListSection<E> extends CloudListSection<E> {

@@ -54,10 +54,10 @@ class Cloud {
 			_document(Entities.subjects).get(),
 			_document(Entities.events).get()
 		]);
-		final names = (snapshots.first.data() ?? {}).values;
+		final entries = (snapshots.first.data() ?? {});
 		final eventEntries = (snapshots.last.data() ?? {});
 
-		final events = {for (final name in names) name: <Event>[]};
+		final events = {for (final name in entries.values) name: <Event>[]};
 
 		for (final entry in eventEntries.entries.where((entry) => entry.value.containsKey(Field.subject.name))) {
 			events[entry.value[Field.subject.name]]!.add(Event(
@@ -68,10 +68,19 @@ class Cloud {
 			));
 		}
 
-		return [for (final name in names) Subject(
-			name: name,
-			events: events[name]!
+		return [for (final entry in entries.entries) Subject(
+			id: entry.key,
+			name: entry.value,
+			events: events[entry.value]!
 		)]..sort((a, b) => a.name.compareTo(b.name));
+	}
+
+	static Future<void> addSubjectDetails(Subject subject) async {
+		final snapshot = await _document(Entities.subjects).collection(Entities.details.name).doc(subject.id).get();
+		final details = snapshot.data()!;
+
+		subject.totalEventCount = details[Field.totalEventCount.name];
+		subject.info = details[Field.info.name];
 	}
 
 	/// Adds an [Event] with the arguments unless it exists.
@@ -106,7 +115,7 @@ class Cloud {
 		}
 	}
 
-	/// The group's [Event]s.
+	/// The group's [Event]s without the details.
 	static Future<List<Event>> events() async {
 		final snapshot = await _document(Entities.events).get();
 		if (!snapshot.exists) return <Event>[];
@@ -181,11 +190,11 @@ class Cloud {
 		final document = _document(entities);
 
 		final id = await _cloud.runTransaction((transaction) async {
-			final entitiesSnapshot = await transaction.get(document);
+			final snapshot = await transaction.get(document);
 			int intId = 0;
 
-			if (entitiesSnapshot.exists) {
-				final entries = entitiesSnapshot.data()!;
+			if (snapshot.exists) {
+				final entries = snapshot.data()!;
 
 				for (final existingEntity in entries.values) {
 					if (existingEquals(existingEntity)) return null;
@@ -198,7 +207,7 @@ class Cloud {
 			final id = intId.toString();
 			final entityEntry = {id: entity};
 
-			if (entitiesSnapshot.exists) {
+			if (snapshot.exists) {
 				transaction.update(document, entityEntry);
 			}
 			else {
@@ -255,6 +264,7 @@ enum Entities {
 enum Field {
 	name,
 	totalEventCount,
+	info,
 	subject,
 	date,
 	note,

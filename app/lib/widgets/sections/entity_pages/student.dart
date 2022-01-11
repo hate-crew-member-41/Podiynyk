@@ -20,9 +20,10 @@ class StudentPage extends StatelessWidget {
 					mainAxisAlignment: MainAxisAlignment.center,
 					crossAxisAlignment: CrossAxisAlignment.start,
 					children: [
-						TextField(  // todo: adding a label
+						TextField(
 							controller: _nameField,
 							decoration: const InputDecoration(hintText: "name"),
+							onSubmitted: (label) {},  // todo: add the label
 						),
 						if (_student.role != Role.ordinary) Text(_student.role.name)
 					]

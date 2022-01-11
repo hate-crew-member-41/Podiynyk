@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/entities.dart' show Subject, Event;
 
-import 'section.dart';
+import 'entity_pages/subject.dart';
 import 'new_entity_pages/subject.dart';
+import 'section.dart';
 
 
 class SubjectsSection extends ExtendableListSection<Subject> {
@@ -18,22 +19,17 @@ class SubjectsSection extends ExtendableListSection<Subject> {
 	}
 
 	@override
-	ListTile tile(BuildContext context, Subject subject) {
+	Widget tile(BuildContext context, Subject subject) {
 		final nextEvent = _nextEvent(subject);
 
 		return ListTile(
 			title: Text(subject.name),
-			subtitle: Text(_eventCount(subject.events.length)),
-			trailing: nextEvent != null ? Text(nextEvent.date.dateRepr) : null
+			subtitle: Text(subject.eventCountRepr),
+			trailing: nextEvent != null ? Text(nextEvent.date.dateRepr) : null,
+			onTap: () => Navigator.of(context).push(MaterialPageRoute(
+				builder: (context) => SubjectPage(subject)
+			))
 		);
-	}
-
-	String _eventCount(int eventCount) {
-		switch (eventCount.compareTo(1)) {
-			case -1: return "no events";
-			case 0: return "1 event";
-			default: return "$eventCount events";
-		}
 	}
 
 	Event? _nextEvent(Subject subject) {

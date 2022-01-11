@@ -7,11 +7,8 @@ import '../section.dart' show EntityDate;
 
 class MessagePage extends StatefulWidget {
 	final Message _message;
-	final _subjectField = TextEditingController();
 
-	MessagePage(this._message) {
-		_subjectField.text = _message.subject;
-	}
+	const MessagePage(this._message);
 
 	@override
 	State<MessagePage> createState() => _MessagePageState();
@@ -36,10 +33,7 @@ class _MessagePageState extends State<MessagePage> {
 					mainAxisAlignment: MainAxisAlignment.center,
 					crossAxisAlignment: CrossAxisAlignment.start,
 					children: [
-						TextField(  // todo: adding a label
-							controller: widget._subjectField,
-							decoration: const InputDecoration(hintText: "subject"),
-						),
+						Text(widget._message.subject),
 						Text(widget._message.date.fullRepr),
 						if (author != null) Text("from $author"),
 						if (content != null) Text(content)

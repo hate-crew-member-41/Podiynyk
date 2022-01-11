@@ -5,6 +5,7 @@ import 'package:podiynyk/storage/entities.dart' show Event;
 import '../section.dart' show EntityDate;
 
 
+// todo: make entity pages share code
 class EventPage extends StatefulWidget {
 	final Event _event;
 	final _nameField = TextEditingController();
@@ -36,9 +37,10 @@ class _EventPageState extends State<EventPage> {
 					mainAxisAlignment: MainAxisAlignment.center,
 					crossAxisAlignment: CrossAxisAlignment.start,
 					children: [
-						TextField(  // todo: adding a label
+						TextField(
 							controller: widget._nameField,
 							decoration: const InputDecoration(hintText: "name"),
+							onSubmitted: (label) {},  // todo: add the label
 						),
 						if (subject != null) Text(subject),
 						Text(widget._event.date.fullRepr),

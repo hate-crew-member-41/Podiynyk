@@ -26,13 +26,32 @@ extension Compared on Role {
 
 
 class Subject {
+	final String id;
 	final String name;
 	final List<Event> events;
 
+	int? totalEventCount;
+	List<String>? info;
+
 	Subject({
+		required this.id,
 		required this.name,
 		required this.events
 	});
+
+	Future<void> addDetails() => Cloud.addSubjectDetails(this);
+
+	String get eventCountRepr => _eventCountRepr(events.length);
+
+	String get totalEventCountRepr => _eventCountRepr(totalEventCount!);
+
+	String _eventCountRepr(int count) {
+		switch (count.compareTo(1)) {
+			case -1: return "no events";
+			case 0: return "1 event";
+			default: return "$count events";
+		}
+	}
 }
 
 
@@ -51,9 +70,9 @@ class Event {
 		required this.date
 	});
 
-	bool isBefore(Event event) => date.isBefore(event.date);
-
 	Future<void> addDetails() => Cloud.addEventDetails(this);
+
+	bool isBefore(Event event) => date.isBefore(event.date);
 }
 
 
@@ -62,8 +81,8 @@ class Message {
 	final String subject;
 	final DateTime date;
 
-	String? content;
 	String? author;
+	String? content;
 
 	Message({
 		required this.id,

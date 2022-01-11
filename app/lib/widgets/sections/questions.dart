@@ -19,7 +19,7 @@ class QuestionsSection extends ExtendableListSection<Question> {
 
 	// todo: define
 	@override
-	ListTile tile(BuildContext context, Question entity) {
+	Widget tile(BuildContext context, Question entity) {
 		throw UnimplementedError();
 	}
 

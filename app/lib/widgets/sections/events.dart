@@ -21,7 +21,7 @@ class EventsSection extends ExtendableListSection<Event> {
 	}
 
 	@override
-	ListTile tile(BuildContext context, Event event) => ListTile(
+	Widget tile(BuildContext context, Event event) => ListTile(
 		title: Text(event.name),
 		trailing: Text(event.date.dateRepr),
 		onTap: () => Navigator.of(context).push(MaterialPageRoute(

@@ -18,7 +18,7 @@ class GroupSection extends CloudListSection<Student> {
 	}
 
 	@override
-	ListTile tile(BuildContext context, Student student) {
+	Widget tile(BuildContext context, Student student) {
 		return ListTile(
 			title: Text(student.name),
 			subtitle: student.role == Role.ordinary ? null : Text(student.role.name),
