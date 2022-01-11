@@ -31,7 +31,30 @@ class _EventPageState extends State<EventPage> {
 		final note = widget._event.note;
 
 		return GestureDetector(
-			onLongPress: () {},  // todo: the options
+			onLongPress: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Scaffold(
+				body: Column(
+				mainAxisAlignment: MainAxisAlignment.center,
+				crossAxisAlignment: CrossAxisAlignment.start,
+				children: [
+					TextButton(
+						child: const Text("add a note"),
+						onPressed: () {},  // todo: implement
+						style: const ButtonStyle(alignment: Alignment.centerLeft)
+					),
+					// todo: implement the queues feature, add (schedule / start, delete) buttons
+					TextButton(
+						child: const Text("hide"),
+						onPressed: () {},  // todo: implement
+						style: const ButtonStyle(alignment: Alignment.centerLeft)
+					),
+					TextButton(
+						child: const Text("delete"),
+						onPressed: () {},  // todo: implement
+						style: const ButtonStyle(alignment: Alignment.centerLeft)
+					)
+				]
+			)
+			))),
 			child: Scaffold(
 				body: Column(
 					mainAxisAlignment: MainAxisAlignment.center,

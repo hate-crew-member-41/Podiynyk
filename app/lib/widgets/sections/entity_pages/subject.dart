@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/storage/entities.dart' show Subject;
+import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import 'package:podiynyk/storage/entities.dart' show Role, Subject;
 
 import '../agenda.dart';
 
@@ -28,10 +29,27 @@ class _SubjectPageState extends State<SubjectPage> {
 	Widget build(BuildContext context) {
 		final totalEventCount = widget._subject.totalEventCount;
 		final info = widget._subject.info;
-		final hasEvents = widget._subject.events.isNotEmpty;
+		final events = widget._subject.events;
 
 		return GestureDetector(
-			onLongPress: () {},  // todo: the options
+			onLongPress: () => _showPage([
+				TextButton(
+					child: const Text("add an event"),
+					onPressed: () {},  // todo: implement
+					style: const ButtonStyle(alignment: Alignment.centerLeft)
+				),
+				TextButton(
+					child: const Text("add information"),
+					onPressed: () {},  // todo: implement
+					style: const ButtonStyle(alignment: Alignment.centerLeft)
+				),
+				// todo: implement the following feature, add (follow / unfollow) buttons
+				if (Cloud.role == Role.leader) TextButton(
+					child: const Text("delete"),
+					onPressed: () {},  // todo: implement
+					style: const ButtonStyle(alignment: Alignment.centerLeft)
+				)
+			]),
 			child: Scaffold(
 				body: Column(
 					mainAxisAlignment: MainAxisAlignment.center,
@@ -44,15 +62,16 @@ class _SubjectPageState extends State<SubjectPage> {
 						),
 						if (totalEventCount != null) Text("${widget._subject.totalEventCountRepr} so far"),
 						if (info != null) TextButton(
+							child: const Text("information"),
 							onPressed: () => _showPage([
-								for (final entry in info) Text(entry)]),
-							child: const Text("information")
+								for (final entry in info) Text(entry)
+							])
 						),
-						if (hasEvents) TextButton(
+						if (events.isNotEmpty) TextButton(
+							child: Text(widget._subject.eventCountRepr),
 							onPressed: () => _showPage([
-								for (final event in widget._subject.events) EventTile(event, showSubject: false)
-							]),
-							child: Text(widget._subject.eventCountRepr)
+								for (final event in events) EventTile(event, showSubject: false)
+							])
 						)
 					]
 				)
@@ -62,10 +81,11 @@ class _SubjectPageState extends State<SubjectPage> {
 
 	void _showPage(List<Widget> items) {
 		Navigator.of(context).push(MaterialPageRoute(builder: (context) => Scaffold(
-			body: Center(child: ListView(
-				shrinkWrap: true,
-				children: items,
-			))
+			body: Column(
+				mainAxisAlignment: MainAxisAlignment.center,
+				crossAxisAlignment: CrossAxisAlignment.start,
+				children: items
+			)
 		)));
 	}
 }
