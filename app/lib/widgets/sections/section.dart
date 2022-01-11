@@ -13,8 +13,20 @@ extension EntityDate on DateTime {
 	}
 
 	String get fullRepr {
-		String repr = dateRepr;
-		if (hour != 0 || minute != 0) repr += ', ${hour.twoDigitRepr}:${minute.twoDigitRepr}';
+		late String repr;
+		switch (weekday) {
+			case 1: repr = 'Monday'; break;
+			case 2: repr = 'Tuesday'; break;
+			case 3: repr = 'Wednesday'; break;
+			case 4: repr = 'Thursday'; break;
+			case 5: repr = 'Friday'; break;
+			case 6: repr = 'Saturday'; break;
+			case 7: repr = 'Sunday'; break;
+		}
+
+		repr = '$repr $dateRepr';
+		if (hour != 0 || minute != 0) repr = '$repr, ${hour.twoDigitRepr}:${minute.twoDigitRepr}';
+
 		return repr;
 	}
 }
