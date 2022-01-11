@@ -23,16 +23,16 @@ class StudentPage extends StatelessWidget {
 						children: [
 							_student.role == Role.ordinary ? TextButton(
 								child: const Text("trust"),
-								onPressed: () {},  // todo: implement
+								onPressed: () => Cloud.makeTrusted(_student.name),
 								style: const ButtonStyle(alignment: Alignment.centerLeft)
 							) : TextButton(
 								child: const Text("untrust"),
-								onPressed: () {},  // todo: implement
+								onPressed: () => Cloud.makeOrdinary(_student.name),
 								style: const ButtonStyle(alignment: Alignment.centerLeft)
 							),
 							TextButton(
 								child: const Text("make the leader"),
-								onPressed: () {},  // todo: implement
+								onPressed: () => Cloud.makeLeader(_student.name),
 								style: const ButtonStyle(alignment: Alignment.centerLeft)
 							)
 						]

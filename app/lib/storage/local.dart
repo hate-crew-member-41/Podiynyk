@@ -17,7 +17,7 @@ class Local {
 
 	// static String get name => _user.get(Field.name.name);
 	// todo: switch after identification is implemented
-	static String? get name => 'Test Name 2';
+	static String? get name => 'Leader Name';
 }
 
 

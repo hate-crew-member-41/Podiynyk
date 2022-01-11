@@ -8,7 +8,7 @@ extension on int {
 extension EntityDate on DateTime {
 	String get dateRepr {
 		String repr = '${day.twoDigitRepr}.${month.twoDigitRepr}';
-		if (year != DateTime.now().year) repr += '.${year.twoDigitRepr}';
+		if (year != DateTime.now().year) repr = '$repr.${year.twoDigitRepr}';
 		return repr;
 	}
 
