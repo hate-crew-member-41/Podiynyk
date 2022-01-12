@@ -47,6 +47,9 @@ class _HomeState extends State<Home> {
 			drawer: Drawer(
 				child: Column(
 					mainAxisAlignment: MainAxisAlignment.center,
+					// tofix: the constructors are called not only when the sections are built
+					// CloudListSection ones have Firestore reads which come out useless
+					// this makes the number of reads around 6 times more than it needs to be
 					children: [
 						_drawerTile(AgendaSection()),
 						_drawerTile(SubjectsSection()),

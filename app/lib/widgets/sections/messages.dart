@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/message.dart';
 
 import 'entity_pages/message.dart';
@@ -15,7 +16,10 @@ class MessagesSection extends ExtendableListSection<Message> {
 	final icon = Icons.messenger;
 
 	MessagesSection() {
-		futureEntities = Cloud.messages();
+		futureEntities = Cloud.messages().then((messages) {
+			final hiddenSubjects = Local.hiddenMessagesSubjects;
+			return messages..removeWhere((message) => !hiddenSubjects.contains(message.subject));
+		});
 	}
 
 	@override

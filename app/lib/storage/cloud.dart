@@ -89,11 +89,17 @@ class Cloud {
 		final snapshot = await _document(Entities.messages).get();
 		if (!snapshot.exists) return <Message>[];
 
-		return [for (final entry in snapshot.data()!.entries) Message(
-			id: entry.key,
-			subject: entry.value[Field.subject.name],
-			date: entry.value[Field.date.name].toDate()
-		)]..sort((a, b) => b.date.compareTo(a.date));
+		final messages = <Message>[];
+		for (final entry in snapshot.data()!.entries) {
+			messages.add(Message(
+				id: entry.key,
+				subject: entry.value[Field.subject.name],
+				date: entry.value[Field.date.name].toDate()
+			));
+		}
+		Local.clearHiddenMessages(messages);
+
+		return messages..sort((a, b) => b.date.compareTo(a.date));
 	}
 
 	// todo: define
@@ -123,6 +129,31 @@ class Cloud {
 
 		_role = students.firstWhere((student) => student.name == Local.name).role;
 		return students;
+	}
+
+	/// Initializes the [subject]'s detail fields.
+	static Future<void> addSubjectDetails(Subject subject) async {
+		final snapshot = await _document(Entities.subjects).collection(Entities.details.name).doc(subject.id).get();
+		final details = snapshot.data()!;
+
+		subject.totalEventCount = details[Field.totalEventCount.name];
+		subject.info = details[Field.info.name];
+	}
+
+	/// Initializes the [event]'s detail fields.
+	static Future<void> addEventDetails(Event event) async {
+		final snapshot = await _document(Entities.events).collection(Entities.details.name).doc(event.id).get();
+		if (!snapshot.exists) return;
+
+		event.note = snapshot[Field.note.name];
+	}
+
+	/// Initializes the [message]'s detail fields.
+	static Future<void> addMessageDetails(Message message) async {
+		final snapshot = await _document(Entities.messages).collection(Entities.details.name).doc(message.id).get();
+		
+		message.content = snapshot[Field.content.name];
+		message.author = snapshot[Field.author.name];
 	}
 
 	/// Adds a [Subject] with the [name] unless it exists.
@@ -229,29 +260,13 @@ class Cloud {
 		return wasWritten;
 	}
 
-	/// Initializes the [subject]'s detail fields.
-	static Future<void> addSubjectDetails(Subject subject) async {
-		final snapshot = await _document(Entities.subjects).collection(Entities.details.name).doc(subject.id).get();
-		final details = snapshot.data()!;
-
-		subject.totalEventCount = details[Field.totalEventCount.name];
-		subject.info = details[Field.info.name];
-	}
-
-	/// Initializes the [event]'s detail fields.
-	static Future<void> addEventDetails(Event event) async {
-		final snapshot = await _document(Entities.events).collection(Entities.details.name).doc(event.id).get();
-		if (!snapshot.exists) return;
-
-		event.note = snapshot[Field.note.name];
-	}
-
-	/// Initializes the [message]'s detail fields.
-	static Future<void> addMessageDetails(Message message) async {
-		final snapshot = await _document(Entities.messages).collection(Entities.details.name).doc(message.id).get();
-		
-		message.content = snapshot[Field.content.name];
-		message.author = snapshot[Field.author.name];
+	/// Deletes the [message].
+	static Future<void> deleteMessage(Message message) async {
+		final messagesDocument = _document(Entities.messages);
+		await Future.wait([
+			messagesDocument.update({message.id: FieldValue.delete()}),
+			messagesDocument.collection(Entities.details.name).doc(message.id).delete()
+		]);
 	}
 
 	/// Sets the [Role] of the student with the [name] to [Role.trusted].
@@ -261,7 +276,7 @@ class Cloud {
 			Role.trusted.name: FieldValue.arrayUnion([name])
 		});
 	}
-	
+
 	/// Sets the [Role] of the student with the [name] to [Role.ordinary].
 	static Future<void> makeOrdinary(String name) async {
 		await _document(Entities.students).update({
