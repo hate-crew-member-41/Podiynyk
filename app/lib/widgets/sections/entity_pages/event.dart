@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/storage/entities.dart' show Event;
+import 'package:podiynyk/storage/entities/event.dart' show Event;
 
 import '../section.dart' show EntityDate;
 

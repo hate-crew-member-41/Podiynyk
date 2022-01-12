@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
-import 'package:podiynyk/storage/entities.dart' show Question;
+import 'package:podiynyk/storage/entities/question.dart';
 
 import 'section.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
-import 'package:podiynyk/storage/entities.dart' show Student, Role;
+import 'package:podiynyk/storage/entities/student.dart';
 
 
 class StudentPage extends StatelessWidget {
@@ -15,8 +15,8 @@ class StudentPage extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return GestureDetector(
-			onLongPress: Cloud.role == Role.leader ?
-				() => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Scaffold(
+			onLongPress: Cloud.role == Role.leader ? () {
+				Navigator.of(context).push(MaterialPageRoute(builder: (context) => Scaffold(
 					body: Column(
 						mainAxisAlignment: MainAxisAlignment.center,
 						crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,7 +37,8 @@ class StudentPage extends StatelessWidget {
 							)
 						]
 					)
-				))) : null,
+				)));
+			} : null,
 			child: Scaffold(
 				body: Column(
 					mainAxisAlignment: MainAxisAlignment.center,

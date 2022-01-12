@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
-import 'package:podiynyk/storage/entities.dart' show Student, Role;
+import 'package:podiynyk/storage/entities/student.dart';
 
 import 'section.dart';
 import 'entity_pages/student.dart';

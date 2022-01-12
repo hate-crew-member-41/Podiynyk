@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
-import 'package:podiynyk/storage/entities.dart' show Message;
+import 'package:podiynyk/storage/entities/message.dart';
 
 import 'entity_pages/message.dart';
 import 'new_entity_pages/message.dart';

@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 class Local {
 	static late final Box<String> _user;
+	// static late Box
 
 	static Future<void> init() async {
 		await Hive.initFlutter();
@@ -17,7 +18,9 @@ class Local {
 
 	// static String get name => _user.get(Field.name.name);
 	// todo: switch after identification is implemented
-	static String? get name => 'Leader Name';
+	static String get name => 'Leader Name';
+
+	// static Future<void> openHiddenMessages() async => await 
 }
 
 

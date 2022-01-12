@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
-import 'package:podiynyk/storage/entities.dart' show Subject, Event;
+import 'package:podiynyk/storage/entities/event.dart';
+import 'package:podiynyk/storage/entities/subject.dart';
 
 import 'entity_pages/subject.dart';
 import 'new_entity_pages/subject.dart';

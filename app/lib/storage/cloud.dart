@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import 'entities.dart';
 import 'local.dart';
+import 'entities/event.dart';
+import 'entities/message.dart';
+import 'entities/question.dart';
+import 'entities/student.dart';
+import 'entities/subject.dart';
 
 
 class Cloud {
@@ -174,7 +178,7 @@ class Cloud {
 		},
 		details: {
 			Field.content.name: content,
-			Field.author.name: Local.name!
+			Field.author.name: Local.name
 		},
 	);
 
