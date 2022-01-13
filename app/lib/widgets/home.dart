@@ -47,9 +47,6 @@ class _HomeState extends State<Home> {
 			drawer: Drawer(
 				child: Column(
 					mainAxisAlignment: MainAxisAlignment.center,
-					// tofix: the constructors are called not only when the sections are built
-					// CloudListSection ones have Firestore reads which come out useless
-					// this makes the number of reads around 6 times more than it needs to be
 					children: [
 						_drawerTile(AgendaSection()),
 						_drawerTile(SubjectsSection()),
@@ -71,7 +68,7 @@ class _HomeState extends State<Home> {
 		title: Text(section.name),
 		leading: Icon(section.icon),
 		onTap: () {
-			setState(() => _section = section);
+			if (section.name != _section.name) setState(() => _section = section);
 			Navigator.of(context).pop();
 		}
 	);
@@ -98,7 +95,7 @@ class _EntityCountState extends State<EntityCount> {
 	}
 
 	@override
-	void didUpdateWidget(covariant EntityCount oldWidget) {
+	void didUpdateWidget(EntityCount oldWidget) {
 		_isActual = false;
 		scheduleRebuild();
 		super.didUpdateWidget(oldWidget);

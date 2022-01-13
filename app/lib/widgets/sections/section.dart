@@ -39,8 +39,16 @@ abstract class Section extends StatelessWidget {
 	const Section();
 }
 
+
+// todo: _futureEntries is mutable
 abstract class CloudListSection<E> extends Section {
-	late final Future<List<E>> futureEntities;
+	Future<List<E>>? _futureEntities;
+	Future<List<E>> get futureEntities {
+		_futureEntities ??= entitiesFuture;
+		return _futureEntities!;
+	}
+
+	Future<List<E>> get entitiesFuture;
 
 	@override
 	Widget build(BuildContext context) {
@@ -61,16 +69,15 @@ abstract class CloudListSection<E> extends Section {
 			children: [
 				for (final entity in snapshot.data!) tile(context, entity),
 				const ListTile()
-			],
+			]
 		);
 	}
 
 	Widget tile(BuildContext context, E entity);
 }
 
-abstract class ExtendableListSection<E> extends CloudListSection<E> {
-	ExtendableListSection();
 
+abstract class ExtendableListSection<E> extends CloudListSection<E> {
 	Widget addEntityButton(BuildContext context);
 }
 

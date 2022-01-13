@@ -7,36 +7,33 @@ import 'entity.dart';
 
 
 class NewEventPage extends StatefulWidget {
-	late final bool _askSubject;
-	late final bool _subjectRequired;
-	late final String? _subject;
-	late final List<String>? _subjectNames;
+	final bool _askSubject;
+	final bool _subjectRequired;
+	final String? _subject;
+	final List<String>? _subjectNames;
 
 	final _nameField = TextEditingController();
 	final _subjectField = TextEditingController();
 	final _dateField = TextEditingController();
 	final _noteField = TextEditingController();
 
-	NewEventPage(List<String> subjectNames) {
-		_askSubject = true;
-		_subjectRequired = false;
-		_subject = null;
+	NewEventPage(List<String> subjectNames) :
+		_askSubject = true,
+		_subjectRequired = false,
+		_subject = null,
 		_subjectNames = subjectNames;
-	}
 
-	NewEventPage.subjectEvent(String subject) {
-		_askSubject = false;
-		_subjectRequired = true;
-		_subject = subject;
+	NewEventPage.subjectEvent(String subject) :
+		_askSubject = false,
+		_subjectRequired = true,
+		_subject = subject,
 		_subjectNames = null;
-	}
 
-	NewEventPage.noSubjectEvent() {
-		_askSubject = false;
-		_subjectRequired = false;
-		_subject = null;
+	NewEventPage.noSubjectEvent() :
+		_askSubject = false,
+		_subjectRequired = false,
+		_subject = null,
 		_subjectNames = null;
-	}
 
 	@override
 	State<NewEventPage> createState() => _NewEventPageState();
@@ -138,9 +135,8 @@ class _NewEventPageState extends State<NewEventPage> {
 			_date == null
 		) return;
 
-		// these ideas apply to all new-entity pages
-		// todo: show an animation of the event flying away?
-		// todo: show the result of the request on the page?
+		// idea: show an animation of the event flying away?
+		// idea: show the result of the request on the page?
 		Navigator.of(context).pop();
 
 		Cloud.addEvent(

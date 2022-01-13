@@ -14,9 +14,8 @@ class AgendaSection extends ExtendableListSection<Event> {
 	@override
 	final icon = Icons.event_note;
 
-	AgendaSection() {
-		futureEntities = Cloud.events();
-	}
+	@override
+	Future<List<Event>> get entitiesFuture => Cloud.events();
 
 	@override
 	Widget tile(BuildContext context, Event event) => EventTile(event, showSubject: true);

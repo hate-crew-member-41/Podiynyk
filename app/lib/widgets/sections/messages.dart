@@ -15,12 +15,11 @@ class MessagesSection extends ExtendableListSection<Message> {
 	@override
 	final icon = Icons.messenger;
 
-	MessagesSection() {
-		futureEntities = Cloud.messages().then((messages) {
-			final hiddenSubjects = Local.hiddenMessagesSubjects;
-			return messages..removeWhere((message) => !hiddenSubjects.contains(message.subject));
-		});
-	}
+	@override
+	Future<List<Message>> get entitiesFuture => Cloud.messages().then((messages) {
+		final hiddenSubjects = Local.hiddenMessagesSubjects;
+		return messages..removeWhere((message) => !hiddenSubjects.contains(message.subject));
+	});
 
 	@override
 	Widget tile(BuildContext context, Message message) => ListTile(

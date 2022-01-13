@@ -17,7 +17,7 @@ class App extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return MaterialApp(
-			theme: ThemeData(primarySwatch: Colors.teal),
+			theme: ThemeData(primarySwatch: Colors.amber),
 			title: 'Podiynyk',
 			home: FutureBuilder(
 				future: Future.wait([Local.init(), Cloud.init()]),

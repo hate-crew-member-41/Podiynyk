@@ -112,6 +112,7 @@ class Cloud {
 	static Future<List<Student>> students() async {
 		final snapshot = await _document(Entities.students).get();
 		final entries = snapshot.data()!;
+
 		final students = [
 			for (final name in entries[Role.ordinary.name]) Student(
 				name: name,

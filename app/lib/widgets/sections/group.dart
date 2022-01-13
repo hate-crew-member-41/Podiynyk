@@ -13,9 +13,8 @@ class GroupSection extends CloudListSection<Student> {
 	@override
 	final icon = Icons.people;
 
-	GroupSection() {
-		futureEntities = Cloud.students();
-	}
+	@override
+	Future<List<Student>> get entitiesFuture => Cloud.students();
 
 	@override
 	Widget tile(BuildContext context, Student student) {

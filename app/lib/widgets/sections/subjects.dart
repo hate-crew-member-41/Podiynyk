@@ -15,9 +15,8 @@ class SubjectsSection extends ExtendableListSection<Subject> {
 	@override
 	final icon = Icons.school;
 
-	SubjectsSection() {
-		futureEntities = Cloud.subjects();
-	}
+	@override
+	Future<List<Subject>> get entitiesFuture => Cloud.subjects();
 
 	@override
 	Widget tile(BuildContext context, Subject subject) {
