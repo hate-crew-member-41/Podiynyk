@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/event.dart' show Event;
 
 import '../section.dart' show EntityDate;
@@ -44,7 +45,7 @@ class _EventPageState extends State<EventPage> {
 					// todo: implement the queues feature, add (schedule / start, delete) buttons
 					TextButton(
 						child: const Text("hide"),
-						onPressed: () {},  // todo: implement
+						onPressed: () => Local.addHiddenEntity(DataBox.hiddenEvents, widget._event),
 						style: const ButtonStyle(alignment: Alignment.centerLeft)
 					),
 					TextButton(

@@ -76,12 +76,20 @@ class Cloud {
 		final snapshot = await _document(Entities.events).get();
 		if (!snapshot.exists) return <Event>[];
 
-		return [for (final entry in snapshot.data()!.entries) Event(
-			id: entry.key,
-			name: entry.value[Field.name.name],
-			subject: entry.value[Field.subject.name],
-			date: entry.value[Field.date.name].toDate()
-		)]..sort((a, b) => a.date.compareTo(b.date));
+		final events = [
+			for (final entry in snapshot.data()!.entries) Event(
+				id: entry.key,
+				name: entry.value[Field.name.name],
+				subject: entry.value[Field.subject.name],
+				date: entry.value[Field.date.name].toDate()
+			)
+		];
+		Local.clearHiddenEntities<Event, EventEssence>(DataBox.hiddenEvents, events);
+
+		final hiddenEssences = Local.hiddenEntities<EventEssence>(DataBox.hiddenEvents);
+		return events
+			..removeWhere((event) => hiddenEssences.any((essence) => event.essenceIs(essence)))
+			..sort((a, b) => a.date.compareTo(b.date));
 	}
 
 	/// The group's [Message]s without the details.
@@ -89,17 +97,19 @@ class Cloud {
 		final snapshot = await _document(Entities.messages).get();
 		if (!snapshot.exists) return <Message>[];
 
-		final messages = <Message>[];
-		for (final entry in snapshot.data()!.entries) {
-			messages.add(Message(
+		final messages = [
+			for (final entry in snapshot.data()!.entries) Message(
 				id: entry.key,
 				subject: entry.value[Field.subject.name],
 				date: entry.value[Field.date.name].toDate()
-			));
-		}
-		Local.clearHiddenMessages(messages);
+			)
+		];
+		Local.clearHiddenEntities<Message, MessageEssence>(DataBox.hiddenMessages, messages);
 
-		return messages..sort((a, b) => b.date.compareTo(a.date));
+		final hiddenEssences = Local.hiddenEntities<MessageEssence>(DataBox.hiddenMessages);
+		return messages
+			..removeWhere((message) => hiddenEssences.any((essence) => message.essenceIs(essence)))
+			..sort((a, b) => b.date.compareTo(a.date));
 	}
 
 	// todo: define
@@ -307,7 +317,7 @@ class Cloud {
 }
 
 
-/// The group's [Entities]s stored in [FirebaseFirestore].
+/// The group's [Entities] stored in [FirebaseFirestore].
 enum Entities {
 	students,
 	subjects,

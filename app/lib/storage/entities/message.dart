@@ -1,7 +1,12 @@
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
 
+import 'entity.dart';
 
-class Message {
+
+typedef MessageEssence = String;
+
+
+class Message implements DetailedEntity, StoredEntity<MessageEssence> {
 	final String id;
 	final String subject;
 	final DateTime date;
@@ -15,5 +20,12 @@ class Message {
 		required this.date
 	});
 
+	@override
+	MessageEssence get essence => subject;
+
+	@override
+	bool essenceIs(MessageEssence essence) => subject == essence;
+
+	@override
 	Future<void> addDetails() => Cloud.addMessageDetails(this);
 }

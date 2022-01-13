@@ -1,9 +1,10 @@
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
 
+import 'entity.dart';
 import 'event.dart';
 
 
-class Subject {
+class Subject implements DetailedEntity {
 	final String id;
 	final String name;
 	final List<Event> events;
@@ -17,6 +18,7 @@ class Subject {
 		required this.events
 	});
 
+	@override
 	Future<void> addDetails() => Cloud.addSubjectDetails(this);
 
 	String get eventCountRepr => _eventCountRepr(events.length);
