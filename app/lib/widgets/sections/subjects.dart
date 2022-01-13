@@ -38,8 +38,5 @@ class SubjectsSection extends ExtendableListSection<Subject> {
 	}
 
 	@override
-	Widget addEntityButton(BuildContext context) => AddEntityButton(newEntityPage: NewSubjectPage());
+	Widget addEntityButton(BuildContext context) => AddEntityButton(pageBuilder: (_) => NewSubjectPage());
 }
-
-
-

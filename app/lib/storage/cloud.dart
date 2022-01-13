@@ -84,9 +84,9 @@ class Cloud {
 				date: entry.value[Field.date.name].toDate()
 			)
 		];
-		Local.clearHiddenEntities<Event, EventEssence>(DataBox.hiddenEvents, events);
+		Local.clearHiddenEntities<Event, EventEssence>(StoredEntities.hiddenEvents, events);
 
-		final hiddenEssences = Local.hiddenEntities<EventEssence>(DataBox.hiddenEvents);
+		final hiddenEssences = Local.hiddenEntities<EventEssence>(StoredEntities.hiddenEvents);
 		return events
 			..removeWhere((event) => hiddenEssences.any((essence) => event.essenceIs(essence)))
 			..sort((a, b) => a.date.compareTo(b.date));
@@ -104,9 +104,9 @@ class Cloud {
 				date: entry.value[Field.date.name].toDate()
 			)
 		];
-		Local.clearHiddenEntities<Message, MessageEssence>(DataBox.hiddenMessages, messages);
+		Local.clearHiddenEntities<Message, MessageEssence>(StoredEntities.hiddenMessages, messages);
 
-		final hiddenEssences = Local.hiddenEntities<MessageEssence>(DataBox.hiddenMessages);
+		final hiddenEssences = Local.hiddenEntities<MessageEssence>(StoredEntities.hiddenMessages);
 		return messages
 			..removeWhere((message) => hiddenEssences.any((essence) => message.essenceIs(essence)))
 			..sort((a, b) => b.date.compareTo(a.date));
@@ -271,12 +271,21 @@ class Cloud {
 		return wasWritten;
 	}
 
+	/// Deletes the [event].
+	static Future<void> deleteEvent(Event event) async {
+		final document = _document(Entities.events);
+		await Future.wait([
+			document.update({event.id: FieldValue.delete()}),
+			document.collection(Entities.details.name).doc(event.id).delete()
+		]);
+	}
+
 	/// Deletes the [message].
 	static Future<void> deleteMessage(Message message) async {
-		final messagesDocument = _document(Entities.messages);
+		final document = _document(Entities.messages);
 		await Future.wait([
-			messagesDocument.update({message.id: FieldValue.delete()}),
-			messagesDocument.collection(Entities.details.name).doc(message.id).delete()
+			document.update({message.id: FieldValue.delete()}),
+			document.collection(Entities.details.name).doc(message.id).delete()
 		]);
 	}
 

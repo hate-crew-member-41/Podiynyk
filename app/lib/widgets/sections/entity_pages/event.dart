@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/event.dart' show Event;
 
@@ -45,12 +46,12 @@ class _EventPageState extends State<EventPage> {
 					// todo: implement the queues feature, add (schedule / start, delete) buttons
 					TextButton(
 						child: const Text("hide"),
-						onPressed: () => Local.addHiddenEntity(DataBox.hiddenEvents, widget._event),
+						onPressed: () => Local.addHiddenEntity(StoredEntities.hiddenEvents, widget._event),
 						style: const ButtonStyle(alignment: Alignment.centerLeft)
 					),
 					TextButton(
 						child: const Text("delete"),
-						onPressed: () {},  // todo: implement
+						onPressed: () => Cloud.deleteEvent(widget._event),
 						style: const ButtonStyle(alignment: Alignment.centerLeft)
 					)
 				]

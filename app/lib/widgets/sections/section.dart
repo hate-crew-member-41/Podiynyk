@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 
 
 extension on int {
+	/// The 2-digit [String] representation. If less than 10, a leading zero is added.
 	String get twoDigitRepr => toString().padLeft(2, '0');
 }
 
 extension EntityDate on DateTime {
+	/// The representation of the date with 2 digits for each part.
+	/// If the date is in a future year, it is also included.
 	String get dateRepr {
 		String repr = '${day.twoDigitRepr}.${month.twoDigitRepr}';
 		if (year != DateTime.now().year) repr = '$repr.${year.twoDigitRepr}';
 		return repr;
 	}
 
+	/// The representation with the weekday, and the time unless it is midnight.
 	String get fullRepr {
 		late String repr;
 		switch (weekday) {
@@ -41,6 +45,7 @@ abstract class Section extends StatelessWidget {
 
 
 // todo: _futureEntries is mutable
+/// A [Section] that displays a list of fetched [E]ntities.
 abstract class CloudListSection<E> extends Section {
 	Future<List<E>>? _futureEntities;
 	Future<List<E>> get futureEntities {
@@ -77,22 +82,23 @@ abstract class CloudListSection<E> extends Section {
 }
 
 
+/// A [CloudListSection] that has a [FloatingActionButton] for extending its list.
 abstract class ExtendableListSection<E> extends CloudListSection<E> {
 	Widget addEntityButton(BuildContext context);
 }
 
 
 class AddEntityButton extends StatelessWidget {
-	final Widget newEntityPage;
+	final Widget Function(BuildContext) pageBuilder;
 
-	const AddEntityButton({required this.newEntityPage});
+	const AddEntityButton({required this.pageBuilder});
 
 	@override
 	Widget build(BuildContext context) {
 		return FloatingActionButton(
 			child: const Icon(Icons.add),
 			onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-				builder: (context) => newEntityPage
+				builder: pageBuilder
 			))
 		);
 	}

@@ -35,7 +35,7 @@ class _MessagePageState extends State<MessagePage> {
 					alignment: Alignment.centerLeft,
 					child: Local.name != message.author ? TextButton(
 							child: const Text("hide"),
-							onPressed: () => Local.addHiddenEntity(DataBox.hiddenMessages, message),
+							onPressed: () => Local.addHiddenEntity(StoredEntities.hiddenMessages, message),
 							style: const ButtonStyle(alignment: Alignment.centerLeft)
 						) : TextButton(
 							child: const Text("delete"),

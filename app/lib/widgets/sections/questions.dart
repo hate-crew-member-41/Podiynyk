@@ -23,5 +23,5 @@ class QuestionsSection extends ExtendableListSection<Question> {
 
 	// todo: define
 	@override
-	Widget addEntityButton(BuildContext context) => const AddEntityButton(newEntityPage: Scaffold());
+	Widget addEntityButton(BuildContext context) => AddEntityButton(pageBuilder: (_) => const Scaffold());
 }

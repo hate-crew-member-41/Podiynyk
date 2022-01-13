@@ -68,7 +68,7 @@ class _AddEventButtonState extends State<AddEventButton> {
 		return AnimatedOpacity(
 			opacity: isVisible ? 1 : 0,
 			duration: const Duration(milliseconds: 200),
-			child: isVisible ? AddEntityButton(newEntityPage: NewEventPage(_subjectNames!)) : null
+			child: isVisible ? AddEntityButton(pageBuilder: (_) => NewEventPage(_subjectNames!)) : null
 		);
 	}
 }

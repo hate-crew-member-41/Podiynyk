@@ -10,9 +10,9 @@ class Local {
 	static Future<void> init() async {
 		await Hive.initFlutter();
 		await Future.wait([
-			Hive.openBox<String>(DataBox.user.name),
-			Hive.openBox<EventEssence>(DataBox.hiddenEvents.name),
-			Hive.openBox<MessageEssence>(DataBox.hiddenMessages.name)
+			Hive.openBox<String>(StoredEntities.user.name),
+			Hive.openBox<EventEssence>(StoredEntities.hiddenEvents.name),
+			Hive.openBox<MessageEssence>(StoredEntities.hiddenMessages.name)
 		]);
 	}
 
@@ -30,15 +30,15 @@ class Local {
 	static String get name => 'Leader Name';
 
 	/// The [StoredEntity.essence]s of the [entitie]s the user has hidden.
-	static Iterable<E> hiddenEntities<E>(DataBox entities) => Hive.box<E>(entities.name).values;
+	static Iterable<E> hiddenEntities<E>(StoredEntities entities) => Hive.box<E>(entities.name).values;
 
 	/// Remembers the [entity] as hidden by the user.
-	static Future<void> addHiddenEntity(DataBox entities, StoredEntity entity) async {
+	static Future<void> addHiddenEntity(StoredEntities entities, StoredEntity entity) async {
 		await Hive.box(entities.name).add(entity.essence);
 	}
 
 	/// Deletes from the [entities] box the [Entity]ntities that are no more.
-	static void clearHiddenEntities<Entity extends StoredEntity<Essence>, Essence>(DataBox entities, List<Entity> existing) {
+	static void clearHiddenEntities<Entity extends StoredEntity<Essence>, Essence>(StoredEntities entities, List<Entity> existing) {
 		final box = Hive.box<Essence>(entities.name);
 
 		for (final entry in box.toMap().entries) {
@@ -51,13 +51,13 @@ class Local {
 
 
 /// The [Hive] [Box]es the local data is stored in.
-enum DataBox {
+enum StoredEntities {
 	user,
 	hiddenEvents,
 	hiddenMessages
 }
 
-/// The [Field]s used in the [DataBox]es.
+/// The [Field]s used in the [StoredEntities]es.
 enum Field {
 	groupId,
 	name
