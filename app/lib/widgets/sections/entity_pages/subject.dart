@@ -55,18 +55,18 @@ class _SubjectPageState extends State<SubjectPage> {
 				)
 			],
 			options: [
-				OptionButton(
+				EntityActionButton(
 					text: "add an event",
 					action: () {}  // todo: implement
 				),
-				OptionButton(
+				EntityActionButton(
 					text: "add information",
 					action: () {}  // todo: implement
 				),
 				// todo: implement the following feature, add (follow / unfollow) buttons
-				if (Cloud.role == Role.leader) OptionButton(
+				if (Cloud.role == Role.leader) EntityActionButton(
 					text: "delete",
-					action: () {}  // todo: implement
+					action: () => Cloud.deleteSubject(widget._subject)
 				)
 			]
 		);

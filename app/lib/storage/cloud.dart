@@ -273,6 +273,16 @@ class Cloud {
 		return wasWritten;
 	}
 
+	// todo: should the events be deleted?
+	/// Deletes the [subject]. The [subject]'s events are kept.
+	static Future<void> deleteSubject(Subject subject) async {
+		final document = _document(Entities.subjects);
+		await Future.wait([
+			document.update({subject.id: FieldValue.delete()}),
+			document.collection(Entities.details.name).doc(subject.id).delete()
+		]);
+	}
+
 	/// Deletes the [event].
 	static Future<void> deleteEvent(Event event) async {
 		final document = _document(Entities.events);

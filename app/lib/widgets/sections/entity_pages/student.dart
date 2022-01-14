@@ -26,14 +26,14 @@ class StudentPage extends StatelessWidget {
 				if (_student.role != Role.ordinary) Text(_student.role.name)
 			],
 			options: [
-				_student.role == Role.ordinary ? OptionButton(
+				_student.role == Role.ordinary ? EntityActionButton(
 					text: "trust",
 					action: () => Cloud.makeTrusted(_student.name)
-				) : OptionButton(
+				) : EntityActionButton(
 					text: "untrust",
 					action: () => Cloud.makeOrdinary(_student.name)
 				),
-				OptionButton(
+				EntityActionButton(
 					text: "make the leader",
 					action: () => Cloud.makeLeader(_student.name)
 				)

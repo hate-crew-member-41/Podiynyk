@@ -51,16 +51,16 @@ class _EventPageState extends State<EventPage> {
 				)
 			],
 			options: [
-				if (widget._event.note == null) OptionButton(
+				if (widget._event.note == null) EntityActionButton(
 					text: "add a note",
 					action: () {}  // todo: implement
 				),
 				// todo: implement the queues feature, add (schedule / start, delete) buttons
-				OptionButton(
+				EntityActionButton(
 					text: "hide",
 					action: () => Local.addHiddenEntity(StoredEntities.hiddenEvents, widget._event)
 				),
-				OptionButton(
+				EntityActionButton(
 					text: "delete",
 					action: () => Cloud.deleteEvent(widget._event)
 				)

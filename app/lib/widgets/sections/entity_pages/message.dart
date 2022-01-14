@@ -37,10 +37,10 @@ class _MessagePageState extends State<MessagePage> {
 				if (author != null) Text("from $author"),
 				if (content != null) Text(content)
 			],
-			options: [Local.name != message.author ? OptionButton(
+			options: [Local.name != message.author ? EntityActionButton(
 				text: "hide",
 				action: () => Local.addHiddenEntity(StoredEntities.hiddenMessages, message)
-			) : OptionButton(
+			) : EntityActionButton(
 				text: "delete",
 				action: () => Cloud.deleteMessage(message)
 			)]

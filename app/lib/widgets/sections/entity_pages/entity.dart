@@ -34,11 +34,11 @@ class EntityPage extends StatelessWidget {
 }
 
 
-class OptionButton extends StatelessWidget {
+class EntityActionButton extends StatelessWidget {
 	final String text;
 	final void Function() action;
 
-	const OptionButton({
+	const EntityActionButton({
 		required this.text,
 		required this.action
 	});
