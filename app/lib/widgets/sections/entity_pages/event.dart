@@ -5,16 +5,15 @@ import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/event.dart' show Event;
 
 import '../section.dart' show EntityDate;
+import 'entity.dart';
 
 
-// todo: make entity pages share code
 class EventPage extends StatefulWidget {
 	final Event _event;
 	final _nameField = TextEditingController();
+	final _noteField = TextEditingController();
 
-	EventPage(this._event) {
-		_nameField.text = _event.name;
-	}
+	EventPage(this._event);
 
 	@override
 	State<EventPage> createState() => _EventPageState();
@@ -31,48 +30,41 @@ class _EventPageState extends State<EventPage> {
 	Widget build(BuildContext context) {
 		final subject = widget._event.subject;
 		final note = widget._event.note;
+		final hasNote = note != null;
 
-		return GestureDetector(
-			onLongPress: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Scaffold(
-				body: Column(
-				mainAxisAlignment: MainAxisAlignment.center,
-				crossAxisAlignment: CrossAxisAlignment.start,
-				children: [
-					TextButton(
-						child: const Text("add a note"),
-						onPressed: () {},  // todo: implement
-						style: const ButtonStyle(alignment: Alignment.centerLeft)
-					),
-					// todo: implement the queues feature, add (schedule / start, delete) buttons
-					TextButton(
-						child: const Text("hide"),
-						onPressed: () => Local.addHiddenEntity(StoredEntities.hiddenEvents, widget._event),
-						style: const ButtonStyle(alignment: Alignment.centerLeft)
-					),
-					TextButton(
-						child: const Text("delete"),
-						onPressed: () => Cloud.deleteEvent(widget._event),
-						style: const ButtonStyle(alignment: Alignment.centerLeft)
-					)
-				]
-			)
-			))),
-			child: Scaffold(
-				body: Column(
-					mainAxisAlignment: MainAxisAlignment.center,
-					crossAxisAlignment: CrossAxisAlignment.start,
-					children: [
-						TextField(
-							controller: widget._nameField,
-							decoration: const InputDecoration(hintText: "name"),
-							onSubmitted: (label) {},  // todo: add the label
-						),
-						if (subject != null) Text(subject),
-						Text(widget._event.date.fullRepr),
-						if (note != null) Text(note)
-					]
+		widget._nameField.text = widget._event.name;
+		if (hasNote) widget._noteField.text = note;
+
+		return EntityPage(
+			children: [
+				TextField(
+					controller: widget._nameField,
+					decoration: const InputDecoration(hintText: "name"),
+					onSubmitted: (label) {},  // todo: add the label
+				),
+				if (subject != null) Text(subject),
+				Text(widget._event.date.fullRepr),  // todo: allow changing
+				if (hasNote) TextField(
+					controller: widget._noteField,
+					decoration: const InputDecoration(hintText: "note"),
+					onSubmitted: (newNote) {},  // todo: change the note
 				)
-			)
+			],
+			options: [
+				if (widget._event.note == null) OptionButton(
+					text: "add a note",
+					action: () {}  // todo: implement
+				),
+				// todo: implement the queues feature, add (schedule / start, delete) buttons
+				OptionButton(
+					text: "hide",
+					action: () => Local.addHiddenEntity(StoredEntities.hiddenEvents, widget._event)
+				),
+				OptionButton(
+					text: "delete",
+					action: () => Cloud.deleteEvent(widget._event)
+				)
+			]
 		);
 	}
 }

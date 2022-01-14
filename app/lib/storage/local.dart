@@ -33,8 +33,8 @@ class Local {
 	static Iterable<E> hiddenEntities<E>(StoredEntities entities) => Hive.box<E>(entities.name).values;
 
 	/// Remembers the [entity] as hidden by the user.
-	static Future<void> addHiddenEntity(StoredEntities entities, StoredEntity entity) async {
-		await Hive.box(entities.name).add(entity.essence);
+	static Future<void> addHiddenEntity<E>(StoredEntities entities, StoredEntity<E> entity) async {
+		await Hive.box<E>(entities.name).add(entity.essence);
 	}
 
 	/// Deletes from the [entities] box the [Entity]ntities that are no more.

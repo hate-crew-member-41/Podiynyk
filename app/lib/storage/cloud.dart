@@ -64,6 +64,8 @@ class Cloud {
 			));
 		}
 
+		for (final events in events.values) events.sort((a, b) => a.date.compareTo(b.date));
+
 		return [for (final entry in entries.entries) Subject(
 			id: entry.key,
 			name: entry.value,

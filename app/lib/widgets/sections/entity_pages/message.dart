@@ -5,6 +5,7 @@ import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/message.dart' show Message;
 
 import '../section.dart' show EntityDate;
+import 'entity.dart';
 
 
 class MessagePage extends StatefulWidget {
@@ -29,33 +30,20 @@ class _MessagePageState extends State<MessagePage> {
 		final author = message.author;
 		final content = message.content;
 
-		return GestureDetector(
-			onLongPress: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => Scaffold(
-				body: Align(
-					alignment: Alignment.centerLeft,
-					child: Local.name != message.author ? TextButton(
-							child: const Text("hide"),
-							onPressed: () => Local.addHiddenEntity(StoredEntities.hiddenMessages, message),
-							style: const ButtonStyle(alignment: Alignment.centerLeft)
-						) : TextButton(
-							child: const Text("delete"),
-							onPressed: () => Cloud.deleteMessage(message),
-							style: const ButtonStyle(alignment: Alignment.centerLeft)
-						)
-				)
-			))),
-			child: Scaffold(
-				body: Column(
-					mainAxisAlignment: MainAxisAlignment.center,
-					crossAxisAlignment: CrossAxisAlignment.start,
-					children: [
-						Text(message.subject),
-						Text(message.date.fullRepr),
-						if (author != null) Text("from $author"),
-						if (content != null) Text(content)
-					]
-				)
-			)
+		return EntityPage(
+			children: [
+				Text(message.subject),
+				Text(message.date.fullRepr),
+				if (author != null) Text("from $author"),
+				if (content != null) Text(content)
+			],
+			options: [Local.name != message.author ? OptionButton(
+				text: "hide",
+				action: () => Local.addHiddenEntity(StoredEntities.hiddenMessages, message)
+			) : OptionButton(
+				text: "delete",
+				action: () => Cloud.deleteMessage(message)
+			)]
 		);
 	}
 }
