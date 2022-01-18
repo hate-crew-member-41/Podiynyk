@@ -20,10 +20,13 @@ class SubjectsSection extends ExtendableListSection<Subject> {
 	Future<List<Subject>> get entitiesFuture => Cloud.subjects();
 
 	@override
+	Future<int> get entityCount => futureEntities.then(
+		(subjects) => subjects.where((subject) => !subjectIsUnfollowed(subject)
+	).length);
+
+	@override
 	List<Widget> tiles(BuildContext context, List<Subject> subjects) {
-		final unfollowed = List<Subject>.from(subjects.where(
-			(subject) => Local.entityIsStored(StoredEntities.unfollowedSubjects, subject)
-		));
+		final unfollowed = List<Subject>.from(subjects.where(subjectIsUnfollowed));
 		subjects.removeWhere((subject) => unfollowed.contains(subject));
 
 		return [
@@ -31,6 +34,8 @@ class SubjectsSection extends ExtendableListSection<Subject> {
 			for (final subject in unfollowed) Opacity(opacity: 0.6, child: tile(context, subject)),
 		];
 	}
+
+	bool subjectIsUnfollowed(Subject subject) => Local.entityIsStored(StoredEntities.unfollowedSubjects, subject);
 
 	@override
 	Widget tile(BuildContext context, Subject subject) {

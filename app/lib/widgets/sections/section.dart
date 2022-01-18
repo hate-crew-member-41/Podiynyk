@@ -55,6 +55,8 @@ abstract class CloudListSection<E> extends Section {
 
 	Future<List<E>> get entitiesFuture;
 
+	Future<int> get entityCount => futureEntities.then((entities) => entities.length);
+
 	@override
 	Widget build(BuildContext context) {
 		return FutureBuilder(

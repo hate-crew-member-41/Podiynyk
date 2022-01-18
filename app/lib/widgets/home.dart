@@ -101,9 +101,9 @@ class _EntityCountState extends State<EntityCount> {
 		super.didUpdateWidget(oldWidget);
 	}
 
-	void scheduleRebuild() => widget._section.futureEntities.then((entities) => setState(() {
+	void scheduleRebuild() => widget._section.entityCount.then((count) => setState(() {
 		_isActual = true;
-		_count = entities.length;
+		_count = count;
 	}));
 
 	@override
