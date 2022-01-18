@@ -175,14 +175,14 @@ class Cloud {
 		details: {Field.totalEventCount.name: 0}
 	);
 
-	/// Adds the [info] to the [subject]'s details.
-	static Future<void> addSubjectInfo(Subject subject, String info) async {
+	/// Updates the [info] in the [subject]'s details.
+	static Future<void> updateSubjectInfo(Subject subject) async {
 		_document(Entities.subjects).collection(Entities.details.name).doc(subject.id).update({
-			Field.info.name: FieldValue.arrayUnion([info])
+			Field.info.name: subject.info
 		});
 	}
 
-	/// Adds an [Event] with the arguments unless it exists.
+	/// Adds an [Event] with the arguments unless it exists. Increments the [subject]'s total event count.
 	static Future<void> addEvent({
 		required String name,
 		String? subject,
@@ -197,10 +197,10 @@ class Cloud {
 				if (subject != null) Field.subject.name: subject,
 				Field.date.name: date,
 			},
-			details: note != null ? {Field.note.name: note} : null,
+			details: {if (note != null) Field.note.name: note},
 		);
 
-		if (wasWritten) {
+		if (subject != null && wasWritten) {
 			final document = _document(Entities.subjects);
 
 			final subjectsSnapshot = await document.get();
@@ -212,6 +212,13 @@ class Cloud {
 				Field.totalEventCount.name: FieldValue.increment(1)
 			});
 		}
+	}
+
+	/// Updates the [note] in the [event]'s details.
+	static Future<void> updateEventNote(Event event) async {
+		_document(Entities.events).collection(Entities.details.name).doc(event.id).update({
+			Field.note.name: event.note
+		});
 	}
 
 	/// Adds a [Message] with the arguments unless it exists.

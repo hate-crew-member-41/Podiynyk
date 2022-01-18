@@ -51,7 +51,7 @@ class _SubjectPageState extends State<SubjectPage> {
 				if (info != null) TextButton(
 					child: const Text("information"),
 					onPressed: () => _showPage([
-						for (final entry in info) Text(entry)
+						for (final entry in info) Text(entry)  // todo: make them fields to enable editing
 					])
 				),
 				if (events.isNotEmpty) TextButton(
@@ -79,7 +79,7 @@ class _SubjectPageState extends State<SubjectPage> {
 								))
 							)
 						)
-					))  // todo: implement
+					))
 				),
 				isFollowed ? EntityActionButton(
 					text: "unfollow",
@@ -107,7 +107,11 @@ class _SubjectPageState extends State<SubjectPage> {
 	}
 
 	void addInfo() {
+		final subject = widget._subject;
+		subject.info ??= [];
+
+		subject.info!.add(widget._infoField.text);
+		Cloud.updateSubjectInfo(widget._subject);
 		Navigator.of(context).pop();
-		Cloud.addSubjectInfo(widget._subject, widget._infoField.text);
 	}
 }

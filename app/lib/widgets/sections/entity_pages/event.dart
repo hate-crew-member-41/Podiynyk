@@ -28,11 +28,12 @@ class _EventPageState extends State<EventPage> {
 
 	@override
 	Widget build(BuildContext context) {
-		final subject = widget._event.subject;
-		final note = widget._event.note;
+		final event = widget._event;
+		final subject = event.subject;
+		final note = event.note;
 		final hasNote = note != null;
 
-		widget._nameField.text = widget._event.name;
+		widget._nameField.text = event.name;
 		if (hasNote) widget._noteField.text = note;
 
 		return EntityPage(
@@ -43,28 +44,43 @@ class _EventPageState extends State<EventPage> {
 					onSubmitted: (label) {},  // todo: add the label
 				),
 				if (subject != null) Text(subject),
-				Text(widget._event.date.fullRepr),  // todo: allow changing
+				Text(event.date.fullRepr),  // todo: allow changing
 				if (hasNote) TextField(
 					controller: widget._noteField,
-					decoration: const InputDecoration(hintText: "note"),
-					onSubmitted: (newNote) {},  // todo: change the note
+					decoration: const InputDecoration(hintText: "to be deleted"),
+					onSubmitted: (newNote) {},  // todo: update the note
 				)
 			],
 			actions: [
-				if (widget._event.note == null) EntityActionButton(
+				if (event.note == null) EntityActionButton(
 					text: "add a note",
-					action: () {}  // todo: implement
+					action: () => Navigator.of(context).push(MaterialPageRoute(
+						builder: (_) => GestureDetector(
+							onDoubleTap: addNote,
+							child: Scaffold(
+								body: Center(child: TextField(
+									controller: widget._noteField
+								))
+							)
+						)
+					))
 				),
 				// todo: implement the queues feature, add (schedule / start, delete) buttons
 				EntityActionButton(
 					text: "hide",
-					action: () => Local.addStoredEntity(StoredEntities.hiddenEvents, widget._event)
+					action: () => Local.addStoredEntity(StoredEntities.hiddenEvents, event)
 				),
 				EntityActionButton(
 					text: "delete",
-					action: () => Cloud.deleteEvent(widget._event)
+					action: () => Cloud.deleteEvent(event)
 				)
 			]
 		);
+	}
+
+	void addNote() {
+		widget._event.note = widget._noteField.text;
+		Cloud.updateEventNote(widget._event);
+		Navigator.of(context).pop();
 	}
 }
