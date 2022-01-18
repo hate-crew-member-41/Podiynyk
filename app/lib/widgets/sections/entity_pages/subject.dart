@@ -11,10 +11,9 @@ import 'entity.dart';
 
 class SubjectPage extends StatefulWidget {
 	final Subject _subject;
-	final bool isFollowed;
 	final _nameField = TextEditingController();
 
-	SubjectPage(this._subject, {required this.isFollowed}) {
+	SubjectPage(this._subject) {
 		_nameField.text = _subject.name;
 	}
 
@@ -35,6 +34,8 @@ class _SubjectPageState extends State<SubjectPage> {
 		final totalEventCount = subject.totalEventCount;
 		final info = subject.info;
 		final events = subject.events;
+
+		final isFollowed = !Local.entityIsStored(StoredEntities.unfollowedSubjects, subject);
 
 		return EntityPage(
 			children: [
@@ -66,7 +67,7 @@ class _SubjectPageState extends State<SubjectPage> {
 					text: "add information",
 					action: () {}  // todo: implement
 				),
-				widget.isFollowed ? EntityActionButton(
+				isFollowed ? EntityActionButton(
 					text: "unfollow",
 					action: () => Local.addStoredEntity(StoredEntities.unfollowedSubjects, subject)
 				) : EntityActionButton(

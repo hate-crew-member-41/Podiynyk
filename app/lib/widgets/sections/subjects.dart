@@ -20,20 +20,30 @@ class SubjectsSection extends ExtendableListSection<Subject> {
 	Future<List<Subject>> get entitiesFuture => Cloud.subjects();
 
 	@override
+	List<Widget> tiles(BuildContext context, List<Subject> subjects) {
+		final unfollowed = List<Subject>.from(subjects.where(
+			(subject) => Local.entityIsStored(StoredEntities.unfollowedSubjects, subject)
+		));
+		subjects.removeWhere((subject) => unfollowed.contains(subject));
+
+		return [
+			for (final subject in subjects) tile(context, subject),
+			for (final subject in unfollowed) Opacity(opacity: 0.6, child: tile(context, subject)),
+		];
+	}
+
+	@override
 	Widget tile(BuildContext context, Subject subject) {
-		final isFollowed = !Local.entityIsStored(StoredEntities.unfollowedSubjects, subject);
 		final nextEvent = _nextEvent(subject);
 
-		final tile = ListTile(
+		return ListTile(
 			title: Text(subject.name),
 			subtitle: Text(subject.eventCountRepr),
 			trailing: nextEvent != null ? Text(nextEvent.date.dateRepr) : null,
 			onTap: () => Navigator.of(context).push(MaterialPageRoute(
-				builder: (context) => SubjectPage(subject, isFollowed: isFollowed)
+				builder: (context) => SubjectPage(subject)
 			))
 		);
-
-		return isFollowed ? tile : Opacity(opacity: 0.6, child: tile);
 	}
 
 	Event? _nextEvent(Subject subject) {

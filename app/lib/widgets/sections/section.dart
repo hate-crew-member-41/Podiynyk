@@ -72,11 +72,15 @@ abstract class CloudListSection<E> extends Section {
 		// idea: consider an AnimatedOpacity animation with a different delay for each tile
 		return ListView(
 			children: [
-				for (final entity in snapshot.data!) tile(context, entity),
-				const ListTile()
+				...tiles(context, snapshot.data!),
+				if (this is ExtendableListSection) const ListTile()
 			]
 		);
 	}
+
+	List<Widget> tiles(BuildContext context, List<E> entities) => [
+		for (final entity in entities) tile(context, entity)
+	];
 
 	Widget tile(BuildContext context, E entity);
 }
