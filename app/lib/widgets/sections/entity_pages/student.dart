@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/student.dart';
 
 import 'entity.dart';
@@ -25,7 +26,7 @@ class StudentPage extends StatelessWidget {
 				),
 				if (_student.role != Role.ordinary) Text(_student.role.name)
 			],
-			options: [
+			actions: Cloud.role != Role.leader || _student.name == Local.name ? null : [
 				_student.role == Role.ordinary ? EntityActionButton(
 					text: "trust",
 					action: () => Cloud.makeTrusted(_student.name)

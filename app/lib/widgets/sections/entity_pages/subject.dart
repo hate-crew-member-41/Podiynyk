@@ -58,7 +58,7 @@ class _SubjectPageState extends State<SubjectPage> {
 					])
 				)
 			],
-			options: [
+			actions: [
 				EntityActionButton(
 					text: "add an event",
 					action: () {}  // todo: implement

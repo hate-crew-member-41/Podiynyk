@@ -50,7 +50,7 @@ class _EventPageState extends State<EventPage> {
 					onSubmitted: (newNote) {},  // todo: change the note
 				)
 			],
-			options: [
+			actions: [
 				if (widget._event.note == null) EntityActionButton(
 					text: "add a note",
 					action: () {}  // todo: implement

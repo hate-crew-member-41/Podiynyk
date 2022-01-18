@@ -37,7 +37,7 @@ class _MessagePageState extends State<MessagePage> {
 				if (author != null) Text("from $author"),
 				if (content != null) Text(content)
 			],
-			options: [Local.name != message.author ? EntityActionButton(
+			actions: [Local.name != message.author ? EntityActionButton(
 				text: "hide",
 				action: () => Local.addStoredEntity(StoredEntities.hiddenMessages, message)
 			) : EntityActionButton(
