@@ -14,6 +14,7 @@ import 'entity.dart';
 class SubjectPage extends StatefulWidget {
 	final Subject _subject;
 	final _nameField = TextEditingController();
+	final _infoField = TextEditingController();
 
 	SubjectPage(this._subject) {
 		_nameField.text = _subject.name;
@@ -69,7 +70,16 @@ class _SubjectPageState extends State<SubjectPage> {
 				),
 				EntityActionButton(
 					text: "add information",
-					action: () {}  // todo: implement
+					action: () => Navigator.of(context).push(MaterialPageRoute(
+						builder: (_) => GestureDetector(
+							onDoubleTap: addInfo,
+							child: Scaffold(
+								body: Center(child: TextField(
+									controller: widget._infoField
+								))
+							)
+						)
+					))  // todo: implement
 				),
 				isFollowed ? EntityActionButton(
 					text: "unfollow",
@@ -94,5 +104,10 @@ class _SubjectPageState extends State<SubjectPage> {
 				children: children
 			)
 		)));
+	}
+
+	void addInfo() {
+		Navigator.of(context).pop();
+		Cloud.addSubjectInfo(widget._subject, widget._infoField.text);
 	}
 }

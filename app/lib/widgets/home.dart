@@ -45,7 +45,7 @@ class _HomeState extends State<Home> {
 				))
 			),
 			body: _section,
-			drawer: Drawer(
+			drawer: Drawer(  // todo: group tiles
 				child: Column(
 					mainAxisAlignment: MainAxisAlignment.center,
 					children: [

@@ -48,7 +48,10 @@ class EntityActionButton extends StatelessWidget {
 	Widget build(BuildContext context) {
 		return TextButton(
 			child: Text(text),
-			onPressed: action,
+			onPressed: () {
+				Navigator.of(context).pop();
+				action();
+			},
 			style: const ButtonStyle(alignment: Alignment.centerLeft)
 		);
 	}

@@ -148,7 +148,7 @@ class Cloud {
 		final details = snapshot.data()!;
 
 		subject.totalEventCount = details[Field.totalEventCount.name];
-		subject.info = details[Field.info.name];
+		subject.info = List<String>.from(details[Field.info.name]);
 	}
 
 	/// Initializes the [event]'s detail fields.
@@ -174,6 +174,13 @@ class Cloud {
 		entity: name,
 		details: {Field.totalEventCount.name: 0}
 	);
+
+	/// Adds the [info] to the [subject]'s details.
+	static Future<void> addSubjectInfo(Subject subject, String info) async {
+		_document(Entities.subjects).collection(Entities.details.name).doc(subject.id).update({
+			Field.info.name: FieldValue.arrayUnion([info])
+		});
+	}
 
 	/// Adds an [Event] with the arguments unless it exists.
 	static Future<void> addEvent({
