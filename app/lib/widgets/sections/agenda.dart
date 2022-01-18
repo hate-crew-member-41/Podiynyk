@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import 'package:podiynyk/storage/entities/subject.dart';
+import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/event.dart';
 
 import 'entity_pages/event.dart';
@@ -15,7 +17,10 @@ class AgendaSection extends ExtendableListSection<Event> {
 	final icon = Icons.event_note;
 
 	@override
-	Future<List<Event>> get entitiesFuture => Cloud.events();
+	Future<List<Event>> get entitiesFuture => Cloud.events().then((events) {
+		final unfollowedEssences = Local.storedEntities<SubjectEssence>(StoredEntities.unfollowedSubjects);
+		return List<Event>.from(events.where((event) => !unfollowedEssences.contains(event.subject)));
+	});
 
 	@override
 	Widget tile(BuildContext context, Event event) => EventTile(event, showSubject: true);
