@@ -5,6 +5,8 @@ import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/student.dart' show Role;
 import 'package:podiynyk/storage/entities/subject.dart' show Subject;
 
+import 'package:podiynyk/widgets/sections/new_entity_pages/event.dart';
+
 import '../agenda.dart';
 import 'entity.dart';
 
@@ -61,7 +63,9 @@ class _SubjectPageState extends State<SubjectPage> {
 			actions: [
 				EntityActionButton(
 					text: "add an event",
-					action: () {}  // todo: implement
+					action: () => Navigator.of(context).push(MaterialPageRoute(
+						builder: (_) => NewEventPage.subjectEvent(subject.name)
+					))
 				),
 				EntityActionButton(
 					text: "add information",

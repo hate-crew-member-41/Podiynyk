@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 
+// todo: respond to actions (pop the actions page, display the new entity in the list, remove the deleted one, etc.)
 class EntityPage extends StatelessWidget {
 	final List<Widget> children;
 	final List<Widget>? actions;
