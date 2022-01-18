@@ -22,16 +22,16 @@ class Event implements DetailedEntity, StoredEntity<EventEssence> {
 	});
 
 	@override
+	Future<void> addDetails() => Cloud.addEventDetails(this);
+
+	@override
 	EventEssence get essence => {
 		'name': name, 
 		'subject': subject
 	};
 
 	@override
-	bool essenceIs(EventEssence essence) => name == essence['name'] && subject == essence['subject'];
-
-	@override
-	Future<void> addDetails() => Cloud.addEventDetails(this);
+	bool essenceIs(EventEssence comparedTo) => name == comparedTo['name'] && subject == comparedTo['subject'];
 
 	bool isBefore(Event event) => date.isBefore(event.date);
 }

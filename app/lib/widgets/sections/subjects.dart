@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/entities/event.dart';
 import 'package:podiynyk/storage/entities/subject.dart';
@@ -20,16 +21,19 @@ class SubjectsSection extends ExtendableListSection<Subject> {
 
 	@override
 	Widget tile(BuildContext context, Subject subject) {
+		final isFollowed = !Local.entityIsStored(StoredEntities.unfollowedSubjects, subject);
 		final nextEvent = _nextEvent(subject);
 
-		return ListTile(
+		final tile = ListTile(
 			title: Text(subject.name),
 			subtitle: Text(subject.eventCountRepr),
 			trailing: nextEvent != null ? Text(nextEvent.date.dateRepr) : null,
 			onTap: () => Navigator.of(context).push(MaterialPageRoute(
-				builder: (context) => SubjectPage(subject)
+				builder: (context) => SubjectPage(subject, isFollowed: isFollowed)
 			))
 		);
+
+		return isFollowed ? tile : Opacity(opacity: 0.6, child: tile);
 	}
 
 	Event? _nextEvent(Subject subject) {

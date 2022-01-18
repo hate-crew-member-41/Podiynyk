@@ -21,11 +21,11 @@ class Message implements DetailedEntity, StoredEntity<MessageEssence> {
 	});
 
 	@override
+	Future<void> addDetails() => Cloud.addMessageDetails(this);
+
+	@override
 	MessageEssence get essence => subject;
 
 	@override
-	bool essenceIs(MessageEssence essence) => subject == essence;
-
-	@override
-	Future<void> addDetails() => Cloud.addMessageDetails(this);
+	bool essenceIs(MessageEssence comparedTo) => subject == comparedTo;
 }

@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'entities/entity.dart' show StoredEntity;
 import 'entities/event.dart' show EventEssence;
 import 'entities/message.dart' show MessageEssence;
+import 'entities/subject.dart' show SubjectEssence;
 
 
 class Local {
@@ -11,6 +12,7 @@ class Local {
 		await Hive.initFlutter();
 		await Future.wait([
 			Hive.openBox<String>(StoredEntities.user.name),
+			Hive.openBox<SubjectEssence>(StoredEntities.unfollowedSubjects.name),
 			Hive.openBox<EventEssence>(StoredEntities.hiddenEvents.name),
 			Hive.openBox<MessageEssence>(StoredEntities.hiddenMessages.name)
 		]);
@@ -29,17 +31,28 @@ class Local {
 	/// The user's name.
 	static String get name => 'Leader Name';
 
-	/// The [StoredEntity.essence]s of the [entitie]s the user has hidden.
-	static Iterable<E> hiddenEntities<E>(StoredEntities entities) => Hive.box<E>(entities.name).values;
-
-	/// Remembers the [entity] as hidden by the user.
-	static Future<void> addHiddenEntity<E>(StoredEntities entities, StoredEntity<E> entity) async {
-		await Hive.box<E>(entities.name).add(entity.essence);
+	static bool entityIsStored<E>(StoredEntities entities, StoredEntity<E> entity) {
+		final storedEssences = _box<E>(entities).values;
+		return storedEssences.any((storedEssence) => entity.essenceIs(storedEssence));
 	}
 
-	/// Deletes from the [entities] box the [Entity]ntities that are no more.
-	static void clearHiddenEntities<Entity extends StoredEntity<Essence>, Essence>(StoredEntities entities, List<Entity> existing) {
-		final box = Hive.box<Essence>(entities.name);
+	/// Adds the [entity] to the [entities].
+	static Future<void> addStoredEntity<E>(StoredEntities entities, StoredEntity<E> entity) async {
+		await _box<E>(entities).add(entity.essence);
+	}
+
+	static Future<void> deleteStoredEntity<E>(StoredEntities entities, StoredEntity<E> entity) async {
+		final box = _box<E>(entities);
+		final key = box.toMap().entries.firstWhere((entry) => entity.essenceIs(entry.value)).key;
+		await _box<E>(entities).delete(key);
+	}
+
+	/// Deletes from the [entities] box the [Entity]s that are no more.
+	static void clearStoredEntities<Entity extends StoredEntity<Essence>, Essence>(
+		StoredEntities entities,
+		List<Entity> existing
+	) {
+		final box = _box<Essence>(entities);
 
 		for (final entry in box.toMap().entries) {
 			if (existing.every((entity) => !entity.essenceIs(entry.value))) {
@@ -47,17 +60,20 @@ class Local {
 			}
 		}
 	}
+
+	static Box<V> _box<V>(StoredEntities entities) => Hive.box<V>(entities.name);
 }
 
 
 /// The [Hive] [Box]es the local data is stored in.
 enum StoredEntities {
 	user,
+	unfollowedSubjects,
 	hiddenEvents,
 	hiddenMessages
 }
 
-/// The [Field]s used in the [StoredEntities]es.
+/// The [Field]s used in the [StoredEntities].
 enum Field {
 	groupId,
 	name

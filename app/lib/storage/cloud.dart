@@ -86,11 +86,10 @@ class Cloud {
 				date: entry.value[Field.date.name].toDate()
 			)
 		];
-		Local.clearHiddenEntities<Event, EventEssence>(StoredEntities.hiddenEvents, events);
+		Local.clearStoredEntities<Event, EventEssence>(StoredEntities.hiddenEvents, events);
 
-		final hiddenEssences = Local.hiddenEntities<EventEssence>(StoredEntities.hiddenEvents);
 		return events
-			..removeWhere((event) => hiddenEssences.any((essence) => event.essenceIs(essence)))
+			..removeWhere((event) => Local.entityIsStored(StoredEntities.hiddenEvents, event))
 			..sort((a, b) => a.date.compareTo(b.date));
 	}
 
@@ -106,11 +105,10 @@ class Cloud {
 				date: entry.value[Field.date.name].toDate()
 			)
 		];
-		Local.clearHiddenEntities<Message, MessageEssence>(StoredEntities.hiddenMessages, messages);
+		Local.clearStoredEntities<Message, MessageEssence>(StoredEntities.hiddenMessages, messages);
 
-		final hiddenEssences = Local.hiddenEntities<MessageEssence>(StoredEntities.hiddenMessages);
 		return messages
-			..removeWhere((message) => hiddenEssences.any((essence) => message.essenceIs(essence)))
+			..removeWhere((message) => Local.entityIsStored(StoredEntities.hiddenMessages, message))
 			..sort((a, b) => b.date.compareTo(a.date));
 	}
 

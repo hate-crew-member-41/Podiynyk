@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/student.dart' show Role;
 import 'package:podiynyk/storage/entities/subject.dart' show Subject;
 
@@ -10,9 +11,10 @@ import 'entity.dart';
 
 class SubjectPage extends StatefulWidget {
 	final Subject _subject;
+	final bool isFollowed;
 	final _nameField = TextEditingController();
 
-	SubjectPage(this._subject) {
+	SubjectPage(this._subject, {required this.isFollowed}) {
 		_nameField.text = _subject.name;
 	}
 
@@ -29,9 +31,10 @@ class _SubjectPageState extends State<SubjectPage> {
 
 	@override
 	Widget build(BuildContext context) {
-		final totalEventCount = widget._subject.totalEventCount;
-		final info = widget._subject.info;
-		final events = widget._subject.events;
+		final subject = widget._subject;
+		final totalEventCount = subject.totalEventCount;
+		final info = subject.info;
+		final events = subject.events;
 
 		return EntityPage(
 			children: [
@@ -40,7 +43,7 @@ class _SubjectPageState extends State<SubjectPage> {
 					decoration: const InputDecoration(hintText: "subject"),
 					onSubmitted: (label) {},  // todo: add the label
 				),
-				if (totalEventCount != null) Text("${widget._subject.totalEventCountRepr} so far"),
+				if (totalEventCount != null) Text("${subject.totalEventCountRepr} so far"),
 				if (info != null) TextButton(
 					child: const Text("information"),
 					onPressed: () => _showPage([
@@ -48,7 +51,7 @@ class _SubjectPageState extends State<SubjectPage> {
 					])
 				),
 				if (events.isNotEmpty) TextButton(
-					child: Text(widget._subject.eventCountRepr),
+					child: Text(subject.eventCountRepr),
 					onPressed: () => _showPage([
 						for (final event in events) EventTile(event, showSubject: false)
 					])
@@ -63,10 +66,16 @@ class _SubjectPageState extends State<SubjectPage> {
 					text: "add information",
 					action: () {}  // todo: implement
 				),
-				// todo: implement the following feature, add (follow / unfollow) buttons
+				widget.isFollowed ? EntityActionButton(
+					text: "unfollow",
+					action: () => Local.addStoredEntity(StoredEntities.unfollowedSubjects, subject)
+				) : EntityActionButton(
+					text: "follow",
+					action: () => Local.deleteStoredEntity(StoredEntities.unfollowedSubjects, subject)
+				),
 				if (Cloud.role == Role.leader) EntityActionButton(
 					text: "delete",
-					action: () => Cloud.deleteSubject(widget._subject)
+					action: () => Cloud.deleteSubject(subject)
 				)
 			]
 		);
