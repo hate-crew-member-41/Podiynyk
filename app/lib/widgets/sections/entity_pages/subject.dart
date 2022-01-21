@@ -61,14 +61,14 @@ class _SubjectPageState extends State<SubjectPage> {
 					])
 				)
 			],
-			actions: isFollowed ? [
-				EntityActionButton(
+			actions: [
+				if (isFollowed) EntityActionButton(
 					text: "add an event",
 					action: () => Navigator.of(context).push(MaterialPageRoute(
 						builder: (_) => NewEventPage.subjectEvent(subject.name)
 					))
 				),
-				EntityActionButton(
+				if (isFollowed) EntityActionButton(
 					text: "add information",
 					action: () => Navigator.of(context).push(MaterialPageRoute(
 						builder: (_) => GestureDetector(
@@ -92,7 +92,7 @@ class _SubjectPageState extends State<SubjectPage> {
 					text: "delete",
 					action: () => Cloud.deleteSubject(subject)
 				)
-			] : null
+			]
 		);
 	}
 
