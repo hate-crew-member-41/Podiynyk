@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:podiynyk/storage/entities/identification_option.dart';
 
 import 'local.dart';
 import 'entities/county.dart';
@@ -21,35 +22,36 @@ class Cloud {
 	}
 
 	/// The [County]s of Ukraine.
-	static Future<List<County>> counties() async {
-		final snapshot = await _cloud.collection(Entities.counties.name).doc(Entities.counties.name).get();
-		return [
-			for (final entry in snapshot.data()!.entries) County(
-				id: entry.key,
-				name: entry.value
-			)
-		]..sort((a, b) => a.name.compareTo(b.name));
-	}
+	static Future<List<County>> counties() => _identificationOptions(
+		entities: Entities.counties,
+		document: Entities.counties.name,
+		optionConstructor: ({required id, required name}) => County(id: id, name: name)
+	);
 
 	/// The [Univesity]s of the [county].
-	static Future<List<University>> universities(County county) async {
-		final snapshot = await _cloud.collection(Entities.counties.name).doc(county.id).get();
-		return [
-			for (final entry in snapshot.data()!.entries) University(
-				id: entry.key,
-				name: entry.value
-			)
-		]..sort((a, b) => a.name.compareTo(b.name));
-	}
+	static Future<List<University>> universities(County county) => _identificationOptions(
+		entities: Entities.counties,
+		document: county.id,
+		optionConstructor: ({required id, required name}) => University(id: id, name: name)
+	);
 
 	/// The [Department]s of the [university].
-	static Future<List<Department>> departments(University university) async {
-		final snapshot = await _cloud.collection(Entities.universities.name).doc(university.id).get();
+	static Future<List<Department>> departments(University university) => _identificationOptions(
+		entities: Entities.universities,
+		document: university.id,
+		optionConstructor: ({required id, required name}) => Department(id: id, name: name, university: university)
+	);
+
+	static Future<List<O>> _identificationOptions<O extends IdentificationOption>({
+		required Entities entities,
+		required String document,
+		required O Function({required String id, required String name}) optionConstructor
+	}) async {
+		final snapshot = await _cloud.collection(entities.name).doc(document).get();
 		return [
-			for (final entry in snapshot.data()!.entries) Department(
+			for (final entry in snapshot.data()!.entries) optionConstructor(
 				id: entry.key,
 				name: entry.value,
-				university: university
 			)
 		]..sort((a, b) => a.name.compareTo(b.name));
 	}

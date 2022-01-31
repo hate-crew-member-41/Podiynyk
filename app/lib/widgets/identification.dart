@@ -99,7 +99,10 @@ class _IdentificationFormState extends State<IdentificationForm> {
 		builder: _countiesBuilder
 	);
 
-	Widget _countiesBuilder(BuildContext context, AsyncSnapshot<List<County>> snapshot) => _optionsBuilder<County>(
+	Widget _countiesBuilder(
+		BuildContext context,
+		AsyncSnapshot<List<County>> snapshot
+	) => _optionsBuilder<County>(
 		context: context,
 		snapshot: snapshot,
 		onTap: (county) async {
@@ -116,7 +119,10 @@ class _IdentificationFormState extends State<IdentificationForm> {
 		}
 	);
 
-	Widget _universitiesBuilder(BuildContext context, AsyncSnapshot<List<University>> snapshot) => _optionsBuilder<University>(
+	Widget _universitiesBuilder(
+		BuildContext context,
+		AsyncSnapshot<List<University>> snapshot
+	) => _optionsBuilder<University>(
 		context: context,
 		snapshot: snapshot,
 		onTap: (university) async {
@@ -139,7 +145,10 @@ class _IdentificationFormState extends State<IdentificationForm> {
 		builder: _departmentsBuilder
 	);
 
-	Widget _departmentsBuilder(BuildContext context, AsyncSnapshot<List<Department>> snapshot) => _optionsBuilder<Department>(
+	Widget _departmentsBuilder(
+		BuildContext context,
+		AsyncSnapshot<List<Department>> snapshot
+	) => _optionsBuilder<Department>(
 		context: context,
 		snapshot: snapshot,
 		onTap: (department) {

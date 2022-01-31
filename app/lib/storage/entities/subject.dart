@@ -1,5 +1,4 @@
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
-
 import 'entity.dart';
 import 'event.dart';
 

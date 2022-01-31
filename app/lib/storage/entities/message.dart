@@ -1,4 +1,4 @@
-import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import '../cloud.dart' show Cloud;
 
 import 'entity.dart';
 
