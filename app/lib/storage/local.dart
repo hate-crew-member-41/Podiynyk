@@ -22,12 +22,14 @@ class Local {
 	static bool get userIsIdentified => groupId != null;
 
 	/// The id of the user's group.
-	static String? get groupId => Hive.box<String>(Stored.user.name).get(Field.groupId.name);
+	static String? get groupId => Hive.box<String>(Stored.user.name).get(_Field.groupId.name);
+	/// Sets the user's [groupId] to be the non-null [id].
+	static set groupId(String? id) => Hive.box<String>(Stored.user.name).put(_Field.groupId.name, id!);
 	// todo: switch after identification is implemented
 	// static String? get groupId => 'test.group.id';
 
 	/// The user's name.
-	static String get name => Hive.box<String>(Stored.user.name).get(Field.name.name)!;
+	static String get name => Hive.box<String>(Stored.user.name).get(_Field.name.name)!;
 	// todo: switch after identification is implemented
 	// static String get name => 'Leader Name';
 
@@ -79,8 +81,8 @@ enum Stored {
 	hiddenMessages
 }
 
-/// The [Field]s used in the [Stored].
-enum Field {
+/// The [_Field]s used in the [Stored].
+enum _Field {
 	groupId,
 	name
 }

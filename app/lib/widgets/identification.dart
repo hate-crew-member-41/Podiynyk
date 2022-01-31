@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import 'package:podiynyk/storage/local.dart' show Local;
 import 'package:podiynyk/storage/entities/county.dart';
 import 'package:podiynyk/storage/entities/department.dart';
 import 'package:podiynyk/storage/entities/identification_option.dart';
@@ -55,43 +56,48 @@ class _IdentificationFormState extends State<IdentificationForm> {
 	final _nameField = TextEditingController();
 
 	University? _university;
+	late Department _department;
 
 	@override
 	Widget build(BuildContext context) {
-		return Scaffold(
-			body: Column(
-				mainAxisAlignment: MainAxisAlignment.center,
-				crossAxisAlignment: CrossAxisAlignment.start,
-				children: [
-					GestureDetector(
-						onTap: _showCountyOptions,
-						child: TextField(
-							controller: _universityField,
-							enabled: false,
-							decoration: const InputDecoration(hintText: "university")
+		return GestureDetector(
+			onDoubleTap: _enterGroup,
+			child: Scaffold(
+				body: Column(
+					mainAxisAlignment: MainAxisAlignment.center,
+					crossAxisAlignment: CrossAxisAlignment.start,
+					children: [
+						GestureDetector(
+							onTap: _showCountyOptions,
+							child: TextField(
+								controller: _universityField,
+								enabled: false,
+								decoration: const InputDecoration(hintText: "university")
+							),
 						),
-					),
-					GestureDetector(
-						onTap: () => _university != null ? _showDepartmentOptions() : _showCountyOptions(),
-						child: TextField(
-							controller: _departmentField,
-							enabled: false,
-							decoration: const InputDecoration(hintText: "department")
+						GestureDetector(
+							onTap: () => _university != null ? _showDepartmentOptions() : _showCountyOptions(),
+							child: TextField(
+								controller: _departmentField,
+								enabled: false,
+								decoration: const InputDecoration(hintText: "department")
+							)
+						),
+						TextField(
+							controller: _groupField,
+							decoration: const InputDecoration(hintText: "group"),
+						),
+						TextField(
+							controller: _nameField,
+							decoration: const InputDecoration(hintText: "name"),
 						)
-					),
-					TextField(
-						controller: _groupField,
-						decoration: const InputDecoration(hintText: "group"),
-					),
-					TextField(
-						controller: _nameField,
-						decoration: const InputDecoration(hintText: "name"),
-					)
-				]
+					]
+				)
 			)
 		);
 	}
 
+	// todo: call asap after the build
 	Future<bool?> _showCountyOptions() => _showOptions(
 		context: context,
 		title: "county",
@@ -127,13 +133,11 @@ class _IdentificationFormState extends State<IdentificationForm> {
 		snapshot: snapshot,
 		onTap: (university) async {
 			_university = university;
-			final navigator = Navigator.of(context);
-
 			final departmentChosen = await _showDepartmentOptions();
 
 			if (departmentChosen == true) {
 				_universityField.text = university.name;
-				navigator.pop(true);
+				Navigator.of(context).pop(true);
 			}
 		}
 	);
@@ -152,6 +156,7 @@ class _IdentificationFormState extends State<IdentificationForm> {
 		context: context,
 		snapshot: snapshot,
 		onTap: (department) {
+			_department = department;
 			_departmentField.text = department.name;
 			Navigator.of(context).pop(true);
 		}
@@ -164,7 +169,10 @@ class _IdentificationFormState extends State<IdentificationForm> {
 		required Widget Function(BuildContext, AsyncSnapshot<List<O>>) builder
 	}) => Navigator.of(context).push<bool>(MaterialPageRoute(
 		builder: (_) => Scaffold(
-			appBar: AppBar(title: Text(title)),
+			appBar: AppBar(
+				title: Text(title),
+				automaticallyImplyLeading: false
+			),
 			body: FutureBuilder(
 				future: options,
 				builder: builder
@@ -187,5 +195,15 @@ class _IdentificationFormState extends State<IdentificationForm> {
 				onTap: () => onTap(option)
 			)
 		]);
+	}
+
+	void _enterGroup() {
+		if (_departmentField.text.isEmpty || _groupField.text.isEmpty || _nameField.text.isEmpty) return;
+
+		final groupName = _groupField.text.toLowerCase().replaceAll('-', ' ').replaceAll(' ', '');
+		final groupId = '${_university!.id}.${_department.id}.$groupName';
+		Local.groupId = groupId;
+		
+		// todo: enter group space
 	}
 }

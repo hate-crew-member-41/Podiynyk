@@ -62,12 +62,14 @@ class _SubjectPageState extends State<SubjectPage> {
 				)
 			],
 			actions: [
+				// todo: move this action to the event list through a FAD
 				if (isFollowed) EntityActionButton(
 					text: "add an event",
 					action: () => Navigator.of(context).push(MaterialPageRoute(
 						builder: (_) => NewEventPage.subjectEvent(subject.name)
 					))
 				),
+				// todo: move this action to the info list through a FAD
 				if (isFollowed) EntityActionButton(
 					text: "add information",
 					action: () => Navigator.of(context).push(MaterialPageRoute(

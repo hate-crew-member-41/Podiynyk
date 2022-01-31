@@ -39,7 +39,7 @@ class Cloud {
 	static Future<List<Department>> departments(University university) => _identificationOptions(
 		entities: Entities.universities,
 		document: university.id,
-		optionConstructor: ({required id, required name}) => Department(id: id, name: name, university: university)
+		optionConstructor: ({required id, required name}) => Department(id: id, name: name)
 	);
 
 	static Future<List<O>> _identificationOptions<O extends IdentificationOption>({
@@ -94,13 +94,13 @@ class Cloud {
 		final events = {for (final name in entries.values) name: <Event>[]};
 
 		for (final entry in eventEntries.entries.where(
-			(entry) => entry.value.containsKey(Field.subject.name)
+			(entry) => entry.value.containsKey(_Field.subject.name)
 		)) {
-			events[entry.value[Field.subject.name]]!.add(Event(
+			events[entry.value[_Field.subject.name]]!.add(Event(
 				id: entry.key,
-				name: entry.value[Field.name.name],
-				subject: entry.value[Field.subject.name],
-				date: entry.value[Field.date.name].toDate()
+				name: entry.value[_Field.name.name],
+				subject: entry.value[_Field.subject.name],
+				date: entry.value[_Field.date.name].toDate()
 			));
 		}
 
@@ -121,9 +121,9 @@ class Cloud {
 		final events = [
 			for (final entry in snapshot.data()!.entries) Event(
 				id: entry.key,
-				name: entry.value[Field.name.name],
-				subject: entry.value[Field.subject.name],
-				date: entry.value[Field.date.name].toDate()
+				name: entry.value[_Field.name.name],
+				subject: entry.value[_Field.subject.name],
+				date: entry.value[_Field.date.name].toDate()
 			)
 		];
 		Local.clearStoredEntities<Event, EventEssence>(Stored.hiddenEvents, events);
@@ -141,8 +141,8 @@ class Cloud {
 		final messages = [
 			for (final entry in snapshot.data()!.entries) Message(
 				id: entry.key,
-				subject: entry.value[Field.subject.name],
-				date: entry.value[Field.date.name].toDate()
+				subject: entry.value[_Field.subject.name],
+				date: entry.value[_Field.date.name].toDate()
 			)
 		];
 		Local.clearStoredEntities<Message, MessageEssence>(Stored.hiddenMessages, messages);
@@ -187,8 +187,8 @@ class Cloud {
 		final snapshot = await _groupDocument(Entities.subjects).collection(Entities.details.name).doc(subject.id).get();
 		final details = snapshot.data()!;
 
-		subject.totalEventCount = details[Field.totalEventCount.name];
-		subject.info = List<String>.from(details[Field.info.name]);
+		subject.totalEventCount = details[_Field.totalEventCount.name];
+		subject.info = List<String>.from(details[_Field.info.name]);
 	}
 
 	/// Initializes the [event]'s detail fields.
@@ -196,15 +196,15 @@ class Cloud {
 		final snapshot = await _groupDocument(Entities.events).collection(Entities.details.name).doc(event.id).get();
 		if (!snapshot.exists) return;
 
-		event.note = snapshot[Field.note.name];
+		event.note = snapshot[_Field.note.name];
 	}
 
 	/// Initializes the [message]'s detail fields.
 	static Future<void> addMessageDetails(Message message) async {
 		final snapshot = await _groupDocument(Entities.messages).collection(Entities.details.name).doc(message.id).get();
 		
-		message.content = snapshot[Field.content.name];
-		message.author = snapshot[Field.author.name];
+		message.content = snapshot[_Field.content.name];
+		message.author = snapshot[_Field.author.name];
 	}
 
 	/// Adds a [Subject] with the [name] unless it exists.
@@ -212,13 +212,13 @@ class Cloud {
 		entities: Entities.subjects,
 		existingEquals: (existingSubject) => existingSubject == name,
 		entity: name,
-		details: {Field.totalEventCount.name: 0}
+		details: {_Field.totalEventCount.name: 0}
 	);
 
 	/// Updates the [info] in the [subject]'s details.
 	static Future<void> updateSubjectInfo(Subject subject) async {
 		_groupDocument(Entities.subjects).collection(Entities.details.name).doc(subject.id).update({
-			Field.info.name: subject.info
+			_Field.info.name: subject.info
 		});
 	}
 
@@ -232,13 +232,13 @@ class Cloud {
 		final wasWritten = await _addEntity(
 			entities: Entities.events,
 			existingEquals: (existingEvent) =>
-				existingEvent[Field.name.name] == name && existingEvent[Field.subject.name] == subject,
+				existingEvent[_Field.name.name] == name && existingEvent[_Field.subject.name] == subject,
 			entity: {
-				Field.name.name: name,
-				if (subject != null) Field.subject.name: subject,
-				Field.date.name: date,
+				_Field.name.name: name,
+				if (subject != null) _Field.subject.name: subject,
+				_Field.date.name: date,
 			},
-			details: {if (note != null) Field.note.name: note},
+			details: {if (note != null) _Field.note.name: note},
 		);
 
 		if (subject != null && wasWritten) {
@@ -250,7 +250,7 @@ class Cloud {
 			).key;
 
 			document.collection(Entities.details.name).doc(subjectId).update({
-				Field.totalEventCount.name: FieldValue.increment(1)
+				_Field.totalEventCount.name: FieldValue.increment(1)
 			});
 		}
 	}
@@ -258,7 +258,7 @@ class Cloud {
 	/// Updates the [note] in the [event]'s details.
 	static Future<void> updateEventNote(Event event) async {
 		await _groupDocument(Entities.events).collection(Entities.details.name).doc(event.id).update({
-			Field.note.name: event.note
+			_Field.note.name: event.note
 		});
 	}
 
@@ -270,12 +270,12 @@ class Cloud {
 		entities: Entities.messages,
 		existingEquals: (existingSubject) => existingSubject == subject,
 		entity: {
-			Field.subject.name: subject,
-			Field.date.name: DateTime.now()
+			_Field.subject.name: subject,
+			_Field.date.name: DateTime.now()
 		},
 		details: {
-			Field.content.name: content,
-			Field.author.name: Local.name
+			_Field.content.name: content,
+			_Field.author.name: Local.name
 		},
 	);
 
@@ -402,8 +402,8 @@ enum Entities {
 	messages
 }
 
-/// The [Field]s used in [FirebaseFirestore].
-enum Field {
+/// The [_Field]s used in [FirebaseFirestore].
+enum _Field {
 	name,
 	totalEventCount,
 	info,
