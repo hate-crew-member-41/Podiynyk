@@ -18,7 +18,7 @@ class AgendaSection extends ExtendableListSection<Event> {
 
 	@override
 	Future<List<Event>> get entitiesFuture => Cloud.events().then((events) {
-		final unfollowedEssences = Local.storedEntities<SubjectEssence>(StoredEntities.unfollowedSubjects);
+		final unfollowedEssences = Local.storedEntities<SubjectEssence>(Stored.unfollowedSubjects);
 		return List<Event>.from(events.where((event) => !unfollowedEssences.contains(event.subject)));
 	});
 

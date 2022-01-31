@@ -3,9 +3,10 @@ app/android/
 app/ios/
 
 # Working with Firebase with Admin SDK
-firebase/HEIs/
 firebase/key.json
 firebase/counties.txt
+firebase/write_universities.py
+firebase/universities/
 
 # A script for code statistics
 app/code_stats.py

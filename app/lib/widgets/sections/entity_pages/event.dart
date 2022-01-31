@@ -68,7 +68,7 @@ class _EventPageState extends State<EventPage> {
 				// todo: implement the queues feature, add (schedule / start, delete) buttons
 				EntityActionButton(
 					text: "hide",
-					action: () => Local.addStoredEntity(StoredEntities.hiddenEvents, event)
+					action: () => Local.addStoredEntity(Stored.hiddenEvents, event)
 				),
 				EntityActionButton(
 					text: "delete",

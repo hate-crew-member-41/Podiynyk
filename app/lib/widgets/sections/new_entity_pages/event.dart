@@ -57,13 +57,13 @@ class _NewEventPageState extends State<NewEventPage> {
 				controller: widget._nameField,
 				decoration: const InputDecoration(hintText: "name")
 			),
-			if (widget._askSubject) GestureDetector(  // TextField.onTap is not called if the field is disabled
+			if (widget._askSubject) GestureDetector(
 				onTap: () => _askSubject(context),
 				child: TextField(
 					controller: widget._subjectField,
 					enabled: false,
 					decoration: const InputDecoration(hintText: "subject")
-				),
+				)
 			),
 			GestureDetector(
 				onTap: () => _askDate(context),

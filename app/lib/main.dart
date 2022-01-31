@@ -24,8 +24,8 @@ class App extends StatelessWidget {
 				builder: (context, snapshot) {
 					if (snapshot.connectionState == ConnectionState.waiting) return const Loading();
 					// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
-					if (!Local.userIsIdentified) return const Identification();
-					return const Home();
+					if (!Local.userIsIdentified) return Identification();
+					return const Home();  // todo: sync the role
 				},
 			)
 		);

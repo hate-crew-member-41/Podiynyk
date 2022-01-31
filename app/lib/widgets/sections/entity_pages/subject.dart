@@ -38,7 +38,7 @@ class _SubjectPageState extends State<SubjectPage> {
 		final info = subject.info;
 		final events = subject.events;
 
-		final isFollowed = !Local.entityIsStored(StoredEntities.unfollowedSubjects, subject);
+		final isFollowed = !Local.entityIsStored(Stored.unfollowedSubjects, subject);
 
 		return EntityPage(
 			children: [
@@ -83,10 +83,10 @@ class _SubjectPageState extends State<SubjectPage> {
 				),
 				isFollowed ? EntityActionButton(
 					text: "unfollow",
-					action: () => Local.addStoredEntity(StoredEntities.unfollowedSubjects, subject)
+					action: () => Local.addStoredEntity(Stored.unfollowedSubjects, subject)
 				) : EntityActionButton(
 					text: "follow",
-					action: () => Local.deleteStoredEntity(StoredEntities.unfollowedSubjects, subject)
+					action: () => Local.deleteStoredEntity(Stored.unfollowedSubjects, subject)
 				),
 				if (Cloud.role == Role.leader) EntityActionButton(
 					text: "delete",

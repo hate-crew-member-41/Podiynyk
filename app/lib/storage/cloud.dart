@@ -2,11 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'local.dart';
+import 'entities/county.dart';
+import 'entities/department.dart';
 import 'entities/event.dart';
 import 'entities/message.dart';
 import 'entities/question.dart';
 import 'entities/student.dart';
 import 'entities/subject.dart';
+import 'entities/university.dart';
 
 
 class Cloud {
@@ -15,16 +18,49 @@ class Cloud {
 	/// Initializes [Firebase] and synchronizes the user's [Role] in the group.
 	static Future<void> init() async {
 		await Firebase.initializeApp();
-		await _syncRole();
+	}
+
+	/// The [County]s of Ukraine.
+	static Future<List<County>> counties() async {
+		final snapshot = await _cloud.collection(Entities.counties.name).doc(Entities.counties.name).get();
+		return [
+			for (final entry in snapshot.data()!.entries) County(
+				id: entry.key,
+				name: entry.value
+			)
+		]..sort((a, b) => a.name.compareTo(b.name));
+	}
+
+	/// The [Univesity]s of the [county].
+	static Future<List<University>> universities(County county) async {
+		final snapshot = await _cloud.collection(Entities.counties.name).doc(county.id).get();
+		return [
+			for (final entry in snapshot.data()!.entries) University(
+				id: entry.key,
+				name: entry.value
+			)
+		]..sort((a, b) => a.name.compareTo(b.name));
+	}
+
+	/// The [Department]s of the [university].
+	static Future<List<Department>> departments(University university) async {
+		final snapshot = await _cloud.collection(Entities.universities.name).doc(university.id).get();
+		return [
+			for (final entry in snapshot.data()!.entries) Department(
+				id: entry.key,
+				name: entry.value,
+				university: university
+			)
+		]..sort((a, b) => a.name.compareTo(b.name));
 	}
 
 	static late Role _role;
-	/// The user's [Role] in the group.
+	/// The user's [Role].
 	static Role get role => _role;
 
-	/// Synchronizes the user's [Role] in the group.
+	/// Synchronizes the user's [Role].
 	static Future<void> _syncRole() async {
-		final snapshot = await _document(Entities.students).get();
+		final snapshot = await _groupDocument(Entities.students).get();
 		final students = snapshot.data()!;
 
 		if (students[Role.ordinary.name].contains(Local.name)) {
@@ -40,22 +76,24 @@ class Cloud {
 
 	/// The names of the group's subjects.
 	static Future<List<String>> subjectNames() async {
-		final snapshot = await _document(Entities.subjects).get();
+		final snapshot = await _groupDocument(Entities.subjects).get();
 		return snapshot.exists ? (List<String>.from(snapshot.data()!.values)..sort()) : <String>[];
 	}
 
 	/// The group's [Subject]s without the details.
 	static Future<List<Subject>> subjects() async {
 		final snapshots = await Future.wait([
-			_document(Entities.subjects).get(),
-			_document(Entities.events).get()
+			_groupDocument(Entities.subjects).get(),
+			_groupDocument(Entities.events).get()
 		]);
 		final entries = (snapshots.first.data() ?? {});
 		final eventEntries = (snapshots.last.data() ?? {});
 
 		final events = {for (final name in entries.values) name: <Event>[]};
 
-		for (final entry in eventEntries.entries.where((entry) => entry.value.containsKey(Field.subject.name))) {
+		for (final entry in eventEntries.entries.where(
+			(entry) => entry.value.containsKey(Field.subject.name)
+		)) {
 			events[entry.value[Field.subject.name]]!.add(Event(
 				id: entry.key,
 				name: entry.value[Field.name.name],
@@ -75,7 +113,7 @@ class Cloud {
 
 	/// The group's [Event]s without the details.
 	static Future<List<Event>> events() async {
-		final snapshot = await _document(Entities.events).get();
+		final snapshot = await _groupDocument(Entities.events).get();
 		if (!snapshot.exists) return <Event>[];
 
 		final events = [
@@ -86,16 +124,16 @@ class Cloud {
 				date: entry.value[Field.date.name].toDate()
 			)
 		];
-		Local.clearStoredEntities<Event, EventEssence>(StoredEntities.hiddenEvents, events);
+		Local.clearStoredEntities<Event, EventEssence>(Stored.hiddenEvents, events);
 
 		return events
-			..removeWhere((event) => Local.entityIsStored(StoredEntities.hiddenEvents, event))
+			..removeWhere((event) => Local.entityIsStored(Stored.hiddenEvents, event))
 			..sort((a, b) => a.date.compareTo(b.date));
 	}
 
 	/// The group's [Message]s without the details.
 	static Future<List<Message>> messages() async {
-		final snapshot = await _document(Entities.messages).get();
+		final snapshot = await _groupDocument(Entities.messages).get();
 		if (!snapshot.exists) return <Message>[];
 
 		final messages = [
@@ -105,10 +143,10 @@ class Cloud {
 				date: entry.value[Field.date.name].toDate()
 			)
 		];
-		Local.clearStoredEntities<Message, MessageEssence>(StoredEntities.hiddenMessages, messages);
+		Local.clearStoredEntities<Message, MessageEssence>(Stored.hiddenMessages, messages);
 
 		return messages
-			..removeWhere((message) => Local.entityIsStored(StoredEntities.hiddenMessages, message))
+			..removeWhere((message) => Local.entityIsStored(Stored.hiddenMessages, message))
 			..sort((a, b) => b.date.compareTo(a.date));
 	}
 
@@ -120,7 +158,7 @@ class Cloud {
 
 	/// The group's [Student]s. Updates the user's [Role].
 	static Future<List<Student>> students() async {
-		final snapshot = await _document(Entities.students).get();
+		final snapshot = await _groupDocument(Entities.students).get();
 		final entries = snapshot.data()!;
 
 		final students = [
@@ -144,7 +182,7 @@ class Cloud {
 
 	/// Initializes the [subject]'s detail fields.
 	static Future<void> addSubjectDetails(Subject subject) async {
-		final snapshot = await _document(Entities.subjects).collection(Entities.details.name).doc(subject.id).get();
+		final snapshot = await _groupDocument(Entities.subjects).collection(Entities.details.name).doc(subject.id).get();
 		final details = snapshot.data()!;
 
 		subject.totalEventCount = details[Field.totalEventCount.name];
@@ -153,7 +191,7 @@ class Cloud {
 
 	/// Initializes the [event]'s detail fields.
 	static Future<void> addEventDetails(Event event) async {
-		final snapshot = await _document(Entities.events).collection(Entities.details.name).doc(event.id).get();
+		final snapshot = await _groupDocument(Entities.events).collection(Entities.details.name).doc(event.id).get();
 		if (!snapshot.exists) return;
 
 		event.note = snapshot[Field.note.name];
@@ -161,7 +199,7 @@ class Cloud {
 
 	/// Initializes the [message]'s detail fields.
 	static Future<void> addMessageDetails(Message message) async {
-		final snapshot = await _document(Entities.messages).collection(Entities.details.name).doc(message.id).get();
+		final snapshot = await _groupDocument(Entities.messages).collection(Entities.details.name).doc(message.id).get();
 		
 		message.content = snapshot[Field.content.name];
 		message.author = snapshot[Field.author.name];
@@ -177,7 +215,7 @@ class Cloud {
 
 	/// Updates the [info] in the [subject]'s details.
 	static Future<void> updateSubjectInfo(Subject subject) async {
-		_document(Entities.subjects).collection(Entities.details.name).doc(subject.id).update({
+		_groupDocument(Entities.subjects).collection(Entities.details.name).doc(subject.id).update({
 			Field.info.name: subject.info
 		});
 	}
@@ -191,7 +229,8 @@ class Cloud {
 	}) async {
 		final wasWritten = await _addEntity(
 			entities: Entities.events,
-			existingEquals: (existingEvent) => existingEvent[Field.name.name] == name && existingEvent[Field.subject.name] == subject,
+			existingEquals: (existingEvent) =>
+				existingEvent[Field.name.name] == name && existingEvent[Field.subject.name] == subject,
 			entity: {
 				Field.name.name: name,
 				if (subject != null) Field.subject.name: subject,
@@ -201,7 +240,7 @@ class Cloud {
 		);
 
 		if (subject != null && wasWritten) {
-			final document = _document(Entities.subjects);
+			final document = _groupDocument(Entities.subjects);
 
 			final subjectsSnapshot = await document.get();
 			final subjectId = subjectsSnapshot.data()!.entries.firstWhere(
@@ -216,7 +255,7 @@ class Cloud {
 
 	/// Updates the [note] in the [event]'s details.
 	static Future<void> updateEventNote(Event event) async {
-		_document(Entities.events).collection(Entities.details.name).doc(event.id).update({
+		await _groupDocument(Entities.events).collection(Entities.details.name).doc(event.id).update({
 			Field.note.name: event.note
 		});
 	}
@@ -250,7 +289,7 @@ class Cloud {
 		required Object entity,
 		Map<String, Object>? details
 	}) async {
-		final document = _document(entities);
+		final document = _groupDocument(entities);
 
 		final id = await _cloud.runTransaction((transaction) async {
 			final snapshot = await transaction.get(document);
@@ -288,7 +327,7 @@ class Cloud {
 	// todo: should the events be deleted?
 	/// Deletes the [subject]. The [subject]'s events are kept.
 	static Future<void> deleteSubject(Subject subject) async {
-		final document = _document(Entities.subjects);
+		final document = _groupDocument(Entities.subjects);
 		await Future.wait([
 			document.update({subject.id: FieldValue.delete()}),
 			document.collection(Entities.details.name).doc(subject.id).delete()
@@ -297,7 +336,7 @@ class Cloud {
 
 	/// Deletes the [event].
 	static Future<void> deleteEvent(Event event) async {
-		final document = _document(Entities.events);
+		final document = _groupDocument(Entities.events);
 		await Future.wait([
 			document.update({event.id: FieldValue.delete()}),
 			document.collection(Entities.details.name).doc(event.id).delete()
@@ -306,7 +345,7 @@ class Cloud {
 
 	/// Deletes the [message].
 	static Future<void> deleteMessage(Message message) async {
-		final document = _document(Entities.messages);
+		final document = _groupDocument(Entities.messages);
 		await Future.wait([
 			document.update({message.id: FieldValue.delete()}),
 			document.collection(Entities.details.name).doc(message.id).delete()
@@ -315,7 +354,7 @@ class Cloud {
 
 	/// Sets the [Role] of the student with the [name] to [Role.trusted].
 	static Future<void> makeTrusted(String name) async {
-		await _document(Entities.students).update({
+		await _groupDocument(Entities.students).update({
 			Role.ordinary.name: FieldValue.arrayRemove([name]),
 			Role.trusted.name: FieldValue.arrayUnion([name])
 		});
@@ -323,7 +362,7 @@ class Cloud {
 
 	/// Sets the [Role] of the student with the [name] to [Role.ordinary].
 	static Future<void> makeOrdinary(String name) async {
-		await _document(Entities.students).update({
+		await _groupDocument(Entities.students).update({
 			Role.trusted.name: FieldValue.arrayRemove([name]),
 			Role.ordinary.name: FieldValue.arrayUnion([name])
 		});
@@ -331,20 +370,20 @@ class Cloud {
 
 	/// Sets the [Role] of the student with the [name] to [Role.leader], and the user's role to [Role.trusted].
 	static Future<void> makeLeader(String name) async {
-		final document = _document(Entities.students);
+		final document = _groupDocument(Entities.students);
 
 		final trustedSnapshot = await document.get();
 		final trusted = trustedSnapshot[Role.trusted.name];
 		trusted..remove(name)..add(Local.name);
 
-		await _document(Entities.students).update({
+		await _groupDocument(Entities.students).update({
 			Role.leader.name: name,
 			Role.trusted.name: trusted
 		});
 	}
 
 	/// [DocumentReference] to the document with the group's [entities].
-	static DocumentReference<Map<String, dynamic>> _document(Entities entities) {
+	static DocumentReference<Map<String, dynamic>> _groupDocument(Entities entities) {
 		return _cloud.collection(entities.name).doc(Local.groupId);
 	}
 }
@@ -352,6 +391,8 @@ class Cloud {
 
 /// The group's [Entities] stored in [FirebaseFirestore].
 enum Entities {
+	counties,
+	universities,
 	students,
 	subjects,
 	events,
