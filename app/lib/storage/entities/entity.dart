@@ -11,6 +11,6 @@ abstract class StoredEntity<E> {
 
 /// An entity with details that are not fetched immediately.
 abstract class DetailedEntity {
-	/// Fetches the entities details.
+	/// Fetches the entity's details.
 	Future<void> addDetails();
 }

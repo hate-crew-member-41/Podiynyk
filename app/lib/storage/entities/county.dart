@@ -1,9 +1,13 @@
-import 'package:podiynyk/storage/cloud.dart' show Cloud;
-import 'package:podiynyk/storage/entities/university.dart';
+import '../cloud.dart' show Cloud;
+
+import 'identification_option.dart';
+import 'university.dart';
 
 
-class County {
+class County implements IdentificationOption {
+	@override
 	final String id;
+	@override
 	final String name;
 	
 	const County({

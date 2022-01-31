@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/entities/county.dart';
 import 'package:podiynyk/storage/entities/department.dart';
+import 'package:podiynyk/storage/entities/identification_option.dart';
 import 'package:podiynyk/storage/entities/university.dart';
 
 
@@ -53,7 +54,7 @@ class _IdentificationFormState extends State<IdentificationForm> {
 	final _groupField = TextEditingController();
 	final _nameField = TextEditingController();
 
-	late University _university;
+	University? _university;
 
 	@override
 	Widget build(BuildContext context) {
@@ -63,33 +64,19 @@ class _IdentificationFormState extends State<IdentificationForm> {
 				crossAxisAlignment: CrossAxisAlignment.start,
 				children: [
 					GestureDetector(
-						onTap: () => Navigator.of(context).push(MaterialPageRoute(
-							builder: (_) => Scaffold(
-								appBar: AppBar(title: const Text("county")),
-								body: FutureBuilder(
-									future: Cloud.counties(),
-									builder: _countiesBuilder
-								)
-							)
-						)),
+						onTap: _showCountyOptions,
 						child: TextField(
 							controller: _universityField,
-							enabled: false
-						)
+							enabled: false,
+							decoration: const InputDecoration(hintText: "university")
+						),
 					),
 					GestureDetector(
-						onTap: () => Navigator.of(context).push(MaterialPageRoute(
-							builder: (_) => Scaffold(
-								appBar: AppBar(title: const Text("department")),
-								body: FutureBuilder(
-									future: _university.departments,
-									builder: _departmentsBuilder
-								)
-							)
-						)),
+						onTap: () => _university != null ? _showDepartmentOptions() : _showCountyOptions(),
 						child: TextField(
 							controller: _departmentField,
-							enabled: false
+							enabled: false,
+							decoration: const InputDecoration(hintText: "department")
 						)
 					),
 					TextField(
@@ -105,159 +92,91 @@ class _IdentificationFormState extends State<IdentificationForm> {
 		);
 	}
 
-	Widget _countiesBuilder(BuildContext context, AsyncSnapshot<List<County>> snapshot) {
-		if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(Icons.cloud_download));
+	Future<bool?> _showCountyOptions() => _showOptions(
+		context: context,
+		title: "county",
+		options: Cloud.counties(),
+		builder: _countiesBuilder
+	);
 
-		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+	Widget _countiesBuilder(BuildContext context, AsyncSnapshot<List<County>> snapshot) => _optionsBuilder<County>(
+		context: context,
+		snapshot: snapshot,
+		onTap: (county) async {
+			final navigator = Navigator.of(context);
 
-		return ListView(children: [
-			for (final county in snapshot.data!) ListTile(
-				title: Text(county.name),
-				onTap: () async {
-					final navigator = Navigator.of(context);
+			final universityChosen = await _showOptions(
+				context: context,
+				title: "university",
+				options: county.universities,
+				builder: _universitiesBuilder
+			);
 
-					final universityChosen = await navigator.push<bool>(MaterialPageRoute(
-						builder: (_) => Scaffold(
-							appBar: AppBar(title: const Text("university")),
-							body: FutureBuilder(
-								future: county.universities,
-								builder: _universitiesBuilder
-							)
-						)
-					));
+			if (universityChosen == true) navigator.pop();
+		}
+	);
 
-					if (universityChosen == true) navigator.pop();
-				}
+	Widget _universitiesBuilder(BuildContext context, AsyncSnapshot<List<University>> snapshot) => _optionsBuilder<University>(
+		context: context,
+		snapshot: snapshot,
+		onTap: (university) async {
+			_university = university;
+			final navigator = Navigator.of(context);
+
+			final departmentChosen = await _showDepartmentOptions();
+
+			if (departmentChosen == true) {
+				_universityField.text = university.name;
+				navigator.pop(true);
+			}
+		}
+	);
+
+	Future<bool?> _showDepartmentOptions() => _showOptions(
+		context: context,
+		title: "department",
+		options: _university!.departments,
+		builder: _departmentsBuilder
+	);
+
+	Widget _departmentsBuilder(BuildContext context, AsyncSnapshot<List<Department>> snapshot) => _optionsBuilder<Department>(
+		context: context,
+		snapshot: snapshot,
+		onTap: (department) {
+			_departmentField.text = department.name;
+			Navigator.of(context).pop(true);
+		}
+	);
+
+	Future<bool?> _showOptions<O extends IdentificationOption>({
+		required BuildContext context,
+		required String title,
+		required Future<List<O>> options,
+		required Widget Function(BuildContext, AsyncSnapshot<List<O>>) builder
+	}) => Navigator.of(context).push<bool>(MaterialPageRoute(
+		builder: (_) => Scaffold(
+			appBar: AppBar(title: Text(title)),
+			body: FutureBuilder(
+				future: options,
+				builder: builder
 			)
-		]);
-	}
+		)
+	));
 
-	Widget _universitiesBuilder(BuildContext context, AsyncSnapshot<List<University>> snapshot) {
+	Widget _optionsBuilder<O extends IdentificationOption>({
+		required BuildContext context,
+		required AsyncSnapshot<List<O>> snapshot,
+		required void Function(O) onTap
+	}) {
 		if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(Icons.cloud_download));
 
 		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
 		return ListView(children: [
-			for (final university in snapshot.data!) ListTile(
-				title: Text(university.name),
-				onTap: () async {
-					final navigator = Navigator.of(context);
-
-					final departmentChosen = await navigator.push<bool>(MaterialPageRoute(
-						builder: (_) => Scaffold(
-							appBar: AppBar(title: const Text("department")),
-							body: FutureBuilder(
-								future: university.departments,
-								builder: _departmentsBuilder
-							)
-						)
-					));
-
-					if (departmentChosen == true) {
-						_university = university;
-						_universityField.text = university.name;
-						navigator.pop(true);
-					}
-				}
-			)
-		]);
-	}
-
-	Widget _departmentsBuilder(BuildContext context, AsyncSnapshot<List<Department>> snapshot) {
-		if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(Icons.cloud_download));
-
-		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
-
-		return ListView(children: [
-			for (final department in snapshot.data!) ListTile(
-				title: Text(department.name),
-				onTap: () {
-					_departmentField.text = department.name;
-					Navigator.of(context).pop(true);
-				}
+			for (final option in snapshot.data!) ListTile(
+				title: Text(option.name),
+				onTap: () => onTap(option)
 			)
 		]);
 	}
 }
-
-
-// class DepartmentOptions extends StatefulWidget {
-// 	const DepartmentOptions();
-
-// 	@override
-// 	DepartmentOptionsState createState() => DepartmentOptionsState();
-// }
-
-// class DepartmentOptionsState extends State<DepartmentOptions> {
-// 	String _title = "county";
-// 	late Future<List<dynamic>> _options;
-// 	late Widget Function(BuildContext, AsyncSnapshot<List<dynamic>>) _optionsBuilder;
-
-// 	@override
-// 	void initState() {
-// 		_options = Cloud.counties();
-// 		_optionsBuilder = _countiesBuilder;
-// 		super.initState();
-// 	}
-
-// 	@override
-// 	Widget build(BuildContext context) {
-// 		return Scaffold(
-// 			appBar: AppBar(title: AnimatedSwitcher(
-// 				duration: const Duration(milliseconds: 200),
-// 				child: Text(_title)
-// 			)),
-// 			body: FutureBuilder(
-// 				future: _options,
-// 				builder: _optionsBuilder
-// 			)
-// 		);
-// 	}
-
-// 	Widget _countiesBuilder(BuildContext context, AsyncSnapshot<List<County>> snapshot) {
-// 		if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(Icons.cloud_download));
-
-// 		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
-
-// 		return ListView(children: [
-// 			for (final county in snapshot.data!) ListTile(
-// 				title: Text(county.name),
-// 				onTap: () => setState(() {
-// 					_title = "university";
-// 					_options = county.universities;
-// 					_optionsBuilder = _universitiesBuilder
-// 				})
-// 			)
-// 		]);
-// 	}
-
-// 	Widget _universitiesBuilder(BuildContext context, AsyncSnapshot<List<University>> snapshot) {
-// 		if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(Icons.cloud_download));
-
-// 		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
-
-// 		return ListView(children: [
-// 			for (final university in snapshot.data!) ListTile(
-// 				title: Text(university.name),
-// 				onTap: () => setState(() {
-// 					_title = "department";
-// 					_options = university.departments;
-// 					_optionsBuilder = _departmentsBuilder
-// 				})
-// 			)
-// 		]);
-// 	}
-
-// 	Widget _departmentsBuilder(BuildContext context, AsyncSnapshot<List<Department>> snapshot) {
-// 		if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(Icons.cloud_download));
-
-// 		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
-
-// 		return ListView(children: [
-// 			for (final university in snapshot.data!) ListTile(
-// 				title: Text(university.name),
-// 				onTap: () => Navigator.of(context).pop(),
-// 			)
-// 		]);
-// 	}
-// }

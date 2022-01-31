@@ -1,9 +1,13 @@
-import 'package:podiynyk/storage/cloud.dart' show Cloud;
-import 'package:podiynyk/storage/entities/department.dart';
+import '../cloud.dart' show Cloud;
+
+import 'identification_option.dart';
+import 'department.dart';
 
 
-class University {
+class University implements IdentificationOption {
+	@override
 	final String id;
+	@override
 	final String name;
 	
 	const University({
