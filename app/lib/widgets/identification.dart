@@ -11,6 +11,9 @@ import 'package:podiynyk/storage/entities/university.dart';
 class Identification extends StatefulWidget {
 	static const _intro = "This text is a placeholder, so here comes Loreeeeem... "
 		"Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque, architecto.";
+	final void Function() after;
+
+	const Identification({required this.after});
 
 	@override
 	State<Identification> createState() => _IdentificationState();
@@ -22,7 +25,7 @@ class _IdentificationState extends State<Identification> {
 	_IdentificationState() {
 		_content = GestureDetector(
 			onDoubleTap: () => setState(() {
-				_content = IdentificationForm();
+				_content = IdentificationForm(after: widget.after);
 			}),
 			child: Scaffold(
 				body: Column(
@@ -45,6 +48,9 @@ class _IdentificationState extends State<Identification> {
 
 
 class IdentificationForm extends StatefulWidget {
+	final void Function() after;
+	const IdentificationForm({required this.after});
+
 	@override
 	State<IdentificationForm> createState() => _IdentificationFormState();
 }
@@ -203,7 +209,8 @@ class _IdentificationFormState extends State<IdentificationForm> {
 		final groupName = _groupField.text.toLowerCase().replaceAll('-', ' ').replaceAll(' ', '');
 		final groupId = '${_university!.id}.${_department.id}.$groupName';
 		Local.groupId = groupId;
+		Local.name = _nameField.text;
 		
-		// todo: enter group space
+		Cloud.addStudent().whenComplete(widget.after);
 	}
 }

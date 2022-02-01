@@ -12,11 +12,6 @@ class NewEventPage extends StatefulWidget {
 	final String? _subject;
 	final List<String>? _subjectNames;
 
-	final _nameField = TextEditingController();
-	final _subjectField = TextEditingController();
-	final _dateField = TextEditingController();
-	final _noteField = TextEditingController();
-
 	NewEventPage(List<String> subjectNames) :
 		_askSubject = true,
 		_subjectRequired = false,
@@ -40,6 +35,11 @@ class NewEventPage extends StatefulWidget {
 }
 
 class _NewEventPageState extends State<NewEventPage> {
+	final _nameField = TextEditingController();
+	final _subjectField = TextEditingController();
+	final _dateField = TextEditingController();
+	final _noteField = TextEditingController();
+
 	String? _subjectName;
 	DateTime? _date;
 
@@ -54,13 +54,13 @@ class _NewEventPageState extends State<NewEventPage> {
 		addEntity: _add,
 		children: [
 			TextField(
-				controller: widget._nameField,
+				controller: _nameField,
 				decoration: const InputDecoration(hintText: "name")
 			),
 			if (widget._askSubject) GestureDetector(
 				onTap: () => _askSubject(context),
 				child: TextField(
-					controller: widget._subjectField,
+					controller: _subjectField,
 					enabled: false,
 					decoration: const InputDecoration(hintText: "subject")
 				)
@@ -68,13 +68,13 @@ class _NewEventPageState extends State<NewEventPage> {
 			GestureDetector(
 				onTap: () => _askDate(context),
 				child: TextField(
-					controller: widget._dateField,
+					controller: _dateField,
 					enabled: false,
 					decoration: const InputDecoration(hintText: "date")
 				)
 			),
 			TextField(
-				controller: widget._noteField,
+				controller: _noteField,
 				decoration: const InputDecoration(hintText: "note")
 			)
 		]
@@ -90,7 +90,7 @@ class _NewEventPageState extends State<NewEventPage> {
 						title: Text(name),
 						onTap: () {
 							_subjectName = name;
-							widget._subjectField.text = name;
+							_subjectField.text = name;
 							Navigator.of(context).pop();
 						}
 					)]
@@ -109,7 +109,7 @@ class _NewEventPageState extends State<NewEventPage> {
 		);
 		if (_date != null) {
 			await _askTime(context);
-			widget._dateField.text = _date!.fullRepr;
+			_dateField.text = _date!.fullRepr;
 		}
 	}
 
@@ -124,13 +124,12 @@ class _NewEventPageState extends State<NewEventPage> {
 	}
 
 	void _add(BuildContext context) {
-		final name = widget._nameField.text, note = widget._noteField.text;
 		if (widget._askSubject) {
-			final inputSubject = widget._subjectField.text;
+			final inputSubject = _subjectField.text;
 			_subjectName = inputSubject.isNotEmpty ? inputSubject : null;
 		}
 		if (
-			name.isEmpty ||
+			_nameField.text.isEmpty ||
 			(widget._subjectRequired && _subjectName == null) ||
 			_date == null
 		) return;
@@ -139,8 +138,9 @@ class _NewEventPageState extends State<NewEventPage> {
 		// idea: show the result of the request on the page?
 		Navigator.of(context).pop();
 
+		final note = _noteField.text;
 		Cloud.addEvent(
-			name: name,
+			name: _nameField.text,
 			subject: _subjectName,
 			date: _date!,
 			note: note.isNotEmpty ? note : null

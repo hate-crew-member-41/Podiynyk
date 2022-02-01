@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'storage/cloud.dart' show Cloud;
 import 'storage/local.dart' show Local;
 
-import 'widgets/home.dart' show Home;
-import 'widgets/identification.dart';
 import 'widgets/loading.dart';
+import 'widgets/app_main.dart';
 
 
 void main() {
@@ -13,20 +12,20 @@ void main() {
 }
 
 
+// todo: sync the role
 class App extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return MaterialApp(
-			theme: ThemeData(primarySwatch: Colors.amber),
+			theme: ThemeData(primarySwatch: Colors.grey),
 			title: 'Podiynyk',
 			home: FutureBuilder(
 				future: Future.wait([Local.init(), Cloud.init()]),
 				builder: (context, snapshot) {
 					if (snapshot.connectionState == ConnectionState.waiting) return const Loading();
 					// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
-					if (!Local.userIsIdentified) return Identification();
-					return const Home();  // todo: sync the role
-				},
+					return const AppMain();
+				}
 			)
 		);
 	}

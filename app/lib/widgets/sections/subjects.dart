@@ -35,7 +35,7 @@ class SubjectsSection extends ExtendableListSection<Subject> {
 		];
 	}
 
-	bool subjectIsUnfollowed(Subject subject) => Local.entityIsStored(Stored.unfollowedSubjects, subject);
+	bool subjectIsUnfollowed(Subject subject) => Local.entityIsStored(DataBox.unfollowedSubjects, subject);
 
 	@override
 	Widget tile(BuildContext context, Subject subject) {
