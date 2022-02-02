@@ -79,7 +79,7 @@ class Cloud {
 				id = intId.toString();
 
 				transaction.update(document, {
-					id: Local.name
+					_Field.names.name: {id: Local.name}
 				});
 			}
 			else {
@@ -87,7 +87,7 @@ class Cloud {
 				id = intId.toString();
 
 				transaction.set(document, {
-					_Field.roles.name: {id: Local.name},
+					_Field.names.name: {id: Local.name},
 					_Field.joined.name: DateTime.now()
 				});
 
