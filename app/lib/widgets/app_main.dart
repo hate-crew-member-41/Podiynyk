@@ -17,16 +17,15 @@ class AppMain extends StatefulWidget {
 class _AppMainState extends State<AppMain> {
 	@override
 	Widget build(BuildContext context) {
-		if (Local.userIsIdentified) return FutureBuilder<bool>(
-			future: Cloud.leaderIsDetermined(),
+		return Local.userIsIdentified ? FutureBuilder<bool>(
+			future: Cloud.leaderIsDetermined,
 			builder: (context, snapshot) {
 				if (snapshot.connectionState == ConnectionState.waiting) return const Icon(Icons.cloud_download);
 				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 				return GroupZone(leaderIsConfirmed: snapshot.data!);
 			}
+		) : Identification(
+			after: () => setState(() {})  // todo: provide this method using the provider package?
 		);
-
-		// todo: provide this method using the provider package?
-		return Identification(after: () => setState(() {}));
 	}
 }

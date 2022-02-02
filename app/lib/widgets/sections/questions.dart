@@ -13,7 +13,7 @@ class QuestionsSection extends ExtendableListSection<Question> {
 	final icon = Icons.question_answer;
 
 	@override
-	Future<List<Question>> get entitiesFuture => Cloud.questions();
+	Future<List<Question>> get entitiesFuture => Cloud.questions;
 
 	// todo: define
 	@override

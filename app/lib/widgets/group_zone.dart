@@ -16,6 +16,6 @@ class GroupZone extends StatefulWidget {
 class _GroupZoneState extends State<GroupZone> {
 	@override
 	Widget build(BuildContext context) {
-		return widget.leaderIsConfirmed ? const Home() : const LeaderDetermination();
+		return widget.leaderIsConfirmed ? const Home() : LeaderDetermination(after: () => setState(() {}));
 	}
 }

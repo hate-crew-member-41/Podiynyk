@@ -13,6 +13,15 @@ import 'entities/subject.dart';
 import 'entities/university.dart';
 
 
+extension on Map<String, dynamic> {
+	int get newId {
+		int id = 0;
+		while (containsKey(id)) id++;
+		return id;
+	}
+}
+
+
 class Cloud {
 	static final _cloud = FirebaseFirestore.instance;
 
@@ -22,7 +31,7 @@ class Cloud {
 	}
 
 	/// The [County]s of Ukraine.
-	static Future<List<County>> counties() => _identificationOptions(
+	static Future<List<County>> get counties => _identificationOptions(
 		entities: Collection.counties,
 		document: Collection.counties.name,
 		optionConstructor: ({required id, required name}) => County(id: id, name: name)
@@ -56,33 +65,45 @@ class Cloud {
 		]..sort((a, b) => a.name.compareTo(b.name));
 	}
 
-	/// Adds the student to the group. If they are the group's first student, initializes the group's documents.
-	static Future<void> addStudent() async {
+	/// Adds the user to the group. If they are the group's first student, initializes the group's documents.
+	static Future<void> enterGroup() async {
 		final document = _cloud.collection(Collection.groups.name).doc(Local.groupId);
-		final snapshot = await document.get();
 
-		if (snapshot.exists) {
-			document.update({
-				Role.ordinary.name: FieldValue.arrayUnion([Local.name])
-			});
-		}
-		else {
-			document.set({
-				Role.ordinary.name: [Local.name],
-				Role.trusted.name: <String>[],
-				_Field.joined.name: DateTime.now()
-			});
+		Local.id = await _cloud.runTransaction((transaction) async {
+			final snapshot = await transaction.get(document);
+			late int intId;
+			late String id;
 
-			_groupDocument(Collection.subjects).set({});
-			_groupDocument(Collection.events).set({});
-			_groupDocument(Collection.messages).set({});
-			_groupDocument(Collection.questions).set({});
-		}
+			if (snapshot.exists) {
+				intId = snapshot.data()!.newId;
+				id = intId.toString();
+
+				transaction.update(document, {
+					id: Local.name
+				});
+			}
+			else {
+				intId = 0;
+				id = intId.toString();
+
+				transaction.set(document, {
+					_Field.roles.name: {id: Local.name},
+					_Field.joined.name: DateTime.now()
+				});
+
+				_groupDocument(Collection.subjects).set({});
+				_groupDocument(Collection.events).set({});
+				_groupDocument(Collection.messages).set({});
+				_groupDocument(Collection.questions).set({});
+			}
+
+			return id;
+		});
 	}
 
-	static Future<bool> leaderIsDetermined() async {
+	static Future<bool> get leaderIsDetermined async {
 		final snapshot = await _groupDocument(Collection.groups).get();
-		return snapshot.data()!.containsKey(Role.leader);
+		return snapshot.data()!.containsKey(_Field.roles);
 	}
 
 	static late Role _role;
@@ -92,27 +113,18 @@ class Cloud {
 	/// Synchronizes the user's [Role].
 	static Future<void> _syncRole() async {
 		final snapshot = await _groupDocument(Collection.groups).get();
-		final students = snapshot.data()!;
-
-		if (students[Role.ordinary.name].contains(Local.name)) {
-			_role = Role.ordinary;
-		}
-		else if (students[Role.trusted.name].contains(Local.name)) {
-			_role = Role.trusted;
-		}
-		else {
-			_role = Role.leader;
-		}
+		final roleIndex = snapshot.data()![_Field.roles.name][Local.id];
+		_role = Role.values[roleIndex];
 	}
 
 	/// The names of the group's subjects.
-	static Future<List<String>> subjectNames() async {
+	static Future<List<String>> get subjectNames async {
 		final snapshot = await _groupDocument(Collection.subjects).get();
 		return snapshot.exists ? (List<String>.from(snapshot.data()!.values)..sort()) : <String>[];
 	}
 
 	/// The group's [Subject]s without the details.
-	static Future<List<Subject>> subjects() async {
+	static Future<List<Subject>> get subjects async {
 		final snapshots = await Future.wait([
 			_groupDocument(Collection.subjects).get(),
 			_groupDocument(Collection.events).get()
@@ -143,7 +155,7 @@ class Cloud {
 	}
 
 	/// The group's [Event]s without the details.
-	static Future<List<Event>> events() async {
+	static Future<List<Event>> get events async {
 		final snapshot = await _groupDocument(Collection.events).get();
 		if (!snapshot.exists) return <Event>[];
 
@@ -163,7 +175,7 @@ class Cloud {
 	}
 
 	/// The group's [Message]s without the details.
-	static Future<List<Message>> messages() async {
+	static Future<List<Message>> get messages async {
 		final snapshot = await _groupDocument(Collection.messages).get();
 		if (!snapshot.exists) return <Message>[];
 
@@ -183,27 +195,20 @@ class Cloud {
 
 	// todo: define
 	/// The group's [Question]s without the details.
-	static Future<List<Question>> questions() async {
+	static Future<List<Question>> get questions async {
 		return [];
 	}
 
 	/// The group's [Student]s. Updates the user's [Role].
-	static Future<List<Student>> students() async {
+	static Future<List<Student>> get students async {
 		final snapshot = await _groupDocument(Collection.groups).get();
-		final entries = snapshot.data()!;
+		final data = snapshot.data()!;
 
 		final students = [
-			for (final name in entries[Role.ordinary.name]) Student(
-				name: name,
-				role: Role.ordinary
-			),
-			for (final name in entries[Role.trusted.name]) Student(
-				name: name,
-				role: Role.trusted
-			),
-			Student(
-				name: entries[Role.leader.name],
-				role: Role.leader
+			for (final entry in data[_Field.names]) Student(
+				id: entry.key,
+				name: entry.value,
+				role: data[_Field.roles][entry.key]
 			)
 		]..sort((a, b) => a.name.compareTo(b.name));
 
@@ -325,7 +330,7 @@ class Cloud {
 
 		final id = await _cloud.runTransaction((transaction) async {
 			final snapshot = await transaction.get(document);
-			int intId = 0;
+			late int intId;
 
 			if (snapshot.exists) {
 				final entries = snapshot.data()!;
@@ -334,8 +339,10 @@ class Cloud {
 					if (existingEquals(existingEntity)) return null;
 				}
 
-				final takenIds = entries.keys;
-				while (takenIds.contains(intId.toString())) intId++;
+				intId = entries.newId;
+			}
+			else {
+				intId = 0;
 			}
 
 			final id = intId.toString();
@@ -384,33 +391,20 @@ class Cloud {
 		]);
 	}
 
-	/// Sets the [Role] of the student with the [name] to [Role.trusted].
-	static Future<void> makeTrusted(String name) async {
+	/// Sets the [student]'s [Role] to [role].
+	static Future<void> setRole(Student student, Role role) async {
 		await _groupDocument(Collection.groups).update({
-			Role.ordinary.name: FieldValue.arrayRemove([name]),
-			Role.trusted.name: FieldValue.arrayUnion([name])
+			_Field.roles.name: {student.id: role.index}
 		});
 	}
 
-	/// Sets the [Role] of the student with the [name] to [Role.ordinary].
-	static Future<void> makeOrdinary(String name) async {
-		await _groupDocument(Collection.groups).update({
-			Role.trusted.name: FieldValue.arrayRemove([name]),
-			Role.ordinary.name: FieldValue.arrayUnion([name])
-		});
-	}
-
-	/// Sets the [Role] of the student with the [name] to [Role.leader], and the user's role to [Role.trusted].
-	static Future<void> makeLeader(String name) async {
+	/// Sets the [Role] of the [student] to [Role.leader], and the user's role to [Role.trusted].
+	static Future<void> makeLeader(Student student) async {
 		final document = _groupDocument(Collection.groups);
 
-		final trustedSnapshot = await document.get();
-		final trusted = trustedSnapshot[Role.trusted.name];
-		trusted..remove(name)..add(Local.name);
-
-		await _groupDocument(Collection.groups).update({
-			Role.leader.name: name,
-			Role.trusted.name: trusted
+		document.update({
+			Local.id: Role.trusted.index,
+			student.id: Role.leader.index
 		});
 	}
 
@@ -435,6 +429,9 @@ enum Collection {
 
 /// The [_Field]s used in [FirebaseFirestore].
 enum _Field {
+	names,
+	confirmations,
+	roles,
 	joined,
 	name,
 	totalEventCount,

@@ -32,12 +32,15 @@ class Local {
 	/// Sets the user's [groupId] to be the non-null [id].
 	static set groupId(String? id) => Hive.box<String>(DataBox.user.name).put(_Field.groupId.name, id!);
 
+	/// Sets the user's [id].
+	static set id(String id) => Hive.box<String>(DataBox.user.name).put(_Field.id.name, id);
+	/// The user's [id] in the group.
+	static String get id => Hive.box<String>(DataBox.user.name).get(_Field.id.name)!;
+
+	/// Sets the user's [name].
+	static set name(String name) => Hive.box<String>(DataBox.user.name).put(_Field.name.name, name);
 	/// The user's name.
 	static String get name => Hive.box<String>(DataBox.user.name).get(_Field.name.name)!;
-	/// Sets the user's [name] to be [name].
-	static set name(String name) => Hive.box<String>(DataBox.user.name).put(_Field.name.name, name);
-	// todo: switch after identification is implemented
-	// static String get name => 'Leader Name';
 
 	/// The [E]ssences of the stored [entities].
 	static Iterable<E> storedEntities<E>(DataBox entities) => _box<E>(entities).values;
@@ -90,5 +93,6 @@ enum DataBox {
 /// The [_Field]s used in the [DataBox].
 enum _Field {
 	groupId,
+	id,
 	name
 }

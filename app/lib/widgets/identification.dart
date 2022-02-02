@@ -9,8 +9,6 @@ import 'package:podiynyk/storage/entities/university.dart';
 
 
 class Identification extends StatefulWidget {
-	static const _intro = "This text is a placeholder, so here comes Loreeeeem... "
-		"Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque, architecto.";
 	final void Function() after;
 
 	const Identification({required this.after});
@@ -20,6 +18,9 @@ class Identification extends StatefulWidget {
 }
 
 class _IdentificationState extends State<Identification> {
+	static const _intro = "This text is a placeholder, so here comes Loreeeeem... "
+		"Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque, architecto.";
+
 	late Widget _content;
 
 	_IdentificationState() {
@@ -33,7 +34,7 @@ class _IdentificationState extends State<Identification> {
 					crossAxisAlignment: CrossAxisAlignment.start,
 					children: const [
 						Text('Hi'),
-						Text(Identification._intro)
+						Text(_intro)
 					]
 				)
 			)
@@ -107,7 +108,7 @@ class _IdentificationFormState extends State<IdentificationForm> {
 	Future<bool?> _showCountyOptions() => _showOptions(
 		context: context,
 		title: "county",
-		options: Cloud.counties(),
+		options: Cloud.counties,
 		builder: _countiesBuilder
 	);
 
@@ -211,6 +212,6 @@ class _IdentificationFormState extends State<IdentificationForm> {
 		Local.groupId = groupId;
 		Local.name = _nameField.text;
 		
-		Cloud.addStudent().whenComplete(widget.after);
+		Cloud.enterGroup().whenComplete(widget.after);
 	}
 }

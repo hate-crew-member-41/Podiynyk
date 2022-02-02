@@ -1,8 +1,10 @@
 class Student {
+	final String id;
 	final String name;
 	final Role role;
 
 	const Student({
+		required this.id,
 		required this.name,
 		required this.role
 	});

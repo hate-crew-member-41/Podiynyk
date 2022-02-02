@@ -15,7 +15,7 @@ class MessagesSection extends ExtendableListSection<Message> {
 	final icon = Icons.messenger;
 
 	@override
-	Future<List<Message>> get entitiesFuture => Cloud.messages();
+	Future<List<Message>> get entitiesFuture => Cloud.messages;
 
 	@override
 	Widget tile(BuildContext context, Message message) => ListTile(

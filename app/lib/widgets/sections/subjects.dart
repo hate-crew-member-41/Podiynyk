@@ -17,7 +17,7 @@ class SubjectsSection extends ExtendableListSection<Subject> {
 	final icon = Icons.school;
 
 	@override
-	Future<List<Subject>> get entitiesFuture => Cloud.subjects();
+	Future<List<Subject>> get entitiesFuture => Cloud.subjects;
 
 	@override
 	Future<int> get entityCount => futureEntities.then(

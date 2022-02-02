@@ -15,7 +15,7 @@ class EventsSection extends ExtendableListSection<Event> {
 	final icon = Icons.calendar_today;
 
 	@override
-	Future<List<Event>> get entitiesFuture => Cloud.events().then((events) =>
+	Future<List<Event>> get entitiesFuture => Cloud.events.then((events) =>
 		List<Event>.from(events.where((event) => event.subject == null))
 	);
 

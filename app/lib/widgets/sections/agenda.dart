@@ -17,7 +17,7 @@ class AgendaSection extends ExtendableListSection<Event> {
 	final icon = Icons.event_note;
 
 	@override
-	Future<List<Event>> get entitiesFuture => Cloud.events().then((events) {
+	Future<List<Event>> get entitiesFuture => Cloud.events.then((events) {
 		final unfollowedEssences = Local.storedEntities<SubjectEssence>(DataBox.unfollowedSubjects);
 		return List<Event>.from(events.where((event) => !unfollowedEssences.contains(event.subject)));
 	});
@@ -62,7 +62,7 @@ class _AddEventButtonState extends State<AddEventButton> {
 
 	@override
 	void initState() {
-		Cloud.subjectNames().then((subjectNames) => setState(() => _subjectNames = subjectNames));
+		Cloud.subjectNames.then((subjectNames) => setState(() => _subjectNames = subjectNames));
 		super.initState();
 	}
 
