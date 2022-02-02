@@ -67,7 +67,7 @@ class Cloud {
 
 	/// Adds the user to the group. If they are the group's first student, initializes the group's documents.
 	static Future<void> enterGroup() async {
-		final document = _cloud.collection(Collection.groups.name).doc(Local.groupId);
+		final document = _groupDocument(Collection.groups);
 
 		Local.id = await _cloud.runTransaction((transaction) async {
 			final snapshot = await transaction.get(document);
@@ -88,6 +88,7 @@ class Cloud {
 
 				transaction.set(document, {
 					_Field.names.name: {id: Local.name},
+					_Field.confirmations.name: <String, int>{},
 					_Field.joined.name: DateTime.now()
 				});
 
@@ -101,9 +102,21 @@ class Cloud {
 		});
 	}
 
+	/// Whether the group is past the [LeaderDetermination] step.
 	static Future<bool> get leaderIsDetermined async {
 		final snapshot = await _groupDocument(Collection.groups).get();
 		return snapshot.data()!.containsKey(_Field.roles);
+	}
+
+	static Stream<Map<String, int?>> get confirmationUpdates {
+		return _groupDocument(Collection.groups).snapshots().map((document) {
+			final data = document.data()!;
+			// print(data);
+
+			return {for (final entry in data[_Field.names.name].entries)
+				entry.value: data[_Field.confirmations.name][entry.key]
+			};
+		});
 	}
 
 	static late Role _role;
@@ -208,7 +221,7 @@ class Cloud {
 			for (final entry in data[_Field.names]) Student(
 				id: entry.key,
 				name: entry.value,
-				role: data[_Field.roles][entry.key]
+				role: Role.values[data[_Field.roles][entry.key]]
 			)
 		]..sort((a, b) => a.name.compareTo(b.name));
 
@@ -330,22 +343,13 @@ class Cloud {
 
 		final id = await _cloud.runTransaction((transaction) async {
 			final snapshot = await transaction.get(document);
-			late int intId;
+			final entries = snapshot.data()!;
 
-			if (snapshot.exists) {
-				final entries = snapshot.data()!;
-
-				for (final existingEntity in entries.values) {
-					if (existingEquals(existingEntity)) return null;
-				}
-
-				intId = entries.newId;
-			}
-			else {
-				intId = 0;
+			for (final existingEntity in entries.values) {
+				if (existingEquals(existingEntity)) return null;
 			}
 
-			final id = intId.toString();
+			final id = entries.newId.toString();
 			final entityEntry = {id: entity};
 
 			if (snapshot.exists) {

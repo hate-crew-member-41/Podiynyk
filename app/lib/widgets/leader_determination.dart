@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:podiynyk/storage/cloud.dart' show Cloud;
+
 
 class LeaderDetermination extends StatefulWidget {
 	final void Function() after;
@@ -43,6 +45,7 @@ class _LeaderDeterminationState extends State<LeaderDetermination> {
 
 class LeaderDeterminationStudentList extends StatefulWidget {
 	final void Function() after;
+
 	const LeaderDeterminationStudentList({required this.after});
 
 	@override
@@ -50,12 +53,28 @@ class LeaderDeterminationStudentList extends StatefulWidget {
 }
 
 class _LeaderDeterminationStudentListState extends State<LeaderDeterminationStudentList> {
+	
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(
-			// body: Center(child: StreamBuilder(
-			// 	stream: Cloud.
-			// ))
+			body: Center(child: StreamBuilder<Map<String, int?>>(
+				stream: Cloud.confirmationUpdates,
+				builder: (context, snapshot) {
+					if (snapshot.connectionState == ConnectionState.waiting) return const Icon(Icons.cloud_download);
+					// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+					
+					final entries = snapshot.data!.entries.toList()..sort((a, b) => a.key.compareTo(b.key));
+					return ListView(
+						shrinkWrap: true,
+						children: [
+							for (final entry in entries) ListTile(
+								title: Text(entry.key),
+								trailing: entry.value == null ? null : Text("${entry.value}/3")  // todo: replace the 3 with the variable to be used
+							)
+						]
+					);
+				}
+			))
 		);
 	}
 }
