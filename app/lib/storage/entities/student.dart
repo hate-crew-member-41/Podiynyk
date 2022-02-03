@@ -1,12 +1,14 @@
 class Student {
 	final String id;
 	final String name;
-	final Role role;
+	final Role? role;
+	final int? confirmationCount;
 
 	const Student({
 		required this.id,
 		required this.name,
-		required this.role
+		this.role,
+		this.confirmationCount
 	});
 }
 

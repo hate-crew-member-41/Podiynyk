@@ -75,11 +75,14 @@ class Cloud {
 			late String id;
 
 			if (snapshot.exists) {
-				intId = snapshot.data()!.newId;
+				final data = snapshot.data()!;
+				intId = data.newId;
 				id = intId.toString();
 
+				final selfInitField = data.containsKey(_Field.roles.name) ? _Field.roles : _Field.confirmationCounts;
 				transaction.update(document, {
-					_Field.names.name: {id: Local.name}
+					'${_Field.names.name}.$id': Local.name,
+					'${selfInitField.name}.$id': 0
 				});
 			}
 			else {
@@ -87,8 +90,8 @@ class Cloud {
 				id = intId.toString();
 
 				transaction.set(document, {
-					_Field.names.name: {id: Local.name},
-					_Field.confirmations.name: <String, int>{},
+					'${_Field.names.name}.$id': Local.name,
+					'${_Field.confirmationCounts.name}.$id': 0,
 					_Field.joined.name: DateTime.now()
 				});
 
@@ -102,29 +105,44 @@ class Cloud {
 		});
 	}
 
-	/// Whether the group is past the [LeaderDetermination] step.
+	/// Whether the group is past the [LeaderElection] step.
 	static Future<bool> get leaderIsDetermined async {
 		final snapshot = await _groupDocument(Collection.groups).get();
 		return snapshot.data()!.containsKey(_Field.roles);
 	}
 
-	static Stream<Map<String, int?>> get confirmationUpdates {
+	/// A [Stream] of updates of the group's [Student]s and confirmations for them to be the [Role.leader].
+	static Stream<List<Student>> get leaderElectionUpdates {
 		return _groupDocument(Collection.groups).snapshots().map((document) {
 			final data = document.data()!;
-			// print(data);
 
-			return {for (final entry in data[_Field.names.name].entries)
-				entry.value: data[_Field.confirmations.name][entry.key]
-			};
+			return [
+				for (final entry in data[_Field.names.name].entries) Student(
+					id: entry.key,
+					name: entry.value,
+					confirmationCount: data[_Field.confirmationCounts.name][entry.key]
+				)
+			]..sort((a, b) => int.parse(a.id).compareTo(int.parse(b.id)));
+		});
+	}
+
+	/// Adds a vote for the [Student] with the id [toId] and takes a vote from one with the id [fromId], if not `null`;
+	static Future<void> changeLeaderVote({
+		required String toId,
+		String? fromId
+	}) async {
+		await _groupDocument(Collection.groups).update({
+			'${_Field.confirmationCounts.name}.$toId': FieldValue.increment(1),
+			if (fromId != null) '${_Field.confirmationCounts.name}.$fromId': FieldValue.increment(-1)
 		});
 	}
 
 	static late Role _role;
-	/// The user's [Role].
+	/// The user's [Role]. Requires [syncRole] to have been called.
 	static Role get role => _role;
 
 	/// Synchronizes the user's [Role].
-	static Future<void> _syncRole() async {
+	static Future<void> syncRole() async {
 		final snapshot = await _groupDocument(Collection.groups).get();
 		final roleIndex = snapshot.data()![_Field.roles.name][Local.id];
 		_role = Role.values[roleIndex];
@@ -225,7 +243,7 @@ class Cloud {
 			)
 		]..sort((a, b) => a.name.compareTo(b.name));
 
-		_role = students.firstWhere((student) => student.name == Local.name).role;
+		_role = students.firstWhere((student) => student.name == Local.name).role!;
 		return students;
 	}
 
@@ -434,7 +452,7 @@ enum Collection {
 /// The [_Field]s used in [FirebaseFirestore].
 enum _Field {
 	names,
-	confirmations,
+	confirmationCounts,
 	roles,
 	joined,
 	name,

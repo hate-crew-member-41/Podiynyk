@@ -24,7 +24,7 @@ class StudentPage extends StatelessWidget {
 					decoration: const InputDecoration(hintText: "name"),
 					onSubmitted: (label) {},  // todo: add the label
 				),
-				if (_student.role != Role.ordinary) Text(_student.role.name)
+				if (_student.role != Role.ordinary) Text(_student.role!.name)
 			],
 			actions: Cloud.role != Role.leader || _student.name == Local.name ? null : [
 				_student.role == Role.ordinary ? EntityActionButton(

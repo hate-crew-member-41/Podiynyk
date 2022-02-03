@@ -1,27 +1,29 @@
 import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import 'package:podiynyk/storage/local.dart' show Local;
+import 'package:podiynyk/storage/entities/student.dart';
 
 
-class LeaderDetermination extends StatefulWidget {
+class LeaderElection extends StatefulWidget {
 	final void Function() after;
 
-	const LeaderDetermination({required this.after});
+	const LeaderElection({required this.after});
 
 	@override
-	State<LeaderDetermination> createState() => _LeaderDeterminationState();
+	State<LeaderElection> createState() => _LeaderElectionState();
 }
 
-class _LeaderDeterminationState extends State<LeaderDetermination> {
+class _LeaderElectionState extends State<LeaderElection> {
 	static const _intro = "The next thing you will see is the list of groupmates that have made it to this point. "
 		"When you see the leader, tap on them. If you are the leader, sit back and let them tap on you.";
 
 	late Widget _content;
 
-	_LeaderDeterminationState() {
+	_LeaderElectionState() {
 		_content = GestureDetector(
 			onDoubleTap: () => setState(() {
-				_content = LeaderDeterminationStudentList(after: widget.after);
+				_content = LeaderCandidateList(after: widget.after);
 			}),
 			child: Scaffold(
 				body: Column(
@@ -43,33 +45,39 @@ class _LeaderDeterminationState extends State<LeaderDetermination> {
 }
 
 
-class LeaderDeterminationStudentList extends StatefulWidget {
+class LeaderCandidateList extends StatefulWidget {
 	final void Function() after;
 
-	const LeaderDeterminationStudentList({required this.after});
+	const LeaderCandidateList({required this.after});
 
 	@override
-	_LeaderDeterminationStudentListState createState() => _LeaderDeterminationStudentListState();
+	_LeaderCandidateListState createState() => _LeaderCandidateListState();
 }
 
-class _LeaderDeterminationStudentListState extends State<LeaderDeterminationStudentList> {
-	
+class _LeaderCandidateListState extends State<LeaderCandidateList> {
+	String? _votedForId;
+
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(
-			body: Center(child: StreamBuilder<Map<String, int?>>(
-				stream: Cloud.confirmationUpdates,
+			body: Center(child: StreamBuilder<List<Student>>(
+				stream: Cloud.leaderElectionUpdates,
 				builder: (context, snapshot) {
 					if (snapshot.connectionState == ConnectionState.waiting) return const Icon(Icons.cloud_download);
 					// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
-					
-					final entries = snapshot.data!.entries.toList()..sort((a, b) => a.key.compareTo(b.key));
+
 					return ListView(
 						shrinkWrap: true,
 						children: [
-							for (final entry in entries) ListTile(
-								title: Text(entry.key),
-								trailing: entry.value == null ? null : Text("${entry.value}/3")  // todo: replace the 3 with the variable to be used
+							for (final student in snapshot.data!) ListTile(
+								title: Text(student.name),
+								trailing: student.confirmationCount == 0 ? null : Text("${student.confirmationCount}/3"),  // todo: replace the 3 with the variable to be used
+								onTap: student.name == Local.name ? null : () {
+									if (student.id == _votedForId) return;
+
+									Cloud.changeLeaderVote(toId: student.id, fromId: _votedForId);
+									_votedForId = student.id;
+								}
 							)
 						]
 					);

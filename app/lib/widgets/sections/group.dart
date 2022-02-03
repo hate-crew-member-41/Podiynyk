@@ -20,7 +20,7 @@ class GroupSection extends CloudListSection<Student> {
 	Widget tile(BuildContext context, Student student) {
 		return ListTile(
 			title: Text(student.name),
-			subtitle: student.role == Role.ordinary ? null : Text(student.role.name),
+			subtitle: student.role == Role.ordinary ? null : Text(student.role!.name),
 			onTap: () => Navigator.of(context).push(MaterialPageRoute(
 				builder: (context) => StudentPage(student)
 			))
