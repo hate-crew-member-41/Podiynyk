@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:podiynyk/storage/entities/identification_option.dart';
@@ -89,9 +91,10 @@ class Cloud {
 				intId = 0;
 				id = intId.toString();
 
+				// the [set] method does not support nested fields via dot notation, unlike the [update] method
 				transaction.set(document, {
-					'${_Field.names.name}.$id': Local.name,
-					'${_Field.confirmationCounts.name}.$id': 0,
+					_Field.names.name: {id: Local.name},
+					_Field.confirmationCounts.name: {id: 0},
 					_Field.joined.name: DateTime.now()
 				});
 
@@ -106,23 +109,26 @@ class Cloud {
 	}
 
 	/// Whether the group is past the [LeaderElection] step.
-	static Future<bool> get leaderIsDetermined async {
+	static Future<bool> get leaderIsElected async {
 		final snapshot = await _groupDocument(Collection.groups).get();
-		return snapshot.data()!.containsKey(_Field.roles);
+		return snapshot.data()!.containsKey(_Field.roles.name);
 	}
 
-	/// A [Stream] of updates of the group's [Student]s and confirmations for them to be the [Role.leader].
-	static Stream<List<Student>> get leaderElectionUpdates {
+	/// A [Stream] of updates of the group's [Student]s and confirmations for them to be the group's leader.
+	/// As soon as the leader is determined, `null` is returned.
+	static Stream<List<Student>?> get leaderElectionUpdates {
 		return _groupDocument(Collection.groups).snapshots().map((document) {
 			final data = document.data()!;
 
-			return [
+			if (data.containsKey(_Field.confirmationCounts.name)) return [
 				for (final entry in data[_Field.names.name].entries) Student(
 					id: entry.key,
 					name: entry.value,
 					confirmationCount: data[_Field.confirmationCounts.name][entry.key]
 				)
 			]..sort((a, b) => int.parse(a.id).compareTo(int.parse(b.id)));
+
+			return null;
 		});
 	}
 

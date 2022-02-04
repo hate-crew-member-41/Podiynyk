@@ -18,14 +18,14 @@ class _AppMainState extends State<AppMain> {
 	@override
 	Widget build(BuildContext context) {
 		return Local.userIsIdentified ? FutureBuilder<bool>(
-			future: Cloud.leaderIsDetermined,
+			future: Cloud.leaderIsElected,
 			builder: (context, snapshot) {
 				if (snapshot.connectionState == ConnectionState.waiting) return const Icon(Icons.cloud_download);
 				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
-				return GroupZone(leaderIsConfirmed: snapshot.data!);
+				return GroupZone(leaderIsElected: snapshot.data!);
 			}
 		) : Identification(
-			after: () => setState(() {})  // todo: provide this method using the provider package?
+			reloadAppMain: () => setState(() {})  // todo: provide this method using the provider package?
 		);
 	}
 }

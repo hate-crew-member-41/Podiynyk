@@ -9,9 +9,9 @@ import 'package:podiynyk/storage/entities/university.dart';
 
 
 class Identification extends StatefulWidget {
-	final void Function() after;
+	final void Function() reloadAppMain;
 
-	const Identification({required this.after});
+	const Identification({required this.reloadAppMain});
 
 	@override
 	State<Identification> createState() => _IdentificationState();
@@ -26,7 +26,7 @@ class _IdentificationState extends State<Identification> {
 	_IdentificationState() {
 		_content = GestureDetector(
 			onDoubleTap: () => setState(() {
-				_content = IdentificationForm(after: widget.after);
+				_content = IdentificationForm(reloadAppMain: widget.reloadAppMain);
 			}),
 			child: Scaffold(
 				body: Column(
@@ -49,8 +49,8 @@ class _IdentificationState extends State<Identification> {
 
 
 class IdentificationForm extends StatefulWidget {
-	final void Function() after;
-	const IdentificationForm({required this.after});
+	final void Function() reloadAppMain;
+	const IdentificationForm({required this.reloadAppMain});
 
 	@override
 	State<IdentificationForm> createState() => _IdentificationFormState();
@@ -212,6 +212,6 @@ class _IdentificationFormState extends State<IdentificationForm> {
 		Local.groupId = groupId;
 		Local.name = _nameField.text;
 		
-		Cloud.enterGroup().whenComplete(widget.after);
+		Cloud.enterGroup().whenComplete(widget.reloadAppMain);
 	}
 }

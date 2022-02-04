@@ -6,9 +6,9 @@ import 'package:podiynyk/storage/entities/student.dart';
 
 
 class LeaderElection extends StatefulWidget {
-	final void Function() after;
+	final void Function() endLeaderElection;
 
-	const LeaderElection({required this.after});
+	const LeaderElection({required this.endLeaderElection});
 
 	@override
 	State<LeaderElection> createState() => _LeaderElectionState();
@@ -23,7 +23,7 @@ class _LeaderElectionState extends State<LeaderElection> {
 	_LeaderElectionState() {
 		_content = GestureDetector(
 			onDoubleTap: () => setState(() {
-				_content = LeaderCandidateList(after: widget.after);
+				_content = LeaderCandidateList(endLeaderElection: widget.endLeaderElection);
 			}),
 			child: Scaffold(
 				body: Column(
@@ -46,32 +46,37 @@ class _LeaderElectionState extends State<LeaderElection> {
 
 
 class LeaderCandidateList extends StatefulWidget {
-	final void Function() after;
+	final void Function() endLeaderElection;
 
-	const LeaderCandidateList({required this.after});
+	const LeaderCandidateList({required this.endLeaderElection});
 
 	@override
 	_LeaderCandidateListState createState() => _LeaderCandidateListState();
 }
 
 class _LeaderCandidateListState extends State<LeaderCandidateList> {
+	static const confirmationCountThreshold = 3;
 	String? _votedForId;
 
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(
-			body: Center(child: StreamBuilder<List<Student>>(
-				stream: Cloud.leaderElectionUpdates,
+			body: Center(child: StreamBuilder<List<Student>?>(
+				stream: _updates(),
 				builder: (context, snapshot) {
 					if (snapshot.connectionState == ConnectionState.waiting) return const Icon(Icons.cloud_download);
 					// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
+					final students = snapshot.data!;
+  
 					return ListView(
 						shrinkWrap: true,
 						children: [
-							for (final student in snapshot.data!) ListTile(
+							for (final student in students) ListTile(
 								title: Text(student.name),
-								trailing: student.confirmationCount == 0 ? null : Text("${student.confirmationCount}/3"),  // todo: replace the 3 with the variable to be used
+								trailing: student.confirmationCount == 0 ?
+									null :
+									Text("${student.confirmationCount}/$confirmationCountThreshold"),
 								onTap: student.name == Local.name ? null : () {
 									if (student.id == _votedForId) return;
 
@@ -84,5 +89,16 @@ class _LeaderCandidateListState extends State<LeaderCandidateList> {
 				}
 			))
 		);
+	}
+
+	Stream<List<Student>> _updates() async* {
+		await for (final students in Cloud.leaderElectionUpdates) {
+			if (students != null) {
+				yield students;
+			}
+			else {
+				widget.endLeaderElection();
+			}
+		}
 	}
 }
