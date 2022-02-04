@@ -48,7 +48,7 @@ class _SubjectPageState extends State<SubjectPage> {
 					onSubmitted: (label) {},  // todo: add the label
 				),
 				if (totalEventCount != null) Text("${subject.totalEventCountRepr} so far"),
-				if (info != null) TextButton(
+				if (info != null && info.isNotEmpty) TextButton(
 					child: const Text("information"),
 					onPressed: () => _showPage([
 						for (final entry in info) Text(entry)  // todo: make them fields to enable editing

@@ -59,24 +59,22 @@ abstract class CloudListSection<E> extends Section {
 
 	@override
 	Widget build(BuildContext context) {
-		return FutureBuilder(
+		return FutureBuilder<List<E>>(
 			future: futureEntities,
-			builder: _section
-		);
-	}
+			builder: (context, snapshot) {
+				// todo: what is shown while awaiting
+				if (snapshot.connectionState == ConnectionState.waiting) return Center(child: Icon(icon));
 
-	Widget _section(BuildContext context, AsyncSnapshot<List<E>> snapshot) {
-		// todo: what is shown while awaiting
-		if (snapshot.connectionState == ConnectionState.waiting) return Center(child: Icon(icon));
+				if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
-		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
-
-		// idea: consider an AnimatedOpacity animation with a different delay for each tile
-		return ListView(
-			children: [
-				...tiles(context, snapshot.data!),
-				if (this is ExtendableListSection) const ListTile()
-			]
+				// idea: consider an AnimatedOpacity animation with a different delay for each tile
+				return ListView(
+					children: [
+						...tiles(context, snapshot.data!),
+						if (this is ExtendableListSection) const ListTile()
+					]
+				);
+			}
 		);
 	}
 

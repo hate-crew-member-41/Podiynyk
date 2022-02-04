@@ -55,7 +55,6 @@ class LeaderCandidateList extends StatefulWidget {
 }
 
 class _LeaderCandidateListState extends State<LeaderCandidateList> {
-	static const confirmationCountThreshold = 3;
 	String? _votedForId;
 
 	@override
@@ -76,7 +75,7 @@ class _LeaderCandidateListState extends State<LeaderCandidateList> {
 								title: Text(student.name),
 								trailing: student.confirmationCount == 0 ?
 									null :
-									Text("${student.confirmationCount}/$confirmationCountThreshold"),
+									Text(student.confirmationCount.toString()),
 								onTap: student.name == Local.name ? null : () {
 									if (student.id == _votedForId) return;
 

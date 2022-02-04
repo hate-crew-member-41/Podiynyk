@@ -108,17 +108,25 @@ class Cloud {
 		});
 	}
 
-	/// Whether the group is past the [LeaderElection] step.
+	/// Whether the group is past the [LeaderElection] step. Updates [role].
 	static Future<bool> get leaderIsElected async {
 		final snapshot = await _groupDocument(Collection.groups).get();
-		return snapshot.data()!.containsKey(_Field.roles.name);
+		final data = snapshot.data()!;
+
+		final isElected = data.containsKey(_Field.roles.name);
+		if (isElected) {
+			final roleIndex = data[_Field.roles.name][Local.id];
+			_role = Role.values[roleIndex];
+		}
+
+		return isElected;
 	}
 
 	/// A [Stream] of updates of the group's [Student]s and confirmations for them to be the group's leader.
 	/// As soon as the leader is determined, `null` is returned.
 	static Stream<List<Student>?> get leaderElectionUpdates {
-		return _groupDocument(Collection.groups).snapshots().map((document) {
-			final data = document.data()!;
+		return _groupDocument(Collection.groups).snapshots().map((snapshot) {
+			final data = snapshot.data()!;
 
 			if (data.containsKey(_Field.confirmationCounts.name)) return [
 				for (final entry in data[_Field.names.name].entries) Student(
@@ -128,6 +136,7 @@ class Cloud {
 				)
 			]..sort((a, b) => int.parse(a.id).compareTo(int.parse(b.id)));
 
+			_role = Role.ordinary;
 			return null;
 		});
 	}
@@ -236,16 +245,16 @@ class Cloud {
 		return [];
 	}
 
-	/// The group's [Student]s. Updates the user's [Role].
+	/// The group's [Student]s. Updates [role].
 	static Future<List<Student>> get students async {
 		final snapshot = await _groupDocument(Collection.groups).get();
 		final data = snapshot.data()!;
 
 		final students = [
-			for (final entry in data[_Field.names]) Student(
+			for (final entry in data[_Field.names.name].entries) Student(
 				id: entry.key,
 				name: entry.value,
-				role: Role.values[data[_Field.roles][entry.key]]
+				role: Role.values[data[_Field.roles.name][entry.key]]
 			)
 		]..sort((a, b) => a.name.compareTo(b.name));
 
@@ -259,7 +268,8 @@ class Cloud {
 		final details = snapshot.data()!;
 
 		subject.totalEventCount = details[_Field.totalEventCount.name];
-		subject.info = List<String>.from(details[_Field.info.name]);
+		final info = details[_Field.info.name];
+		subject.info = info != null ? List<String>.from(info) : <String>[];
 	}
 
 	/// Initializes the [event]'s detail fields.
@@ -283,7 +293,10 @@ class Cloud {
 		collection: Collection.subjects,
 		existingEquals: (existingSubject) => existingSubject == name,
 		entity: name,
-		details: {_Field.totalEventCount.name: 0}
+		details: {
+			_Field.totalEventCount.name: 0,
+			_Field.info.name: <String>[]
+		}
 	);
 
 	/// Updates the [info] in the [subject]'s details.

@@ -52,9 +52,11 @@ class _HomeState extends State<Home> {
 						_drawerTile(AgendaSection()),
 						_drawerTile(SubjectsSection()),
 						_drawerTile(EventsSection()),
+						const ListTile(),
 						_drawerTile(MessagesSection()),
 						_drawerTile(QuestionsSection()),
 						_drawerTile(GroupSection()),
+						const ListTile(),
 						_drawerTile(const SettingsSection())
 					]
 				)
@@ -65,6 +67,7 @@ class _HomeState extends State<Home> {
 		);
 	}
 
+	// todo: make it a stateless widget
 	ListTile _drawerTile(Section section) => ListTile(
 		title: Text(section.name),
 		leading: Icon(section.icon),
@@ -74,6 +77,26 @@ class _HomeState extends State<Home> {
 		}
 	);
 }
+
+
+// class SectionTile extends StatelessWidget {
+// 	final String name;
+// 	final IconData icon;
+
+// 	const SectionTile({
+// 		required this.name,
+// 		required this.icon
+// 	});
+
+// 	@override
+// 	Widget build(BuildContext context) {
+// 		return ListTile(
+// 			title: Text(name),
+// 			leading: Icon(icon),
+// 			onTap: () {}
+// 		);
+// 	}
+// }
 
 
 class EntityCount extends StatefulWidget {
