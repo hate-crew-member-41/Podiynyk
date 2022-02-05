@@ -2,29 +2,32 @@ import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
 
+import 'package:podiynyk/ui/main/widgets/fields.dart';
+
 import '../section.dart' show EntityDate;
 import 'entity.dart';
 
 
+// todo: what if there are no subjects?
 class NewEventPage extends StatefulWidget {
 	final bool _askSubject;
 	final bool _subjectRequired;
 	final String? _subject;
 	final List<String>? _subjectNames;
 
-	NewEventPage(List<String> subjectNames) :
+	const NewEventPage(List<String> subjectNames) :
 		_askSubject = true,
 		_subjectRequired = false,
 		_subject = null,
 		_subjectNames = subjectNames;
 
-	NewEventPage.subjectEvent(String subject) :
+	const NewEventPage.subjectEvent(String subject) :
 		_askSubject = false,
 		_subjectRequired = true,
 		_subject = subject,
 		_subjectNames = null;
 
-	NewEventPage.noSubjectEvent() :
+	const NewEventPage.noSubjectEvent() :
 		_askSubject = false,
 		_subjectRequired = false,
 		_subject = null,
@@ -53,29 +56,23 @@ class _NewEventPageState extends State<NewEventPage> {
 	Widget build(BuildContext context) => NewEntityPage(
 		addEntity: _add,
 		children: [
-			TextField(
+			InputField(
 				controller: _nameField,
-				decoration: const InputDecoration(hintText: "name")
+				name: "name"
 			),
-			if (widget._askSubject) GestureDetector(
-				onTap: () => _askSubject(context),
-				child: TextField(
-					controller: _subjectField,
-					enabled: false,
-					decoration: const InputDecoration(hintText: "subject")
-				)
+			if (widget._askSubject) OptionField(
+				controller: _subjectField,
+				name: "subject",
+				showOptions: (context) => _askSubject(context)
 			),
-			GestureDetector(
-				onTap: () => _askDate(context),
-				child: TextField(
-					controller: _dateField,
-					enabled: false,
-					decoration: const InputDecoration(hintText: "date")
-				)
+			OptionField(
+				controller: _dateField,
+				name: "date",
+				showOptions: _askDate
 			),
-			TextField(
+			InputField(
 				controller: _noteField,
-				decoration: const InputDecoration(hintText: "note")
+				name: "note"
 			)
 		]
 	);
@@ -99,7 +96,7 @@ class _NewEventPageState extends State<NewEventPage> {
 		));
 	}
 
-	void _askDate(BuildContext context) async {
+	Future<void> _askDate(BuildContext context) async {
 		final now = DateTime.now();
 		_date = await showDatePicker(
 			context: context,

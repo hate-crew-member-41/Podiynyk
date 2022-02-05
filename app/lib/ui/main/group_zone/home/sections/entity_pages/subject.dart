@@ -5,6 +5,8 @@ import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/student.dart' show Role;
 import 'package:podiynyk/storage/entities/subject.dart' show Subject;
 
+import 'package:podiynyk/ui/main/widgets/fields.dart' show InputField;
+
 import '../agenda.dart';
 import '../new_entity_pages/event.dart';
 import 'entity.dart';
@@ -75,8 +77,9 @@ class _SubjectPageState extends State<SubjectPage> {
 						builder: (_) => GestureDetector(
 							onDoubleTap: addInfo,
 							child: Scaffold(
-								body: Center(child: TextField(
-									controller: widget._infoField
+								body: Center(child: InputField(
+									controller: widget._infoField,
+									name: "information"
 								))
 							)
 						)

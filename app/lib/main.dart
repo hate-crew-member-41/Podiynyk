@@ -18,8 +18,16 @@ class App extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return MaterialApp(
+			title: 'Podiynyk',
+			home: FutureBuilder(
+				future: Future.wait([Local.init(), Cloud.init()]),
+				builder: (context, snapshot) {
+					if (snapshot.connectionState == ConnectionState.waiting) return const Loading();
+					// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+					return const AppMain();
+				}
+			),
 			theme: ThemeData(
-				useMaterial3: true,
 				brightness: Brightness.dark,
 				canvasColor: const HSVColor.fromAHSV(1, 0, 0, .1).toColor(),
 				appBarTheme: AppBarTheme(
@@ -35,15 +43,6 @@ class App extends StatelessWidget {
 					backgroundColor: const HSVColor.fromAHSV(1, 0, 0, .2).toColor(),
 					foregroundColor: Colors.white
 				)
-			),
-			title: 'Podiynyk',
-			home: FutureBuilder(
-				future: Future.wait([Local.init(), Cloud.init()]),
-				builder: (context, snapshot) {
-					if (snapshot.connectionState == ConnectionState.waiting) return const Loading();
-					// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
-					return const AppMain();
-				}
 			)
 		);
 	}

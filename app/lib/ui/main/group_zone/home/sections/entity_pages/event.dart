@@ -4,6 +4,8 @@ import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/event.dart' show Event;
 
+import 'package:podiynyk/ui/main/widgets/fields.dart' show InputField;
+
 import '../section.dart' show EntityDate;
 import 'entity.dart';
 
@@ -58,8 +60,9 @@ class _EventPageState extends State<EventPage> {
 						builder: (_) => GestureDetector(
 							onDoubleTap: addNote,
 							child: Scaffold(
-								body: Center(child: TextField(
-									controller: widget._noteField
+								body: Center(child: InputField(
+									controller: widget._noteField,
+									name: "note"
 								))
 							)
 						)

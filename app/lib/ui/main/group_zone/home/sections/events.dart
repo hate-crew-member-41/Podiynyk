@@ -29,5 +29,7 @@ class EventsSection extends ExtendableListSection<Event> {
 	);
 
 	@override
-	Widget addEntityButton(BuildContext context) => AddEntityButton(pageBuilder: (_) => NewEventPage.noSubjectEvent());
+	Widget addEntityButton(BuildContext context) => NewEntityButton(
+		pageBuilder: (_) => const NewEventPage.noSubjectEvent()
+	);
 }

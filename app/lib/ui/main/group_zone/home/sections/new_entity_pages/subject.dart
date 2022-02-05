@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
 
+import 'package:podiynyk/ui/main/widgets/fields.dart' show InputField;
+
 import 'entity.dart';
 
 
@@ -11,9 +13,9 @@ class NewSubjectPage extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) => NewEntityPage(
 		addEntity: _add,
-		children: [TextField(
+		children: [InputField(
 			controller: _nameField,
-			decoration: const InputDecoration(hintText: "name"),
+			name: "name",
 		)]
 	);
 

@@ -92,10 +92,10 @@ abstract class ExtendableListSection<E> extends CloudListSection<E> {
 }
 
 
-class AddEntityButton extends StatelessWidget {
+class NewEntityButton extends StatelessWidget {
 	final Widget Function(BuildContext) pageBuilder;
 
-	const AddEntityButton({required this.pageBuilder});
+	const NewEntityButton({required this.pageBuilder});
 
 	@override
 	Widget build(BuildContext context) {

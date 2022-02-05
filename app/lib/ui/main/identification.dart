@@ -7,6 +7,8 @@ import 'package:podiynyk/storage/entities/department.dart';
 import 'package:podiynyk/storage/entities/identification_option.dart';
 import 'package:podiynyk/storage/entities/university.dart';
 
+import 'widgets/fields.dart';
+
 
 class Identification extends StatefulWidget {
 	final void Function() end;
@@ -74,41 +76,37 @@ class _IdentificationFormState extends State<IdentificationForm> {
 					mainAxisAlignment: MainAxisAlignment.center,
 					crossAxisAlignment: CrossAxisAlignment.start,
 					children: [
-						GestureDetector(
-							onTap: _showCountyOptions,
-							child: TextField(
-								controller: _universityField,
-								enabled: false,
-								decoration: const InputDecoration(hintText: "university")
-							),
+						OptionField(
+							controller: _universityField,
+							name: "university",
+							showOptions: _showCountyOptions
 						),
-						GestureDetector(
-							onTap: () => _university != null ? _showDepartmentOptions() : _showCountyOptions(),
-							child: TextField(
-								controller: _departmentField,
-								enabled: false,
-								decoration: const InputDecoration(hintText: "department")
-							)
+						OptionField(
+							controller: _departmentField,
+							name: "department",
+							showOptions: (context) => _university != null ?
+								_showDepartmentOptions(context) :
+								_showCountyOptions(context)
 						),
-						DecoratedField(
+						InputField(
 							controller: _groupField,
-							hintText: "group",
+							name: "group",
 						),
-						DecoratedField(
+						InputField(
 							controller: _nameField,
-							hintText: "name",
+							name: "name",
 						)
 					]
 				)
 			)
 		);
 
-		// will the build always have finished before _showCountyOptions is called?
-		Future.delayed(const Duration(), _showCountyOptions);
+		// todoŁ will the build always have finished before _showCountyOptions is called?
+		Future.delayed(const Duration(), () => _showCountyOptions(context));
 		return state;
 	}
 
-	Future<bool?> _showCountyOptions() => _showOptions(
+	Future<bool?> _showCountyOptions(BuildContext context) => _showOptions(
 		context: context,
 		title: "county",
 		options: Cloud.counties,
@@ -143,7 +141,7 @@ class _IdentificationFormState extends State<IdentificationForm> {
 		snapshot: snapshot,
 		onTap: (university) async {
 			_university = university;
-			final departmentChosen = await _showDepartmentOptions();
+			final departmentChosen = await _showDepartmentOptions(context);
 
 			if (departmentChosen == true) {
 				_universityField.text = university.name;
@@ -152,7 +150,7 @@ class _IdentificationFormState extends State<IdentificationForm> {
 		}
 	);
 
-	Future<bool?> _showDepartmentOptions() => _showOptions(
+	Future<bool?> _showDepartmentOptions(BuildContext context) => _showOptions(
 		context: context,
 		title: "department",
 		options: _university!.departments,
@@ -216,46 +214,5 @@ class _IdentificationFormState extends State<IdentificationForm> {
 		Local.name = _nameField.text;
 		
 		Cloud.enterGroup().whenComplete(widget.endIdentification);
-	}
-}
-
-
-class DecoratedField extends StatefulWidget {
-	final TextEditingController controller;
-	final String hintText;
-
-	const DecoratedField({
-		required this.controller,
-		required this.hintText
-	});
-
-	@override
-	_DecoratedFieldState createState() => _DecoratedFieldState();
-}
-
-class _DecoratedFieldState extends State<DecoratedField> {
-	final _focusNode = FocusNode();
-
-	@override
-	void initState() {
-		_focusNode.addListener(() => setState(() {}));
-		super.initState();
-	}
-
-	@override
-	Widget build(BuildContext context) {
-		return TextField(
-			controller: widget.controller,
-			focusNode: _focusNode,
-			showCursor: false,
-			decoration: InputDecoration(
-				border: InputBorder.none,
-				contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-				fillColor: const HSVColor.fromAHSV(1, 0, 0, .2).toColor(),
-				filled: _focusNode.hasFocus,
-				hintText: widget.hintText,
-			)
-
-		);
 	}
 }

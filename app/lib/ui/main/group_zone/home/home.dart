@@ -67,6 +67,7 @@ class _HomeState extends State<Home> {
 		);
 	}
 
+	// todo: attempt to make it accept a builder for the section
 	// todo: make it a stateless widget
 	ListTile _drawerTile(Section section) => ListTile(
 		title: Text(section.name),
