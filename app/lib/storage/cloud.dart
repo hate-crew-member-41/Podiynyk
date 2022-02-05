@@ -5,6 +5,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:podiynyk/storage/entities/identification_option.dart';
 
 import 'local.dart';
+import 'fields.dart';
+
 import 'entities/county.dart';
 import 'entities/department.dart';
 import 'entities/event.dart';
@@ -81,9 +83,9 @@ class Cloud {
 				intId = data.newId;
 				id = intId.toString();
 
-				final selfInitField = data.containsKey(_Field.roles.name) ? _Field.roles : _Field.confirmationCounts;
+				final selfInitField = data.containsKey(Field.roles.name) ? Field.roles : Field.confirmationCounts;
 				transaction.update(document, {
-					'${_Field.names.name}.$id': Local.name,
+					'${Field.names.name}.$id': Local.name,
 					'${selfInitField.name}.$id': 0
 				});
 			}
@@ -93,9 +95,9 @@ class Cloud {
 
 				// the [set] method does not support nested fields via dot notation, unlike the [update] method
 				transaction.set(document, {
-					_Field.names.name: {id: Local.name},
-					_Field.confirmationCounts.name: {id: 0},
-					_Field.joined.name: DateTime.now()
+					Field.names.name: {id: Local.name},
+					Field.confirmationCounts.name: {id: 0},
+					Field.joined.name: DateTime.now()
 				});
 
 				_groupDocument(Collection.subjects).set({});
@@ -114,9 +116,9 @@ class Cloud {
 		final snapshot = await _groupDocument(Collection.groups).get();
 		final data = snapshot.data()!;
 
-		final isElected = data.containsKey(_Field.roles.name);
+		final isElected = data.containsKey(Field.roles.name);
 		if (isElected) {
-			final roleIndex = data[_Field.roles.name][Local.id];
+			final roleIndex = data[Field.roles.name][Local.id];
 			_role = Role.values[roleIndex];
 		}
 
@@ -131,11 +133,11 @@ class Cloud {
 		return _groupDocument(Collection.groups).snapshots().map((snapshot) {
 			final data = snapshot.data()!;
 
-			if (data.containsKey(_Field.confirmationCounts.name)) return [
-				for (final entry in data[_Field.names.name].entries) Student(
+			if (data.containsKey(Field.confirmationCounts.name)) return [
+				for (final entry in data[Field.names.name].entries) Student(
 					id: entry.key,
 					name: entry.value,
-					confirmationCount: data[_Field.confirmationCounts.name][entry.key]
+					confirmationCount: data[Field.confirmationCounts.name][entry.key]
 				)
 			]..sort((a, b) => int.parse(a.id).compareTo(int.parse(b.id)));
 
@@ -150,8 +152,8 @@ class Cloud {
 		String? fromId
 	}) async {
 		await _groupDocument(Collection.groups).update({
-			'${_Field.confirmationCounts.name}.$toId': FieldValue.increment(1),
-			if (fromId != null) '${_Field.confirmationCounts.name}.$fromId': FieldValue.increment(-1)
+			'${Field.confirmationCounts.name}.$toId': FieldValue.increment(1),
+			if (fromId != null) '${Field.confirmationCounts.name}.$fromId': FieldValue.increment(-1)
 		});
 	}
 
@@ -162,7 +164,7 @@ class Cloud {
 	/// Synchronizes the user's [Role].
 	static Future<void> syncRole() async {
 		final snapshot = await _groupDocument(Collection.groups).get();
-		final roleIndex = snapshot.data()![_Field.roles.name][Local.id];
+		final roleIndex = snapshot.data()![Field.roles.name][Local.id];
 		_role = Role.values[roleIndex];
 	}
 
@@ -171,7 +173,7 @@ class Cloud {
 		final snapshot = await _groupDocument(Collection.subjects).get();
 		return [for (final entry in snapshot.data()!.entries) Subject(
 			id: entry.key,
-			name: entry.value[_Field.name.name]
+			name: entry.value[Field.name.name]
 		)]..sort((a, b) => a.name.compareTo(b.name));
 	}
 
@@ -186,18 +188,18 @@ class Cloud {
 
 		final subjects = [for (final entry in subjectEntries.entries) Subject(
 			id: entry.key,
-			name: entry.value[_Field.name.name],
+			name: entry.value[Field.name.name],
 		)]..sort((a, b) => a.name.compareTo(b.name));
 
 		for (final subject in subjects) {
 			subject.events = [
 				for (final entry in eventEntries.entries.where((entry) =>
-					entry.value[_Field.subject.name] == subject.id
+					entry.value[Field.subject.name] == subject.id
 				)) Event(
 					id: entry.key,
-					name: entry.value[_Field.name.name],
+					name: entry.value[Field.name.name],
 					subject: subject,
-					date: entry.value[_Field.date.name],
+					date: entry.value[Field.date.name],
 				)
 			]..sort((a, b) => a.date.compareTo(b.date));
 		}
@@ -213,12 +215,12 @@ class Cloud {
 		final events = [
 			for (final entry in snapshot.data()!.entries) Event(
 				id: entry.key,
-				name: entry.value[_Field.name.name],
+				name: entry.value[Field.name.name],
 				// tofix: subjects also need to be fetched to construct a Subject object here
 				// however, Agenda section already fetches events and subjects,
 				// so just fetching subjects here means fetching subjects twice in it
-				subject: entry.value[_Field.subject.name],
-				date: entry.value[_Field.date.name].toDate()
+				subject: entry.value[Field.subject.name],
+				date: entry.value[Field.date.name].toDate()
 			)
 		];
 		Local.clearStoredEntities<Event, EventEssence>(DataBox.hiddenEvents, events);
@@ -236,8 +238,8 @@ class Cloud {
 		final messages = [
 			for (final entry in snapshot.data()!.entries) Message(
 				id: entry.key,
-				subject: entry.value[_Field.subject.name],
-				date: entry.value[_Field.date.name].toDate()
+				subject: entry.value[Field.subject.name],
+				date: entry.value[Field.date.name].toDate()
 			)
 		];
 		Local.clearStoredEntities<Message, MessageEssence>(DataBox.hiddenMessages, messages);
@@ -259,10 +261,10 @@ class Cloud {
 		final data = snapshot.data()!;
 
 		final students = [
-			for (final entry in data[_Field.names.name].entries) Student(
+			for (final entry in data[Field.names.name].entries) Student(
 				id: entry.key,
 				name: entry.value,
-				role: Role.values[data[_Field.roles.name][entry.key]]
+				role: Role.values[data[Field.roles.name][entry.key]]
 			)
 		]..sort((a, b) => a.name.compareTo(b.name));
 
@@ -275,8 +277,8 @@ class Cloud {
 		final snapshot = await _groupDocument(Collection.subjects).collection(Collection.details.name).doc(subject.id).get();
 		final details = snapshot.data()!;
 
-		subject.totalEventCount = details[_Field.totalEventCount.name];
-		final info = details[_Field.info.name];
+		subject.totalEventCount = details[Field.totalEventCount.name];
+		final info = details[Field.info.name];
 		subject.info = info != null ? List<String>.from(info) : <String>[];
 	}
 
@@ -285,32 +287,32 @@ class Cloud {
 		final snapshot = await _groupDocument(Collection.events).collection(Collection.details.name).doc(event.id).get();
 		if (!snapshot.exists) return;
 
-		event.note = snapshot[_Field.note.name];
+		event.note = snapshot[Field.note.name];
 	}
 
 	/// Initializes the [message]'s detail fields.
 	static Future<void> addMessageDetails(Message message) async {
 		final snapshot = await _groupDocument(Collection.messages).collection(Collection.details.name).doc(message.id).get();
 		
-		message.content = snapshot[_Field.content.name];
-		message.author = snapshot[_Field.author.name];
+		message.content = snapshot[Field.content.name];
+		message.author = snapshot[Field.author.name];
 	}
 
 	/// Adds a [Subject] with the [name] unless it exists.
 	static Future<void> addSubject({required String name}) async => await _addEntity(
 		collection: Collection.subjects,
 		existingEquals: (existingSubject) => existingSubject == name,
-		entity: {_Field.name.name: name},
+		entity: {Field.name.name: name},
 		details: {
-			_Field.totalEventCount.name: 0,
-			_Field.info.name: <String>[]
+			Field.totalEventCount.name: 0,
+			Field.info.name: <String>[]
 		}
 	);
 
 	/// Updates the [info] in the [subject]'s details.
 	static Future<void> updateSubjectInfo(Subject subject) async {
 		_groupDocument(Collection.subjects).collection(Collection.details.name).doc(subject.id).update({
-			_Field.info.name: subject.info
+			Field.info.name: subject.info
 		});
 	}
 
@@ -324,20 +326,20 @@ class Cloud {
 		final wasWritten = await _addEntity(
 			collection: Collection.events,
 			existingEquals: (existingEvent) =>
-				existingEvent[_Field.name.name] == name && existingEvent[_Field.subject.name] == subject?.id,
+				existingEvent[Field.name.name] == name && existingEvent[Field.subject.name] == subject?.id,
 			entity: {
-				_Field.name.name: name,
-				_Field.subject.name: subject?.id,
-				_Field.date.name: date,
+				Field.name.name: name,
+				Field.subject.name: subject?.id,
+				Field.date.name: date,
 			},
-			details: {if (note != null) _Field.note.name: note},
+			details: {if (note != null) Field.note.name: note},
 		);
 
 		if (subject != null && wasWritten) {
 			final document = _groupDocument(Collection.subjects);
 
 			document.collection(Collection.details.name).doc(subject.id).update({
-				_Field.totalEventCount.name: FieldValue.increment(1)
+				Field.totalEventCount.name: FieldValue.increment(1)
 			});
 		}
 	}
@@ -345,7 +347,7 @@ class Cloud {
 	/// Updates the [note] in the [event]'s details.
 	static Future<void> updateEventNote(Event event) async {
 		await _groupDocument(Collection.events).collection(Collection.details.name).doc(event.id).update({
-			_Field.note.name: event.note
+			Field.note.name: event.note
 		});
 	}
 
@@ -357,12 +359,12 @@ class Cloud {
 		collection: Collection.messages,
 		existingEquals: (existingSubject) => existingSubject == subject,
 		entity: {
-			_Field.subject.name: subject,
-			_Field.date.name: DateTime.now()
+			Field.subject.name: subject,
+			Field.date.name: DateTime.now()
 		},
 		details: {
-			_Field.content.name: content,
-			_Field.author.name: Local.name
+			Field.content.name: content,
+			Field.author.name: Local.name
 		},
 	);
 
@@ -438,7 +440,7 @@ class Cloud {
 	/// Sets the [student]'s [Role] to [role].
 	static Future<void> setRole(Student student, Role role) async {
 		await _groupDocument(Collection.groups).update({
-			_Field.roles.name: {student.id: role.index}
+			Field.roles.name: {student.id: role.index}
 		});
 	}
 
@@ -469,20 +471,4 @@ enum Collection {
 	messages,
 	questions,
 	details
-}
-
-/// The [_Field]s used in [FirebaseFirestore].
-enum _Field {
-	names,
-	confirmationCounts,
-	roles,
-	joined,
-	name,
-	totalEventCount,
-	info,
-	subject,
-	date,
-	note,
-	content,
-	author
 }
