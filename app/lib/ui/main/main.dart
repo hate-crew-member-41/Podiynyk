@@ -4,7 +4,7 @@ import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/local.dart' show Local;
 
 import 'identification.dart';
-import 'group_zone.dart';
+import 'group_zone/group_zone.dart';
 
 
 class AppMain extends StatefulWidget {
@@ -25,7 +25,7 @@ class _AppMainState extends State<AppMain> {
 				return GroupZone(leaderIsElected: snapshot.data!);
 			}
 		) : Identification(
-			reloadAppMain: () => setState(() {})  // todo: provide this method using the provider package?
+			end: () => setState(() {})  // todo: provide this method using the provider package?
 		);
 	}
 }

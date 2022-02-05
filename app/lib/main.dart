@@ -4,8 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'storage/cloud.dart' show Cloud;
 import 'storage/local.dart' show Local;
 
-import 'widgets/loading.dart';
-import 'widgets/app_main.dart';
+import 'ui/loading.dart';
+import 'ui/main/main.dart';
 
 
 void main() {
@@ -19,6 +19,7 @@ class App extends StatelessWidget {
 	Widget build(BuildContext context) {
 		return MaterialApp(
 			theme: ThemeData(
+				useMaterial3: true,
 				brightness: Brightness.dark,
 				canvasColor: const HSVColor.fromAHSV(1, 0, 0, .1).toColor(),
 				appBarTheme: AppBarTheme(

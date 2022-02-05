@@ -5,9 +5,9 @@ import 'package:podiynyk/storage/entities/subject.dart';
 import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/event.dart';
 
+import 'section.dart';
 import 'entity_pages/event.dart';
 import 'new_entity_pages/event.dart';
-import 'section.dart';
 
 
 class AgendaSection extends ExtendableListSection<Event> {

@@ -5,9 +5,8 @@ import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/student.dart' show Role;
 import 'package:podiynyk/storage/entities/subject.dart' show Subject;
 
-import 'package:podiynyk/widgets/sections/new_entity_pages/event.dart';
-
 import '../agenda.dart';
+import '../new_entity_pages/event.dart';
 import 'entity.dart';
 
 

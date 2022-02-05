@@ -9,9 +9,9 @@ import 'package:podiynyk/storage/entities/university.dart';
 
 
 class Identification extends StatefulWidget {
-	final void Function() reloadAppMain;
+	final void Function() end;
 
-	const Identification({required this.reloadAppMain});
+	const Identification({required this.end});
 
 	@override
 	State<Identification> createState() => _IdentificationState();
@@ -26,7 +26,7 @@ class _IdentificationState extends State<Identification> {
 	_IdentificationState() {
 		_content = GestureDetector(
 			onDoubleTap: () => setState(() {
-				_content = IdentificationForm(reloadAppMain: widget.reloadAppMain);
+				_content = IdentificationForm(endIdentification: widget.end);
 			}),
 			child: Scaffold(
 				body: Column(
@@ -49,8 +49,8 @@ class _IdentificationState extends State<Identification> {
 
 
 class IdentificationForm extends StatefulWidget {
-	final void Function() reloadAppMain;
-	const IdentificationForm({required this.reloadAppMain});
+	final void Function() endIdentification;
+	const IdentificationForm({required this.endIdentification});
 
 	@override
 	State<IdentificationForm> createState() => _IdentificationFormState();
@@ -67,7 +67,7 @@ class _IdentificationFormState extends State<IdentificationForm> {
 
 	@override
 	Widget build(BuildContext context) {
-		return GestureDetector(
+		final state = GestureDetector(
 			onDoubleTap: _enterGroup,
 			child: Scaffold(
 				body: Column(
@@ -90,21 +90,24 @@ class _IdentificationFormState extends State<IdentificationForm> {
 								decoration: const InputDecoration(hintText: "department")
 							)
 						),
-						TextField(
+						DecoratedField(
 							controller: _groupField,
-							decoration: const InputDecoration(hintText: "group"),
+							hintText: "group",
 						),
-						TextField(
+						DecoratedField(
 							controller: _nameField,
-							decoration: const InputDecoration(hintText: "name"),
+							hintText: "name",
 						)
 					]
 				)
 			)
 		);
+
+		// will the build always have finished before _showCountyOptions is called?
+		Future.delayed(const Duration(), _showCountyOptions);
+		return state;
 	}
 
-	// todo: call asap after the build
 	Future<bool?> _showCountyOptions() => _showOptions(
 		context: context,
 		title: "county",
@@ -212,6 +215,47 @@ class _IdentificationFormState extends State<IdentificationForm> {
 		Local.groupId = groupId;
 		Local.name = _nameField.text;
 		
-		Cloud.enterGroup().whenComplete(widget.reloadAppMain);
+		Cloud.enterGroup().whenComplete(widget.endIdentification);
+	}
+}
+
+
+class DecoratedField extends StatefulWidget {
+	final TextEditingController controller;
+	final String hintText;
+
+	const DecoratedField({
+		required this.controller,
+		required this.hintText
+	});
+
+	@override
+	_DecoratedFieldState createState() => _DecoratedFieldState();
+}
+
+class _DecoratedFieldState extends State<DecoratedField> {
+	final _focusNode = FocusNode();
+
+	@override
+	void initState() {
+		_focusNode.addListener(() => setState(() {}));
+		super.initState();
+	}
+
+	@override
+	Widget build(BuildContext context) {
+		return TextField(
+			controller: widget.controller,
+			focusNode: _focusNode,
+			showCursor: false,
+			decoration: InputDecoration(
+				border: InputBorder.none,
+				contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+				fillColor: const HSVColor.fromAHSV(1, 0, 0, .2).toColor(),
+				filled: _focusNode.hasFocus,
+				hintText: widget.hintText,
+			)
+
+		);
 	}
 }

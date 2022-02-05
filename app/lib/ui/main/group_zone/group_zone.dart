@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'home.dart';
 import 'leader_election.dart';
+import 'home/home.dart';
 
 
 class GroupZone extends StatefulWidget {
@@ -25,7 +25,7 @@ class _GroupZoneState extends State<GroupZone> {
 	@override
 	Widget build(BuildContext context) {
 		return _leaderIsElected ? const Home() : LeaderElection(
-			endLeaderElection: () => setState(() { _leaderIsElected = true; })
+			end: () => setState(() { _leaderIsElected = true; })
 		);
 	}
 }
