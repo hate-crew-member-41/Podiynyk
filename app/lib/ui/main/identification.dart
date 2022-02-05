@@ -37,7 +37,10 @@ class _IdentificationState extends State<Identification> {
 					children: const [
 						Text('Hi'),
 						Text(_intro)
-					]
+					].map((widget) => Padding(
+						padding: const EdgeInsets.all(16),
+						child: widget
+					)).toList()
 				)
 			)
 		);

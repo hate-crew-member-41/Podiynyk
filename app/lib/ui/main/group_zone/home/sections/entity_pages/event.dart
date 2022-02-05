@@ -45,7 +45,7 @@ class _EventPageState extends State<EventPage> {
 					decoration: const InputDecoration(hintText: "name"),
 					onSubmitted: (label) {},  // todo: add the label
 				),
-				if (subject != null) Text(subject),
+				if (subject != null) Text(subject.name),
 				Text(event.date.fullRepr),  // todo: allow changing
 				if (hasNote) TextField(
 					controller: widget._noteField,

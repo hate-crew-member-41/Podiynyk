@@ -10,12 +10,12 @@ class Local {
 	/// Initializes [Hive] and makes the local data accessible.
 	static Future<void> init() async {
 		await Hive.initFlutter();
-		await Future.wait([
-			(await Hive.openBox<String>(DataBox.user.name)).deleteFromDisk(),
-			(await Hive.openBox<SubjectEssence>(DataBox.unfollowedSubjects.name)).deleteFromDisk(),
-			(await Hive.openBox<EventEssence>(DataBox.hiddenEvents.name)).deleteFromDisk(),
-			(await Hive.openBox<MessageEssence>(DataBox.hiddenMessages.name)).deleteFromDisk()
-		]);
+		// await Future.wait([
+		// 	(await Hive.openBox<String>(DataBox.user.name)).deleteFromDisk(),
+		// 	(await Hive.openBox<SubjectEssence>(DataBox.unfollowedSubjects.name)).deleteFromDisk(),
+		// 	(await Hive.openBox<EventEssence>(DataBox.hiddenEvents.name)).deleteFromDisk(),
+		// 	(await Hive.openBox<MessageEssence>(DataBox.hiddenMessages.name)).deleteFromDisk()
+		// ]);
 		await Future.wait([
 			Hive.openBox<String>(DataBox.user.name),
 			Hive.openBox<SubjectEssence>(DataBox.unfollowedSubjects.name),

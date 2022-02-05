@@ -13,7 +13,6 @@ void main() {
 }
 
 
-// todo: sync the role
 class App extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
@@ -35,9 +34,9 @@ class App extends StatelessWidget {
 				),
 				textTheme: TextTheme(
 					headline6: GoogleFonts.montserrat(),  // app bar
-					subtitle1: GoogleFonts.montserrat(),  // list tile's title
+					subtitle1: GoogleFonts.montserrat(fontSize: 16),  // list tile's title
 					bodyText1: GoogleFonts.montserrat(),  // emphasized text
-					bodyText2: GoogleFonts.montserrat()  // plain text
+					bodyText2: GoogleFonts.montserrat(fontSize: 14)  // plain text
 				),
 				floatingActionButtonTheme: FloatingActionButtonThemeData(
 					backgroundColor: const HSVColor.fromAHSV(1, 0, 0, .2).toColor(),

@@ -55,7 +55,7 @@ class _SubjectPageState extends State<SubjectPage> {
 						for (final entry in info) Text(entry)  // todo: make them fields to enable editing
 					])
 				),
-				if (events.isNotEmpty) TextButton(
+				if (events!.isNotEmpty) TextButton(
 					child: Text(subject.eventCountRepr),
 					onPressed: () => _showPage([
 						for (final event in events) EventTile(event, showSubject: false)
@@ -67,7 +67,7 @@ class _SubjectPageState extends State<SubjectPage> {
 				if (isFollowed) EntityActionButton(
 					text: "add an event",
 					action: () => Navigator.of(context).push(MaterialPageRoute(
-						builder: (_) => NewEventPage.subjectEvent(subject.name)
+						builder: (_) => NewEventPage.subjectEvent(subject)
 					))
 				),
 				// todo: move this action to the info list through a FAD

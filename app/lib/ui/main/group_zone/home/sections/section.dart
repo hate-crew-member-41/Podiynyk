@@ -45,6 +45,7 @@ abstract class Section extends StatelessWidget {
 
 
 // todo: _futureEntries is mutable
+// idea: consider an AnimatedOpacity animation with a different delay for each tile
 /// A [Section] that displays a list of fetched [E]ntities.
 abstract class CloudListSection<E> extends Section {
 	Future<List<E>>? _futureEntities;
@@ -65,9 +66,8 @@ abstract class CloudListSection<E> extends Section {
 				// todo: what is shown while awaiting
 				if (snapshot.connectionState == ConnectionState.waiting) return Center(child: Icon(icon));
 
-				if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
-				// idea: consider an AnimatedOpacity animation with a different delay for each tile
 				return ListView(
 					children: [
 						...tiles(context, snapshot.data!),

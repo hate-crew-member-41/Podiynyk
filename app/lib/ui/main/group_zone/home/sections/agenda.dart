@@ -14,12 +14,12 @@ class AgendaSection extends ExtendableListSection<Event> {
 	@override
 	final name = "agenda";
 	@override
-	final icon = Icons.event_note;
+	final icon = Icons.import_contacts;
 
 	@override
 	Future<List<Event>> get entitiesFuture => Cloud.events.then((events) {
 		final unfollowedEssences = Local.storedEntities<SubjectEssence>(DataBox.unfollowedSubjects);
-		return List<Event>.from(events.where((event) => !unfollowedEssences.contains(event.subject)));
+		return events.where((event) => !unfollowedEssences.contains(event.subject?.essence)).toList();
 	});
 
 	@override
@@ -40,7 +40,7 @@ class EventTile extends StatelessWidget {
 	Widget build(BuildContext context) {
 		return ListTile(
 			title: Text(_event.name),
-			subtitle: showSubject && _event.subject != null ? Text(_event.subject!) : null,
+			subtitle: showSubject && _event.subject != null ? Text(_event.subject!.name) : null,
 			trailing: Text(_event.date.dateRepr),
 			onTap: () => Navigator.of(context).push(MaterialPageRoute(
 				builder: (context) => EventPage(_event)
@@ -58,22 +58,24 @@ class AddEventButton extends StatefulWidget {
 }
 
 class _AddEventButtonState extends State<AddEventButton> {
-	List<String>? _subjectNames;
+	List<Subject>? _subjects;
 
 	@override
 	void initState() {
-		Cloud.subjectNames.then((subjectNames) => setState(() => _subjectNames = subjectNames));
+		Cloud.subjects.then((subjects) => setState(() => _subjects = subjects));
 		super.initState();
 	}
 
 	@override
 	Widget build(BuildContext context) {
-		final isVisible = _subjectNames != null;
+		final isVisible = _subjects != null;
 
 		return AnimatedOpacity(
 			opacity: isVisible ? 1 : 0,
 			duration: const Duration(milliseconds: 200),
-			child: isVisible ? NewEntityButton(pageBuilder: (_) => NewEventPage(_subjectNames!)) : null
+			child: isVisible ? NewEntityButton(
+				pageBuilder: (_) => NewEventPage(subjects: _subjects!)
+			) : null
 		);
 	}
 }

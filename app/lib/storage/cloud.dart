@@ -18,7 +18,7 @@ import 'entities/university.dart';
 extension on Map<String, dynamic> {
 	int get newId {
 		int id = 0;
-		while (containsKey(id)) id++;
+		while (containsKey(id.toString())) id++;
 		return id;
 	}
 }
@@ -102,6 +102,7 @@ class Cloud {
 				_groupDocument(Collection.events).set({});
 				_groupDocument(Collection.messages).set({});
 				_groupDocument(Collection.questions).set({});
+				_groupDocument(Collection.questions).set({});
 			}
 
 			return id;
@@ -122,6 +123,8 @@ class Cloud {
 		return isElected;
 	}
 
+	// todo: create a Firestore cloud function to change the document asa there are enough confirmations,
+	// todo: make the function init the group's documents instead of [enterGroup]
 	/// A [Stream] of updates of the group's [Student]s and confirmations for them to be the group's leader.
 	/// As soon as the leader is determined, `null` is returned.
 	static Stream<List<Student>?> get leaderElectionUpdates {
@@ -163,41 +166,43 @@ class Cloud {
 		_role = Role.values[roleIndex];
 	}
 
-	/// The names of the group's subjects.
-	static Future<List<String>> get subjectNames async {
+	/// The group's [Subject]s without the [Event]s and details.
+	static Future<List<Subject>> get subjects async {
 		final snapshot = await _groupDocument(Collection.subjects).get();
-		return snapshot.exists ? (List<String>.from(snapshot.data()!.values)..sort()) : <String>[];
+		return [for (final entry in snapshot.data()!.entries) Subject(
+			id: entry.key,
+			name: entry.value[_Field.name.name]
+		)]..sort((a, b) => a.name.compareTo(b.name));
 	}
 
 	/// The group's [Subject]s without the details.
-	static Future<List<Subject>> get subjects async {
+	static Future<List<Subject>> get subjectsWithEvents async {
 		final snapshots = await Future.wait([
 			_groupDocument(Collection.subjects).get(),
 			_groupDocument(Collection.events).get()
 		]);
-		final entries = (snapshots.first.data() ?? {});
-		final eventEntries = (snapshots.last.data() ?? {});
+		final subjectEntries = snapshots.first.data()!;
+		final eventEntries = snapshots.last.data()!;
 
-		final events = {for (final name in entries.values) name: <Event>[]};
+		final subjects = [for (final entry in subjectEntries.entries) Subject(
+			id: entry.key,
+			name: entry.value[_Field.name.name],
+		)]..sort((a, b) => a.name.compareTo(b.name));
 
-		for (final entry in eventEntries.entries.where(
-			(entry) => entry.value.containsKey(_Field.subject.name)
-		)) {
-			events[entry.value[_Field.subject.name]]!.add(Event(
-				id: entry.key,
-				name: entry.value[_Field.name.name],
-				subject: entry.value[_Field.subject.name],
-				date: entry.value[_Field.date.name].toDate()
-			));
+		for (final subject in subjects) {
+			subject.events = [
+				for (final entry in eventEntries.entries.where((entry) =>
+					entry.value[_Field.subject.name] == subject.id
+				)) Event(
+					id: entry.key,
+					name: entry.value[_Field.name.name],
+					subject: subject,
+					date: entry.value[_Field.date.name],
+				)
+			]..sort((a, b) => a.date.compareTo(b.date));
 		}
 
-		for (final events in events.values) events.sort((a, b) => a.date.compareTo(b.date));
-
-		return [for (final entry in entries.entries) Subject(
-			id: entry.key,
-			name: entry.value,
-			events: events[entry.value]!
-		)]..sort((a, b) => a.name.compareTo(b.name));
+		return subjects;
 	}
 
 	/// The group's [Event]s without the details.
@@ -209,6 +214,9 @@ class Cloud {
 			for (final entry in snapshot.data()!.entries) Event(
 				id: entry.key,
 				name: entry.value[_Field.name.name],
+				// tofix: subjects also need to be fetched to construct a Subject object here
+				// however, Agenda section already fetches events and subjects,
+				// so just fetching subjects here means fetching subjects twice in it
 				subject: entry.value[_Field.subject.name],
 				date: entry.value[_Field.date.name].toDate()
 			)
@@ -292,7 +300,7 @@ class Cloud {
 	static Future<void> addSubject({required String name}) async => await _addEntity(
 		collection: Collection.subjects,
 		existingEquals: (existingSubject) => existingSubject == name,
-		entity: name,
+		entity: {_Field.name.name: name},
 		details: {
 			_Field.totalEventCount.name: 0,
 			_Field.info.name: <String>[]
@@ -309,17 +317,17 @@ class Cloud {
 	/// Adds an [Event] with the arguments unless it exists. Increments the [subject]'s total event count.
 	static Future<void> addEvent({
 		required String name,
-		String? subject,
+		Subject? subject,
 		required DateTime date,
 		String? note
 	}) async {
 		final wasWritten = await _addEntity(
 			collection: Collection.events,
 			existingEquals: (existingEvent) =>
-				existingEvent[_Field.name.name] == name && existingEvent[_Field.subject.name] == subject,
+				existingEvent[_Field.name.name] == name && existingEvent[_Field.subject.name] == subject?.id,
 			entity: {
 				_Field.name.name: name,
-				if (subject != null) _Field.subject.name: subject,
+				_Field.subject.name: subject?.id,
 				_Field.date.name: date,
 			},
 			details: {if (note != null) _Field.note.name: note},
@@ -328,12 +336,7 @@ class Cloud {
 		if (subject != null && wasWritten) {
 			final document = _groupDocument(Collection.subjects);
 
-			final subjectsSnapshot = await document.get();
-			final subjectId = subjectsSnapshot.data()!.entries.firstWhere(
-				(subjectEntry) => subjectEntry.value == subject
-			).key;
-
-			document.collection(Collection.details.name).doc(subjectId).update({
+			document.collection(Collection.details.name).doc(subject.id).update({
 				_Field.totalEventCount.name: FieldValue.increment(1)
 			});
 		}

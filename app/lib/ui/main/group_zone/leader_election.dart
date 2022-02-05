@@ -32,7 +32,10 @@ class _LeaderElectionState extends State<LeaderElection> {
 					children: const [
 						Text('Almost there'),
 						Text(_intro)
-					]
+					].map((widget) => Padding(
+						padding: const EdgeInsets.all(16),
+						child: widget
+					)).toList()
 				)
 			)
 		);

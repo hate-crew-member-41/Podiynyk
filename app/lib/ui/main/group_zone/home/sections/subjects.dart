@@ -17,7 +17,7 @@ class SubjectsSection extends ExtendableListSection<Subject> {
 	final icon = Icons.school;
 
 	@override
-	Future<List<Subject>> get entitiesFuture => Cloud.subjects;
+	Future<List<Subject>> get entitiesFuture => Cloud.subjectsWithEvents;
 
 	@override
 	Future<int> get entityCount => futureEntities.then(
@@ -52,8 +52,8 @@ class SubjectsSection extends ExtendableListSection<Subject> {
 	}
 
 	Event? _nextEvent(Subject subject) {
-		if (subject.events.isEmpty) return null;
-		return subject.events.reduce((nextEvent, event) =>  event.isBefore(nextEvent) ? event : nextEvent);
+		if (subject.events!.isEmpty) return null;
+		return subject.events!.reduce((nextEvent, event) =>  event.isBefore(nextEvent) ? event : nextEvent);
 	}
 
 	@override

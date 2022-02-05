@@ -1,6 +1,7 @@
 import '../cloud.dart' show Cloud;
 
 import 'entity.dart';
+import 'subject.dart';
 
 
 typedef EventEssence = Map<String, String?>;
@@ -9,7 +10,7 @@ typedef EventEssence = Map<String, String?>;
 class Event implements DetailedEntity, StoredEntity<EventEssence> {
 	final String id;
 	final String name;
-	final String? subject;
+	final Subject? subject;
 	final DateTime date;
 
 	String? note;
@@ -27,11 +28,13 @@ class Event implements DetailedEntity, StoredEntity<EventEssence> {
 	@override
 	EventEssence get essence => {
 		'name': name, 
-		'subject': subject
+		'subject': subject?.id
 	};
 
 	@override
-	bool essenceIs(EventEssence comparedTo) => name == comparedTo['name'] && subject == comparedTo['subject'];
+	bool essenceIs(EventEssence comparedTo) {
+		return name == comparedTo['name'] && subject?.id == comparedTo['subject'];
+	}
 
 	bool isBefore(Event event) => date.isBefore(event.date);
 }

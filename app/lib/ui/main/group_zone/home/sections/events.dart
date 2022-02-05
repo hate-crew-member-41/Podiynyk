@@ -12,7 +12,7 @@ class EventsSection extends ExtendableListSection<Event> {
 	@override
 	final name = "events";
 	@override
-	final icon = Icons.calendar_today;
+	final icon = Icons.event_note;
 
 	@override
 	Future<List<Event>> get entitiesFuture => Cloud.events.then((events) =>
