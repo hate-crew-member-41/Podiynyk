@@ -184,7 +184,7 @@ class Cloud {
 	}
 
 	/// The group's sorted [Event]s without the details, that the user has not hidden.
-	static Future<List<Event>> events({Future<List<Subject>>? subjectsFuture}) async {
+	static Future<List<Event>> get events async {
 		final subjectsWithEvents = await _subjectsWithEvents;
 		return subjectsWithEvents.events
 			..removeWhere((event) => Local.entityIsStored(DataBox.hiddenEvents, event))
@@ -218,7 +218,7 @@ class Cloud {
 				id: entry.key,
 				name: entry.value[Field.name.name],
 				subject: subject,
-				date: entry.value[Field.date.name],
+				date: entry.value[Field.date.name].toDate(),
 			));
 		}
 

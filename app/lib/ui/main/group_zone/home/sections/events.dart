@@ -7,16 +7,28 @@ import 'section.dart';
 import 'entity_pages/event.dart';
 
 
-class EventsSection extends StatelessWidget {
+class EventsSectionCloudData {
+	final events = Cloud.events.then((events) =>
+		events.where((event) => event.subject == null).toList()
+	);
+}
+
+
+class EventsSection extends CloudSection {
 	static const name = "events";
 	static const icon = Icons.event_note;
 
-	const EventsSection();
+	EventsSection() : super(EventsSectionCloudData());
+
+	@override
+	String get sectionName => name;
+	@override
+	IconData get sectionIcon => icon;
 
 	@override
 	Widget build(BuildContext context) {
 		return FutureBuilder<List<Event>>(
-			future: events,
+			future: cloudData.events,
 			builder: (context, snapshot) {
 				// todo: what is shown while awaiting
 				if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(icon));
@@ -36,11 +48,6 @@ class EventsSection extends StatelessWidget {
 				);
 			}
 		);
-	}
-
-	Future<List<Event>> get events async {
-		final events = await Cloud.events();
-		return events.where((event) => event.subject == null).toList();
 	}
 
 	// Widget addEntityButton(BuildContext context) => NewEntityButton(

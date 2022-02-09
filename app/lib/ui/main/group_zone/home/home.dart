@@ -7,6 +7,7 @@ import 'sections/events.dart';
 import 'sections/group.dart';
 import 'sections/messages.dart';
 import 'sections/questions.dart';
+import 'sections/section.dart';
 import 'sections/subjects.dart';
 import 'sections/settings.dart';
 
@@ -20,87 +21,89 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-	// todo: change the types
-	dynamic _section = const AgendaSection();
-	dynamic _sectionData = AgendaData();
+	Section _section = AgendaSection();
 
 	@override
 	Widget build(BuildContext context) {
-		return Provider.value(
-			value: _sectionData,
-			builder: (context, _) => Scaffold(
-				appBar: AppBar(
-					automaticallyImplyLeading: false,
-					title: Builder(builder: (context) => Row(
-						mainAxisAlignment: MainAxisAlignment.spaceBetween,
-						children: [
-							GestureDetector(
-								child: Text(_section.name),
-								onTap: () => Scaffold.of(context).openDrawer()
-							),
-							Row(children: [
-								// todo: add entity count
-								Padding(
-									padding: const EdgeInsets.only(left: 8),
-									child: Icon(_section.icon)
-								)
-							])
-						]
-					))
-				),
-				body: _section,
-				drawer: Drawer(
-					child: Column(
-						mainAxisAlignment: MainAxisAlignment.center,
-						children: [
-							SectionTile(
-								name: AgendaSection.name,
-								icon: AgendaSection.icon,
-								setSection: _setSectionFunction(() => const AgendaSection())
-							),
-							SectionTile(
-								name: SubjectsSection.name,
-								icon: SubjectsSection.icon,
-								setSection: _setSectionFunction(() => const SubjectsSection())
-							),
-							SectionTile(
-								name: EventsSection.name,
-								icon: EventsSection.icon,
-								setSection: _setSectionFunction(() => const EventsSection())
-							),
-							const ListTile(),
-							SectionTile(
-								name: MessagesSection.name,
-								icon: MessagesSection.icon,
-								setSection: _setSectionFunction(() => const MessagesSection())
-							),
-							SectionTile(
-								name: QuestionsSection.name,
-								icon: QuestionsSection.icon,
-								setSection: _setSectionFunction(() => const QuestionsSection())
-							),
-							SectionTile(
-								name: GroupSection.name,
-								icon: GroupSection.icon,
-								setSection: _setSectionFunction(() => const GroupSection())
-							),
-							const ListTile(),
-							SectionTile(
-								name: SettingsSection.name,
-								icon: SettingsSection.icon,
-								setSection: _setSectionFunction(() => const SettingsSection())
-							),
-						]
-					)
-				),
-				drawerEdgeDragWidth: 150,
-				// todo: add floating action button dependant on the _section
-			),
-		);
+		return _section is CloudSection ? Provider.value(
+			value: (_section as CloudSection).cloudData,
+			builder: (_, __) => _builder,
+		) : _builder;
 	}
 
-	void Function() _setSectionFunction<S>(S Function() sectionBuilder) => () {
-		if (_section is! S) setState(() => _section = sectionBuilder());
+	Widget get _builder => Scaffold(
+		appBar: AppBar(
+			automaticallyImplyLeading: false,
+			title: Builder(builder: (context) => Row(
+				mainAxisAlignment: MainAxisAlignment.spaceBetween,
+				children: [
+					GestureDetector(
+						child: Text(_section.sectionName),
+						onTap: () => Scaffold.of(context).openDrawer()
+					),
+					Row(children: [
+						// todo: add entity count
+						Padding(
+							padding: const EdgeInsets.only(left: 8),
+							child: Icon(_section.sectionIcon)
+						)
+					])
+				]
+			))
+		),
+		body: _section,
+		drawer: Drawer(
+			child: Column(
+				mainAxisAlignment: MainAxisAlignment.center,
+				children: [
+					SectionTile(
+						name: AgendaSection.name,
+						icon: AgendaSection.icon,
+						setSection: _setSectionFunction(() => AgendaSection())
+					),
+					SectionTile(
+						name: SubjectsSection.name,
+						icon: SubjectsSection.icon,
+						setSection: _setSectionFunction(() => SubjectsSection())
+					),
+					SectionTile(
+						name: EventsSection.name,
+						icon: EventsSection.icon,
+						setSection: _setSectionFunction(() => EventsSection())
+					),
+					const ListTile(),
+					SectionTile(
+						name: MessagesSection.name,
+						icon: MessagesSection.icon,
+						setSection: _setSectionFunction(() => MessagesSection())
+					),
+					SectionTile(
+						name: QuestionsSection.name,
+						icon: QuestionsSection.icon,
+						setSection: _setSectionFunction(() => QuestionsSection())
+					),
+					SectionTile(
+						name: GroupSection.name,
+						icon: GroupSection.icon,
+						setSection: _setSectionFunction(() => GroupSection())
+					),
+					const ListTile(),
+					SectionTile(
+						name: SettingsSection.name,
+						icon: SettingsSection.icon,
+						setSection: _setSectionFunction(() => const SettingsSection())
+					),
+				]
+			)
+		),
+		drawerEdgeDragWidth: 150,
+		// todo: add floating action button dependant on the _section
+	);
+
+	void Function() _setSectionFunction<S extends Section>(S Function() sectionBuilder) => () {
+		if (_section is! S) setState(() {
+			_section = sectionBuilder();
+		});
 	};
 }
 

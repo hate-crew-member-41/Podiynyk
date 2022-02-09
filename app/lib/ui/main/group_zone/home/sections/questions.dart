@@ -3,12 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/entities/question.dart';
 
+import 'section.dart';
 
-class QuestionsSection extends StatelessWidget {
+
+class QuestionsSectionCloudData {
+	final questions = Cloud.questions;
+}
+
+
+class QuestionsSection extends CloudSection {
 	static const name = "questions";
 	static const icon = Icons.question_answer;
 
-	const QuestionsSection();
+	QuestionsSection() : super(QuestionsSectionCloudData());
+
+	@override
+	String get sectionName => name;
+	@override
+	IconData get sectionIcon => icon;
 
 	@override
 	Widget build(BuildContext context) {

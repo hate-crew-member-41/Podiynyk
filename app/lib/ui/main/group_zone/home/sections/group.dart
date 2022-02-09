@@ -3,19 +3,30 @@ import 'package:flutter/material.dart';
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/entities/student.dart';
 
+import 'section.dart';
 import 'entity_pages/student.dart';
 
 
-class GroupSection extends StatelessWidget {
+class GroupSectionCloudData {
+	final students = Cloud.students;
+}
+
+
+class GroupSection extends CloudSection {
 	static const name = "group";
 	static const icon = Icons.people;
 
-	const GroupSection();
+	GroupSection() : super(GroupSectionCloudData());
+
+	@override
+	String get sectionName => name;
+	@override
+	IconData get sectionIcon => icon;
 
 	@override
 	Widget build(BuildContext context) {
 		return FutureBuilder<List<Student>>(
-			future: Cloud.students,
+			future: cloudData.students,
 			builder: (context, snapshot) {
 				// todo: what is shown while awaiting
 				if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(icon));

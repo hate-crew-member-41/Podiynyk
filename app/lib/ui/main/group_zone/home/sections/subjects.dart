@@ -9,16 +9,26 @@ import 'section.dart';
 import 'entity_pages/subject.dart';
 
 
-class SubjectsSection extends StatelessWidget {
+class SubjectsSectionCloudData {
+	final subjects = Cloud.subjectsWithEvents;
+}
+
+
+class SubjectsSection extends CloudSection {
 	static const name = "subjects";
 	static const icon = Icons.school;
 
-	const SubjectsSection();
+	SubjectsSection() : super(SubjectsSectionCloudData());
+
+	@override
+	String get sectionName => name;
+	@override
+	IconData get sectionIcon => icon;
 
 	@override
 	Widget build(BuildContext context) {
 		return FutureBuilder<List<Subject>>(
-			future: Cloud.subjectsWithEvents,
+			future: cloudData.subjects,
 			builder: (context, snapshot) {
 				// todo: what is shown while awaiting
 				if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(icon));

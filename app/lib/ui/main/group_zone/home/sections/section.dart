@@ -37,57 +37,21 @@ extension EntityDate on DateTime {
 
 
 abstract class Section extends StatelessWidget {
-	abstract final String name;
-	abstract final IconData icon;
+	/// The static [name] of the section.
+	String get sectionName;
+	/// The static [icon] of the section.
+	IconData get sectionIcon;
 
 	const Section();
 }
 
 
-// todo: _futureEntries is mutable
+// todo: rename to CloudListSection if the the common build behavior is captured
 // idea: consider an AnimatedOpacity animation with a different delay for each tile
-/// A [Section] that displays a list of fetched [E]ntities.
-abstract class CloudListSection<E> extends Section {
-	Future<List<E>>? _entitiesFuture;
-	Future<List<E>> get entitiesFuture {
-		_entitiesFuture ??= entities;
-		return _entitiesFuture!;
-	}
+abstract class CloudSection extends Section {
+	final dynamic cloudData;
 
-	Future<List<E>> get entities;
-
-	Future<int> get entityCount => entitiesFuture.then((entities) => entities.length);
-
-	@override
-	Widget build(BuildContext context) {
-		return FutureBuilder<List<E>>(
-			future: entitiesFuture,
-			builder: (context, snapshot) {
-				// todo: what is shown while awaiting
-				if (snapshot.connectionState == ConnectionState.waiting) return Center(child: Icon(icon));
-				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
-
-				return ListView(
-					children: [
-						...tiles(context, snapshot.data!),
-						if (this is ExtendableListSection) const ListTile()
-					]
-				);
-			}
-		);
-	}
-
-	List<Widget> tiles(BuildContext context, List<E> entities) => [
-		for (final entity in entities) tile(context, entity)
-	];
-
-	Widget tile(BuildContext context, E entity);
-}
-
-
-/// A [CloudListSection] that has a [FloatingActionButton] for extending its list.
-abstract class ExtendableListSection<E> extends CloudListSection<E> {
-	Widget addEntityButton(BuildContext context);
+	const CloudSection(this.cloudData);
 }
 
 

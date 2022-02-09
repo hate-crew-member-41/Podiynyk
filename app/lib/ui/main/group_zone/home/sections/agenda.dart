@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud, Subjects;
 import 'package:podiynyk/storage/entities/subject.dart';
@@ -11,7 +10,7 @@ import 'entity_pages/event.dart';
 import 'new_entity_pages/event.dart';
 
 
-class AgendaData {
+class AgendaSectionCloudData {
 	// todo: completely redo storing entities
 	final subjects = Cloud.subjectsWithEvents.then((subjects) {
 		final unfollowedEssences = Local.storedEntities<SubjectEssence>(DataBox.unfollowedSubjects);
@@ -24,16 +23,21 @@ class AgendaData {
 }
 
 
-class AgendaSection extends StatelessWidget {
+class AgendaSection extends CloudSection {
 	static const name = "agenda";
 	static const icon = Icons.import_contacts;
 
-	const AgendaSection();
+	AgendaSection() : super(AgendaSectionCloudData());
+
+	@override
+	String get sectionName => name;
+	@override
+	IconData get sectionIcon => icon;
 
 	@override
 	Widget build(BuildContext context) {
 		return FutureBuilder<List<Event>>(
-			future: context.read<AgendaData>().events,
+			future: cloudData.events,
 			builder: (context, snapshot) {
 				// todo: what is shown while awaiting
 				if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(icon));
