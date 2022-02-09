@@ -25,6 +25,14 @@ extension on Map<String, dynamic> {
 	}
 }
 
+extension Subjects on List<Subject> {
+	List<Event> get events => [for (final subject in this) ...subject.events!];
+}
+
+extension on List<Event> {
+	void sortByDate() => sort((a, b) => a.date.compareTo(b.date));
+}
+
 
 class Cloud {
 	static final _cloud = FirebaseFirestore.instance;
@@ -93,7 +101,7 @@ class Cloud {
 				intId = 0;
 				id = intId.toString();
 
-				// the [set] method does not support nested fields via dot notation, unlike the [update] method
+				// the [set] method does not support nested fields via dot notation
 				transaction.set(document, {
 					Field.names.name: {id: Local.name},
 					Field.confirmationCounts.name: {id: 0},
@@ -168,17 +176,23 @@ class Cloud {
 		_role = Role.values[roleIndex];
 	}
 
-	/// The group's [Subject]s without the [Event]s and details.
-	static Future<List<Subject>> get subjects async {
-		final snapshot = await _groupDocument(Collection.subjects).get();
-		return [for (final entry in snapshot.data()!.entries) Subject(
-			id: entry.key,
-			name: entry.value[Field.name.name]
-		)]..sort((a, b) => a.name.compareTo(b.name));
+	/// The group's sorted [Subject]s with the sorted [Event]s, without the details.
+	static Future<List<Subject>> get subjectsWithEvents async {
+		final subjects = await _subjectsWithEvents;
+		for (final subject in subjects) subject.events!.sortByDate();
+		return subjects..sort((a, b) => a.name.compareTo(b.name));
 	}
 
-	/// The group's [Subject]s without the details.
-	static Future<List<Subject>> get subjectsWithEvents async {
+	/// The group's sorted [Event]s without the details, that the user has not hidden.
+	static Future<List<Event>> events({Future<List<Subject>>? subjectsFuture}) async {
+		final subjectsWithEvents = await _subjectsWithEvents;
+		return subjectsWithEvents.events
+			..removeWhere((event) => Local.entityIsStored(DataBox.hiddenEvents, event))
+			..sort((a, b) => a.date.compareTo(b.date));
+	}
+
+	/// The group's [Subject]s with the unsorted [Event]s, without the details.
+	static Future<List<Subject>> get _subjectsWithEvents async {
 		final snapshots = await Future.wait([
 			_groupDocument(Collection.subjects).get(),
 			_groupDocument(Collection.events).get()
@@ -186,54 +200,34 @@ class Cloud {
 		final subjectEntries = snapshots.first.data()!;
 		final eventEntries = snapshots.last.data()!;
 
-		final subjects = [for (final entry in subjectEntries.entries) Subject(
-			id: entry.key,
-			name: entry.value[Field.name.name],
-		)]..sort((a, b) => a.name.compareTo(b.name));
+		final subjects = [
+			for (final entry in subjectEntries.entries) Subject(
+				id: entry.key,
+				name: entry.value[Field.name.name],
+				events: <Event>[]
+			)
+		];
+		final subjectsById = {
+			for (final subject in subjects) subject.id: subject
+		};
 
-		for (final subject in subjects) {
-			subject.events = [
-				for (final entry in eventEntries.entries.where((entry) =>
-					entry.value[Field.subject.name] == subject.id
-				)) Event(
-					id: entry.key,
-					name: entry.value[Field.name.name],
-					subject: subject,
-					date: entry.value[Field.date.name],
-				)
-			]..sort((a, b) => a.date.compareTo(b.date));
+		for (final entry in eventEntries.entries) {
+			final subject = subjectsById[entry.value[Field.subject.name]]!;
+
+			subject.events!.add(Event(
+				id: entry.key,
+				name: entry.value[Field.name.name],
+				subject: subject,
+				date: entry.value[Field.date.name],
+			));
 		}
 
 		return subjects;
 	}
 
-	/// The group's [Event]s without the details.
-	static Future<List<Event>> get events async {
-		final snapshot = await _groupDocument(Collection.events).get();
-		if (!snapshot.exists) return <Event>[];
-
-		final events = [
-			for (final entry in snapshot.data()!.entries) Event(
-				id: entry.key,
-				name: entry.value[Field.name.name],
-				// tofix: subjects also need to be fetched to construct a Subject object here
-				// however, Agenda section already fetches events and subjects,
-				// so just fetching subjects here means fetching subjects twice in it
-				subject: entry.value[Field.subject.name],
-				date: entry.value[Field.date.name].toDate()
-			)
-		];
-		Local.clearStoredEntities<Event, EventEssence>(DataBox.hiddenEvents, events);
-
-		return events
-			..removeWhere((event) => Local.entityIsStored(DataBox.hiddenEvents, event))
-			..sort((a, b) => a.date.compareTo(b.date));
-	}
-
 	/// The group's [Message]s without the details.
 	static Future<List<Message>> get messages async {
 		final snapshot = await _groupDocument(Collection.messages).get();
-		if (!snapshot.exists) return <Message>[];
 
 		final messages = [
 			for (final entry in snapshot.data()!.entries) Message(

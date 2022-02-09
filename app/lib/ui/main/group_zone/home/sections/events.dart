@@ -39,7 +39,7 @@ class EventsSection extends StatelessWidget {
 	}
 
 	Future<List<Event>> get events async {
-		final events = await Cloud.events;
+		final events = await Cloud.events();
 		return events.where((event) => event.subject == null).toList();
 	}
 

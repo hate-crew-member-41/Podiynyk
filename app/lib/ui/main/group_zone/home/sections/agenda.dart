@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import 'package:podiynyk/storage/cloud.dart' show Cloud, Subjects;
 import 'package:podiynyk/storage/entities/subject.dart';
 import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/event.dart';
@@ -8,6 +9,19 @@ import 'package:podiynyk/storage/entities/event.dart';
 import 'section.dart';
 import 'entity_pages/event.dart';
 import 'new_entity_pages/event.dart';
+
+
+class AgendaData {
+	// todo: completely redo storing entities
+	final subjects = Cloud.subjectsWithEvents.then((subjects) {
+		final unfollowedEssences = Local.storedEntities<SubjectEssence>(DataBox.unfollowedSubjects);
+		return subjects.where((subject) =>
+			!unfollowedEssences.contains(subject.essence)
+		).toList();
+	});
+	
+	Future<List<Event>> get events => subjects.then((subjects) => subjects.events);
+}
 
 
 class AgendaSection extends StatelessWidget {
@@ -19,7 +33,7 @@ class AgendaSection extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return FutureBuilder<List<Event>>(
-			future: events,
+			future: context.read<AgendaData>().events,
 			builder: (context, snapshot) {
 				// todo: what is shown while awaiting
 				if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(icon));
@@ -36,15 +50,6 @@ class AgendaSection extends StatelessWidget {
 				);
 			}
 		);
-	}
- 
-	Future<List<Event>> get events async {
-		final events = await Cloud.events;
-		final unfollowedEssences = Local.storedEntities<SubjectEssence>(DataBox.unfollowedSubjects);
-
-		return events.where((event) =>
-			!unfollowedEssences.contains(event.subject?.essence)
-		).toList();
 	}
 
 	// Widget addEntityButton(BuildContext context) => const AddEventButton();
@@ -71,32 +76,32 @@ class EventTile extends StatelessWidget {
 }
 
 
-class AddEventButton extends StatefulWidget {
-	const AddEventButton();
+// class AddEventButton extends StatefulWidget {
+// 	const AddEventButton();
 
-	@override
-	_AddEventButtonState createState() => _AddEventButtonState();
-}
+// 	@override
+// 	_AddEventButtonState createState() => _AddEventButtonState();
+// }
 
-class _AddEventButtonState extends State<AddEventButton> {
-	List<Subject>? _subjects;
+// class _AddEventButtonState extends State<AddEventButton> {
+// 	List<Subject>? _subjects;
 
-	@override
-	void initState() {
-		Cloud.subjects.then((subjects) => setState(() => _subjects = subjects));
-		super.initState();
-	}
+// 	@override
+// 	void initState() {
+// 		Cloud.subjects.then((subjects) => setState(() => _subjects = subjects));
+// 		super.initState();
+// 	}
 
-	@override
-	Widget build(BuildContext context) {
-		final isVisible = _subjects != null;
+// 	@override
+// 	Widget build(BuildContext context) {
+// 		final isVisible = _subjects != null;
 
-		return AnimatedOpacity(
-			opacity: isVisible ? 1 : 0,
-			duration: const Duration(milliseconds: 200),
-			child: isVisible ? NewEntityButton(
-				pageBuilder: (_) => NewEventPage(subjects: _subjects!)
-			) : null
-		);
-	}
-}
+// 		return AnimatedOpacity(
+// 			opacity: isVisible ? 1 : 0,
+// 			duration: const Duration(milliseconds: 200),
+// 			child: isVisible ? NewEntityButton(
+// 				pageBuilder: (_) => NewEventPage(subjects: _subjects!)
+// 			) : null
+// 		);
+// 	}
+// }
