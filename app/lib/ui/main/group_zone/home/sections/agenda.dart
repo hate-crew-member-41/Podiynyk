@@ -10,23 +10,44 @@ import 'entity_pages/event.dart';
 import 'new_entity_pages/event.dart';
 
 
-class AgendaSection extends ExtendableListSection<Event> {
-	@override
-	final name = "agenda";
-	@override
-	final icon = Icons.import_contacts;
+class AgendaSection extends StatelessWidget {
+	static const name = "agenda";
+	static const icon = Icons.import_contacts;
+
+	const AgendaSection();
 
 	@override
-	Future<List<Event>> get entitiesFuture => Cloud.events.then((events) {
+	Widget build(BuildContext context) {
+		return FutureBuilder<List<Event>>(
+			future: events,
+			builder: (context, snapshot) {
+				// todo: what is shown while awaiting
+				if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(icon));
+				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+
+				return ListView(
+					children: [
+						for (final entity in snapshot.data!) EventTile(
+							entity,
+							showSubject: true
+						),
+						const ListTile()
+					],
+				);
+			}
+		);
+	}
+ 
+	Future<List<Event>> get events async {
+		final events = await Cloud.events;
 		final unfollowedEssences = Local.storedEntities<SubjectEssence>(DataBox.unfollowedSubjects);
-		return events.where((event) => !unfollowedEssences.contains(event.subject?.essence)).toList();
-	});
 
-	@override
-	Widget tile(BuildContext context, Event event) => EventTile(event, showSubject: true);
+		return events.where((event) =>
+			!unfollowedEssences.contains(event.subject?.essence)
+		).toList();
+	}
 
-	@override
-	Widget addEntityButton(BuildContext context) => const AddEventButton();
+	// Widget addEntityButton(BuildContext context) => const AddEventButton();
 }
 
 

@@ -405,7 +405,7 @@ class Cloud {
 		});
 
 		final wasWritten = id != null;
-		if (details != null && wasWritten) document.collection(Collection.details.name).doc(id).set(details);
+		if (details != null && wasWritten) await document.collection(Collection.details.name).doc(id).set(details);
 		return wasWritten;
 	}
 
@@ -448,7 +448,7 @@ class Cloud {
 	static Future<void> makeLeader(Student student) async {
 		final document = _groupDocument(Collection.groups);
 
-		document.update({
+		await document.update({
 			Local.id: Role.trusted.index,
 			student.id: Role.leader.index
 		});

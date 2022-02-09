@@ -3,25 +3,36 @@ import 'package:flutter/material.dart';
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/entities/question.dart';
 
-import 'section.dart';
 
+class QuestionsSection extends StatelessWidget {
+	static const name = "questions";
+	static const icon = Icons.question_answer;
 
-class QuestionsSection extends ExtendableListSection<Question> {
-	@override
-	final name = "questions";
-	@override
-	final icon = Icons.question_answer;
+	const QuestionsSection();
 
 	@override
-	Future<List<Question>> get entitiesFuture => Cloud.questions;
+	Widget build(BuildContext context) {
+		return FutureBuilder<List<Question>>(
+			future: Cloud.questions,
+			builder: (context, snapshot) {
+				// todo: what is shown while awaiting
+				if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(icon));
+				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
-	// todo: define
-	@override
-	Widget tile(BuildContext context, Question entity) {
-		throw UnimplementedError();
+				return ListView(
+					children: const [
+						// todo: define the tiles
+						// ...[for (final question in snapshot.data!) const ListTile()],
+						ListTile()
+					]
+				);
+			}
+		);
 	}
 
 	// todo: define
-	@override
-	Widget addEntityButton(BuildContext context) => NewEntityButton(pageBuilder: (_) => const Scaffold());
+	// @override
+	// Widget addEntityButton(BuildContext context) => NewEntityButton(
+	// 	pageBuilder: (_) => const Scaffold()
+	// );
 }

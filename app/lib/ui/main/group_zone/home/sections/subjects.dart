@@ -7,26 +7,37 @@ import 'package:podiynyk/storage/entities/subject.dart';
 
 import 'section.dart';
 import 'entity_pages/subject.dart';
-import 'new_entity_pages/subject.dart';
 
 
-class SubjectsSection extends ExtendableListSection<Subject> {
-	@override
-	final name = "subjects";
-	@override
-	final icon = Icons.school;
+class SubjectsSection extends StatelessWidget {
+	static const name = "subjects";
+	static const icon = Icons.school;
+
+	const SubjectsSection();
 
 	@override
-	Future<List<Subject>> get entitiesFuture => Cloud.subjectsWithEvents;
+	Widget build(BuildContext context) {
+		return FutureBuilder<List<Subject>>(
+			future: Cloud.subjectsWithEvents,
+			builder: (context, snapshot) {
+				// todo: what is shown while awaiting
+				if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(icon));
+				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
-	@override
-	Future<int> get entityCount => futureEntities.then(
-		(subjects) => subjects.where((subject) => !subjectIsUnfollowed(subject)
-	).length);
+				return ListView(
+					children: tiles(context, snapshot.data!)..add(const ListTile())
+				);
+			}
+		);
+	}
 
-	@override
+	// @override
+	// Future<int> get entityCount => entitiesFuture.then(
+	// 	(subjects) => subjects.where((subject) => !subjectIsUnfollowed(subject)
+	// ).length);
+
 	List<Widget> tiles(BuildContext context, List<Subject> subjects) {
-		final unfollowed = List<Subject>.from(subjects.where(subjectIsUnfollowed));
+		final unfollowed = subjects.where(subjectIsUnfollowed).toList();
 		subjects.removeWhere((subject) => unfollowed.contains(subject));
 
 		return [
@@ -37,7 +48,6 @@ class SubjectsSection extends ExtendableListSection<Subject> {
 
 	bool subjectIsUnfollowed(Subject subject) => Local.entityIsStored(DataBox.unfollowedSubjects, subject);
 
-	@override
 	Widget tile(BuildContext context, Subject subject) {
 		final nextEvent = _nextEvent(subject);
 
@@ -56,6 +66,5 @@ class SubjectsSection extends ExtendableListSection<Subject> {
 		return subject.events!.reduce((nextEvent, event) =>  event.isBefore(nextEvent) ? event : nextEvent);
 	}
 
-	@override
-	Widget addEntityButton(BuildContext context) => NewEntityButton(pageBuilder: (_) => NewSubjectPage());
+	// Widget addEntityButton(BuildContext context) => NewEntityButton(pageBuilder: (_) => NewSubjectPage());
 }

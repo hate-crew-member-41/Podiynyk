@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 
-import 'section.dart' show Section;
 
-
-class SettingsSection extends Section {
-	@override
-	final name = "settings";
-	@override
-	final icon = Icons.settings;
+class SettingsSection extends StatelessWidget {
+	static const name = "settings";
+	static const icon = Icons.settings;
 
 	const SettingsSection();
 
+	// todo: define
 	@override
 	Widget build(BuildContext context) {
-		return Center(child: Icon(icon));
+		return const Center(child: Icon(icon));
 	}
 }

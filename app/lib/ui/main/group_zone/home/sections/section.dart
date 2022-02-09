@@ -48,24 +48,23 @@ abstract class Section extends StatelessWidget {
 // idea: consider an AnimatedOpacity animation with a different delay for each tile
 /// A [Section] that displays a list of fetched [E]ntities.
 abstract class CloudListSection<E> extends Section {
-	Future<List<E>>? _futureEntities;
-	Future<List<E>> get futureEntities {
-		_futureEntities ??= entitiesFuture;
-		return _futureEntities!;
+	Future<List<E>>? _entitiesFuture;
+	Future<List<E>> get entitiesFuture {
+		_entitiesFuture ??= entities;
+		return _entitiesFuture!;
 	}
 
-	Future<List<E>> get entitiesFuture;
+	Future<List<E>> get entities;
 
-	Future<int> get entityCount => futureEntities.then((entities) => entities.length);
+	Future<int> get entityCount => entitiesFuture.then((entities) => entities.length);
 
 	@override
 	Widget build(BuildContext context) {
 		return FutureBuilder<List<E>>(
-			future: futureEntities,
+			future: entitiesFuture,
 			builder: (context, snapshot) {
 				// todo: what is shown while awaiting
 				if (snapshot.connectionState == ConnectionState.waiting) return Center(child: Icon(icon));
-
 				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
 				return ListView(

@@ -1,0 +1,539 @@
+[33mcommit e1d002cc6733bd8736f21c90792c627c2be2325e[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Sat Feb 5 19:08:28 2022 +0200
+
+    Unite the fields used locally and remotely
+
+[33mcommit 70651f640f1bcb0850fed8600eb15200c13426a8[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Sat Feb 5 18:54:32 2022 +0200
+
+    Change how subjects are stored
+
+[33mcommit 5047f67fd22cee19b299bba50f2f594494cce72a[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Sat Feb 5 15:04:40 2022 +0200
+
+    Create field widget templates, finichs styling fields
+
+[33mcommit 6ed574de354cb9b5773b538e4afaa4b4e1b69747[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Sat Feb 5 13:27:59 2022 +0200
+
+    Change the package structure, add decorated field widget
+
+[33mcommit 6ca32fe2d90cc311916c7d7e65e1f81218f5455c[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Fri Feb 4 21:42:48 2022 +0200
+
+    Add theme sketches, fix small cloud API mistakes
+
+[33mcommit 76fa790c1752c443d14157d4a7f405b8bc592d13[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Fri Feb 4 12:29:16 2022 +0200
+
+    Implement the transition from leader election to home
+
+[33mcommit ca52c6a3827b48522d0df11b7dd681772136b26b[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Thu Feb 3 09:57:34 2022 +0200
+
+    Implement picking the leader in leader election
+
+[33mcommit 3083d0d46b9b01eb1f05690bfd621b1fad92099c[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Feb 2 22:54:28 2022 +0200
+
+    Implement the real-time list of leader determination
+
+[33mcommit b4747ed91aef507923d6e66941a24390016bd741[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Feb 2 19:09:16 2022 +0200
+
+    Fix group document init
+
+[33mcommit a9b6de274ecf68021f14a98aa3f5b72ab5fce3ec[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Feb 2 19:06:27 2022 +0200
+
+    Change the structure of the group document
+
+[33mcommit b50c39b978499a319a50d933ba21286f145d8f6d[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Tue Feb 1 22:05:05 2022 +0200
+
+    Implement transitions between pre-group-data widgets
+
+[33mcommit 46607fe729ff6605d945de0979644b30328a7b9c[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Mon Jan 31 22:00:56 2022 +0200
+
+    Implement the rest of identification
+
+[33mcommit aa74138a2e92f0e1675660a24133e385c77493dc[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Mon Jan 31 20:10:37 2022 +0200
+
+    Reduce cloud-related identification code duplication
+
+[33mcommit 95904052c12fbeb2b15693458ba5db49ceb1355d[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Mon Jan 31 19:36:51 2022 +0200
+
+    Reduce code duplication in identification
+
+[33mcommit f4a3c893f5947ce90cb44165e8274caeae729ae7[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Mon Jan 31 17:53:32 2022 +0200
+
+    Implement identification (university, department)
+
+[33mcommit a24e3a796d97e6161ceac26d7601e233f58fd5b9[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Fri Jan 21 19:30:16 2022 +0200
+
+    Add identification, leader determination to design sketches
+
+[33mcommit 2e228ff3341c20fbc774caba1cf6a9595daa8de7[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Tue Jan 18 20:28:16 2022 +0200
+
+    Exclude events of unfollowed subjects in agenda
+
+[33mcommit 3fd7e4d9cd73d15a53a2b2c37bf9e9718302bcc6[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Tue Jan 18 18:27:14 2022 +0200
+
+    Implement adding event notes
+
+[33mcommit c11353f527753a1eed7817450bc5ec7ed5134a8b[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Tue Jan 18 17:17:26 2022 +0200
+
+    Implement adding subject info, fix fetching it
+
+[33mcommit bb1755c1302d7fcdbe180f801e8ff36e9b54bda6[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Tue Jan 18 15:31:15 2022 +0200
+
+    Implement adding events from subject pages
+
+[33mcommit db49e28adec4e84c697842ef0dd09adb4482fd8a[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Tue Jan 18 15:17:00 2022 +0200
+
+    Restrict access to student actions
+
+[33mcommit 82c98824cef7b7b847e8ee514ab2e25037ef7b5a[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Tue Jan 18 14:31:41 2022 +0200
+
+    Exclude unfollowed subjects from the subject count
+
+[33mcommit 6772198b5033516f53a1012aa611a18a0c5e5faf[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Tue Jan 18 13:55:58 2022 +0200
+
+    Move unfollowed subjects to the end of the list
+
+[33mcommit f2929e3178eb80f29cb3d82f696e70a0f331d0f4[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Tue Jan 18 13:08:42 2022 +0200
+
+    Implement unfollowing subjects
+
+[33mcommit 034f723da7577c46a5cac916fd5dc58a8499d2d0[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Fri Jan 14 10:50:39 2022 +0200
+
+    Implement deleting subjects
+
+[33mcommit 44b2c5961e0741350a3c4c73f5405db5eac1b754[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Fri Jan 14 10:21:00 2022 +0200
+
+    Make entity pages share code (define EntityPage)
+
+[33mcommit e8bdaa983e9d1bd0d5c80450d0eaf2e265605bb0[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Thu Jan 13 18:58:05 2022 +0200
+
+    Implement deleting events
+
+[33mcommit 07227f58f56c23f7aa306bd572a23ff9aff73589[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Thu Jan 13 17:20:46 2022 +0200
+
+    Implement hiding events, generalize stored entities
+
+[33mcommit 58c845beb39b70610a0acdb61909fd757c397629[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Thu Jan 13 11:56:17 2022 +0200
+
+    Fix fetching section entities (a single read now)
+
+[33mcommit a37b84ca9ef2eeb16e6114bb6d7d357b6e70fc8d[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Jan 12 17:54:45 2022 +0200
+
+    Implement message options, spot a severe issue
+
+[33mcommit 1a9e58db033ff241048e5c41585cd62949ac19a7[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Jan 12 11:05:10 2022 +0200
+
+    Put entities in separate files
+
+[33mcommit 0008d1c752be7503a5973c6511bbe8b734dc1e38[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Tue Jan 11 15:00:29 2022 +0200
+
+    Implement student options, reorder Cloud methods
+
+[33mcommit 744c7e1e75b76c123fb1f9fe95d63192f5764b7e[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Tue Jan 11 13:19:05 2022 +0200
+
+    Add weekday to the full date repr
+
+[33mcommit 5f5d6d848710905d3890f9cdd1371ff279d32e07[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Tue Jan 11 11:44:13 2022 +0200
+
+    Add entity options pages
+
+[33mcommit 8bae6cceb300cfc0702c83bcbbf024510afbcaad[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Tue Jan 11 09:31:08 2022 +0200
+
+    Add subject page
+
+[33mcommit 0bae228236b9bb0d94ec21d9e89abd88d13d17c8[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Mon Jan 10 19:37:41 2022 +0200
+
+    Add event page, remove traces of the labels feature
+
+[33mcommit dbea8c2bf4e5387620f3ee87f3b22cb501c57682[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Mon Jan 10 17:47:26 2022 +0200
+
+    Add message page, delay the labels feature
+
+[33mcommit db5773c455ed374d5ba65fef4e31ce33dd51a64a[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Mon Jan 10 15:26:13 2022 +0200
+
+    Put new-entity and entity pages in directories
+
+[33mcommit fcddc82d3268c1406eac04f3a3e0a78e63a62841[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Sun Jan 9 18:18:24 2022 +0200
+
+    Add student page, implement adding student labels
+
+[33mcommit 9895c1c36500fccea91f92f8f284c6568b3a03a1[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Sun Jan 9 17:39:43 2022 +0200
+
+    Fix no-event subject tiles, improve date repr
+
+[33mcommit 359e19d456066223bc9fee698bb5f18c445b7d14[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Sun Jan 9 17:38:16 2022 +0200
+
+    Implement local storage and proper app init
+
+[33mcommit 3d23920f42c6fbdcc998956fbcf143798ebfe9a4[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Sat Jan 8 23:10:05 2022 +0200
+
+    Add the entity count to the app bar
+
+[33mcommit 3e21425d287b90a3e6b918fc58715980649177b3[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Sat Jan 8 13:46:38 2022 +0200
+
+    Refactor sections
+
+[33mcommit 9336ad40e658b37a455bd44982034d94077a4947[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Sat Jan 8 00:14:38 2022 +0200
+
+    Refactor the agenda section (a fix is needed)
+
+[33mcommit 30c30bdf7895d8b60cddfcd9413bcbb93eeb05d5[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Fri Jan 7 22:43:56 2022 +0200
+
+    Refactor sections code, change some names
+
+[33mcommit 3043716ed4232365b57dd9eebcbf03cd2cfed039[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Fri Jan 7 14:46:53 2022 +0200
+
+    Change storing students, add content to the group section
+
+[33mcommit e76bb15b4eda9acb85beb58222e3a15edc161e7b[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Fri Jan 7 00:30:17 2022 +0200
+
+    Add content to the events and messages sections
+
+[33mcommit fc0463736afd8d31a96fde415aefa5cfffa88e6e[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Thu Jan 6 23:56:47 2022 +0200
+
+    Define a general class for cloud-list sections
+
+[33mcommit 670fcad7f328b0bd36b15b2b793e11c4bd062b1e[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Thu Jan 6 23:47:39 2022 +0200
+
+    Fix fetching events and handling fetched dates
+
+[33mcommit adff06b43769061902cc3f95a5d99003642b89f8[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Thu Jan 6 22:04:28 2022 +0200
+
+    Add content to the agenda section
+
+[33mcommit d47f421472d3a30e4b5ec705b323f9d08c94ff78[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Thu Jan 6 18:29:27 2022 +0200
+
+    Implement fetching the messages, add 2 attrs to them
+
+[33mcommit 974bb6b8b729c817b57b005e4b35eccaf03d119d[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Thu Jan 6 17:21:52 2022 +0200
+
+    Implement fetching the events, add sorting
+
+[33mcommit 4ab6b32d44bff8b087f365c1cbb14ba911ab4311[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Thu Jan 6 15:47:47 2022 +0200
+
+    Make collection and field names classes, enums
+
+[33mcommit 2333fa3158f80ba44a7054a512e44f56e4656595[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Thu Jan 6 15:28:09 2022 +0200
+
+    Define a general method for adding entities
+
+[33mcommit 78af9c949b4b1899fccc70a98fced7d938572e65[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Thu Jan 6 10:39:47 2022 +0200
+
+    Make naming consistent
+
+[33mcommit a08e179518666fd76d0d277f8aaee30560767d49[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Jan 5 23:58:09 2022 +0200
+
+    Update the design sketches
+
+[33mcommit 4f9f28252660007b96c2ddd420133e9eaaccee6f[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Jan 5 23:47:27 2022 +0200
+
+    Correct storing the subjects
+
+[33mcommit c52f0b79112f9b11e809fce85db1465a017e07d4[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Jan 5 20:25:44 2022 +0200
+
+    Implement new-message back-end logic
+
+[33mcommit 139f974419ba1b750aa068c75870ce0d2d5fcedd[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Jan 5 20:25:08 2022 +0200
+
+    Make a new-message page sketch
+
+[33mcommit 2e6a9ca9b7b53ac9fed45a06a5d73bd606527df8[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Jan 5 19:15:50 2022 +0200
+
+    Gather collection and field names in classes
+
+[33mcommit e7c782d731a9203aa880efcc09dd65f89f06d058[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Jan 5 18:35:30 2022 +0200
+
+    Make the new event's subject be chosen
+
+[33mcommit 2b7d2b8d11da2ef2cb5088c816440dd9ef4453af[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Jan 5 16:21:49 2022 +0200
+
+    Implement incrementing total events counts
+
+[33mcommit d507285751610772e60d61f0a5f7ef57368fb065[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Jan 5 16:01:04 2022 +0200
+
+    Implement allowing to add events after fetching the subjects
+
+[33mcommit 83082afe633fddce56dc6968d78ee4174abe94ee[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Jan 5 15:58:26 2022 +0200
+
+    Implement fetching the subjects
+
+[33mcommit c94ca8208f4b5f9daa9dd9b6a2c4b36d83cc9f21[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Jan 5 11:23:52 2022 +0200
+
+    Implement new-event page in agenda
+
+[33mcommit 0e695a6e44a93065a1992a2b10bdda33ef17fa63[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Tue Jan 4 21:42:47 2022 +0200
+
+    Make a new-event page sketch, implement new-event back-end logic
+
+[33mcommit 8677cf354dd2fcebebad597cf70d1e08cf9d8d62[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Tue Jan 4 17:06:31 2022 +0200
+
+    Implement new-event back-end logic
+
+[33mcommit 19bb925543f1f45168906e9658f83eb0e4bbdbc2[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Tue Jan 4 14:33:44 2022 +0200
+
+    Add storage and role system, make a new-subject page sketch
+
+[33mcommit a31558e6f27556701d764fe211a21c5dfce7bf1e[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Tue Jan 4 11:46:22 2022 +0200
+
+    Fix the font in design sketches
+
+[33mcommit 2c0887929272b6ecd2152b9a8b07b97e1ff0dbda[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Mon Jan 3 22:09:36 2022 +0200
+
+    Add adding action to the sections via floating action button
+
+[33mcommit f3b3ffd6add791901d83b2d16f8ee41df6f163b7[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Mon Jan 3 20:24:04 2022 +0200
+
+    Create the sections, implement navigation between them
+
+[33mcommit a5b702085763bfc4f627e597495d703048c64c25[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Mon Jan 3 15:01:08 2022 +0200
+
+    Update design sketches, add Firestore structure
+
+[33mcommit b7944dcfe8d46ea707e99d2c1139b2d1006a3348[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Sun Jan 2 18:09:08 2022 +0200
+
+    Update design sketches
+
+[33mcommit f9abbda9204f2e4c26d3c12d222ff4c0f5bdd6ea[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Sun Jan 2 16:49:50 2022 +0200
+
+    Start from scratch, change the project structure
+
+[33mcommit a467c81769ab4a8036f93bcfb3dfa8b557973e9f[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Sat Jan 1 19:10:24 2022 +0200
+
+    Add design sketches
+
+[33mcommit d62cadb665aa067d3245cf66864313f7d3345c29[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Sat Nov 20 07:45:00 2021 +0200
+
+    Organise imports
+
+[33mcommit e5fd87f01c2313f9dcf3e0f069c02ec59947f8b2[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Fri Nov 5 20:06:36 2021 +0200
+
+    Make Database, User, GroupData, Appearance static
+
+[33mcommit 30e841c9a7c2f612dbc338417550bd6cb7a7b4eb[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Thu Oct 28 08:37:59 2021 +0300
+
+    Turn the  section-change method to a setter
+
+[33mcommit 80cf83a9c4da44cb1d339cb28048c48d216033ad[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Oct 27 20:07:39 2021 +0300
+
+    Combine groupmate tile and page into stateful widget
+
+[33mcommit a36fa99544f407cb07f79fccc38a8af24f9a987d[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Oct 27 16:31:03 2021 +0300
+
+    Create a separate folder for each UI section
+
+[33mcommit 7459db508397ff39054fc4e3bbc54f3f0c7a2fb9[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Mon Oct 18 17:51:35 2021 +0300
+
+    Make import paths absolute
+
+[33mcommit e740f2f5935ebdb6551e51f2254220340bfebbc1[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Mon Oct 18 17:42:30 2021 +0300
+
+    Discard DedicatedWidget, make the buttons members of the new class
+
+[33mcommit 619d6e7ddbcdc48424656637b01ad10d8f11cf43[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Fri Oct 8 14:25:25 2021 +0300
+
+    Remove managing groupmate labels from the dedicated pages
+
+[33mcommit fb2c96a01fd9781225ee648698016aa0977c8463[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Thu Oct 7 21:01:32 2021 +0300
+
+    Fix syncing the role, divide Database model constructor
+
+[33mcommit 8d4d518549b0f0d2543290117c517e1058565a28[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Oct 6 22:00:03 2021 +0300
+
+    Add local and remote database structures
+
+[33mcommit 06e42c91c09f5172fea4b164cfcc78a6a272e928[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Oct 6 20:32:06 2021 +0300
+
+    Create abstract UISection, clear old sketches of UI sections
+
+[33mcommit 253fac25c15e5ce13c9922ee4755015f13e6df9a[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Oct 6 19:49:35 2021 +0300
+
+    Change the roles of User and Group models, discard GroupId
+
+[33mcommit d3afde712255b90eb648408984004a87383a50d3[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Oct 6 07:47:09 2021 +0300
+
+    Remove Subject.percentage, fix Group.subjects
+
+[33mcommit 60878212cd66a60f91bb2cae5dda7907e6f1d04f[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Tue Oct 5 19:38:40 2021 +0300
+
+    Discard identification and registration, switch to mock group id
+
+[33mcommit a3fce62ccd4ffb2bcd442a9b78761000a4f9ac12[m
+Author: Victor <v.buhayov@gmail.com>
+Date:   Wed Sep 8 11:57:48 2021 +0300
+
+    initial commit

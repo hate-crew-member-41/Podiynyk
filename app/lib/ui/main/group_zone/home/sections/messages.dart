@@ -5,27 +5,41 @@ import 'package:podiynyk/storage/entities/message.dart';
 
 import 'section.dart';
 import 'entity_pages/message.dart';
-import 'new_entity_pages/message.dart';
 
 
-class MessagesSection extends ExtendableListSection<Message> {
-	@override
-	final name = "messages";
-	@override
-	final icon = Icons.messenger;
+class MessagesSection extends StatelessWidget {
+	static const name = "messages";
+	static const icon = Icons.messenger;
+
+	const MessagesSection();
 
 	@override
-	Future<List<Message>> get entitiesFuture => Cloud.messages;
+	Widget build(BuildContext context) {
+		return FutureBuilder<List<Message>>(
+			future: Cloud.messages,
+			builder: (context, snapshot) {
+				// todo: what is shown while awaiting
+				if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(icon));
+				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
-	@override
-	Widget tile(BuildContext context, Message message) => ListTile(
-		title: Text(message.subject),
-		trailing: Text(message.date.dateRepr),
-		onTap: () => Navigator.of(context).push(MaterialPageRoute(
-			builder: (context) => MessagePage(message)
-		))
-	);
+				return ListView(
+					children: [
+						for (final message in snapshot.data!) ListTile(
+							title: Text(message.subject),
+							trailing: Text(message.date.dateRepr),
+							onTap: () => Navigator.of(context).push(MaterialPageRoute(
+								builder: (context) => MessagePage(message)
+							))
+						),
+						const ListTile()
+					]
+				);
+			}
+		);
+	}
 
-	@override
-	Widget addEntityButton(BuildContext context) => NewEntityButton(pageBuilder: (_) => NewMessagePage());
+	// @override
+	// Widget addEntityButton(BuildContext context) => NewEntityButton(
+	// 	pageBuilder: (_) => NewMessagePage()
+	// );
 }
