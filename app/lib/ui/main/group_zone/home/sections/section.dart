@@ -15,7 +15,7 @@ extension EntityDate on DateTime {
 		return repr;
 	}
 
-	/// The representation with the weekday, and the time unless it is midnight.
+	/// The representation with the weekday and the time.
 	String get fullRepr {
 		late String repr;
 		switch (weekday) {
@@ -29,10 +29,21 @@ extension EntityDate on DateTime {
 		}
 
 		repr = '$repr $dateRepr';
-		if (hour != 0 || minute != 0) repr = '$repr, ${hour.twoDigitRepr}:${minute.twoDigitRepr}';
+		if (_hasTime) repr = '$repr, ${hour.twoDigitRepr}:${minute.twoDigitRepr}';
 
 		return repr;
 	}
+
+	/// The [EntityDate] with [time]'s time parameters.
+	DateTime withTime(TimeOfDay time) => DateTime(year, month, day, time.hour, time.minute, 1);
+
+	/// Whether the [EntityDate] is past.
+	bool get isPast {
+		if (_hasTime) return isBefore(DateTime.now());
+		return day < DateTime.now().day;
+	}
+
+	bool get _hasTime => !(hour == 0 && minute == 0 && second == 0);
 }
 
 

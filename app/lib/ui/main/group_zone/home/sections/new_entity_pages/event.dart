@@ -84,14 +84,16 @@ class _NewEventPageState extends State<NewEventPage> {
 			builder: (context) => Scaffold(
 				body: Center(child: ListView(
 					shrinkWrap: true,
-					children: [for (final subject in widget.subjects!) ListTile(
-						title: Text(subject.name),
-						onTap: () {
-							_subject = subject;
-							_subjectField.text = subject.name;
-							Navigator.of(context).pop();
-						}
-					)]
+					children: [
+						for (final subject in widget.subjects!) ListTile(
+							title: Text(subject.name),
+							onTap: () {
+								_subject = subject;
+								_subjectField.text = subject.name;
+								Navigator.of(context).pop();
+							}
+						)
+					]
 				))
 			)
 		));
@@ -101,9 +103,9 @@ class _NewEventPageState extends State<NewEventPage> {
 		final now = DateTime.now();
 		_date = await showDatePicker(
 			context: context,
-			initialDate: _date ?? now.add(const Duration(days: 7)),
+			initialDate: _date ?? now.add(const Duration(days: DateTime.daysPerWeek * 2)),
 			firstDate: now,
-			lastDate: now.add(const Duration(days: 365 * 4 + 1))
+			lastDate: now.add(const Duration(days: 365))
 		);
 		if (_date != null) {
 			await _askTime(context);
@@ -114,11 +116,9 @@ class _NewEventPageState extends State<NewEventPage> {
 	Future<void> _askTime(BuildContext context) async {
 		final time = await showTimePicker(
 			context: context,
-			initialTime: const TimeOfDay(hour: 8, minute: 30)
+			initialTime: TimeOfDay.now().replacing(minute: 0)
 		);
-		if (time != null) {
-			_date = DateTime(_date!.year, _date!.month, _date!.day, time.hour, time.minute);
-		}
+		if (time != null) _date = _date!.withTime(time);
 	}
 
 	void _add(BuildContext context) {

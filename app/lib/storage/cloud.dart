@@ -183,6 +183,7 @@ class Cloud {
 		return subjects..sort((a, b) => a.name.compareTo(b.name));
 	}
 
+	// tofix: no-subject events are not included
 	/// The group's sorted [Event]s without the details, that the user has not hidden.
 	static Future<List<Event>> get events async {
 		final subjectsWithEvents = await _subjectsWithEvents;
@@ -212,8 +213,10 @@ class Cloud {
 		};
 
 		for (final entry in eventEntries.entries) {
-			final subject = subjectsById[entry.value[Field.subject.name]]!;
+			final subjectId = entry.value[Field.subject.name];
+			if (subjectId == null) continue;
 
+			final subject = subjectsById[subjectId]!;
 			subject.events.add(Event(
 				id: entry.key,
 				name: entry.value[Field.name.name],
@@ -323,7 +326,7 @@ class Cloud {
 				existingEvent[Field.name.name] == name && existingEvent[Field.subject.name] == subject?.id,
 			entity: {
 				Field.name.name: name,
-				Field.subject.name: subject?.id,
+				if (subject != null) Field.subject.name: subject.id,
 				Field.date.name: date,
 			},
 			details: {if (note != null) Field.note.name: note},

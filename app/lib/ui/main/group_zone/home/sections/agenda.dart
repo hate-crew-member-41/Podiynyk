@@ -55,22 +55,27 @@ class AgendaSection extends CloudEntitiesSection<AgendaSectionCloudData, Event> 
 
 
 class EventTile extends StatelessWidget {
-	final Event _event;
+	final Event event;
 	final bool showSubject;
 
-	const EventTile(this._event, {required this.showSubject});
+	const EventTile(this.event, {required this.showSubject});
 
 	@override
 	Widget build(BuildContext context) {
-		return ListTile(
-			title: Text(_event.name),
-			subtitle: showSubject && _event.subject != null ? Text(_event.subject!.name) : null,
-			trailing: Text(_event.date.dateRepr),
-			onTap: () => Navigator.of(context).push(MaterialPageRoute(
-				builder: (context) => EventPage(_event)
-			))
+		return !event.date.isPast ? _builder(context) : Opacity(
+			opacity: 0.5,
+			child: _builder(context)
 		);
 	}
+
+	Widget _builder(BuildContext context) => ListTile(
+		title: Text(event.name),
+		subtitle: showSubject && event.subject != null ? Text(event.subject!.name) : null,
+		trailing: Text(event.date.dateRepr),
+		onTap: () => Navigator.of(context).push(MaterialPageRoute(
+			builder: (context) => EventPage(event)
+		))
+	);
 }
 
 
