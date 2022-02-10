@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud, Subjects;
 import 'package:podiynyk/storage/entities/subject.dart';
@@ -36,6 +37,8 @@ class AgendaSection extends CloudSection<AgendaSectionCloudData> {
 	String get sectionName => name;
 	@override
 	IconData get sectionIcon => icon;
+	@override
+	Widget get actionButton => const NewSubjectEventButton();
 
 	@override
 	Widget build(BuildContext context) {
@@ -58,8 +61,6 @@ class AgendaSection extends CloudSection<AgendaSectionCloudData> {
 			}
 		);
 	}
-
-	// Widget addEntityButton(BuildContext context) => const AddEventButton();
 }
 
 
@@ -83,32 +84,20 @@ class EventTile extends StatelessWidget {
 }
 
 
-// class AddEventButton extends StatefulWidget {
-// 	const AddEventButton();
+class NewSubjectEventButton extends StatelessWidget {
+	const NewSubjectEventButton();
 
-// 	@override
-// 	_AddEventButtonState createState() => _AddEventButtonState();
-// }
-
-// class _AddEventButtonState extends State<AddEventButton> {
-// 	List<Subject>? _subjects;
-
-// 	@override
-// 	void initState() {
-// 		Cloud.subjects.then((subjects) => setState(() => _subjects = subjects));
-// 		super.initState();
-// 	}
-
-// 	@override
-// 	Widget build(BuildContext context) {
-// 		final isVisible = _subjects != null;
-
-// 		return AnimatedOpacity(
-// 			opacity: isVisible ? 1 : 0,
-// 			duration: const Duration(milliseconds: 200),
-// 			child: isVisible ? NewEntityButton(
-// 				pageBuilder: (_) => NewEventPage(subjects: _subjects!)
-// 			) : null
-// 		);
-// 	}
-// }
+	@override
+	Widget build(BuildContext context) {
+		return FutureBuilder<List<Subject>>(
+			future: (context.read<CloudSectionData>() as AgendaSectionCloudData).subjects,
+			builder: (context, snapshot) {
+				if (snapshot.connectionState == ConnectionState.waiting) return Container();
+				// todo: consider handling
+				return NewEntityButton(
+					pageBuilder: (_) => NewEventPage(subjects: snapshot.data!)
+				);
+			}
+		);
+	}
+}

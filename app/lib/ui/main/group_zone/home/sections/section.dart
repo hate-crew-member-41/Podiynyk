@@ -37,12 +37,14 @@ extension EntityDate on DateTime {
 
 
 abstract class Section extends StatelessWidget {
-	/// The static [name] of the section.
+	const Section();
+
+	/// The static [name].
 	String get sectionName;
-	/// The static [icon] of the section.
+	/// The static [icon].
 	IconData get sectionIcon;
 
-	const Section();
+	Widget? get actionButton => null;
 }
 
 
@@ -69,9 +71,7 @@ class NewEntityButton extends StatelessWidget {
 	Widget build(BuildContext context) {
 		return FloatingActionButton(
 			child: const Icon(Icons.add),
-			onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-				builder: pageBuilder
-			))
+			onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: pageBuilder))
 		);
 	}
 }

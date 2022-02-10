@@ -10,6 +10,7 @@ import 'entity.dart';
 
 
 // todo: what if there are no subjects?
+// todo: access the subjects through the context?
 class NewEventPage extends StatefulWidget {
 	final bool _askSubject;
 	final bool _subjectRequired;

@@ -5,6 +5,7 @@ import 'package:podiynyk/storage/entities/message.dart';
 
 import 'section.dart';
 import 'entity_pages/message.dart';
+import 'new_entity_pages/message.dart';
 
 
 class MessagesSectionCloudData extends CloudSectionData {
@@ -25,6 +26,10 @@ class MessagesSection extends CloudSection<MessagesSectionCloudData> {
 	String get sectionName => name;
 	@override
 	IconData get sectionIcon => icon;
+	@override
+	Widget get actionButton => NewEntityButton(
+		pageBuilder: (_) => NewMessagePage()
+	);
 
 	@override
 	Widget build(BuildContext context) {

@@ -7,6 +7,7 @@ import 'package:podiynyk/storage/entities/subject.dart';
 
 import 'section.dart';
 import 'entity_pages/subject.dart';
+import 'new_entity_pages/subject.dart';
 
 
 class SubjectsSectionCloudData extends CloudSectionData {
@@ -27,6 +28,10 @@ class SubjectsSection extends CloudSection<SubjectsSectionCloudData> {
 	String get sectionName => name;
 	@override
 	IconData get sectionIcon => icon;
+	@override
+	Widget get actionButton => NewEntityButton(
+		pageBuilder: (_) => NewSubjectPage()
+	);
 
 	@override
 	Widget build(BuildContext context) {
@@ -43,11 +48,6 @@ class SubjectsSection extends CloudSection<SubjectsSectionCloudData> {
 			}
 		);
 	}
-
-	// @override
-	// Future<int> get entityCount => entitiesFuture.then(
-	// 	(subjects) => subjects.where((subject) => !subjectIsUnfollowed(subject)
-	// ).length);
 
 	List<Widget> tiles(BuildContext context, List<Subject> subjects) {
 		final unfollowed = subjects.where(subjectIsUnfollowed).toList();
@@ -78,6 +78,4 @@ class SubjectsSection extends CloudSection<SubjectsSectionCloudData> {
 		if (subject.events!.isEmpty) return null;
 		return subject.events!.reduce((nextEvent, event) =>  event.isBefore(nextEvent) ? event : nextEvent);
 	}
-
-	// Widget addEntityButton(BuildContext context) => NewEntityButton(pageBuilder: (_) => NewSubjectPage());
 }

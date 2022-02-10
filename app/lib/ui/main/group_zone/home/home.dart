@@ -27,11 +27,11 @@ class _HomeState extends State<Home> {
 	Widget build(BuildContext context) {
 		return _section is CloudSection ? Provider.value(
 			value: (_section as CloudSection).data,
-			builder: (_, __) => _builder,
-		) : _builder;
+			builder: (context, _) => _builder(context),
+		) : _builder(context);
 	}
 
-	Widget get _builder => Scaffold(
+	Widget _builder(BuildContext context) => Scaffold(
 		appBar: AppBar(
 			automaticallyImplyLeading: false,
 			title: Builder(builder: (context) => Row(
@@ -97,7 +97,7 @@ class _HomeState extends State<Home> {
 			)
 		),
 		drawerEdgeDragWidth: 150,
-		// todo: add floating action button dependent on the _section
+		floatingActionButton: _section.actionButton,
 	);
 
 	void Function() _setSectionFunction<S extends Section>(S Function() sectionBuilder) => () {
@@ -106,20 +106,15 @@ class _HomeState extends State<Home> {
 }
 
 
-class EntityCount extends StatefulWidget {
+class EntityCount extends StatelessWidget {
 	final Future<int> future;
 
 	const EntityCount(this.future);
 
 	@override
-	_EntityCountState createState() => _EntityCountState();
-}
-
-class _EntityCountState extends State<EntityCount> {
-	@override
 	Widget build(BuildContext context) {
 		return FutureBuilder(
-			future: widget.future,
+			future: future,
 			builder: (context, snapshot) {
 				if (snapshot.connectionState == ConnectionState.waiting) return Container();
 				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
@@ -153,45 +148,3 @@ class SectionTile extends StatelessWidget {
 		);
 	}
 }
-
-
-// class EntityCount extends StatefulWidget {
-// 	final CloudListSection _section;
-
-// 	const EntityCount(this._section);
-
-// 	@override
-// 	_EntityCountState createState() => _EntityCountState();
-// }
-
-// class _EntityCountState extends State<EntityCount> {
-// 	bool _isActual = false;
-// 	int? _count;
-
-// 	@override
-// 	void initState() {
-// 		scheduleRebuild();
-// 		super.initState();
-// 	}
-
-// 	@override
-// 	void didUpdateWidget(EntityCount oldWidget) {
-// 		_isActual = false;
-// 		scheduleRebuild();
-// 		super.didUpdateWidget(oldWidget);
-// 	}
-
-// 	void scheduleRebuild() => widget._section.entityCount.then((count) => setState(() {
-// 		_isActual = true;
-// 		_count = count;
-// 	}));
-
-// 	@override
-// 	Widget build(BuildContext context) {
-// 		return AnimatedOpacity(
-// 			opacity: _isActual ? 1 : 0,
-// 			duration: const Duration(milliseconds: 200),
-// 			child: Text(_count.toString())
-// 		);
-// 	}
-// }

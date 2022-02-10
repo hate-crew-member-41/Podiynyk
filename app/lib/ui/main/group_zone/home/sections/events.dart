@@ -5,6 +5,7 @@ import 'package:podiynyk/storage/entities/event.dart';
 
 import 'section.dart';
 import 'entity_pages/event.dart';
+import 'new_entity_pages/event.dart';
 
 
 class EventsSectionCloudData extends CloudSectionData {
@@ -27,6 +28,10 @@ class EventsSection extends CloudSection<EventsSectionCloudData> {
 	String get sectionName => name;
 	@override
 	IconData get sectionIcon => icon;
+	@override
+	Widget get actionButton => NewEntityButton(
+		pageBuilder: (_) => const NewEventPage.noSubjectEvent()
+	);
 
 	@override
 	Widget build(BuildContext context) {
