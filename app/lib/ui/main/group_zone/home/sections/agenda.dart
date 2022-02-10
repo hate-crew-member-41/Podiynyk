@@ -13,7 +13,7 @@ import 'new_entity_pages/event.dart';
 
 class AgendaSectionCloudData extends CloudEntitiesSectionData<Event> {
 	// todo: completely redo storing entities
-	final subjects = Cloud.subjectsWithEvents.then((subjects) {
+	final subjects = Cloud.subjects.then((subjects) {
 		final unfollowedEssences = Local.storedEntities<SubjectEssence>(DataBox.unfollowedSubjects);
 		return subjects.where((subject) =>
 			!unfollowedEssences.contains(subject.essence)

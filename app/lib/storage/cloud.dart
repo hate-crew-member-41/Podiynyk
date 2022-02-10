@@ -177,8 +177,8 @@ class Cloud {
 	}
 
 	/// The group's sorted [Subject]s with the sorted [Event]s, without the details.
-	static Future<List<Subject>> get subjectsWithEvents async {
-		final subjects = await _subjectsWithEvents;
+	static Future<List<Subject>> get subjects async {
+		final subjects = await _subjects;
 		for (final subject in subjects) subject.events.sortByDate();
 		return subjects..sort((a, b) => a.name.compareTo(b.name));
 	}
@@ -186,14 +186,14 @@ class Cloud {
 	// tofix: no-subject events are not included
 	/// The group's sorted [Event]s without the details, that the user has not hidden.
 	static Future<List<Event>> get events async {
-		final subjectsWithEvents = await _subjectsWithEvents;
+		final subjectsWithEvents = await _subjects;
 		return subjectsWithEvents.events
 			..removeWhere((event) => Local.entityIsStored(DataBox.hiddenEvents, event))
 			..sort((a, b) => a.date.compareTo(b.date));
 	}
 
 	/// The group's [Subject]s with the unsorted [Event]s, without the details.
-	static Future<List<Subject>> get _subjectsWithEvents async {
+	static Future<List<Subject>> get _subjects async {
 		final snapshots = await Future.wait([
 			_groupDocument(Collection.subjects).get(),
 			_groupDocument(Collection.events).get()
@@ -226,6 +226,20 @@ class Cloud {
 		}
 
 		return subjects;
+	}
+
+	/// The group's sorted non-subject [Event]s.
+	static Future<List<Event>> get nonSubjectEvents async {
+		final snapshot = await _groupDocument(Collection.events).get();
+		return [
+			for (final entry in snapshot.data()!.entries.where((entry) =>
+				entry.value[Field.subject.name] == null
+			)) Event(
+				id: entry.key,
+				name: entry.value[Field.name.name] as String,
+				date: (entry.value[Field.date.name] as Timestamp).toDate(),
+			)
+		]..sortByDate();
 	}
 
 	/// The group's [Message]s without the details.

@@ -19,7 +19,7 @@ class Event implements DetailedEntity, StoredEntity<EventEssence> {
 	Event({
 		required this.id,
 		required this.name,
-		required this.subject,
+		this.subject,
 		required this.date
 	});
 

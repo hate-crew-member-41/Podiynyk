@@ -10,7 +10,7 @@ import 'new_entity_pages/subject.dart';
 
 
 class SubjectsSectionCloudData extends CloudEntitiesSectionData<Subject> {
-	final subjects = Cloud.subjectsWithEvents;
+	final subjects = Cloud.subjects;
 
 	@override
 	Future<List<Subject>> get counted => subjects;

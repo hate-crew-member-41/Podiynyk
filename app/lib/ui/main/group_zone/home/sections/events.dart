@@ -9,9 +9,7 @@ import 'new_entity_pages/event.dart';
 
 
 class EventsSectionCloudData extends CloudEntitiesSectionData<Event> {
-	final events = Cloud.events.then((events) =>
-		events.where((event) => event.subject == null).toList()
-	);
+	final events = Cloud.nonSubjectEvents;
 
 	@override
 	Future<List<Event>> get counted => events;
