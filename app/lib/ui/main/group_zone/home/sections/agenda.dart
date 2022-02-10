@@ -11,7 +11,7 @@ import 'entity_pages/event.dart';
 import 'new_entity_pages/event.dart';
 
 
-class AgendaSectionCloudData extends CloudSectionData {
+class AgendaSectionCloudData extends CloudEntitiesSectionData<Event> {
 	// todo: completely redo storing entities
 	final subjects = Cloud.subjectsWithEvents.then((subjects) {
 		final unfollowedEssences = Local.storedEntities<SubjectEssence>(DataBox.unfollowedSubjects);
@@ -27,7 +27,7 @@ class AgendaSectionCloudData extends CloudSectionData {
 }
 
 
-class AgendaSection extends CloudSection<AgendaSectionCloudData> {
+class AgendaSection extends CloudEntitiesSection<AgendaSectionCloudData, Event> {
 	static const name = "agenda";
 	static const icon = Icons.import_contacts;
 
@@ -41,26 +41,16 @@ class AgendaSection extends CloudSection<AgendaSectionCloudData> {
 	Widget get actionButton => const NewSubjectEventButton();
 
 	@override
-	Widget build(BuildContext context) {
-		return FutureBuilder<List<Event>>(
-			future: data.events,
-			builder: (context, snapshot) {
-				// todo: what is shown while awaiting
-				if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(icon));
-				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+	Future<List<Event>> get entities => data.events;
 
-				return ListView(
-					children: [
-						for (final entity in snapshot.data!) EventTile(
-							entity,
-							showSubject: true
-						),
-						const ListTile()
-					],
-				);
-			}
-		);
-	}
+	@override
+	List<Widget> tiles(BuildContext context, List<Event> events) => [
+		for (final entity in events) EventTile(
+			entity,
+			showSubject: true
+		),
+		const ListTile()
+	];
 }
 
 
@@ -90,7 +80,7 @@ class NewSubjectEventButton extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return FutureBuilder<List<Subject>>(
-			future: (context.read<CloudSectionData>() as AgendaSectionCloudData).subjects,
+			future: (context.read<CloudEntitiesSectionData>() as AgendaSectionCloudData).subjects,
 			builder: (context, snapshot) {
 				if (snapshot.connectionState == ConnectionState.waiting) return Container();
 				// todo: consider handling

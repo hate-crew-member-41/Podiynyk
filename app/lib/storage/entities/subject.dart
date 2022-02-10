@@ -9,7 +9,7 @@ typedef SubjectEssence = String;
 class Subject implements DetailedEntity, StoredEntity<SubjectEssence> {
 	final String id;
 	final String name;
-	List<Event>? events;
+	final List<Event> events;
 
 	int? totalEventCount;
 	List<String>? info;
@@ -17,7 +17,7 @@ class Subject implements DetailedEntity, StoredEntity<SubjectEssence> {
 	Subject({
 		required this.id,
 		required this.name,
-		this.events
+		required this.events
 	});
 
 	@override
@@ -29,7 +29,7 @@ class Subject implements DetailedEntity, StoredEntity<SubjectEssence> {
 	@override
 	bool essenceIs(SubjectEssence comparedTo) => name == comparedTo;
 
-	String get eventCountRepr => _eventCountRepr(events!.length);
+	String get eventCountRepr => _eventCountRepr(events.length);
 
 	String get totalEventCountRepr => _eventCountRepr(totalEventCount!);
 

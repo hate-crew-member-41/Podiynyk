@@ -7,7 +7,7 @@ import 'section.dart';
 import 'entity_pages/student.dart';
 
 
-class GroupSectionCloudData extends CloudSectionData {
+class GroupSectionCloudData extends CloudEntitiesSectionData<Student> {
 	final students = Cloud.students;
 
 	@override
@@ -15,7 +15,7 @@ class GroupSectionCloudData extends CloudSectionData {
 }
 
 
-class GroupSection extends CloudSection<GroupSectionCloudData> {
+class GroupSection extends CloudEntitiesSection<GroupSectionCloudData, Student> {
 	static const name = "group";
 	static const icon = Icons.people;
 
@@ -27,24 +27,16 @@ class GroupSection extends CloudSection<GroupSectionCloudData> {
 	IconData get sectionIcon => icon;
 
 	@override
-	Widget build(BuildContext context) {
-		return FutureBuilder<List<Student>>(
-			future: data.students,
-			builder: (context, snapshot) {
-				// todo: what is shown while awaiting
-				if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(icon));
-				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+	Future<List<Student>> get entities => data.students;
 
-				return ListView(
-					children: [for (final student in snapshot.data!) ListTile(
-						title: Text(student.name),
-						subtitle: student.role == Role.ordinary ? null : Text(student.role!.name),
-						onTap: () => Navigator.of(context).push(MaterialPageRoute(
-							builder: (context) => StudentPage(student)
-						))
-					)]
-				);
-			}
-		);
-	}
+	@override
+	List<Widget> tiles(BuildContext context, List<Student> students) => [
+		for (final student in students) ListTile(
+			title: Text(student.name),
+			subtitle: student.role == Role.ordinary ? null : Text(student.role!.name),
+			onTap: () => Navigator.of(context).push(MaterialPageRoute(
+				builder: (context) => StudentPage(student)
+			))
+		)
+	];
 }

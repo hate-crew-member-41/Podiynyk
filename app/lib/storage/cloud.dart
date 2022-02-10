@@ -26,7 +26,7 @@ extension on Map<String, dynamic> {
 }
 
 extension Subjects on List<Subject> {
-	List<Event> get events => [for (final subject in this) ...subject.events!];
+	List<Event> get events => [for (final subject in this) ...subject.events];
 }
 
 extension on List<Event> {
@@ -179,7 +179,7 @@ class Cloud {
 	/// The group's sorted [Subject]s with the sorted [Event]s, without the details.
 	static Future<List<Subject>> get subjectsWithEvents async {
 		final subjects = await _subjectsWithEvents;
-		for (final subject in subjects) subject.events!.sortByDate();
+		for (final subject in subjects) subject.events.sortByDate();
 		return subjects..sort((a, b) => a.name.compareTo(b.name));
 	}
 
@@ -214,7 +214,7 @@ class Cloud {
 		for (final entry in eventEntries.entries) {
 			final subject = subjectsById[entry.value[Field.subject.name]]!;
 
-			subject.events!.add(Event(
+			subject.events.add(Event(
 				id: entry.key,
 				name: entry.value[Field.name.name],
 				subject: subject,

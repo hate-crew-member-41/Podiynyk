@@ -6,7 +6,7 @@ import 'package:podiynyk/storage/entities/question.dart';
 import 'section.dart';
 
 
-class QuestionsSectionCloudData extends CloudSectionData {
+class QuestionsSectionCloudData extends CloudEntitiesSectionData<Question> {
 	final questions = Cloud.questions;
 
 	@override
@@ -14,7 +14,7 @@ class QuestionsSectionCloudData extends CloudSectionData {
 }
 
 
-class QuestionsSection extends CloudSection<QuestionsSectionCloudData> {
+class QuestionsSection extends CloudEntitiesSection<QuestionsSectionCloudData, Question> {
 	static const name = "questions";
 	static const icon = Icons.question_answer;
 
@@ -29,25 +29,9 @@ class QuestionsSection extends CloudSection<QuestionsSectionCloudData> {
 	Widget get actionButton => const Scaffold();
 
 	@override
-	Widget build(BuildContext context) {
-		return FutureBuilder<List<Question>>(
-			future: Cloud.questions,
-			builder: (context, snapshot) {
-				// todo: what is shown while awaiting
-				if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(icon));
-				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
-
-				return ListView(
-					// todo: define the tiles
-					children: const []
-				);
-			}
-		);
-	}
+	Future<List<Question>> get entities => data.questions;
 
 	// todo: define
-	// @override
-	// Widget addEntityButton(BuildContext context) => NewEntityButton(
-	// 	pageBuilder: (_) => const Scaffold()
-	// );
+	@override
+	List<Widget> tiles(BuildContext context, List<Question> questions) => [];
 }

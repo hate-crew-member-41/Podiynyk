@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
-import 'package:podiynyk/storage/entities/event.dart';
+import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/subject.dart';
 
 import 'section.dart';
@@ -10,7 +9,7 @@ import 'entity_pages/subject.dart';
 import 'new_entity_pages/subject.dart';
 
 
-class SubjectsSectionCloudData extends CloudSectionData {
+class SubjectsSectionCloudData extends CloudEntitiesSectionData<Subject> {
 	final subjects = Cloud.subjectsWithEvents;
 
 	@override
@@ -18,7 +17,7 @@ class SubjectsSectionCloudData extends CloudSectionData {
 }
 
 
-class SubjectsSection extends CloudSection<SubjectsSectionCloudData> {
+class SubjectsSection extends CloudEntitiesSection<SubjectsSectionCloudData, Subject> {
 	static const name = "subjects";
 	static const icon = Icons.school;
 
@@ -34,48 +33,30 @@ class SubjectsSection extends CloudSection<SubjectsSectionCloudData> {
 	);
 
 	@override
-	Widget build(BuildContext context) {
-		return FutureBuilder<List<Subject>>(
-			future: data.subjects,
-			builder: (context, snapshot) {
-				// todo: what is shown while awaiting
-				if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(icon));
-				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+	Future<List<Subject>> get entities => data.subjects;
 
-				return ListView(
-					children: tiles(context, snapshot.data!)..add(const ListTile())
-				);
-			}
-		);
-	}
-
+	@override
 	List<Widget> tiles(BuildContext context, List<Subject> subjects) {
-		final unfollowed = subjects.where(subjectIsUnfollowed).toList();
+		final unfollowed = subjects.where((subject) =>
+			Local.entityIsStored(DataBox.unfollowedSubjects, subject)
+		).toList();
 		subjects.removeWhere((subject) => unfollowed.contains(subject));
 
 		return [
 			for (final subject in subjects) tile(context, subject),
 			for (final subject in unfollowed) Opacity(opacity: 0.6, child: tile(context, subject)),
+			const ListTile()
 		];
 	}
 
-	bool subjectIsUnfollowed(Subject subject) => Local.entityIsStored(DataBox.unfollowedSubjects, subject);
-
 	Widget tile(BuildContext context, Subject subject) {
-		final nextEvent = _nextEvent(subject);
-
 		return ListTile(
 			title: Text(subject.name),
 			subtitle: Text(subject.eventCountRepr),
-			trailing: nextEvent != null ? Text(nextEvent.date.dateRepr) : null,
+			trailing: subject.events.isNotEmpty ? Text(subject.events.first.date.dateRepr) : null,
 			onTap: () => Navigator.of(context).push(MaterialPageRoute(
 				builder: (context) => SubjectPage(subject)
 			))
 		);
-	}
-
-	Event? _nextEvent(Subject subject) {
-		if (subject.events!.isEmpty) return null;
-		return subject.events!.reduce((nextEvent, event) =>  event.isBefore(nextEvent) ? event : nextEvent);
 	}
 }

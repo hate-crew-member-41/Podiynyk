@@ -25,8 +25,8 @@ class _HomeState extends State<Home> {
 
 	@override
 	Widget build(BuildContext context) {
-		return _section is CloudSection ? Provider.value(
-			value: (_section as CloudSection).data,
+		return _section is CloudEntitiesSection ? Provider.value(
+			value: (_section as CloudEntitiesSection).data,
 			builder: (context, _) => _builder(context),
 		) : _builder(context);
 	}
@@ -42,7 +42,7 @@ class _HomeState extends State<Home> {
 						onTap: () => Scaffold.of(context).openDrawer()
 					),
 					Row(children: [
-						if (_section is CloudSection) EntityCount((_section as CloudSection).data.count),
+						if (_section is CloudEntitiesSection) EntityCount((_section as CloudEntitiesSection).data.count),
 						Padding(
 							padding: const EdgeInsets.only(left: 8),
 							child: Icon(_section.sectionIcon)

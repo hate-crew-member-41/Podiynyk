@@ -48,17 +48,38 @@ abstract class Section extends StatelessWidget {
 }
 
 
-abstract class CloudSectionData {
-	Future<List<dynamic>> get counted;
+abstract class CloudEntitiesSectionData<E> {
+	Future<List<E>> get counted;
 	Future<int> get count => counted.then((counted) => counted.length);
 }
 
 // todo: rename to CloudListSection if the the common build behavior is captured
 // idea: consider an AnimatedOpacity animation with a different delay for each tile
-abstract class CloudSection<D extends CloudSectionData> extends Section {
+abstract class CloudEntitiesSection<D extends CloudEntitiesSectionData<E>, E> extends Section {
 	final D data;
 
-	const CloudSection(this.data);
+	const CloudEntitiesSection(this.data);
+
+	// todo: is it always equal to this.counted?
+	Future<List<E>> get entities;
+
+	@override
+	Widget build(BuildContext context) {
+		return FutureBuilder<List<E>>(
+			future: entities,
+			builder: (context, snapshot) {
+				// todo: what is shown while awaiting
+				if (snapshot.connectionState == ConnectionState.waiting) return Center(child: Icon(sectionIcon));
+				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+
+				return ListView(
+					children: tiles(context, snapshot.data!)
+				);
+			}
+		);
+	}
+
+	List<Widget> tiles(BuildContext context, List<E> entities);
 }
 
 

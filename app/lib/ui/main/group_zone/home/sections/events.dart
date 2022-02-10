@@ -8,7 +8,7 @@ import 'entity_pages/event.dart';
 import 'new_entity_pages/event.dart';
 
 
-class EventsSectionCloudData extends CloudSectionData {
+class EventsSectionCloudData extends CloudEntitiesSectionData<Event> {
 	final events = Cloud.events.then((events) =>
 		events.where((event) => event.subject == null).toList()
 	);
@@ -18,7 +18,7 @@ class EventsSectionCloudData extends CloudSectionData {
 }
 
 
-class EventsSection extends CloudSection<EventsSectionCloudData> {
+class EventsSection extends CloudEntitiesSection<EventsSectionCloudData, Event> {
 	static const name = "events";
 	static const icon = Icons.event_note;
 
@@ -34,31 +34,17 @@ class EventsSection extends CloudSection<EventsSectionCloudData> {
 	);
 
 	@override
-	Widget build(BuildContext context) {
-		return FutureBuilder<List<Event>>(
-			future: data.events,
-			builder: (context, snapshot) {
-				// todo: what is shown while awaiting
-				if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(icon));
-				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+	Future<List<Event>> get entities => data.events;
 
-				return ListView(
-					children: [
-						for (final event in snapshot.data!) ListTile(
-							title: Text(event.name),
-							trailing: Text(event.date.dateRepr),
-							onTap: () => Navigator.of(context).push(MaterialPageRoute(
-								builder: (context) => EventPage(event)
-							))
-						),
-						const ListTile()
-					]
-				);
-			}
-		);
-	}
-
-	// Widget addEntityButton(BuildContext context) => NewEntityButton(
-	// 	pageBuilder: (_) => const NewEventPage.noSubjectEvent()
-	// );
+	@override
+	List<Widget> tiles(BuildContext context, List<Event> events) => [
+		for (final event in events) ListTile(
+			title: Text(event.name),
+			trailing: Text(event.date.dateRepr),
+			onTap: () => Navigator.of(context).push(MaterialPageRoute(
+				builder: (context) => EventPage(event)
+			))
+		),
+		const ListTile()
+	];
 }
