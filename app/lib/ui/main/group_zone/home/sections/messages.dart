@@ -7,12 +7,15 @@ import 'section.dart';
 import 'entity_pages/message.dart';
 
 
-class MessagesSectionCloudData {
+class MessagesSectionCloudData extends CloudSectionData {
 	final messages = Cloud.messages;
+
+	@override
+	Future<List<Message>> get counted => messages;
 }
 
 
-class MessagesSection extends CloudSection {
+class MessagesSection extends CloudSection<MessagesSectionCloudData> {
 	static const name = "messages";
 	static const icon = Icons.messenger;
 
@@ -26,7 +29,7 @@ class MessagesSection extends CloudSection {
 	@override
 	Widget build(BuildContext context) {
 		return FutureBuilder<List<Message>>(
-			future: cloudData.messages,
+			future: data.messages,
 			builder: (context, snapshot) {
 				// todo: what is shown while awaiting
 				if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(icon));

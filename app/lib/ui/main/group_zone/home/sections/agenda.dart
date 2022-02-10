@@ -10,7 +10,7 @@ import 'entity_pages/event.dart';
 import 'new_entity_pages/event.dart';
 
 
-class AgendaSectionCloudData {
+class AgendaSectionCloudData extends CloudSectionData {
 	// todo: completely redo storing entities
 	final subjects = Cloud.subjectsWithEvents.then((subjects) {
 		final unfollowedEssences = Local.storedEntities<SubjectEssence>(DataBox.unfollowedSubjects);
@@ -18,12 +18,15 @@ class AgendaSectionCloudData {
 			!unfollowedEssences.contains(subject.essence)
 		).toList();
 	});
-	
+
 	Future<List<Event>> get events => subjects.then((subjects) => subjects.events);
+
+	@override
+	Future<List<Event>> get counted => events;
 }
 
 
-class AgendaSection extends CloudSection {
+class AgendaSection extends CloudSection<AgendaSectionCloudData> {
 	static const name = "agenda";
 	static const icon = Icons.import_contacts;
 
@@ -37,7 +40,7 @@ class AgendaSection extends CloudSection {
 	@override
 	Widget build(BuildContext context) {
 		return FutureBuilder<List<Event>>(
-			future: cloudData.events,
+			future: data.events,
 			builder: (context, snapshot) {
 				// todo: what is shown while awaiting
 				if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(icon));

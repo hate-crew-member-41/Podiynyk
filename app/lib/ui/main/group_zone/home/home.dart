@@ -26,7 +26,7 @@ class _HomeState extends State<Home> {
 	@override
 	Widget build(BuildContext context) {
 		return _section is CloudSection ? Provider.value(
-			value: (_section as CloudSection).cloudData,
+			value: (_section as CloudSection).data,
 			builder: (_, __) => _builder,
 		) : _builder;
 	}
@@ -42,7 +42,7 @@ class _HomeState extends State<Home> {
 						onTap: () => Scaffold.of(context).openDrawer()
 					),
 					Row(children: [
-						// todo: add entity count
+						if (_section is CloudSection) EntityCount((_section as CloudSection).data.count),
 						Padding(
 							padding: const EdgeInsets.only(left: 8),
 							child: Icon(_section.sectionIcon)
@@ -97,14 +97,36 @@ class _HomeState extends State<Home> {
 			)
 		),
 		drawerEdgeDragWidth: 150,
-		// todo: add floating action button dependant on the _section
+		// todo: add floating action button dependent on the _section
 	);
 
 	void Function() _setSectionFunction<S extends Section>(S Function() sectionBuilder) => () {
-		if (_section is! S) setState(() {
-			_section = sectionBuilder();
-		});
+		if (_section is! S) setState(() => _section = sectionBuilder());
 	};
+}
+
+
+class EntityCount extends StatefulWidget {
+	final Future<int> future;
+
+	const EntityCount(this.future);
+
+	@override
+	_EntityCountState createState() => _EntityCountState();
+}
+
+class _EntityCountState extends State<EntityCount> {
+	@override
+	Widget build(BuildContext context) {
+		return FutureBuilder(
+			future: widget.future,
+			builder: (context, snapshot) {
+				if (snapshot.connectionState == ConnectionState.waiting) return Container();
+				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+				return Text(snapshot.data!.toString());
+			}
+		);
+	}
 }
 
 

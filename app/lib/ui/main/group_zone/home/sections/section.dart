@@ -46,12 +46,17 @@ abstract class Section extends StatelessWidget {
 }
 
 
+abstract class CloudSectionData {
+	Future<List<dynamic>> get counted;
+	Future<int> get count => counted.then((counted) => counted.length);
+}
+
 // todo: rename to CloudListSection if the the common build behavior is captured
 // idea: consider an AnimatedOpacity animation with a different delay for each tile
-abstract class CloudSection extends Section {
-	final dynamic cloudData;
+abstract class CloudSection<D extends CloudSectionData> extends Section {
+	final D data;
 
-	const CloudSection(this.cloudData);
+	const CloudSection(this.data);
 }
 
 

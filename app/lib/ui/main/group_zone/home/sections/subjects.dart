@@ -9,12 +9,15 @@ import 'section.dart';
 import 'entity_pages/subject.dart';
 
 
-class SubjectsSectionCloudData {
+class SubjectsSectionCloudData extends CloudSectionData {
 	final subjects = Cloud.subjectsWithEvents;
+
+	@override
+	Future<List<Subject>> get counted => subjects;
 }
 
 
-class SubjectsSection extends CloudSection {
+class SubjectsSection extends CloudSection<SubjectsSectionCloudData> {
 	static const name = "subjects";
 	static const icon = Icons.school;
 
@@ -28,7 +31,7 @@ class SubjectsSection extends CloudSection {
 	@override
 	Widget build(BuildContext context) {
 		return FutureBuilder<List<Subject>>(
-			future: cloudData.subjects,
+			future: data.subjects,
 			builder: (context, snapshot) {
 				// todo: what is shown while awaiting
 				if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(icon));

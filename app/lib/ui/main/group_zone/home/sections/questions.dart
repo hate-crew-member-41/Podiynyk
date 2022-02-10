@@ -6,12 +6,15 @@ import 'package:podiynyk/storage/entities/question.dart';
 import 'section.dart';
 
 
-class QuestionsSectionCloudData {
+class QuestionsSectionCloudData extends CloudSectionData {
 	final questions = Cloud.questions;
+
+	@override
+	Future<List<Question>> get counted => questions;
 }
 
 
-class QuestionsSection extends CloudSection {
+class QuestionsSection extends CloudSection<QuestionsSectionCloudData> {
 	static const name = "questions";
 	static const icon = Icons.question_answer;
 
