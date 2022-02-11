@@ -1,15 +1,21 @@
+import '../fields.dart';
+
+
 class Student {
 	final String id;
 	final String name;
 	final Role? role;
 	final int? confirmationCount;
 
-	const Student({
-		required this.id,
-		required this.name,
-		this.role,
-		this.confirmationCount
-	});
+	Student.candidateFromCloudFormat(this.id, {required Map<String, dynamic> data}) :
+		name = data[Field.names.name][id] as String,
+		role = null,
+		confirmationCount = data[Field.confirmationCounts.name][id] as int;
+	
+	Student.fromCloudFormat(this.id, {required Map<String, dynamic> data}) :
+		name = data[Field.names.name][id] as String,
+		role = Role.values[data[Field.roles.name][id] as int],
+		confirmationCount = null;
 }
 
 

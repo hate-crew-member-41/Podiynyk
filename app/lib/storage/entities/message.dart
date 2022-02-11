@@ -1,5 +1,7 @@
-import '../cloud.dart' show Cloud;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../cloud.dart' show Cloud;
+import '../fields.dart';
 import 'entity.dart';
 
 
@@ -14,11 +16,10 @@ class Message implements DetailedEntity, StoredEntity<MessageEssence> {
 	String? author;
 	String? content;
 
-	Message({
-		required this.id,
-		required this.subject,
-		required this.date
-	});
+	Message.fromCloudFormat(MapEntry<String, dynamic> entry) :
+		id = entry.key,
+		subject = entry.value[Field.subject.name] as String,
+		date = (entry.value[Field.date.name] as Timestamp).toDate();
 
 	@override
 	Future<void> addDetails() => Cloud.addMessageDetails(this);

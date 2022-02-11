@@ -1,5 +1,6 @@
-import '../cloud.dart' show Cloud;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../cloud.dart' show Cloud;
 import '../fields.dart';
 import 'entity.dart';
 import 'subject.dart';
@@ -16,12 +17,10 @@ class Event implements DetailedEntity, StoredEntity<EventEssence> {
 
 	String? note;
 
-	Event({
-		required this.id,
-		required this.name,
-		required this.subject,
-		required this.date
-	});
+	Event.fromCloudFormat(MapEntry<String, dynamic> entry, {required this.subject}) :
+		id = entry.key,
+		name = entry.value[Field.name.name] as String,
+		date = (entry.value[Field.date.name] as Timestamp).toDate();
 
 	@override
 	Future<void> addDetails() => Cloud.addEventDetails(this);

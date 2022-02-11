@@ -1,4 +1,5 @@
-import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import '../cloud.dart' show Cloud;
+import '../fields.dart';
 import 'entity.dart';
 import 'event.dart';
 
@@ -14,11 +15,11 @@ class Subject implements DetailedEntity, StoredEntity<SubjectEssence> {
 	int? totalEventCount;
 	List<String>? info;
 
-	Subject({
-		required this.id,
-		required this.name,
-		this.events
-	});
+	// todo: add a default value for events
+	Subject.fromCloudFormat(MapEntry<String, dynamic> entry, {bool events = true}) :
+		id = entry.key,
+		name = entry.value[Field.name.name] as String,
+		events = events ? <Event>[] : null;
 
 	@override
 	Future<void> addDetails() => Cloud.addSubjectDetails(this);

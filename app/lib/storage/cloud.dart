@@ -160,10 +160,9 @@ class Cloud {
 			final data = snapshot.data()!;
 
 			if (data.containsKey(Field.confirmationCounts.name)) return [
-				for (final entry in data[Field.names.name].entries) Student(
-					id: entry.key,
-					name: entry.value,
-					confirmationCount: data[Field.confirmationCounts.name][entry.key]
+				for (final id in data[Field.names.name].keys) Student.candidateFromCloudFormat(
+					id,
+					data: data
 				)
 			]..sort((a, b) => int.parse(a.id).compareTo(int.parse(b.id)));
 
@@ -204,11 +203,7 @@ class Cloud {
 		final rawEvents = snapshots.last.data()!;
 
 		final subjects = [
-			for (final entry in rawSubjects.entries) Subject(
-				id: entry.key,
-				name: entry.value[Field.name.name] as String,
-				events: <Event>[]
-			)
+			for (final entry in rawSubjects.entries) Subject.fromCloudFormat(entry)
 		];
 		final subjectsById = {
 			for (final subject in subjects) subject.id: subject
@@ -221,12 +216,7 @@ class Cloud {
 			final subjectId = entry.value[Field.subject.name] as String;
 			final subject = subjectsById[subjectId]!;
 
-			subject.events!.add(Event(
-				id: entry.key,
-				name: entry.value[Field.name.name] as String,
-				subject: subject,
-				date: (entry.value[Field.date.name] as Timestamp).toDate(),
-			));
+			subject.events!.add(Event.fromCloudFormat(entry, subject: subject));
 		}
 
 		for (final subject in subjects) subject.events!.sortByDate();
@@ -244,21 +234,16 @@ class Cloud {
 		final rawEvents = snapshots.last.data()!;
 
 		final subjects = [
-			for (final entry in rawSubjects.entries) Subject(
-				id: entry.key,
-				name: entry.value[Field.name.name] as String
-			)
+			for (final entry in rawSubjects.entries) Subject.fromCloudFormat(entry, events: false)
 		]..sort((a, b) => a.name.compareTo(b.name));
 		final subjectsById = {
 			for (final subject in subjects) subject.id: subject
 		};
 
 		final events = [
-			for (final entry in rawEvents.entries) Event(
-				id: entry.key,
-				name: entry.value[Field.name.name] as String,
-				subject: subjectsById[entry.value[Field.subject.name]],
-				date: (entry.value[Field.date.name] as Timestamp).toDate()
+			for (final entry in rawEvents.entries) Event.fromCloudFormat(
+				entry,
+				subject: subjectsById[entry.value[Field.subject.name]]
 			)
 		]..sortByDate();
 
@@ -273,12 +258,7 @@ class Cloud {
 		);
 
 		return [
-			for (final entry in eventEntries) Event(
-				id: entry.key,
-				name: entry.value[Field.name.name] as String,
-				subject: null,
-				date: (entry.value[Field.date.name] as Timestamp).toDate(),
-			)
+			for (final entry in eventEntries) Event.fromCloudFormat(entry, subject: null)
 		]..sortByDate();
 	}
 
@@ -287,11 +267,7 @@ class Cloud {
 		final snapshot = await Collection.messages.ref.get();
 
 		final messages = [
-			for (final entry in snapshot.data()!.entries) Message(
-				id: entry.key,
-				subject: entry.value[Field.subject.name] as String,
-				date: (entry.value[Field.date.name] as Timestamp).toDate()
-			)
+			for (final entry in snapshot.data()!.entries) Message.fromCloudFormat(entry)
 		];
 
 		// todo: what is this line?
@@ -313,10 +289,9 @@ class Cloud {
 		final data = snapshot.data()!;
 
 		final students = [
-			for (final entry in data[Field.names.name].entries) Student(
-				id: entry.key,
-				name: entry.value,
-				role: Role.values[data[Field.roles.name][entry.key]]
+			for (final id in data[Field.names.name].keys) Student.fromCloudFormat(
+				id,
+				data: data
 			)
 		]..sort((a, b) => a.name.compareTo(b.name));
 
