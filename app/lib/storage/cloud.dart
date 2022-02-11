@@ -47,8 +47,25 @@ extension on Map<String, dynamic> {
 	}
 }
 
+extension on List<IdentificationOption> {
+	void sortByName() => sort((a, b) => a.name.compareTo(b.name));
+}
+
+extension on List<Student> {
+	void sortById() => sort((a, b) => int.parse(a.id).compareTo(int.parse(b.id)));
+	void sortByName() => sort((a, b) => a.name.compareTo(b.name));
+}
+
+extension on List<Subject> {
+	void sortByName() => sort((a, b) => a.name.compareTo(b.name));
+}
+
 extension on List<Event> {
 	void sortByDate() => sort((a, b) => a.date.compareTo(b.date));
+}
+
+extension on List<Message> {
+	void sortByDate() => sort((a, b) => b.date.compareTo(a.date));
 }
 
 
@@ -92,7 +109,7 @@ class Cloud {
 				id: entry.key,
 				name: entry.value,
 			)
-		]..sort((a, b) => a.name.compareTo(b.name));
+		]..sortByName();
 	}
 
 	/// Adds the user to the group. If they are the group's first student, initializes the group's documents.
@@ -164,7 +181,7 @@ class Cloud {
 					id,
 					data: data
 				)
-			]..sort((a, b) => int.parse(a.id).compareTo(int.parse(b.id)));
+			]..sortById();
 
 			_role = Role.ordinary;
 			return null;
@@ -195,16 +212,13 @@ class Cloud {
 
 	/// The group's sorted [Subject]s with the sorted [Event]s, without the details.
 	static Future<List<Subject>> get subjects async {
-		final snapshots = await Future.wait([
-			Collection.subjects.ref.get(),
-			Collection.events.ref.get()
-		]);
-		final rawSubjects = snapshots.first.data()!;
-		final rawEvents = snapshots.last.data()!;
+		final rawSubjectsAndRawEvents = await _rawSubjectsAndRawEvents;
+		final rawSubjects = rawSubjectsAndRawEvents.item1;
+		final rawEvents = rawSubjectsAndRawEvents.item2;
 
 		final subjects = [
 			for (final entry in rawSubjects.entries) Subject.fromCloudFormat(entry)
-		];
+		]..sortByName();
 		final subjectsById = {
 			for (final subject in subjects) subject.id: subject
 		};
@@ -220,22 +234,18 @@ class Cloud {
 		}
 
 		for (final subject in subjects) subject.events!.sortByDate();
-		return subjects..sort((a, b) => a.name.compareTo(b.name));
+		return subjects;
 	}
 
-	// todo: share code with [subjects] getter
 	/// The group's sorted [Event]s and sorted [Subject]s without the events. Both are without the details.
 	static Future<Tuple2<List<Event>, List<Subject>>> get eventsAndSubjects async {
-		final snapshots = await Future.wait([
-			Collection.subjects.ref.get(),
-			Collection.events.ref.get()
-		]);
-		final rawSubjects = snapshots.first.data()!;
-		final rawEvents = snapshots.last.data()!;
+		final rawSubjectsAndRawEvents = await _rawSubjectsAndRawEvents;
+		final rawSubjects = rawSubjectsAndRawEvents.item1;
+		final rawEvents = rawSubjectsAndRawEvents.item2;
 
 		final subjects = [
 			for (final entry in rawSubjects.entries) Subject.fromCloudFormat(entry, events: false)
-		]..sort((a, b) => a.name.compareTo(b.name));
+		]..sortByName();
 		final subjectsById = {
 			for (final subject in subjects) subject.id: subject
 		};
@@ -248,6 +258,18 @@ class Cloud {
 		]..sortByDate();
 
 		return Tuple2(events, subjects);
+	}
+
+	/// The group's raw [Subject]s and raw [Event]s.
+	static Future<Tuple2<Map<String, dynamic>, Map<String, dynamic>>> get _rawSubjectsAndRawEvents async {
+		final snapshots = await Future.wait([
+			Collection.subjects.ref.get(),
+			Collection.events.ref.get()
+		]);
+		final rawSubjects = snapshots.first.data()!;
+		final rawEvents = snapshots.last.data()!;
+
+		return Tuple2(rawSubjects, rawEvents);
 	}
 
 	/// The group's sorted non-subject [Event]s.
@@ -274,7 +296,7 @@ class Cloud {
 		Local.clearStoredEntities<Message, MessageEssence>(DataBox.hiddenMessages, messages);
 		return messages
 			..removeWhere((message) => Local.entityIsStored(DataBox.hiddenMessages, message))
-			..sort((a, b) => b.date.compareTo(a.date));
+			..sortByDate();
 	}
 
 	// todo: define
@@ -293,7 +315,7 @@ class Cloud {
 				id,
 				data: data
 			)
-		]..sort((a, b) => a.name.compareTo(b.name));
+		]..sortByName();
 
 		_role = students.firstWhere((student) => student.name == Local.name).role!;
 		return students;
