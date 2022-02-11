@@ -328,9 +328,7 @@ class Cloud {
 	/// Initializes the [event]'s detail fields.
 	static Future<void> addEventDetails(Event event) async {
 		final snapshot = await Collection.events.detailsRef(event.id).get();
-		if (!snapshot.exists) return;
-
-		event.note = snapshot[Field.note.name];
+		event.note = snapshot.data()![Field.note.name];
 	}
 
 	/// Initializes the [message]'s detail fields.
