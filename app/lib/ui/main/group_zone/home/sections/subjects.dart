@@ -36,18 +36,10 @@ class SubjectsSection extends CloudEntitiesSection<SubjectsSectionCloudData, Sub
 	Future<List<Subject>> get entities => data.subjects;
 
 	@override
-	List<Widget> tiles(BuildContext context, List<Subject> subjects) {
-		final unfollowed = subjects.where((subject) =>
-			Local.entityIsStored(DataBox.unfollowedSubjects, subject)
-		).toList();
-		subjects.removeWhere((subject) => unfollowed.contains(subject));
-
-		return [
-			for (final subject in subjects) tile(context, subject),
-			for (final subject in unfollowed) Opacity(opacity: 0.6, child: tile(context, subject)),
-			const ListTile()
-		];
-	}
+	List<Widget> tiles(BuildContext context, List<Subject> subjects) => [
+		for (final subject in subjects) tile(context, subject),
+		const ListTile()
+	];
 
 	Widget tile(BuildContext context, Subject subject) {
 		return ListTile(

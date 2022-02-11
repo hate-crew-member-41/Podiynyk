@@ -39,8 +39,6 @@ class _SubjectPageState extends State<SubjectPage> {
 		final info = subject.info;
 		final events = subject.events;
 
-		final isFollowed = !Local.entityIsStored(DataBox.unfollowedSubjects, subject);
-
 		return EntityPage(
 			children: [
 				TextField(
@@ -64,14 +62,14 @@ class _SubjectPageState extends State<SubjectPage> {
 			],
 			actions: [
 				// todo: move this action to the event list through a FAD
-				if (isFollowed) EntityActionButton(
+				EntityActionButton(
 					text: "add an event",
 					action: () => Navigator.of(context).push(MaterialPageRoute(
 						builder: (_) => NewEventPage.subjectEvent(subject)
 					))
 				),
 				// todo: move this action to the info list through a FAD
-				if (isFollowed) EntityActionButton(
+				EntityActionButton(
 					text: "add information",
 					action: () => Navigator.of(context).push(MaterialPageRoute(
 						builder: (_) => GestureDetector(
@@ -84,13 +82,6 @@ class _SubjectPageState extends State<SubjectPage> {
 							)
 						)
 					))
-				),
-				isFollowed ? EntityActionButton(
-					text: "unfollow",
-					action: () => Local.addStoredEntity(DataBox.unfollowedSubjects, subject)
-				) : EntityActionButton(
-					text: "follow",
-					action: () => Local.deleteStoredEntity(DataBox.unfollowedSubjects, subject)
 				),
 				if (Cloud.role == Role.leader) EntityActionButton(
 					text: "delete",

@@ -1,13 +1,12 @@
 import '../cloud.dart' show Cloud;
 import '../fields.dart';
-import 'entity.dart';
 import 'event.dart';
 
 
 typedef SubjectEssence = String;
 
 
-class Subject implements DetailedEntity, StoredEntity<SubjectEssence> {
+class Subject {
 	final String id;
 	final String name;
 	final List<Event>? events;
@@ -21,14 +20,7 @@ class Subject implements DetailedEntity, StoredEntity<SubjectEssence> {
 		name = entry.value[Field.name.name] as String,
 		events = events ? <Event>[] : null;
 
-	@override
 	Future<void> addDetails() => Cloud.addSubjectDetails(this);
-
-	@override
-	SubjectEssence get essence => name;
-
-	@override
-	bool essenceIs(SubjectEssence comparedTo) => name == comparedTo;
 
 	String get eventCountRepr => _eventCountRepr(events!.length);
 

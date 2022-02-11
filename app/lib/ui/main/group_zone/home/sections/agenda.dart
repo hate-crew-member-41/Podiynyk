@@ -18,13 +18,7 @@ class AgendaSectionCloudData extends CloudEntitiesSectionData<Event> {
 
 	AgendaSectionCloudData() {
 		events = _eventsAndSubjects.then((eventsAndSubjects) => eventsAndSubjects.item1);
-
-		subjects = _eventsAndSubjects.then((eventsAndSubjects) {
-			final unfollowedEssences = Local.storedEntities<SubjectEssence>(DataBox.unfollowedSubjects);
-			return eventsAndSubjects.item2.where((subject) =>
-				!unfollowedEssences.contains(subject.essence)
-			).toList();
-		});
+		subjects = _eventsAndSubjects.then((eventsAndSubjects) => eventsAndSubjects.item2);
 	}
 
 	@override

@@ -39,7 +39,7 @@ class _MessagePageState extends State<MessagePage> {
 			],
 			actions: [Local.name != message.author ? EntityActionButton(
 				text: "hide",
-				action: () => Local.addStoredEntity(DataBox.hiddenMessages, message)
+				action: () {}  // todo: hide the message
 			) : EntityActionButton(
 				text: "delete",
 				action: () => Cloud.deleteMessage(message)

@@ -288,15 +288,9 @@ class Cloud {
 	static Future<List<Message>> get messages async {
 		final snapshot = await Collection.messages.ref.get();
 
-		final messages = [
+		return [
 			for (final entry in snapshot.data()!.entries) Message.fromCloudFormat(entry)
-		];
-
-		// todo: what is this line?
-		Local.clearStoredEntities<Message, MessageEssence>(DataBox.hiddenMessages, messages);
-		return messages
-			..removeWhere((message) => Local.entityIsStored(DataBox.hiddenMessages, message))
-			..sortByDate();
+		]..sortByDate();
 	}
 
 	// todo: define
@@ -419,7 +413,6 @@ class Cloud {
 	/// Adds a [Question] with the arguments unless it exists.
 	static Future<void> addQuestion() async {}
 
-	// todo: act as though the document always exists
 	/// Adds the [entity] unless it exists, with the given [details] unless they are `null`.
 	/// Returns whether the [entity] was written.
 	static Future<bool> _addEntity({
@@ -439,14 +432,7 @@ class Cloud {
 			}
 
 			final id = entries.newId.toString();
-			final entityEntry = {id: entity};
-
-			if (snapshot.exists) {
-				transaction.update(document, entityEntry);
-			}
-			else {
-				transaction.set(document, entityEntry);
-			}
+			transaction.update(document, {id: entity});
 
 			return id;
 		});
@@ -456,7 +442,7 @@ class Cloud {
 		return wasWritten;
 	}
 
-	// todo: should the events be deleted?
+	// todo: delete the events
 	/// Deletes the [subject]. The [subject]'s events are kept.
 	static Future<void> deleteSubject(Subject subject) async {
 		await Future.wait([
