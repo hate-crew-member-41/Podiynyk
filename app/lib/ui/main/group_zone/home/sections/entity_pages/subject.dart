@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/storage/cloud.dart' show Cloud;
-import 'package:podiynyk/storage/local.dart';
-import 'package:podiynyk/storage/entities/student.dart' show Role;
-import 'package:podiynyk/storage/entities/subject.dart' show Subject;
+import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/entities/student.dart';
+import 'package:podiynyk/storage/entities/subject.dart';
 
 import 'package:podiynyk/ui/main/widgets/fields.dart' show InputField;
 
@@ -13,12 +12,12 @@ import 'entity.dart';
 
 
 class SubjectPage extends StatefulWidget {
-	final Subject _subject;
+	final Subject subject;
 	final _nameField = TextEditingController();
 	final _infoField = TextEditingController();
 
-	SubjectPage(this._subject) {
-		_nameField.text = _subject.name;
+	SubjectPage(this.subject) {
+		_nameField.text = subject.name;
 	}
 
 	@override
@@ -28,16 +27,19 @@ class SubjectPage extends StatefulWidget {
 class _SubjectPageState extends State<SubjectPage> {
 	@override
 	void initState() {
-		widget._subject.addDetails().whenComplete(() => setState(() {}));
+		widget.subject.addDetails().whenComplete(() => setState(() {}));
 		super.initState();
 	}
 
 	@override
 	Widget build(BuildContext context) {
-		final subject = widget._subject;
+		final subject = widget.subject;
 		final totalEventCount = subject.totalEventCount;
 		final info = subject.info;
 		final events = subject.events;
+
+		final isLeader = Cloud.role == Role.leader;
+		final canModify = (Cloud.role == Role.trusted && subject.isFollowed) || isLeader;
 
 		return EntityPage(
 			children: [
@@ -61,15 +63,13 @@ class _SubjectPageState extends State<SubjectPage> {
 				)
 			],
 			actions: [
-				// todo: move this action to the event list through a FAD
-				EntityActionButton(
+				if (canModify) EntityActionButton(
 					text: "add an event",
 					action: () => Navigator.of(context).push(MaterialPageRoute(
 						builder: (_) => NewEventPage.subjectEvent(subject)
 					))
 				),
-				// todo: move this action to the info list through a FAD
-				EntityActionButton(
+				if (canModify) EntityActionButton(
 					text: "add information",
 					action: () => Navigator.of(context).push(MaterialPageRoute(
 						builder: (_) => GestureDetector(
@@ -83,7 +83,15 @@ class _SubjectPageState extends State<SubjectPage> {
 						)
 					))
 				),
-				if (Cloud.role == Role.leader) EntityActionButton(
+				subject.isFollowed ? EntityActionButton(
+					text: "unfollow",
+					action: () => subject.unfollow()
+				) : EntityActionButton(
+					text: "follow",
+					action: () => subject.follow()
+				),
+				// todo: confirmation
+				if (isLeader) EntityActionButton(
 					text: "delete",
 					action: () => Cloud.deleteSubject(subject)
 				)
@@ -102,11 +110,11 @@ class _SubjectPageState extends State<SubjectPage> {
 	}
 
 	void addInfo() {
-		final subject = widget._subject;
+		final subject = widget.subject;
 		subject.info ??= [];
 
 		subject.info!.add(widget._infoField.text);
-		Cloud.updateSubjectInfo(widget._subject);
+		Cloud.updateSubjectInfo(widget.subject);
 		Navigator.of(context).pop();
 	}
 }

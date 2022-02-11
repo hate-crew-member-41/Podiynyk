@@ -4,9 +4,6 @@ import '../cloud.dart' show Cloud;
 import '../fields.dart';
 
 
-typedef MessageEssence = String;
-
-
 class Message {
 	final String id;
 	final String subject;

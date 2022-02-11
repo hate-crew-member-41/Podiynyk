@@ -372,7 +372,7 @@ class Cloud {
 				existingEvent[Field.name.name] == name && existingEvent[Field.subject.name] == subject?.id,
 			entity: {
 				Field.name.name: name,
-				if (subject != null) Field.subject.name: subject.id,
+				Field.subject.name: subject?.id,
 				Field.date.name: date,
 			},
 			details: {if (note != null) Field.note.name: note},

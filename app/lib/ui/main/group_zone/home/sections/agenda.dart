@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/subject.dart';
-import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/event.dart';
 
 import 'section.dart';
@@ -17,7 +16,9 @@ class AgendaSectionCloudData extends CloudEntitiesSectionData<Event> {
 	late final Future<List<Subject>> subjects;
 
 	AgendaSectionCloudData() {
-		events = _eventsAndSubjects.then((eventsAndSubjects) => eventsAndSubjects.item1);
+		events = _eventsAndSubjects.then((eventsAndSubjects) =>
+			eventsAndSubjects.item1.where((event) => event.subject?.isFollowed != false).toList()
+		);
 		subjects = _eventsAndSubjects.then((eventsAndSubjects) => eventsAndSubjects.item2);
 	}
 

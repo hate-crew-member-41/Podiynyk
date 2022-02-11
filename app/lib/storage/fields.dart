@@ -4,6 +4,7 @@ enum Field {
 	groupId,
 	id,
 	name,
+	unfollowedSubjects,
 
 	// cloud
 	names,

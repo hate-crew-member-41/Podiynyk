@@ -28,7 +28,3 @@ enum Role {
 	/// Manages the group's [trusted] [Student]s. A single [Student] in the group has this [Role].
 	leader,
 }
-
-extension Compared on Role {
-	bool operator <(Role comparedTo) => index < comparedTo.index;
-}

@@ -5,9 +5,6 @@ import '../fields.dart';
 import 'subject.dart';
 
 
-typedef EventEssence = Map<String, String?>;
-
-
 class Event {
 	final String id;
 	final String name;

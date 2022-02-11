@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/storage/cloud.dart' show Cloud;
-import 'package:podiynyk/storage/local.dart';
+import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/subject.dart';
 
 import 'section.dart';
@@ -37,7 +36,11 @@ class SubjectsSection extends CloudEntitiesSection<SubjectsSectionCloudData, Sub
 
 	@override
 	List<Widget> tiles(BuildContext context, List<Subject> subjects) => [
-		for (final subject in subjects) tile(context, subject),
+		for (final subject in subjects.where((subject) => subject.isFollowed)) tile(context, subject),
+		for (final subject in subjects.where((subject) => !subject.isFollowed)) Opacity(
+			opacity: 0.5,
+			child: tile(context, subject)
+		),
 		const ListTile()
 	];
 

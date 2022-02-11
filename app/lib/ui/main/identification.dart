@@ -70,7 +70,7 @@ class _IdentificationFormState extends State<IdentificationForm> {
 
 	@override
 	Widget build(BuildContext context) {
-		final state = GestureDetector(
+		return GestureDetector(
 			onDoubleTap: () => _enterGroup(context),
 			child: Scaffold(
 				body: Column(
@@ -101,10 +101,6 @@ class _IdentificationFormState extends State<IdentificationForm> {
 				)
 			)
 		);
-
-		// todoŁ will the build always have finished before _showCountyOptions is called?
-		Future.delayed(const Duration(), () => _showCountyOptions(context));
-		return state;
 	}
 
 	Future<bool?> _showCountyOptions(BuildContext context) => _showOptions(
@@ -195,7 +191,6 @@ class _IdentificationFormState extends State<IdentificationForm> {
 		required void Function(O) onTap
 	}) {
 		if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: Icon(Icons.cloud_download));
-
 		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
 		return ListView(children: [
@@ -213,7 +208,7 @@ class _IdentificationFormState extends State<IdentificationForm> {
 		final groupId = '${_university!.id}.${_department.id}.$groupName';
 		Local.groupId = groupId;
 		Local.name = _nameField.text;
-		
+
 		Cloud.enterGroup().whenComplete(context.read<void Function()>());
 	}
 }

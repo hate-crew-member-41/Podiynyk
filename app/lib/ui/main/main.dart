@@ -26,8 +26,13 @@ class _AppMainState extends State<AppMain> {
 				return GroupZone(leaderIsElected: snapshot.data!);
 			}
 		) : Provider.value(
-			value: () => setState(() {}),
+			value: _endIdentification,
 			child: const Identification()
 		);
+	}
+
+	void _endIdentification() {
+		Local.initGroupRelatedData();
+		setState(() {});
 	}
 }
