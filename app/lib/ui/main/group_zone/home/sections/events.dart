@@ -8,7 +8,7 @@ import 'entity_pages/event.dart';
 import 'new_entity_pages/event.dart';
 
 
-class EventsSectionCloudData extends CloudEntitiesSectionData<Event> {
+class NonSubjectEventsSectionCloudData extends CloudEntitiesSectionData<Event> {
 	final events = Cloud.nonSubjectEvents;
 
 	@override
@@ -16,11 +16,11 @@ class EventsSectionCloudData extends CloudEntitiesSectionData<Event> {
 }
 
 
-class EventsSection extends CloudEntitiesSection<EventsSectionCloudData, Event> {
+class NonSubjectEventsSection extends CloudEntitiesSection<NonSubjectEventsSectionCloudData, Event> {
 	static const name = "events";
 	static const icon = Icons.event_note;
 
-	EventsSection() : super(EventsSectionCloudData());
+	NonSubjectEventsSection() : super(NonSubjectEventsSectionCloudData());
 
 	@override
 	String get sectionName => name;

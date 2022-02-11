@@ -17,6 +17,29 @@ import 'entities/subject.dart';
 import 'entities/university.dart';
 
 
+/// The group's [Collection] stored in [FirebaseFirestore].
+enum Collection {
+	counties,
+	universities,
+	groups,
+	subjects,
+	events,
+	messages,
+	questions,
+	details
+}
+
+extension on Collection {
+	/// [DocumentReference] to the document with the group's data of [collection] type.
+	DocumentReference<Map<String, dynamic>> get ref =>	
+		FirebaseFirestore.instance.collection(name).doc(Local.groupId);
+	
+	/// [DocumentReference] to the details of the entity with the [id] in the group's data of [collection] type.
+	DocumentReference<Map<String, dynamic>> detailsRef(String id) =>	
+		ref.collection(Collection.details.name).doc(id);
+}
+
+
 extension on Map<String, dynamic> {
 	int get newId {
 		int id = 0;
@@ -44,31 +67,31 @@ class Cloud {
 
 	/// The [County]s of Ukraine.
 	static Future<List<County>> get counties => _identificationOptions(
-		entities: Collection.counties,
+		collection: Collection.counties,
 		document: Collection.counties.name,
 		optionConstructor: ({required id, required name}) => County(id: id, name: name)
 	);
 
 	/// The [Univesity]s of the [county].
 	static Future<List<University>> universities(County county) => _identificationOptions(
-		entities: Collection.counties,
+		collection: Collection.counties,
 		document: county.id,
 		optionConstructor: ({required id, required name}) => University(id: id, name: name)
 	);
 
 	/// The [Department]s of the [university].
 	static Future<List<Department>> departments(University university) => _identificationOptions(
-		entities: Collection.universities,
+		collection: Collection.universities,
 		document: university.id,
 		optionConstructor: ({required id, required name}) => Department(id: id, name: name)
 	);
 
 	static Future<List<O>> _identificationOptions<O extends IdentificationOption>({
-		required Collection entities,
+		required Collection collection,
 		required String document,
 		required O Function({required String id, required String name}) optionConstructor
 	}) async {
-		final snapshot = await _cloud.collection(entities.name).doc(document).get();
+		final snapshot = await _cloud.collection(collection.name).doc(document).get();
 		return [
 			for (final entry in snapshot.data()!.entries) optionConstructor(
 				id: entry.key,
@@ -79,7 +102,7 @@ class Cloud {
 
 	/// Adds the user to the group. If they are the group's first student, initializes the group's documents.
 	static Future<void> enterGroup() async {
-		final document = _groupDocument(Collection.groups);
+		final document = Collection.groups.ref;
 
 		Local.id = await _cloud.runTransaction((transaction) async {
 			final snapshot = await transaction.get(document);
@@ -108,11 +131,11 @@ class Cloud {
 					Field.joined.name: DateTime.now()
 				});
 
-				_groupDocument(Collection.subjects).set({});
-				_groupDocument(Collection.events).set({});
-				_groupDocument(Collection.messages).set({});
-				_groupDocument(Collection.questions).set({});
-				_groupDocument(Collection.questions).set({});
+				Collection.subjects.ref.set({});
+				Collection.events.ref.set({});
+				Collection.messages.ref.set({});
+				Collection.questions.ref.set({});
+				Collection.questions.ref.set({});
 			}
 
 			return id;
@@ -121,7 +144,7 @@ class Cloud {
 
 	/// Whether the group is past the [LeaderElection] step. Updates [role].
 	static Future<bool> get leaderIsElected async {
-		final snapshot = await _groupDocument(Collection.groups).get();
+		final snapshot = await Collection.groups.ref.get();
 		final data = snapshot.data()!;
 
 		final isElected = data.containsKey(Field.roles.name);
@@ -138,7 +161,7 @@ class Cloud {
 	/// A [Stream] of updates of the group's [Student]s and confirmations for them to be the group's leader.
 	/// As soon as the leader is determined, `null` is returned.
 	static Stream<List<Student>?> get leaderElectionUpdates {
-		return _groupDocument(Collection.groups).snapshots().map((snapshot) {
+		return Collection.groups.ref.snapshots().map((snapshot) {
 			final data = snapshot.data()!;
 
 			if (data.containsKey(Field.confirmationCounts.name)) return [
@@ -159,7 +182,7 @@ class Cloud {
 		required String toId,
 		String? fromId
 	}) async {
-		await _groupDocument(Collection.groups).update({
+		await Collection.groups.ref.update({
 			'${Field.confirmationCounts.name}.$toId': FieldValue.increment(1),
 			if (fromId != null) '${Field.confirmationCounts.name}.$fromId': FieldValue.increment(-1)
 		});
@@ -171,7 +194,7 @@ class Cloud {
 
 	/// Synchronizes the user's [Role].
 	static Future<void> syncRole() async {
-		final snapshot = await _groupDocument(Collection.groups).get();
+		final snapshot = await Collection.groups.ref.get();
 		final roleIndex = snapshot.data()![Field.roles.name][Local.id];
 		_role = Role.values[roleIndex];
 	}
@@ -186,8 +209,8 @@ class Cloud {
 	// tofix: no-subject events are not included
 	/// The group's sorted [Event]s without the details, that the user has not hidden.
 	static Future<List<Event>> get events async {
-		final subjectsWithEvents = await _subjects;
-		return subjectsWithEvents.events
+		final subjects = await _subjects;
+		return subjects.events
 			..removeWhere((event) => Local.entityIsStored(DataBox.hiddenEvents, event))
 			..sort((a, b) => a.date.compareTo(b.date));
 	}
@@ -195,16 +218,16 @@ class Cloud {
 	/// The group's [Subject]s with the unsorted [Event]s, without the details.
 	static Future<List<Subject>> get _subjects async {
 		final snapshots = await Future.wait([
-			_groupDocument(Collection.subjects).get(),
-			_groupDocument(Collection.events).get()
+			Collection.subjects.ref.get(),
+			Collection.events.ref.get()
 		]);
-		final subjectEntries = snapshots.first.data()!;
-		final eventEntries = snapshots.last.data()!;
+		final rawSubjects = snapshots.first.data()!;
+		final rawEvents = snapshots.last.data()!;
 
 		final subjects = [
-			for (final entry in subjectEntries.entries) Subject(
+			for (final entry in rawSubjects.entries) Subject(
 				id: entry.key,
-				name: entry.value[Field.name.name],
+				name: entry.value[Field.name.name] as String,
 				events: <Event>[]
 			)
 		];
@@ -212,16 +235,16 @@ class Cloud {
 			for (final subject in subjects) subject.id: subject
 		};
 
-		for (final entry in eventEntries.entries) {
+		for (final entry in rawEvents.entries) {
 			final subjectId = entry.value[Field.subject.name];
 			if (subjectId == null) continue;
 
 			final subject = subjectsById[subjectId]!;
 			subject.events.add(Event(
 				id: entry.key,
-				name: entry.value[Field.name.name],
+				name: entry.value[Field.name.name] as String,
 				subject: subject,
-				date: entry.value[Field.date.name].toDate(),
+				date: (entry.value[Field.date.name] as Timestamp).toDate(),
 			));
 		}
 
@@ -230,11 +253,13 @@ class Cloud {
 
 	/// The group's sorted non-subject [Event]s.
 	static Future<List<Event>> get nonSubjectEvents async {
-		final snapshot = await _groupDocument(Collection.events).get();
+		final snapshot = await Collection.events.ref.get();
+		final subjectEntries = snapshot.data()!.entries.where((entry) =>
+			entry.value[Field.subject.name] == null
+		);
+
 		return [
-			for (final entry in snapshot.data()!.entries.where((entry) =>
-				entry.value[Field.subject.name] == null
-			)) Event(
+			for (final entry in subjectEntries) Event(
 				id: entry.key,
 				name: entry.value[Field.name.name] as String,
 				date: (entry.value[Field.date.name] as Timestamp).toDate(),
@@ -244,17 +269,18 @@ class Cloud {
 
 	/// The group's [Message]s without the details.
 	static Future<List<Message>> get messages async {
-		final snapshot = await _groupDocument(Collection.messages).get();
+		final snapshot = await Collection.messages.ref.get();
 
 		final messages = [
 			for (final entry in snapshot.data()!.entries) Message(
 				id: entry.key,
-				subject: entry.value[Field.subject.name],
-				date: entry.value[Field.date.name].toDate()
+				subject: entry.value[Field.subject.name] as String,
+				date: (entry.value[Field.date.name] as Timestamp).toDate()
 			)
 		];
-		Local.clearStoredEntities<Message, MessageEssence>(DataBox.hiddenMessages, messages);
 
+		// todo: what is this line?
+		Local.clearStoredEntities<Message, MessageEssence>(DataBox.hiddenMessages, messages);
 		return messages
 			..removeWhere((message) => Local.entityIsStored(DataBox.hiddenMessages, message))
 			..sort((a, b) => b.date.compareTo(a.date));
@@ -268,7 +294,7 @@ class Cloud {
 
 	/// The group's [Student]s. Updates [role].
 	static Future<List<Student>> get students async {
-		final snapshot = await _groupDocument(Collection.groups).get();
+		final snapshot = await Collection.groups.ref.get();
 		final data = snapshot.data()!;
 
 		final students = [
@@ -285,7 +311,7 @@ class Cloud {
 
 	/// Initializes the [subject]'s detail fields.
 	static Future<void> addSubjectDetails(Subject subject) async {
-		final snapshot = await _groupDocument(Collection.subjects).collection(Collection.details.name).doc(subject.id).get();
+		final snapshot = await Collection.subjects.detailsRef(subject.id).get();
 		final details = snapshot.data()!;
 
 		subject.totalEventCount = details[Field.totalEventCount.name];
@@ -295,7 +321,7 @@ class Cloud {
 
 	/// Initializes the [event]'s detail fields.
 	static Future<void> addEventDetails(Event event) async {
-		final snapshot = await _groupDocument(Collection.events).collection(Collection.details.name).doc(event.id).get();
+		final snapshot = await Collection.events.detailsRef(event.id).get();
 		if (!snapshot.exists) return;
 
 		event.note = snapshot[Field.note.name];
@@ -303,7 +329,7 @@ class Cloud {
 
 	/// Initializes the [message]'s detail fields.
 	static Future<void> addMessageDetails(Message message) async {
-		final snapshot = await _groupDocument(Collection.messages).collection(Collection.details.name).doc(message.id).get();
+		final snapshot = await Collection.messages.detailsRef(message.id).get();
 		
 		message.content = snapshot[Field.content.name];
 		message.author = snapshot[Field.author.name];
@@ -322,7 +348,7 @@ class Cloud {
 
 	/// Updates the [info] in the [subject]'s details.
 	static Future<void> updateSubjectInfo(Subject subject) async {
-		_groupDocument(Collection.subjects).collection(Collection.details.name).doc(subject.id).update({
+		Collection.subjects.detailsRef(subject.id).update({
 			Field.info.name: subject.info
 		});
 	}
@@ -347,9 +373,7 @@ class Cloud {
 		);
 
 		if (subject != null && wasWritten) {
-			final document = _groupDocument(Collection.subjects);
-
-			document.collection(Collection.details.name).doc(subject.id).update({
+			Collection.subjects.detailsRef(subject.id).update({
 				Field.totalEventCount.name: FieldValue.increment(1)
 			});
 		}
@@ -357,7 +381,7 @@ class Cloud {
 
 	/// Updates the [note] in the [event]'s details.
 	static Future<void> updateEventNote(Event event) async {
-		await _groupDocument(Collection.events).collection(Collection.details.name).doc(event.id).update({
+		await Collection.events.detailsRef(event.id).update({
 			Field.note.name: event.note
 		});
 	}
@@ -392,7 +416,7 @@ class Cloud {
 		required Object entity,
 		Map<String, Object>? details
 	}) async {
-		final document = _groupDocument(collection);
+		final document = collection.ref;
 
 		final id = await _cloud.runTransaction((transaction) async {
 			final snapshot = await transaction.get(document);
@@ -416,70 +440,49 @@ class Cloud {
 		});
 
 		final wasWritten = id != null;
-		if (details != null && wasWritten) await document.collection(Collection.details.name).doc(id).set(details);
+		if (details != null && wasWritten) await collection.detailsRef(id).set(details);
 		return wasWritten;
 	}
 
 	// todo: should the events be deleted?
 	/// Deletes the [subject]. The [subject]'s events are kept.
 	static Future<void> deleteSubject(Subject subject) async {
-		final document = _groupDocument(Collection.subjects);
 		await Future.wait([
-			document.update({subject.id: FieldValue.delete()}),
-			document.collection(Collection.details.name).doc(subject.id).delete()
+			Collection.subjects.ref.update({subject.id: FieldValue.delete()}),
+			Collection.subjects.detailsRef(subject.id).delete()
 		]);
 	}
 
 	/// Deletes the [event].
 	static Future<void> deleteEvent(Event event) async {
-		final document = _groupDocument(Collection.events);
 		await Future.wait([
-			document.update({event.id: FieldValue.delete()}),
-			document.collection(Collection.details.name).doc(event.id).delete()
+			Collection.events.ref.update({event.id: FieldValue.delete()}),
+			Collection.events.detailsRef(event.id).delete()
 		]);
 	}
 
 	/// Deletes the [message].
 	static Future<void> deleteMessage(Message message) async {
-		final document = _groupDocument(Collection.messages);
 		await Future.wait([
-			document.update({message.id: FieldValue.delete()}),
-			document.collection(Collection.details.name).doc(message.id).delete()
+			Collection.messages.ref.update({message.id: FieldValue.delete()}),
+			Collection.messages.detailsRef(message.id).delete()
 		]);
 	}
 
 	/// Sets the [student]'s [Role] to [role].
 	static Future<void> setRole(Student student, Role role) async {
-		await _groupDocument(Collection.groups).update({
+		await Collection.groups.ref.update({
 			Field.roles.name: {student.id: role.index}
 		});
 	}
 
 	/// Sets the [Role] of the [student] to [Role.leader], and the user's role to [Role.trusted].
 	static Future<void> makeLeader(Student student) async {
-		final document = _groupDocument(Collection.groups);
+		final document = Collection.groups.ref;
 
 		await document.update({
 			Local.id: Role.trusted.index,
 			student.id: Role.leader.index
 		});
 	}
-
-	/// [DocumentReference] to the document with the group's data of [collection] type.
-	static DocumentReference<Map<String, dynamic>> _groupDocument(Collection collection) {
-		return _cloud.collection(collection.name).doc(Local.groupId);
-	}
-}
-
-
-/// The group's [Collection] stored in [FirebaseFirestore].
-enum Collection {
-	counties,
-	universities,
-	groups,
-	subjects,
-	events,
-	messages,
-	questions,
-	details
 }

@@ -67,9 +67,9 @@ class _HomeState extends State<Home> {
 						setSection: _setSectionFunction(() => SubjectsSection())
 					),
 					SectionTile(
-						name: EventsSection.name,
-						icon: EventsSection.icon,
-						setSection: _setSectionFunction(() => EventsSection())
+						name: NonSubjectEventsSection.name,
+						icon: NonSubjectEventsSection.icon,
+						setSection: _setSectionFunction(() => NonSubjectEventsSection())
 					),
 					const ListTile(),
 					SectionTile(
