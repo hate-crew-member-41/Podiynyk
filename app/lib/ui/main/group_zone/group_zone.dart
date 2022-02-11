@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'leader_election.dart';
 import 'home/home.dart';
@@ -24,8 +25,9 @@ class _GroupZoneState extends State<GroupZone> {
 
 	@override
 	Widget build(BuildContext context) {
-		return _leaderIsElected ? const Home() : LeaderElection(
-			end: () => setState(() { _leaderIsElected = true; })
+		return _leaderIsElected ? const Home() : Provider.value(
+			value: () => setState(() { _leaderIsElected = true; }),
+			child: const LeaderElection()
 		);
 	}
 }

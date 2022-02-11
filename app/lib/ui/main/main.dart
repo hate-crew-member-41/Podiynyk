@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/local.dart' show Local;
@@ -24,8 +25,9 @@ class _AppMainState extends State<AppMain> {
 				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 				return GroupZone(leaderIsElected: snapshot.data!);
 			}
-		) : Identification(
-			end: () => setState(() {})  // todo: provide this method using the provider package?
+		) : Provider.value(
+			value: () => setState(() {}),
+			child: const Identification()
 		);
 	}
 }

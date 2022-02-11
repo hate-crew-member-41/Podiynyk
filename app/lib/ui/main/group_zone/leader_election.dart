@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/local.dart' show Local;
@@ -6,9 +7,7 @@ import 'package:podiynyk/storage/entities/student.dart';
 
 
 class LeaderElection extends StatefulWidget {
-	final void Function() end;
-
-	const LeaderElection({required this.end});
+	const LeaderElection();
 
 	@override
 	State<LeaderElection> createState() => _LeaderElectionState();
@@ -23,7 +22,7 @@ class _LeaderElectionState extends State<LeaderElection> {
 	_LeaderElectionState() {
 		_content = GestureDetector(
 			onDoubleTap: () => setState(() {
-				_content = LeaderCandidateList(endElection: widget.end);
+				_content = const LeaderCandidateList();
 			}),
 			child: Scaffold(
 				body: Column(
@@ -49,9 +48,7 @@ class _LeaderElectionState extends State<LeaderElection> {
 
 
 class LeaderCandidateList extends StatefulWidget {
-	final void Function() endElection;
-
-	const LeaderCandidateList({required this.endElection});
+	const LeaderCandidateList();
 
 	@override
 	_LeaderCandidateListState createState() => _LeaderCandidateListState();
@@ -99,7 +96,7 @@ class _LeaderCandidateListState extends State<LeaderCandidateList> {
 				yield students;
 			}
 			else {
-				widget.endElection();
+				context.read<void Function()>()();
 			}
 		}
 	}

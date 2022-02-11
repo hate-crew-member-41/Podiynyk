@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/local.dart' show Local;
@@ -11,9 +12,7 @@ import 'widgets/fields.dart';
 
 
 class Identification extends StatefulWidget {
-	final void Function() end;
-
-	const Identification({required this.end});
+	const Identification();
 
 	@override
 	State<Identification> createState() => _IdentificationState();
@@ -28,7 +27,7 @@ class _IdentificationState extends State<Identification> {
 	_IdentificationState() {
 		_content = GestureDetector(
 			onDoubleTap: () => setState(() {
-				_content = IdentificationForm(endIdentification: widget.end);
+				_content = const IdentificationForm();
 			}),
 			child: Scaffold(
 				body: Column(
@@ -54,8 +53,7 @@ class _IdentificationState extends State<Identification> {
 
 
 class IdentificationForm extends StatefulWidget {
-	final void Function() endIdentification;
-	const IdentificationForm({required this.endIdentification});
+	const IdentificationForm();
 
 	@override
 	State<IdentificationForm> createState() => _IdentificationFormState();
@@ -73,7 +71,7 @@ class _IdentificationFormState extends State<IdentificationForm> {
 	@override
 	Widget build(BuildContext context) {
 		final state = GestureDetector(
-			onDoubleTap: _enterGroup,
+			onDoubleTap: () => _enterGroup(context),
 			child: Scaffold(
 				body: Column(
 					mainAxisAlignment: MainAxisAlignment.center,
@@ -208,7 +206,7 @@ class _IdentificationFormState extends State<IdentificationForm> {
 		]);
 	}
 
-	void _enterGroup() {
+	void _enterGroup(BuildContext context) {
 		if (_departmentField.text.isEmpty || _groupField.text.isEmpty || _nameField.text.isEmpty) return;
 
 		final groupName = _groupField.text.toLowerCase().replaceAll('-', ' ').replaceAll(' ', '');
@@ -216,6 +214,6 @@ class _IdentificationFormState extends State<IdentificationForm> {
 		Local.groupId = groupId;
 		Local.name = _nameField.text;
 		
-		Cloud.enterGroup().whenComplete(widget.endIdentification);
+		Cloud.enterGroup().whenComplete(context.read<void Function()>());
 	}
 }
