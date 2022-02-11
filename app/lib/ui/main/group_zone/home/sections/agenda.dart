@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:podiynyk/storage/cloud.dart' show Cloud, Subjects;
+import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/entities/subject.dart';
 import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/event.dart';
@@ -12,15 +12,20 @@ import 'new_entity_pages/event.dart';
 
 
 class AgendaSectionCloudData extends CloudEntitiesSectionData<Event> {
-	// todo: completely redo storing entities
-	final subjects = Cloud.subjects.then((subjects) {
-		final unfollowedEssences = Local.storedEntities<SubjectEssence>(DataBox.unfollowedSubjects);
-		return subjects.where((subject) =>
-			!unfollowedEssences.contains(subject.essence)
-		).toList();
-	});
+	final _eventsAndSubjects = Cloud.eventsAndSubjects;
+	late final Future<List<Event>> events;
+	late final Future<List<Subject>> subjects;
 
-	Future<List<Event>> get events => subjects.then((subjects) => subjects.events);
+	AgendaSectionCloudData() {
+		events = _eventsAndSubjects.then((eventsAndSubjects) => eventsAndSubjects.item1);
+
+		subjects = _eventsAndSubjects.then((eventsAndSubjects) {
+			final unfollowedEssences = Local.storedEntities<SubjectEssence>(DataBox.unfollowedSubjects);
+			return eventsAndSubjects.item2.where((subject) =>
+				!unfollowedEssences.contains(subject.essence)
+			).toList();
+		});
+	}
 
 	@override
 	Future<List<Event>> get counted => events;

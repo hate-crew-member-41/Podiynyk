@@ -1,15 +1,14 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:podiynyk/storage/entities/identification_option.dart';
+import 'package:tuple/tuple.dart';
 
-import 'local.dart';
 import 'fields.dart';
+import 'local.dart';
 
 import 'entities/county.dart';
 import 'entities/department.dart';
 import 'entities/event.dart';
+import 'entities/identification_option.dart';
 import 'entities/message.dart';
 import 'entities/question.dart';
 import 'entities/student.dart';
@@ -46,10 +45,6 @@ extension on Map<String, dynamic> {
 		while (containsKey(id.toString())) id++;
 		return id;
 	}
-}
-
-extension Subjects on List<Subject> {
-	List<Event> get events => [for (final subject in this) ...subject.events];
 }
 
 extension on List<Event> {
@@ -201,22 +196,6 @@ class Cloud {
 
 	/// The group's sorted [Subject]s with the sorted [Event]s, without the details.
 	static Future<List<Subject>> get subjects async {
-		final subjects = await _subjects;
-		for (final subject in subjects) subject.events.sortByDate();
-		return subjects..sort((a, b) => a.name.compareTo(b.name));
-	}
-
-	// tofix: no-subject events are not included
-	/// The group's sorted [Event]s without the details, that the user has not hidden.
-	static Future<List<Event>> get events async {
-		final subjects = await _subjects;
-		return subjects.events
-			..removeWhere((event) => Local.entityIsStored(DataBox.hiddenEvents, event))
-			..sort((a, b) => a.date.compareTo(b.date));
-	}
-
-	/// The group's [Subject]s with the unsorted [Event]s, without the details.
-	static Future<List<Subject>> get _subjects async {
 		final snapshots = await Future.wait([
 			Collection.subjects.ref.get(),
 			Collection.events.ref.get()
@@ -235,12 +214,14 @@ class Cloud {
 			for (final subject in subjects) subject.id: subject
 		};
 
-		for (final entry in rawEvents.entries) {
-			final subjectId = entry.value[Field.subject.name];
-			if (subjectId == null) continue;
-
+		final subjectEventEntries = rawEvents.entries.where((entry) =>
+			entry.value[Field.subject.name] != null
+		);
+		for (final entry in subjectEventEntries) {
+			final subjectId = entry.value[Field.subject.name] as String;
 			final subject = subjectsById[subjectId]!;
-			subject.events.add(Event(
+
+			subject.events!.add(Event(
 				id: entry.key,
 				name: entry.value[Field.name.name] as String,
 				subject: subject,
@@ -248,20 +229,54 @@ class Cloud {
 			));
 		}
 
-		return subjects;
+		for (final subject in subjects) subject.events!.sortByDate();
+		return subjects..sort((a, b) => a.name.compareTo(b.name));
+	}
+
+	// todo: share code with [subjects] getter
+	/// The group's sorted [Event]s and sorted [Subject]s without the events. Both are without the details.
+	static Future<Tuple2<List<Event>, List<Subject>>> get eventsAndSubjects async {
+		final snapshots = await Future.wait([
+			Collection.subjects.ref.get(),
+			Collection.events.ref.get()
+		]);
+		final rawSubjects = snapshots.first.data()!;
+		final rawEvents = snapshots.last.data()!;
+
+		final subjects = [
+			for (final entry in rawSubjects.entries) Subject(
+				id: entry.key,
+				name: entry.value[Field.name.name] as String
+			)
+		]..sort((a, b) => a.name.compareTo(b.name));
+		final subjectsById = {
+			for (final subject in subjects) subject.id: subject
+		};
+
+		final events = [
+			for (final entry in rawEvents.entries) Event(
+				id: entry.key,
+				name: entry.value[Field.name.name] as String,
+				subject: subjectsById[entry.value[Field.subject.name]],
+				date: (entry.value[Field.date.name] as Timestamp).toDate()
+			)
+		]..sortByDate();
+
+		return Tuple2(events, subjects);
 	}
 
 	/// The group's sorted non-subject [Event]s.
 	static Future<List<Event>> get nonSubjectEvents async {
 		final snapshot = await Collection.events.ref.get();
-		final subjectEntries = snapshot.data()!.entries.where((entry) =>
+		final eventEntries = snapshot.data()!.entries.where((entry) =>
 			entry.value[Field.subject.name] == null
 		);
 
 		return [
-			for (final entry in subjectEntries) Event(
+			for (final entry in eventEntries) Event(
 				id: entry.key,
 				name: entry.value[Field.name.name] as String,
+				subject: null,
 				date: (entry.value[Field.date.name] as Timestamp).toDate(),
 			)
 		]..sortByDate();

@@ -53,7 +53,7 @@ class SubjectsSection extends CloudEntitiesSection<SubjectsSectionCloudData, Sub
 		return ListTile(
 			title: Text(subject.name),
 			subtitle: Text(subject.eventCountRepr),
-			trailing: subject.events.isNotEmpty ? Text(subject.events.first.date.dateRepr) : null,
+			trailing: subject.events!.isNotEmpty ? Text(subject.events!.first.date.dateRepr) : null,
 			onTap: () => Navigator.of(context).push(MaterialPageRoute(
 				builder: (context) => SubjectPage(subject)
 			))

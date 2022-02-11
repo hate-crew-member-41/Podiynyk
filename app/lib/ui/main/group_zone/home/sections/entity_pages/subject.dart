@@ -55,7 +55,7 @@ class _SubjectPageState extends State<SubjectPage> {
 						for (final entry in info) Text(entry)  // todo: make them fields to enable editing
 					])
 				),
-				if (events.isNotEmpty) TextButton(
+				if (events!.isNotEmpty) TextButton(
 					child: Text(subject.eventCountRepr),
 					onPressed: () => _showPage([
 						for (final event in events) EventTile(event, showSubject: false)

@@ -8,6 +8,7 @@ import 'entities/message.dart' show MessageEssence;
 import 'entities/subject.dart' show SubjectEssence;
 
 
+// todo: completely redo storing entities
 class Local {
 	/// Initializes [Hive] and makes the local data accessible.
 	static Future<void> init() async {
