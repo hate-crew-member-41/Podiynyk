@@ -15,6 +15,7 @@ enum Field {
 	// name
 	totalEventCount,
 	info,
+	topic,
 	subject,
 	date,
 	note,

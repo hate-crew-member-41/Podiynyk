@@ -342,7 +342,7 @@ class Cloud {
 	/// Adds a [Subject] with the [name] unless it exists.
 	static Future<void> addSubject({required String name}) async => await _addEntity(
 		collection: Collection.subjects,
-		existingEquals: (existingSubject) => existingSubject == name,
+		existingEquals: (existing) => existing[Field.name.name] == name,
 		entity: {Field.name.name: name},
 		details: {
 			Field.totalEventCount.name: 0,
@@ -366,8 +366,8 @@ class Cloud {
 	}) async {
 		final wasWritten = await _addEntity(
 			collection: Collection.events,
-			existingEquals: (existingEvent) =>
-				existingEvent[Field.name.name] == name && existingEvent[Field.subject.name] == subject?.id,
+			existingEquals: (existing) =>
+				existing[Field.name.name] == name && existing[Field.subject.name] == subject?.id,
 			entity: {
 				Field.name.name: name,
 				Field.subject.name: subject?.id,
@@ -392,13 +392,13 @@ class Cloud {
 
 	/// Adds a [Message] with the arguments unless it exists.
 	static Future<void> addMessage({
-		required String subject,
+		required String topic,
 		required String content,
 	}) async => await _addEntity(
 		collection: Collection.messages,
-		existingEquals: (existingSubject) => existingSubject == subject,
+		existingEquals: (existing) => existing[Field.topic.name] == topic,
 		entity: {
-			Field.subject.name: subject,
+			Field.subject.name: topic,
 			Field.date.name: DateTime.now()
 		},
 		details: {
@@ -415,7 +415,7 @@ class Cloud {
 	/// Returns whether the [entity] was written.
 	static Future<bool> _addEntity({
 		required Collection collection,
-		required bool Function(dynamic existingEntity) existingEquals,
+		required bool Function(Map<String, dynamic> existing) existingEquals,
 		required Object entity,
 		Map<String, Object>? details
 	}) async {

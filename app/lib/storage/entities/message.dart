@@ -6,7 +6,7 @@ import '../fields.dart';
 
 class Message {
 	final String id;
-	final String subject;
+	final String topic;
 	final DateTime date;
 
 	String? author;
@@ -14,7 +14,7 @@ class Message {
 
 	Message.fromCloudFormat(MapEntry<String, dynamic> entry) :
 		id = entry.key,
-		subject = entry.value[Field.subject.name] as String,
+		topic = entry.value[Field.subject.name] as String,
 		date = (entry.value[Field.date.name] as Timestamp).toDate();
 
 	Future<void> addDetails() => Cloud.addMessageDetails(this);

@@ -32,7 +32,7 @@ class NewMessagePage extends StatelessWidget {
 
 		Navigator.of(context).pop();
 		Cloud.addMessage(
-			subject: subject,
+			topic: subject,
 			content: content,
 		);
 	}
