@@ -36,12 +36,10 @@ class MessagesSection extends CloudEntitiesSection<MessagesSectionCloudData, Mes
 
 	@override
 	List<Widget> tiles(BuildContext context, List<Message> messages) => [
-		for (final message in messages) ListTile(
-			title: Text(message.topic),
-			trailing: Text(message.date.dateRepr),
-			onTap: () => Navigator.of(context).push(MaterialPageRoute(
-				builder: (context) => MessagePage(message)
-			))
+		for (final message in messages) EntityTile(
+			title: message.topic,
+			trailing: message.date.dateRepr,
+			pageBuilder: () => MessagePage(message)
 		),
 		const ListTile()
 	];

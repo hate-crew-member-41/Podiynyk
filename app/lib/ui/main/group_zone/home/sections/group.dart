@@ -31,12 +31,10 @@ class GroupSection extends CloudEntitiesSection<GroupSectionCloudData, Student> 
 
 	@override
 	List<Widget> tiles(BuildContext context, List<Student> students) => [
-		for (final student in students) ListTile(
-			title: Text(student.name),
-			subtitle: student.role == Role.ordinary ? null : Text(student.role!.name),
-			onTap: () => Navigator.of(context).push(MaterialPageRoute(
-				builder: (context) => StudentPage(student)
-			))
+		for (final student in students) EntityTile(
+			title: student.name,
+			subtitle: student.role == Role.ordinary ? null : student.role!.name,
+			pageBuilder: () => StudentPage(student)
 		)
 	];
 }

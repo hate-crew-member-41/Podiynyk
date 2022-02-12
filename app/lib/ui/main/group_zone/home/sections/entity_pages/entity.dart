@@ -25,11 +25,10 @@ class EntityPage extends StatelessWidget {
 				)));
 			} : null,
 			child: Scaffold(
-				body: Column(
-					mainAxisAlignment: MainAxisAlignment.center,
-					crossAxisAlignment: CrossAxisAlignment.start,
+				body: Center(child: ListView(
+					shrinkWrap: true,
 					children: children
-				)
+				))
 			)
 		);
 	}

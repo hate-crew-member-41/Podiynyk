@@ -70,13 +70,11 @@ class EventTile extends StatelessWidget {
 		);
 	}
 
-	Widget _builder(BuildContext context) => ListTile(
-		title: Text(event.name),
-		subtitle: showSubject && event.subject != null ? Text(event.subject!.name) : null,
-		trailing: Text(event.date.dateRepr),
-		onTap: () => Navigator.of(context).push(MaterialPageRoute(
-			builder: (context) => EventPage(event)
-		))
+	Widget _builder(BuildContext context) => EntityTile(
+		title: event.name,
+		subtitle: showSubject ? event.subject?.name : null,
+		trailing: event.date.dateRepr,
+		pageBuilder: () => EventPage(event)
 	);
 }
 

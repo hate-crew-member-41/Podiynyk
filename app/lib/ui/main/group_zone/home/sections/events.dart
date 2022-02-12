@@ -36,12 +36,10 @@ class NonSubjectEventsSection extends CloudEntitiesSection<NonSubjectEventsSecti
 
 	@override
 	List<Widget> tiles(BuildContext context, List<Event> events) => [
-		for (final event in events) ListTile(
-			title: Text(event.name),
-			trailing: Text(event.date.dateRepr),
-			onTap: () => Navigator.of(context).push(MaterialPageRoute(
-				builder: (context) => EventPage(event)
-			))
+		for (final event in events) EntityTile(
+			title: event.name,
+			trailing: event.date.dateRepr,
+			pageBuilder: () => EventPage(event)
 		),
 		const ListTile()
 	];

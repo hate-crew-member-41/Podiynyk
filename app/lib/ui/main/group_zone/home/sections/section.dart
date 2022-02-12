@@ -94,6 +94,33 @@ abstract class CloudEntitiesSection<D extends CloudEntitiesSectionData<E>, E> ex
 }
 
 
+class EntityTile extends StatelessWidget {
+	final String title;
+	final String? subtitle;
+	final String? trailing;
+	final Widget Function() pageBuilder;
+
+	const EntityTile({
+		required this.title,
+		this.subtitle,
+		this.trailing,
+		required this.pageBuilder
+	});
+
+	@override
+	Widget build(BuildContext context) {
+		return ListTile(
+			title: Text(title),
+			subtitle: subtitle != null ? Text(subtitle!) : null,
+			trailing: trailing != null ? Text(trailing!) : null,
+			onTap: () => Navigator.of(context).push(MaterialPageRoute(
+				builder: (_) => pageBuilder()
+			))
+		);
+	}
+}
+
+
 class NewEntityButton extends StatelessWidget {
 	final Widget Function(BuildContext) pageBuilder;
 

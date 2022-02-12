@@ -5,7 +5,8 @@ import 'package:podiynyk/storage/entities/student.dart';
 import 'package:podiynyk/storage/entities/subject.dart';
 
 
-import '../agenda.dart';
+import '../agenda.dart' show EventTile;
+import '../section.dart' show EntityTile;
 import '../new_entity_pages/event.dart';
 import '../new_entity_pages/subject.dart' show NewSubjectInfoPage;
 import 'entity.dart';
@@ -49,8 +50,9 @@ class _SubjectPageState extends State<SubjectPage> {
 					child: const Text("information"),
 					onPressed: () => _showEntities(
 						// todo: show the info item on tap
-						[for (final item in info) ListTile(
-							title: Text(item.topic)
+						[for (final item in info) EntityTile(
+							title: item.topic,
+							pageBuilder: () => SubjectInfoPage(subject: subject, info: item),
 						)],
 						newEntityPageBuilder: (_) => NewSubjectInfoPage(subject)
 					)
@@ -97,5 +99,46 @@ class _SubjectPageState extends State<SubjectPage> {
 				)
 			)
 		));
+	}
+}
+
+
+class SubjectInfoPage extends StatelessWidget {
+	final Subject subject;
+	final SubjectInfo info;
+	final TextEditingController _topicField;
+	final TextEditingController _infoField;
+
+
+	SubjectInfoPage({
+		required this.subject,
+		required this.info
+	}) :
+		_topicField = TextEditingController(text: info.topic),
+		_infoField = TextEditingController(text: info.info);
+
+	@override
+	Widget build(BuildContext context) {
+		return EntityPage(
+			children: [
+				TextField(
+					controller: _topicField,
+					decoration: const InputDecoration(hintText: "topic"),
+					onSubmitted: (label) {},  // todo: add the label
+				),
+				TextField(
+					controller: _infoField,
+					decoration: const InputDecoration(hintText: "information"),
+					onSubmitted: (label) {},  // todo: change the info
+				)
+			],
+			actions: Cloud.role == Role.ordinary ? null : [EntityActionButton(
+				text: "delete",
+				action: () {
+					subject.info!.remove(info);
+					Cloud.updateSubjectInfo(subject);
+				}
+			)]
+		);
 	}
 }
