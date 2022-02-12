@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 
 
+// todo: make abstract
 class NewEntityPage extends StatelessWidget {
 	final List<Widget> children;
-	final void Function(BuildContext context) addEntity;
+	final bool Function(BuildContext context) add;
 
 	const NewEntityPage({
 		required this.children,
-		required this.addEntity
+		required this.add
 	});
 
 	@override
 	Widget build(BuildContext context) {
 		return GestureDetector(
-			// todo: display the new entity in the list (consider updating the list instead of rebuilding to prevent unnecessary)
-			onDoubleTap: () => addEntity(context),
+			// todo: display the new entity in the list (consider updating the list instead of rebuilding)
+			onDoubleTap: () {
+				final added = add(context);
+				if (added) Navigator.of(context).pop();
+			},
 			child: Scaffold(
 				body: Center(child: ListView(
 					shrinkWrap: true,

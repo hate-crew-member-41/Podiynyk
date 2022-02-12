@@ -237,6 +237,7 @@ class Cloud {
 		return subjects;
 	}
 
+	// todo: store the event's subject's name instead of ids to avoid fetching subjects?
 	/// The group's sorted [Event]s and sorted [Subject]s without the events. Both are without the details.
 	static Future<Tuple2<List<Event>, List<Subject>>> get eventsAndSubjects async {
 		final rawSubjectsAndRawEvents = await _rawSubjectsAndRawEvents;
@@ -315,14 +316,15 @@ class Cloud {
 		return students;
 	}
 
+	// todo: move add[Entity] logic to the entity classes
+
 	/// Initializes the [subject]'s detail fields.
 	static Future<void> addSubjectDetails(Subject subject) async {
 		final snapshot = await Collection.subjects.detailsRef(subject.id).get();
 		final details = snapshot.data()!;
 
-		subject.totalEventCount = details[Field.totalEventCount.name];
-		final info = details[Field.info.name];
-		subject.info = info != null ? List<String>.from(info) : <String>[];
+		subject.totalEventCount = details[Field.totalEventCount.name] as int;
+		subject.info = [for (final object in details[Field.info.name]) SubjectInfo.fromCloudFormat(object)];
 	}
 
 	/// Initializes the [event]'s detail fields.
@@ -335,7 +337,7 @@ class Cloud {
 	static Future<void> addMessageDetails(Message message) async {
 		final snapshot = await Collection.messages.detailsRef(message.id).get();
 		
-		message.content = snapshot[Field.content.name];
+		message.content = snapshot[Field.message.name];
 		message.author = snapshot[Field.author.name];
 	}
 
@@ -353,7 +355,7 @@ class Cloud {
 	/// Updates the [info] in the [subject]'s details.
 	static Future<void> updateSubjectInfo(Subject subject) async {
 		Collection.subjects.detailsRef(subject.id).update({
-			Field.info.name: subject.info
+			Field.info.name: [for (final item in subject.info!) item.inCloudFormat]
 		});
 	}
 
@@ -393,7 +395,7 @@ class Cloud {
 	/// Adds a [Message] with the arguments unless it exists.
 	static Future<void> addMessage({
 		required String topic,
-		required String content,
+		required String message,
 	}) async => await _addEntity(
 		collection: Collection.messages,
 		existingEquals: (existing) => existing[Field.topic.name] == topic,
@@ -402,7 +404,7 @@ class Cloud {
 			Field.date.name: DateTime.now()
 		},
 		details: {
-			Field.content.name: content,
+			Field.message.name: message,
 			Field.author.name: Local.name
 		},
 	);

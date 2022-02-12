@@ -1,24 +1,20 @@
-/// The [Field]s used in the [Local] storage and in the [Cloud].
+/// A [Field] used in the [Local] storage and in the [Cloud].
 enum Field {
-	// local
-	groupId,
-	id,
-	name,
-	unfollowedSubjects,
-	hiddenEvents,
-
-	// cloud
-	names,
+	author,
 	confirmationCounts,
-	roles,
-	joined,
-	// name
-	totalEventCount,
-	info,
-	topic,
-	subject,
 	date,
+	groupId,
+	hiddenEvents,
+	id,
+	info,
+	joined,
+	message,
+	name,
+	names,
 	note,
-	content,
-	author
+	roles,
+	subject,
+	topic,
+	totalEventCount,
+	unfollowedSubjects
 }

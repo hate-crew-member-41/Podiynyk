@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/entities/subject.dart';
 
 import 'package:podiynyk/ui/main/widgets/fields.dart' show InputField;
 
@@ -12,18 +13,51 @@ class NewSubjectPage extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) => NewEntityPage(
-		addEntity: _add,
+		add: _add,
 		children: [InputField(
 			controller: _nameField,
 			name: "name",
 		)]
 	);
 
-	void _add(BuildContext context) {
+	bool _add(BuildContext context) {
 		final name = _nameField.text;
-		if (name.isEmpty) return;
+		if (name.isEmpty) return false;
 
-		Navigator.of(context).pop();
 		Cloud.addSubject(name: name);
+		return true;
+	}
+}
+
+
+class NewSubjectInfoPage extends StatelessWidget {
+	final Subject _subject;
+	final _topicField = TextEditingController();
+	final _infoField = TextEditingController();
+
+	NewSubjectInfoPage(this._subject);
+
+	@override
+	Widget build(BuildContext context) => NewEntityPage(
+		add: _add,
+		children: [
+			InputField(
+				controller: _topicField,
+				name: "topic"
+			),
+			InputField(
+				controller: _infoField,
+				name: "information"
+			)
+		]
+	);
+
+	bool _add(BuildContext context) {
+		final topic = _topicField.text, info = _infoField.text;
+		if (topic.isEmpty || info.isEmpty) return false;
+
+		_subject.info!.add(SubjectInfo(topic: topic, info: info));
+		Cloud.updateSubjectInfo(_subject);
+		return true;
 	}
 }

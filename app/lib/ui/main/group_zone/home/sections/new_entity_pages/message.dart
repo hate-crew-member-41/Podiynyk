@@ -8,32 +8,32 @@ import 'entity.dart';
 
 
 class NewMessagePage extends StatelessWidget {
-	final _subjectField = TextEditingController();
+	final _topicField = TextEditingController();
 	final _contentField = TextEditingController();
 
 	@override
 	Widget build(BuildContext context) => NewEntityPage(
-		addEntity: _add,
+		add: _add,
 		children: [
 			InputField(
-				controller: _subjectField,
-				name: "subject"
+				controller: _topicField,
+				name: "topic"
 			),
 			InputField(
 				controller: _contentField,
-				name: "content"
+				name: "message"
 			)
 		]
 	);
 
-	void _add(BuildContext context) {
-		final subject = _subjectField.text, content = _contentField.text;
-		if (subject.isEmpty || content.isEmpty) return;
+	bool _add(BuildContext context) {
+		final subject = _topicField.text, content = _contentField.text;
+		if (subject.isEmpty || content.isEmpty) return false;
 
-		Navigator.of(context).pop();
 		Cloud.addMessage(
 			topic: subject,
-			content: content,
+			message: content,
 		);
+		return true;
 	}
 }

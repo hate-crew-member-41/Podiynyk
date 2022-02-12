@@ -1,4 +1,4 @@
-import '../cloud.dart' show Cloud;
+import '../cloud.dart';
 import '../fields.dart';
 import '../local.dart';
 
@@ -13,7 +13,7 @@ class Subject implements StoredEntity {
 	final List<Event>? events;
 
 	int? totalEventCount;
-	List<String>? info;
+	List<SubjectInfo>? info;
 
 	Subject.fromCloudFormat(MapEntry<String, dynamic> entry, {bool events = true}) :
 		id = entry.key,
@@ -50,4 +50,24 @@ class Subject implements StoredEntity {
 	@override
 	String get essence => name;
 
+}
+
+
+class SubjectInfo {
+	final String topic;
+	final String info;
+
+	SubjectInfo({
+		required this.topic,
+		required this.info
+	});
+
+	SubjectInfo.fromCloudFormat(dynamic object) :
+		topic = object[Field.topic.name]!,
+		info = object[Field.info.name]!;
+	
+	Map<String, String> get inCloudFormat => {
+		Field.topic.name: topic,
+		Field.info.name: info
+	};
 }

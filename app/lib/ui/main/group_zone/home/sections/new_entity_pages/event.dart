@@ -55,7 +55,7 @@ class _NewEventPageState extends State<NewEventPage> {
 
 	@override
 	Widget build(BuildContext context) => NewEntityPage(
-		addEntity: _add,
+		add: _add,
 		children: [
 			InputField(
 				controller: _nameField,
@@ -64,7 +64,7 @@ class _NewEventPageState extends State<NewEventPage> {
 			if (widget._askSubject) OptionField(
 				controller: _subjectField,
 				name: "subject",
-				showOptions: (context) => _askSubject(context)
+				showOptions: _askSubject
 			),
 			OptionField(
 				controller: _dateField,
@@ -121,23 +121,24 @@ class _NewEventPageState extends State<NewEventPage> {
 		if (time != null) _date = _date!.withTime(time);
 	}
 
-	void _add(BuildContext context) {
+	bool _add(BuildContext context) {
+		final name = _nameField.text;
 		if (
-			_nameField.text.isEmpty ||
+			name.isEmpty ||
 			(widget._subjectRequired && _subject == null) ||
 			_date == null
-		) return;
+		) return false;
 
 		// idea: show an animation of the event flying away?
 		// idea: show the result of the request on the page?
-		Navigator.of(context).pop();
 
 		final note = _noteField.text;
 		Cloud.addEvent(
-			name: _nameField.text,
+			name: name,
 			subject: _subject,
 			date: _date!,
 			note: note.isNotEmpty ? note : null
 		);
+		return true;
 	}
 }
