@@ -14,6 +14,7 @@ class EntityPage extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return GestureDetector(
+			// todo: make an ampty list mean no actions instead?
 			onLongPress: actions != null ? () {
 				Navigator.of(context).push(MaterialPageRoute(builder: (context) => Scaffold(
 					body: Column(

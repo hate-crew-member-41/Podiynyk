@@ -5,6 +5,7 @@ enum Field {
 	id,
 	name,
 	unfollowedSubjects,
+	hiddenEvents,
 
 	// cloud
 	names,

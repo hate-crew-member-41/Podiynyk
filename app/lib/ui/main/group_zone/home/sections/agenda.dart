@@ -17,7 +17,9 @@ class AgendaSectionCloudData extends CloudEntitiesSectionData<Event> {
 
 	AgendaSectionCloudData() {
 		events = _eventsAndSubjects.then((eventsAndSubjects) =>
-			eventsAndSubjects.item1.where((event) => event.subject?.isFollowed != false).toList()
+			eventsAndSubjects.item1.where((event) =>
+				event.isShown && event.subject?.isFollowed != false
+			).toList()
 		);
 		subjects = _eventsAndSubjects.then((eventsAndSubjects) => eventsAndSubjects.item2);
 	}

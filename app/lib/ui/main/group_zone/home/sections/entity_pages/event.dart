@@ -10,44 +10,45 @@ import 'entity.dart';
 
 
 class EventPage extends StatefulWidget {
-	final Event _event;
-	final _nameField = TextEditingController();
-	final _noteField = TextEditingController();
+	final Event event;
 
-	EventPage(this._event);
+	const EventPage(this.event);
 
 	@override
 	State<EventPage> createState() => _EventPageState();
 }
 
 class _EventPageState extends State<EventPage> {
+	final _nameField = TextEditingController();
+	final _noteField = TextEditingController();
+
 	@override
 	void initState() {
-		widget._event.addDetails().whenComplete(() => setState(() {}));
+		widget.event.addDetails().whenComplete(() => setState(() {}));
 		super.initState();
 	}
 
 	@override
 	Widget build(BuildContext context) {
-		final event = widget._event;
+		final event = widget.event;
 		final subject = event.subject;
 		final note = event.note;
 		final hasNote = note != null;
 
-		widget._nameField.text = event.name;
-		if (hasNote) widget._noteField.text = note;
+		_nameField.text = event.name;
+		if (hasNote) _noteField.text = note;
 
 		return EntityPage(
 			children: [
 				TextField(
-					controller: widget._nameField,
+					controller: _nameField,
 					decoration: const InputDecoration(hintText: "name"),
 					onSubmitted: (label) {},  // todo: add the label
 				),
 				if (subject != null) Text(subject.name),
 				Text(event.date.fullRepr),  // todo: allow changing
 				if (hasNote) TextField(
-					controller: widget._noteField,
+					controller: _noteField,
 					decoration: const InputDecoration(hintText: "to be deleted"),
 					onSubmitted: (newNote) {},  // todo: update the note
 				)
@@ -60,17 +61,19 @@ class _EventPageState extends State<EventPage> {
 							onDoubleTap: addNote,
 							child: Scaffold(
 								body: Center(child: InputField(
-									controller: widget._noteField,
+									controller: _noteField,
 									name: "note"
 								))
 							)
 						)
 					))
 				),
-				// todo: implement the queues feature, add (schedule / start, delete) buttons
-				EntityActionButton(
+				event.isShown ? EntityActionButton(
 					text: "hide",
-					action: () {}  // todo: hide the event
+					action: event.hide
+				) : EntityActionButton(
+					text: "show",
+					action: event.show
 				),
 				EntityActionButton(
 					text: "delete",
@@ -81,8 +84,8 @@ class _EventPageState extends State<EventPage> {
 	}
 
 	void addNote() {
-		widget._event.note = widget._noteField.text;
-		Cloud.updateEventNote(widget._event);
+		widget.event.note = _noteField.text;
+		Cloud.updateEventNote(widget.event);
 		Navigator.of(context).pop();
 	}
 }

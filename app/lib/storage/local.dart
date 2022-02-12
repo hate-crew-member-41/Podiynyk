@@ -1,9 +1,10 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'fields.dart';
-import 'entities/subject.dart';
+import 'entities/entity.dart';
 
 
+// todo: clear stored entities when they are no more
 class Local {
 	static late final Box<String> _user;
 	static late final Box<List<String>> _entities;
@@ -11,7 +12,7 @@ class Local {
 	/// Initializes the local database and makes the data accessible.
 	static Future<void> init() async {
 		await Hive.initFlutter();
-		// uncomment + hot restart to delete all local data
+		// | uncomment, hot restart, comment | to delete all local data
 		// await Future.wait([
 		// 	(await Hive.openBox<String>(DataBox.user.name)).deleteFromDisk(),
 		// 	(await Hive.openBox<List<String>>(DataBox.entities.name)).deleteFromDisk(),
@@ -25,6 +26,7 @@ class Local {
 	/// Initializes the group-related local data.
 	static Future<void> initGroupRelatedData() async {
 		await _entities.put(Field.unfollowedSubjects.name, <String>[]);
+		await _entities.put(Field.hiddenEvents.name, <String>[]);
 	}
 
 	/// Whether the user has completed the identification proces.
@@ -45,20 +47,21 @@ class Local {
 	/// The user's name.
 	static String get name => _user.get(Field.name.name)!;
 
-	static Future<void> unfollowSubject(Subject subject) async {
-		final field = Field.unfollowedSubjects.name;
-		final subjects = _entities.get(field)!;
-		await _entities.put(field, subjects..add(subject.essence));
+	/// Store the [collection] [entity].
+	static Future<void> storeEntity(Field collection, StoredEntity entity) async {
+		final field = collection.name;
+		await _entities.put(field, _entities.get(field)!..add(entity.essence));
 	}
 
-	static Future<void> followSubject(Subject subject) async {
-		final field = Field.unfollowedSubjects.name;
-		await _entities.put(field, _entities.get(field)!..remove(subject.essence));
+	/// Delete the [collection] [entity].
+	static Future<void> deleteEntity(Field collection, StoredEntity entity) async {
+		final field = collection.name;
+		await _entities.put(field, _entities.get(field)!..remove(entity.essence));
 	}
 
-	// todo: clear unfollowed ones
-	static bool subjectIsFollowed(Subject subject) {
-		return !_entities.get(Field.unfollowedSubjects.name)!.contains(subject.essence);
+	/// Whether the [collection] [entity] has not been stored.
+	static bool entityIsUnstored(Field collection, StoredEntity entity) {
+		return !_entities.get(collection.name)!.contains(entity.essence);
 	}
 }
 

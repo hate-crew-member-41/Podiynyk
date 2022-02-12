@@ -1,10 +1,12 @@
 import '../cloud.dart' show Cloud;
 import '../fields.dart';
 import '../local.dart';
+
 import 'event.dart';
+import 'entity.dart';
 
 
-class Subject {
+class Subject implements StoredEntity {
 	final String id;
 	final String name;
 	late bool isFollowed;
@@ -18,7 +20,7 @@ class Subject {
 		name = entry.value[Field.name.name] as String,
 		events = events ? <Event>[] : null
 	{
-		isFollowed = Local.subjectIsFollowed(this);
+		isFollowed = Local.entityIsUnstored(Field.unfollowedSubjects, this);
 	}
 
 	Future<void> addDetails() => Cloud.addSubjectDetails(this);
@@ -36,15 +38,16 @@ class Subject {
 	}
 
 	void unfollow() {
+		Local.storeEntity(Field.unfollowedSubjects, this);
 		isFollowed = false;
-		Local.unfollowSubject(this);
 	}
 
 	void follow() {
+		Local.deleteEntity(Field.unfollowedSubjects, this);
 		isFollowed = true;
-		Local.followSubject(this);
 	}
 
+	@override
 	String get essence => name;
 
 }

@@ -85,10 +85,10 @@ class _SubjectPageState extends State<SubjectPage> {
 				),
 				subject.isFollowed ? EntityActionButton(
 					text: "unfollow",
-					action: () => subject.unfollow()
+					action: subject.unfollow
 				) : EntityActionButton(
 					text: "follow",
-					action: () => subject.follow()
+					action: subject.follow
 				),
 				// todo: confirmation
 				if (isLeader) EntityActionButton(
