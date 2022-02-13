@@ -3,6 +3,7 @@ enum Field {
 	author,
 	confirmationCounts,
 	date,
+	events,
 	groupId,
 	hiddenEvents,
 	id,

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/subject.dart';
 
-import 'package:podiynyk/ui/main/widgets/fields.dart' show InputField;
+import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
 
 import 'entity.dart';
 

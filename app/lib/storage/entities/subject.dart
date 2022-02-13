@@ -17,7 +17,7 @@ class Subject {
 		id = entry.key,
 		name = entry.value[Field.name.name] as String
 	{
-		isFollowed = Local.entityEssenceIsUnstored(Field.unfollowedSubjects, name);
+		isFollowed = Local.entityIsUnstored(Field.unfollowedSubjects, name);
 	}
 
 	static String nameFromCloudFormat(MapEntry<String, dynamic> entry) {
@@ -35,15 +35,15 @@ class Subject {
 		}
 	}
 
-	static bool withNameIsFollowed(String name) => Local.entityEssenceIsUnstored(Field.unfollowedSubjects, name);
+	static bool withNameIsFollowed(String name) => Local.entityIsUnstored(Field.unfollowedSubjects, name);
 
 	void unfollow() {
-		Local.storeEntityEssence(Field.unfollowedSubjects, name);
+		Local.storeEntity(Field.unfollowedSubjects, name);
 		isFollowed = false;
 	}
 
 	void follow() {
-		Local.deleteEntityEssence(Field.unfollowedSubjects, name);
+		Local.deleteEntity(Field.unfollowedSubjects, name);
 		isFollowed = true;
 	}
 }

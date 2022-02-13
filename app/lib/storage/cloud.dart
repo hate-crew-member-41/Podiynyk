@@ -241,7 +241,6 @@ class Cloud {
 	/// The group's sorted [Event]s without the details.
 	static Future<List<Event>> get events async {
 		final snapshot = await Collection.events.ref.get();
-
 		return [
 			for (final entry in snapshot.data()!.entries) Event.fromCloudFormat(entry)
 		]..sortByDate();
@@ -262,7 +261,6 @@ class Cloud {
 	/// The group's [Message]s without the details.
 	static Future<List<Message>> get messages async {
 		final snapshot = await Collection.messages.ref.get();
-
 		return [
 			for (final entry in snapshot.data()!.entries) Message.fromCloudFormat(entry)
 		]..sortByDate();

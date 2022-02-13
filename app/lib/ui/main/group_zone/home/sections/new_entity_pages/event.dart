@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart';
 
-import 'package:podiynyk/ui/main/widgets/fields.dart';
+import 'package:podiynyk/ui/main/common/fields.dart';
 
 import '../section.dart' show EntityDate;
 import 'entity.dart';

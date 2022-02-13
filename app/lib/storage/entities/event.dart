@@ -7,7 +7,8 @@ import '../local.dart';
 
 class Event {
 	final String id;
-	final String name;
+	final String _name;
+	late String? _label;
 	final String? subjectName;
 	final DateTime date;
 	late bool isShown;
@@ -16,24 +17,40 @@ class Event {
 
 	Event.fromCloudFormat(MapEntry<String, dynamic> entry) :
 		id = entry.key,
-		name = entry.value[Field.name.name] as String,
+		_name = entry.value[Field.name.name] as String,
 		subjectName = entry.value[Field.subject.name],
 		date = (entry.value[Field.date.name] as Timestamp).toDate()
 	{
-		isShown = Local.entityEssenceIsUnstored(Field.hiddenEvents, essence);
+		_label = Local.entityLabel(Field.events, essence);
+		isShown = Local.entityIsUnstored(Field.hiddenEvents, essence);
+	}
+
+	String get name => _label ?? _name;
+
+	set label(String label) {
+		if (label == _label) return;
+
+		if (label.isEmpty || label == _name) {
+			Local.deleteEntityLabel(Field.events, essence);
+			_label = null;
+		}
+		else {
+			Local.setEntityLabel(Field.events, essence, label);
+			_label = label;
+		}
 	}
 
 	Future<void> addDetails() => Cloud.addEventDetails(this);
 
 	void hide() {
-		Local.storeEntityEssence(Field.hiddenEvents, essence);
+		Local.storeEntity(Field.hiddenEvents, essence);
 		isShown = false;
 	}
 
 	void show() {
-		Local.deleteEntityEssence(Field.hiddenEvents, essence);
+		Local.deleteEntity(Field.hiddenEvents, essence);
 		isShown = true;
 	}
 
-	String get essence => '$subjectName.$name';
+	String get essence => '$subjectName.$_name';
 }

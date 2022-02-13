@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/event.dart';
 
-import 'package:podiynyk/ui/main/widgets/fields.dart' show InputField;
+import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
 
 import '../section.dart' show EntityDate;
 import 'entity.dart';
@@ -43,14 +43,14 @@ class _EventPageState extends State<EventPage> {
 				TextField(
 					controller: _nameField,
 					decoration: const InputDecoration(hintText: "name"),
-					onSubmitted: (label) {},  // todo: add the label
+					onSubmitted: (label) => widget.event.label = label
 				),
 				if (subjectName != null) Text(subjectName),
 				Text(event.date.fullRepr),  // todo: allow changing
 				if (hasNote) TextField(
 					controller: _noteField,
 					decoration: const InputDecoration(hintText: "to be deleted"),
-					onSubmitted: (newNote) {},  // todo: update the note
+					onSubmitted: (newNote) {}  // todo: update the note
 				)
 			],
 			actions: [
@@ -58,7 +58,7 @@ class _EventPageState extends State<EventPage> {
 					text: "add a note",
 					action: () => Navigator.of(context).push(MaterialPageRoute(
 						builder: (_) => GestureDetector(
-							onDoubleTap: addNote,
+							onDoubleTap: _addNote,
 							child: Scaffold(
 								body: Center(child: InputField(
 									controller: _noteField,
@@ -83,7 +83,7 @@ class _EventPageState extends State<EventPage> {
 		);
 	}
 
-	void addNote() {
+	void _addNote() {
 		widget.event.note = _noteField.text;
 		Cloud.updateEventNote(widget.event);
 		Navigator.of(context).pop();

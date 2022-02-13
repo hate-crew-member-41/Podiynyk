@@ -8,7 +8,7 @@ import 'package:podiynyk/storage/entities/department.dart';
 import 'package:podiynyk/storage/entities/identification_option.dart';
 import 'package:podiynyk/storage/entities/university.dart';
 
-import 'widgets/fields.dart';
+import 'common/fields.dart';
 
 
 class Identification extends StatefulWidget {
