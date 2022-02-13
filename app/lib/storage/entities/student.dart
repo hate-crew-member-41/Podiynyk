@@ -19,9 +19,6 @@ class Student extends LabelableEntity {
 
 	@override
 	Field get labelCollection => Field.students;
-
-	@override
-	String get essence => initialName;
 }
 
 

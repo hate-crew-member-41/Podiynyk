@@ -14,6 +14,7 @@ class Event extends LabelableEntity {
 
 	String? note;
 
+	// tofix: take the subject's label into account
 	Event.fromCloudFormat(MapEntry<String, dynamic> entry) :
 		id = entry.key,
 		subjectName = entry.value[Field.subject.name],

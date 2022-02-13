@@ -22,62 +22,68 @@ class SubjectPage extends StatefulWidget {
 }
 
 class _SubjectPageState extends State<SubjectPage> {
+	late final Subject _subject;
 	final _nameField = TextEditingController();
 
 	@override
 	void initState() {
-		_nameField.text = widget.subject.name;
-		widget.subject.addDetails().whenComplete(() => setState(() {}));
+		_subject = widget.subject;
+		_nameField.text = _subject.name;
+		_subject.addDetails().whenComplete(() => setState(() {}));
 		super.initState();
 	}
 
 	@override
 	Widget build(BuildContext context) {
-		final subject = widget.subject;
-		final info = subject.info;
-		final events = subject.events;
+		final info = _subject.info;
+		final events = _subject.events;
 
 		return EntityPage(
 			children: [
 				TextField(
 					controller: _nameField,
 					decoration: const InputDecoration(hintText: "subject"),
-					onSubmitted: (label) {},  // todo: add the label
+					onSubmitted: _setLabel
 				),
 				if (info != null) TextButton(
 					child: const Text("information"),
 					onPressed: () => _showEntities(
 						// todo: show the info item on tap
 						[for (final item in info) EntityTile(
-							title: item.topic,
-							pageBuilder: () => SubjectInfoPage(subject: subject, info: item),
+							title: item.name,
+							pageBuilder: () => SubjectInfoPage(subject: _subject, info: item),
 						)],
-						newEntityPageBuilder: (_) => NewSubjectInfoPage(subject)
+						newEntityPageBuilder: (_) => NewSubjectInfoPage(_subject)
 					)
 				),
 				TextButton(
-					child: Text(subject.eventCountRepr),
+					child: Text(_subject.eventCountRepr),
 					onPressed: () => _showEntities(
 						[for (final event in events) EventTile(event, showSubject: false)],
-						newEntityPageBuilder: (_) => NewEventPage.subjectEvent(subject.name)
+						newEntityPageBuilder: (_) => NewEventPage.subjectEvent(_subject.name)
 					)
 				)
 			],
 			actions: [
-				subject.isFollowed ? EntityActionButton(
+				_subject.isFollowed ? EntityActionButton(
 					text: "unfollow",
-					action: subject.unfollow
+					action: _subject.unfollow
 				) : EntityActionButton(
 					text: "follow",
-					action: subject.follow
+					action: _subject.follow
 				),
 				// todo: confirmation
 				if (Cloud.role == Role.leader) EntityActionButton(
 					text: "delete",
-					action: () => Cloud.deleteSubject(subject)
+					action: () => Cloud.deleteSubject(_subject)
 				)
 			]
 		);
+	}
+
+	void _setLabel(String label) {
+		_subject.label = label;
+		if (label.isEmpty) _nameField.text = _subject.name;
 	}
 
 	void _showEntities(List<Widget> entities, {required Widget Function(BuildContext) newEntityPageBuilder}) {
@@ -112,7 +118,7 @@ class SubjectInfoPage extends StatelessWidget {
 		required this.subject,
 		required this.info
 	}) :
-		_topicField = TextEditingController(text: info.topic),
+		_topicField = TextEditingController(text: info.name),
 		_infoField = TextEditingController(text: info.info);
 
 	@override
@@ -122,12 +128,12 @@ class SubjectInfoPage extends StatelessWidget {
 				TextField(
 					controller: _topicField,
 					decoration: const InputDecoration(hintText: "topic"),
-					onSubmitted: (label) {},  // todo: add the label
+					onSubmitted: _setLabel
 				),
 				TextField(
 					controller: _infoField,
 					decoration: const InputDecoration(hintText: "information"),
-					onSubmitted: (label) {},  // todo: change the info
+					onSubmitted: (label) {}  // todo: change the info
 				)
 			],
 			actions: Cloud.role == Role.ordinary ? null : [EntityActionButton(
@@ -138,5 +144,10 @@ class SubjectInfoPage extends StatelessWidget {
 				}
 			)]
 		);
+	}
+
+	void _setLabel(String label) {
+		info.label = label;
+		if (label.isEmpty) _topicField.text = info.name;
 	}
 }

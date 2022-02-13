@@ -9,7 +9,7 @@ class Local {
 	static late final Box<Map<String, String>> _labels;
 	static late final Box<List<String>> _entities;
 
-	/// Initializes the local database and makes the data accessible.
+	/// Initializes the [Local] database and makes the data accessible.
 	static Future<void> init() async {
 		await Hive.initFlutter();
 		// | uncomment, hot restart, comment | to delete all local data
@@ -27,10 +27,16 @@ class Local {
 	/// Initializes the group-related [Local] data.
 	static Future<void> initGroupRelatedData() async {
 		await Future.wait([
-			_labels.put(Field.students.name, <String, String>{}),
-			_labels.put(Field.events.name, <String, String>{}),
-			_entities.put(Field.unfollowedSubjects.name, <String>[]),
-			_entities.put(Field.hiddenEvents.name, <String>[])
+			_labels.putAll({
+				Field.students.name: <String, String>{},
+				Field.subjects.name: <String, String>{},
+				Field.subjectInfo.name: <String, String>{},
+				Field.events.name: <String, String>{}
+			}),
+			_entities.putAll({
+				Field.unfollowedSubjects.name: <String>[],
+				Field.hiddenEvents.name: <String>[]
+			})
 		]);
 	}
 

@@ -3,11 +3,11 @@ import '../fields.dart';
 import '../local.dart';
 
 import 'event.dart';
+import 'labelable.dart';
 
 
-class Subject {
+class Subject extends LabelableEntity {
 	final String id;
-	final String name;
 	late bool isFollowed;
 	late final List<Event> events;
 
@@ -15,9 +15,9 @@ class Subject {
 
 	Subject.fromCloudFormat(MapEntry<String, dynamic> entry, {required this.events}) :
 		id = entry.key,
-		name = entry.value[Field.name.name] as String
+		super(initialName: entry.value[Field.name.name] as String)
 	{
-		isFollowed = Local.entityIsUnstored(Field.unfollowedSubjects, name);
+		isFollowed = Local.entityIsUnstored(Field.unfollowedSubjects, essence);
 	}
 
 	static String nameFromCloudFormat(MapEntry<String, dynamic> entry) {
@@ -37,33 +37,41 @@ class Subject {
 
 	static bool withNameIsFollowed(String name) => Local.entityIsUnstored(Field.unfollowedSubjects, name);
 
+	@override
+	Field get labelCollection => Field.subjects;
+
 	void unfollow() {
-		Local.storeEntity(Field.unfollowedSubjects, name);
+		Local.storeEntity(Field.unfollowedSubjects, essence);
 		isFollowed = false;
 	}
 
 	void follow() {
-		Local.deleteEntity(Field.unfollowedSubjects, name);
+		Local.deleteEntity(Field.unfollowedSubjects, essence);
 		isFollowed = true;
 	}
+
+	@override
+	String get essence => initialName;
 }
 
 
-class SubjectInfo {
-	final String topic;
+class SubjectInfo extends LabelableEntity {
 	final String info;
 
 	SubjectInfo({
-		required this.topic,
+		required String topic,
 		required this.info
-	});
+	}) : super(initialName: topic);
 
 	SubjectInfo.fromCloudFormat(dynamic object) :
-		topic = object[Field.topic.name]!,
-		info = object[Field.info.name]!;
+		info = object[Field.info.name] as String,
+		super(initialName: object[Field.topic.name] as String);
 	
 	Map<String, String> get inCloudFormat => {
-		Field.topic.name: topic,
+		Field.topic.name: initialName,
 		Field.info.name: info
 	};
+	
+	@override
+	Field get labelCollection => Field.subjectInfo;
 }

@@ -27,5 +27,5 @@ abstract class LabelableEntity {
 
 	Field get labelCollection;
 
-	String get essence;
+	String get essence => initialName;
 }
