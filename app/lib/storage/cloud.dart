@@ -117,13 +117,11 @@ class Cloud {
 
 		Local.id = await _cloud.runTransaction((transaction) async {
 			final snapshot = await transaction.get(document);
-			late int intId;
 			late String id;
 
 			if (snapshot.exists) {
 				final data = snapshot.data()!;
-				intId = data.newId;
-				id = intId.toString();
+				id = Map<String, dynamic>.from(data[Field.names.name]).newId.toString();
 
 				final selfInitField = data.containsKey(Field.roles.name) ? Field.roles : Field.confirmationCounts;
 				transaction.update(document, {
@@ -132,8 +130,7 @@ class Cloud {
 				});
 			}
 			else {
-				intId = 0;
-				id = intId.toString();
+				id = '0';
 
 				// the [set] method does not support nested fields via dot notation
 				transaction.set(document, {
@@ -145,7 +142,6 @@ class Cloud {
 				Collection.subjects.ref.set({});
 				Collection.events.ref.set({});
 				Collection.messages.ref.set({});
-				Collection.questions.ref.set({});
 				Collection.questions.ref.set({});
 			}
 
@@ -182,12 +178,14 @@ class Cloud {
 				)
 			]..sortById();
 
+			// tofix: actually take the role from the data
 			_role = Role.ordinary;
 			return null;
 		});
 	}
 
-	/// Adds a vote for the [Student] with the id [toId] and takes a vote from one with the id [fromId], if not `null`;
+	/// Adds a confirmation for the student with the id [toId].
+	/// Takes one from the student with the id [fromId] if it is not `null`.
 	static Future<void> changeLeaderVote({
 		required String toId,
 		String? fromId
@@ -199,15 +197,8 @@ class Cloud {
 	}
 
 	static late Role _role;
-	/// The user's [Role]. Requires [syncRole] to have been called.
+	/// The user's [Role].
 	static Role get role => _role;
-
-	/// Synchronizes the user's [Role].
-	static Future<void> syncRole() async {
-		final snapshot = await Collection.groups.ref.get();
-		final roleIndex = snapshot.data()![Field.roles.name][Local.id];
-		_role = Role.values[roleIndex];
-	}
 
 	/// The group's sorted [Subject]s without the details.
 	static Future<List<Subject>> get subjects async {

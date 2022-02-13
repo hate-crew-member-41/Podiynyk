@@ -19,34 +19,33 @@ class EventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<EventPage> {
+	late final Event _event;
 	final _nameField = TextEditingController();
 	final _noteField = TextEditingController();
 
 	@override
 	void initState() {
-		widget.event.addDetails().whenComplete(() => setState(() {}));
+		_event = widget.event;
+		_event.addDetails().whenComplete(() => setState(() {}));
 		super.initState();
 	}
 
 	@override
 	Widget build(BuildContext context) {
-		final event = widget.event;
-		final subjectName = event.subjectName;
-		final note = event.note;
-		final hasNote = note != null;
+		final hasNote = _event.note != null;
 
-		_nameField.text = event.name;
-		if (hasNote) _noteField.text = note;
+		_nameField.text = _event.name;
+		if (hasNote) _noteField.text = _event.note!;
 
 		return EntityPage(
 			children: [
 				TextField(
 					controller: _nameField,
 					decoration: const InputDecoration(hintText: "name"),
-					onSubmitted: (label) => widget.event.label = label
+					onSubmitted: _setLabel
 				),
-				if (subjectName != null) Text(subjectName),
-				Text(event.date.fullRepr),  // todo: allow changing
+				if (_event.subjectName != null) Text(_event.subjectName!),
+				Text(_event.date.fullRepr),  // todo: allow changing
 				if (hasNote) TextField(
 					controller: _noteField,
 					decoration: const InputDecoration(hintText: "to be deleted"),
@@ -54,7 +53,7 @@ class _EventPageState extends State<EventPage> {
 				)
 			],
 			actions: [
-				if (event.note == null) EntityActionButton(
+				if (_event.note == null) EntityActionButton(
 					text: "add a note",
 					action: () => Navigator.of(context).push(MaterialPageRoute(
 						builder: (_) => GestureDetector(
@@ -68,19 +67,24 @@ class _EventPageState extends State<EventPage> {
 						)
 					))
 				),
-				event.isShown ? EntityActionButton(
+				_event.isShown ? EntityActionButton(
 					text: "hide",
-					action: event.hide
+					action: _event.hide
 				) : EntityActionButton(
 					text: "show",
-					action: event.show
+					action: _event.show
 				),
 				EntityActionButton(
 					text: "delete",
-					action: () => Cloud.deleteEvent(event)
+					action: () => Cloud.deleteEvent(_event)
 				)
 			]
 		);
+	}
+
+	void _setLabel(String label) {
+		_event.label = label;
+		if (label.isEmpty) _nameField.text = _event.name;
 	}
 
 	void _addNote() {

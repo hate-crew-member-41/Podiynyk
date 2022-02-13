@@ -22,7 +22,7 @@ class StudentPage extends StatelessWidget {
 				TextField(
 					controller: _nameField,
 					decoration: const InputDecoration(hintText: "name"),
-					onSubmitted: (label) {},  // todo: add the label
+					onSubmitted: _setLabel
 				),
 				if (_student.role != Role.ordinary) Text(_student.role!.name)
 			],
@@ -40,5 +40,10 @@ class StudentPage extends StatelessWidget {
 				)
 			]
 		);
+	}
+
+	void _setLabel(String label) {
+		_student.label = label;
+		if(label.isEmpty) _nameField.text = _student.name;
 	}
 }

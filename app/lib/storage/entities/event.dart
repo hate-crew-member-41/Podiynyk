@@ -1,14 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'labelable.dart';
 import '../cloud.dart';
 import '../fields.dart';
 import '../local.dart';
 
 
-class Event {
+class Event extends LabelableEntity {
 	final String id;
-	final String _name;
-	late String? _label;
 	final String? subjectName;
 	final DateTime date;
 	late bool isShown;
@@ -17,30 +16,17 @@ class Event {
 
 	Event.fromCloudFormat(MapEntry<String, dynamic> entry) :
 		id = entry.key,
-		_name = entry.value[Field.name.name] as String,
 		subjectName = entry.value[Field.subject.name],
-		date = (entry.value[Field.date.name] as Timestamp).toDate()
+		date = (entry.value[Field.date.name] as Timestamp).toDate(),
+		super(initialName: entry.value[Field.name.name] as String)
 	{
-		_label = Local.entityLabel(Field.events, essence);
 		isShown = Local.entityIsUnstored(Field.hiddenEvents, essence);
 	}
 
-	String get name => _label ?? _name;
-
-	set label(String label) {
-		if (label == _label) return;
-
-		if (label.isEmpty || label == _name) {
-			Local.deleteEntityLabel(Field.events, essence);
-			_label = null;
-		}
-		else {
-			Local.setEntityLabel(Field.events, essence, label);
-			_label = label;
-		}
-	}
-
 	Future<void> addDetails() => Cloud.addEventDetails(this);
+
+	@override
+	Field get labelCollection => Field.events;
 
 	void hide() {
 		Local.storeEntity(Field.hiddenEvents, essence);
@@ -52,5 +38,6 @@ class Event {
 		isShown = true;
 	}
 
-	String get essence => '$subjectName.$_name';
+	@override
+	String get essence => '$subjectName.$initialName';
 }

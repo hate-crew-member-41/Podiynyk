@@ -27,6 +27,7 @@ class Local {
 	/// Initializes the group-related [Local] data.
 	static Future<void> initGroupRelatedData() async {
 		await Future.wait([
+			_labels.put(Field.students.name, <String, String>{}),
 			_labels.put(Field.events.name, <String, String>{}),
 			_entities.put(Field.unfollowedSubjects.name, <String>[]),
 			_entities.put(Field.hiddenEvents.name, <String>[])

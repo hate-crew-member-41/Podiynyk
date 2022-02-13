@@ -14,6 +14,7 @@ enum Field {
 	names,
 	note,
 	roles,
+	students,
 	subject,
 	topic,
 	unfollowedSubjects
