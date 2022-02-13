@@ -15,6 +15,5 @@ enum Field {
 	roles,
 	subject,
 	topic,
-	totalEventCount,
 	unfollowedSubjects
 }

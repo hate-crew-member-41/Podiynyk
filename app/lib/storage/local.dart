@@ -1,7 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'fields.dart';
-import 'entities/entity.dart';
 
 
 // todo: clear stored entities when they are no more
@@ -47,21 +46,21 @@ class Local {
 	/// The user's name.
 	static String get name => _user.get(Field.name.name)!;
 
-	/// Store the [collection] [entity].
-	static Future<void> storeEntity(Field collection, StoredEntity entity) async {
+	/// Stores the [collection] entity's [essence].
+	static Future<void> storeEntityEssence(Field collection, String essence) async {
 		final field = collection.name;
-		await _entities.put(field, _entities.get(field)!..add(entity.essence));
+		await _entities.put(field, _entities.get(field)!..add(essence));
 	}
 
-	/// Delete the [collection] [entity].
-	static Future<void> deleteEntity(Field collection, StoredEntity entity) async {
+	/// Deletes the [collection] [entity].
+	static Future<void> deleteEntityEssence(Field collection, String essence) async {
 		final field = collection.name;
-		await _entities.put(field, _entities.get(field)!..remove(entity.essence));
+		await _entities.put(field, _entities.get(field)!..remove(essence));
 	}
 
 	/// Whether the [collection] [entity] has not been stored.
-	static bool entityIsUnstored(Field collection, StoredEntity entity) {
-		return !_entities.get(collection.name)!.contains(entity.essence);
+	static bool entityEssenceIsUnstored(Field collection, String essence) {
+		return !_entities.get(collection.name)!.contains(essence);
 	}
 }
 

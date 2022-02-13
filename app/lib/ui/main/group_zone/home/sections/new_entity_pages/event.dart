@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/storage/cloud.dart' show Cloud;
-import 'package:podiynyk/storage/entities/subject.dart';
+import 'package:podiynyk/storage/cloud.dart';
 
 import 'package:podiynyk/ui/main/widgets/fields.dart';
 
@@ -14,25 +13,25 @@ import 'entity.dart';
 class NewEventPage extends StatefulWidget {
 	final bool _askSubject;
 	final bool _subjectRequired;
-	final Subject? _subject;
-	final List<Subject>? subjects;
+	final String? _subjectName;
+	final List<String>? subjectNames;
 
-	const NewEventPage({required List<Subject> this.subjects}) :
+	const NewEventPage({required this.subjectNames}) :
 		_askSubject = true,
 		_subjectRequired = false,
-		_subject = null;
+		_subjectName = null;
 
-	const NewEventPage.subjectEvent(Subject subject) :
+	const NewEventPage.subjectEvent(String subject) :
 		_askSubject = false,
 		_subjectRequired = true,
-		_subject = subject,
-		subjects = null;
+		_subjectName = subject,
+		subjectNames = null;
 
 	const NewEventPage.noSubjectEvent() :
 		_askSubject = false,
 		_subjectRequired = false,
-		_subject = null,
-		subjects = null;
+		_subjectName = null,
+		subjectNames = null;
 
 	@override
 	State<NewEventPage> createState() => _NewEventPageState();
@@ -44,12 +43,12 @@ class _NewEventPageState extends State<NewEventPage> {
 	final _dateField = TextEditingController();
 	final _noteField = TextEditingController();
 
-	Subject? _subject;
+	String? _subjectName;
 	DateTime? _date;
 
 	@override
 	void initState() {
-		_subject = widget._subject;
+		_subjectName = widget._subjectName;
 		super.initState();
 	}
 
@@ -85,11 +84,11 @@ class _NewEventPageState extends State<NewEventPage> {
 				body: Center(child: ListView(
 					shrinkWrap: true,
 					children: [
-						for (final subject in widget.subjects!) ListTile(
-							title: Text(subject.name),
+						for (final name in widget.subjectNames!) ListTile(
+							title: Text(name),
 							onTap: () {
-								_subject = subject;
-								_subjectField.text = subject.name;
+								_subjectName = name;
+								_subjectField.text = name;
 								Navigator.of(context).pop();
 							}
 						)
@@ -125,7 +124,7 @@ class _NewEventPageState extends State<NewEventPage> {
 		final name = _nameField.text;
 		if (
 			name.isEmpty ||
-			(widget._subjectRequired && _subject == null) ||
+			(widget._subjectRequired && _subjectName == null) ||
 			_date == null
 		) return false;
 
@@ -135,7 +134,7 @@ class _NewEventPageState extends State<NewEventPage> {
 		final note = _noteField.text;
 		Cloud.addEvent(
 			name: name,
-			subject: _subject,
+			subjectName: _subjectName,
 			date: _date!,
 			note: note.isNotEmpty ? note : null
 		);

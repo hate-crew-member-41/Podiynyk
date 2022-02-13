@@ -34,7 +34,6 @@ class _SubjectPageState extends State<SubjectPage> {
 	@override
 	Widget build(BuildContext context) {
 		final subject = widget.subject;
-		final totalEventCount = subject.totalEventCount;
 		final info = subject.info;
 		final events = subject.events;
 
@@ -45,7 +44,6 @@ class _SubjectPageState extends State<SubjectPage> {
 					decoration: const InputDecoration(hintText: "subject"),
 					onSubmitted: (label) {},  // todo: add the label
 				),
-				if (totalEventCount != null) Text("${subject.totalEventCountRepr} so far"),
 				if (info != null) TextButton(
 					child: const Text("information"),
 					onPressed: () => _showEntities(
@@ -60,8 +58,8 @@ class _SubjectPageState extends State<SubjectPage> {
 				TextButton(
 					child: Text(subject.eventCountRepr),
 					onPressed: () => _showEntities(
-						[for (final event in events!) EventTile(event, showSubject: false)],
-						newEntityPageBuilder: (_) => NewEventPage.subjectEvent(subject)
+						[for (final event in events) EventTile(event, showSubject: false)],
+						newEntityPageBuilder: (_) => NewEventPage.subjectEvent(subject.name)
 					)
 				)
 			],

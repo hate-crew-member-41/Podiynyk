@@ -4,39 +4,36 @@ import '../cloud.dart';
 import '../fields.dart';
 import '../local.dart';
 
-import 'subject.dart';
-import 'entity.dart';
 
-
-class Event implements StoredEntity {
+class Event {
 	final String id;
 	final String name;
-	final Subject? subject;
+	final String? subjectName;
 	final DateTime date;
 	late bool isShown;
 
 	String? note;
 
-	Event.fromCloudFormat(MapEntry<String, dynamic> entry, {required this.subject}) :
+	Event.fromCloudFormat(MapEntry<String, dynamic> entry) :
 		id = entry.key,
 		name = entry.value[Field.name.name] as String,
+		subjectName = entry.value[Field.subject.name],
 		date = (entry.value[Field.date.name] as Timestamp).toDate()
 	{
-		isShown = Local.entityIsUnstored(Field.hiddenEvents, this);
+		isShown = Local.entityEssenceIsUnstored(Field.hiddenEvents, essence);
 	}
 
 	Future<void> addDetails() => Cloud.addEventDetails(this);
 
 	void hide() {
-		Local.storeEntity(Field.hiddenEvents, this);
+		Local.storeEntityEssence(Field.hiddenEvents, essence);
 		isShown = false;
 	}
 
 	void show() {
-		Local.deleteEntity(Field.hiddenEvents, this);
+		Local.deleteEntityEssence(Field.hiddenEvents, essence);
 		isShown = true;
 	}
 
-	@override
-	String get essence => '${subject?.essence}.$name';
+	String get essence => '$subjectName.$name';
 }

@@ -3,53 +3,49 @@ import '../fields.dart';
 import '../local.dart';
 
 import 'event.dart';
-import 'entity.dart';
 
 
-class Subject implements StoredEntity {
+class Subject {
 	final String id;
 	final String name;
 	late bool isFollowed;
-	final List<Event>? events;
+	late final List<Event> events;
 
-	int? totalEventCount;
 	List<SubjectInfo>? info;
 
-	Subject.fromCloudFormat(MapEntry<String, dynamic> entry, {bool events = true}) :
+	Subject.fromCloudFormat(MapEntry<String, dynamic> entry, {required this.events}) :
 		id = entry.key,
-		name = entry.value[Field.name.name] as String,
-		events = events ? <Event>[] : null
+		name = entry.value[Field.name.name] as String
 	{
-		isFollowed = Local.entityIsUnstored(Field.unfollowedSubjects, this);
+		isFollowed = Local.entityEssenceIsUnstored(Field.unfollowedSubjects, name);
+	}
+
+	static String nameFromCloudFormat(MapEntry<String, dynamic> entry) {
+		return entry.value[Field.name.name] as String;
 	}
 
 	Future<void> addDetails() => Cloud.addSubjectDetails(this);
 
-	String get eventCountRepr => _eventCountRepr(events!.length);
-
-	String get totalEventCountRepr => _eventCountRepr(totalEventCount!);
-
-	String _eventCountRepr(int count) {
-		switch (count.compareTo(1)) {
+	String get eventCountRepr {
+		final eventCount = events.length;
+		switch (eventCount.compareTo(1)) {
 			case -1: return "no events";
 			case 0: return "1 event";
-			default: return "$count events";
+			default: return "$eventCount events";
 		}
 	}
 
+	static bool withNameIsFollowed(String name) => Local.entityEssenceIsUnstored(Field.unfollowedSubjects, name);
+
 	void unfollow() {
-		Local.storeEntity(Field.unfollowedSubjects, this);
+		Local.storeEntityEssence(Field.unfollowedSubjects, name);
 		isFollowed = false;
 	}
 
 	void follow() {
-		Local.deleteEntity(Field.unfollowedSubjects, this);
+		Local.deleteEntityEssence(Field.unfollowedSubjects, name);
 		isFollowed = true;
 	}
-
-	@override
-	String get essence => name;
-
 }
 
 

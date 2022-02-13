@@ -31,7 +31,7 @@ class _EventPageState extends State<EventPage> {
 	@override
 	Widget build(BuildContext context) {
 		final event = widget.event;
-		final subject = event.subject;
+		final subjectName = event.subjectName;
 		final note = event.note;
 		final hasNote = note != null;
 
@@ -45,7 +45,7 @@ class _EventPageState extends State<EventPage> {
 					decoration: const InputDecoration(hintText: "name"),
 					onSubmitted: (label) {},  // todo: add the label
 				),
-				if (subject != null) Text(subject.name),
+				if (subjectName != null) Text(subjectName),
 				Text(event.date.fullRepr),  // todo: allow changing
 				if (hasNote) TextField(
 					controller: _noteField,

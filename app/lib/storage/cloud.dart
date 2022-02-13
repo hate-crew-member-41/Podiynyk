@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:tuple/tuple.dart';
 
 import 'fields.dart';
 import 'local.dart';
@@ -210,67 +209,42 @@ class Cloud {
 		_role = Role.values[roleIndex];
 	}
 
-	/// The group's sorted [Subject]s with the sorted [Event]s, without the details.
+	/// The group's sorted [Subject]s without the details.
 	static Future<List<Subject>> get subjects async {
-		final rawSubjectsAndRawEvents = await _rawSubjectsAndRawEvents;
-		final rawSubjects = rawSubjectsAndRawEvents.item1;
-		final rawEvents = rawSubjectsAndRawEvents.item2;
-
-		final subjects = [
-			for (final entry in rawSubjects.entries) Subject.fromCloudFormat(entry)
-		]..sortByName();
-		final subjectsById = {
-			for (final subject in subjects) subject.id: subject
-		};
-
-		final subjectEventEntries = rawEvents.entries.where((entry) =>
-			entry.value[Field.subject.name] != null
-		);
-		for (final entry in subjectEventEntries) {
-			final subjectId = entry.value[Field.subject.name] as String;
-			final subject = subjectsById[subjectId]!;
-
-			subject.events!.add(Event.fromCloudFormat(entry, subject: subject));
-		}
-
-		for (final subject in subjects) subject.events!.sortByDate();
-		return subjects;
-	}
-
-	// todo: store the event's subject's name instead of ids to avoid fetching subjects?
-	/// The group's sorted [Event]s and sorted [Subject]s without the events. Both are without the details.
-	static Future<Tuple2<List<Event>, List<Subject>>> get eventsAndSubjects async {
-		final rawSubjectsAndRawEvents = await _rawSubjectsAndRawEvents;
-		final rawSubjects = rawSubjectsAndRawEvents.item1;
-		final rawEvents = rawSubjectsAndRawEvents.item2;
-
-		final subjects = [
-			for (final entry in rawSubjects.entries) Subject.fromCloudFormat(entry, events: false)
-		]..sortByName();
-		final subjectsById = {
-			for (final subject in subjects) subject.id: subject
-		};
-
-		final events = [
-			for (final entry in rawEvents.entries) Event.fromCloudFormat(
-				entry,
-				subject: subjectsById[entry.value[Field.subject.name]]
-			)
-		]..sortByDate();
-
-		return Tuple2(events, subjects);
-	}
-
-	/// The group's raw [Subject]s and raw [Event]s.
-	static Future<Tuple2<Map<String, dynamic>, Map<String, dynamic>>> get _rawSubjectsAndRawEvents async {
 		final snapshots = await Future.wait([
 			Collection.subjects.ref.get(),
 			Collection.events.ref.get()
 		]);
-		final rawSubjects = snapshots.first.data()!;
-		final rawEvents = snapshots.last.data()!;
 
-		return Tuple2(rawSubjects, rawEvents);
+		final events = [
+			for (final entry in snapshots.last.data()!.entries) Event.fromCloudFormat(entry)
+		]..sortByDate();
+
+		return [
+			for (final entry in snapshots.first.data()!.entries) Subject.fromCloudFormat(
+				entry,
+				events: events.where((event) =>
+					event.subjectName == entry.value[Field.name.name]
+				).toList()
+			)
+		]..sortByName();
+	}
+
+	/// The sorted names of the group's [Subject]s.
+	static Future<List<String>> get subjectNames async {
+		final snapshot = await Collection.subjects.ref.get();
+		return [
+			for (final entry in snapshot.data()!.entries) Subject.nameFromCloudFormat(entry)
+		]..sort();
+	}
+
+	/// The group's sorted [Event]s without the details.
+	static Future<List<Event>> get events async {
+		final snapshot = await Collection.events.ref.get();
+
+		return [
+			for (final entry in snapshot.data()!.entries) Event.fromCloudFormat(entry)
+		]..sortByDate();
 	}
 
 	/// The group's sorted non-subject [Event]s.
@@ -281,7 +255,7 @@ class Cloud {
 		);
 
 		return [
-			for (final entry in eventEntries) Event.fromCloudFormat(entry, subject: null)
+			for (final entry in eventEntries) Event.fromCloudFormat(entry)
 		]..sortByDate();
 	}
 
@@ -321,10 +295,9 @@ class Cloud {
 	/// Initializes the [subject]'s detail fields.
 	static Future<void> addSubjectDetails(Subject subject) async {
 		final snapshot = await Collection.subjects.detailsRef(subject.id).get();
-		final details = snapshot.data()!;
-
-		subject.totalEventCount = details[Field.totalEventCount.name] as int;
-		subject.info = [for (final object in details[Field.info.name]) SubjectInfo.fromCloudFormat(object)];
+		subject.info = [
+			for (final object in snapshot.data()![Field.info.name]) SubjectInfo.fromCloudFormat(object)
+		]..sort();
 	}
 
 	/// Initializes the [event]'s detail fields.
@@ -346,10 +319,7 @@ class Cloud {
 		collection: Collection.subjects,
 		existingEquals: (existing) => existing[Field.name.name] == name,
 		entity: {Field.name.name: name},
-		details: {
-			Field.totalEventCount.name: 0,
-			Field.info.name: <String>[]
-		}
+		details: {Field.info.name: <String>[]}
 	);
 
 	/// Updates the [info] in the [subject]'s details.
@@ -359,31 +329,23 @@ class Cloud {
 		});
 	}
 
-	/// Adds an [Event] with the arguments unless it exists. Increments the [subject]'s total event count.
+	/// Adds an [Event] with the arguments unless it exists. Increments the [subjectName]'s total event count.
 	static Future<void> addEvent({
 		required String name,
-		Subject? subject,
+		String? subjectName,
 		required DateTime date,
 		String? note
-	}) async {
-		final wasWritten = await _addEntity(
-			collection: Collection.events,
-			existingEquals: (existing) =>
-				existing[Field.name.name] == name && existing[Field.subject.name] == subject?.id,
-			entity: {
-				Field.name.name: name,
-				Field.subject.name: subject?.id,
-				Field.date.name: date,
-			},
-			details: {if (note != null) Field.note.name: note},
-		);
-
-		if (subject != null && wasWritten) {
-			Collection.subjects.detailsRef(subject.id).update({
-				Field.totalEventCount.name: FieldValue.increment(1)
-			});
-		}
-	}
+	}) async => await _addEntity(
+		collection: Collection.events,
+		existingEquals: (existing) =>
+			existing[Field.name.name] == name && existing[Field.subject.name] == subjectName,
+		entity: {
+			Field.name.name: name,
+			Field.subject.name: subjectName,
+			Field.date.name: date,
+		},
+		details: {if (note != null) Field.note.name: note},
+	);
 
 	/// Updates the [note] in the [event]'s details.
 	static Future<void> updateEventNote(Event event) async {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 
-// todo: make abstract
 class NewEntityPage extends StatelessWidget {
 	final List<Widget> children;
 	final bool Function(BuildContext context) add;
