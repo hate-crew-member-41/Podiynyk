@@ -60,7 +60,7 @@ abstract class Section extends StatelessWidget {
 
 
 abstract class CloudEntitiesSectionData<E> {
-	Future<List<E>> get counted;
+	Future<Iterable<E>> get counted;
 	Future<int> get count => counted.then((counted) => counted.length);
 }
 

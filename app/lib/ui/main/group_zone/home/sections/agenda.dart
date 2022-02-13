@@ -23,9 +23,10 @@ class AgendaSectionCloudData extends CloudEntitiesSectionData<Event> {
 
 	final Future<List<String>> subjectNames = Cloud.subjectNames;
 
-	// todo: do not count ones that are past
 	@override
-	Future<List<Event>> get counted => events;
+	Future<Iterable<Event>> get counted => events.then((events) =>
+		events.where((event) => !event.date.isPast)
+	);
 }
 
 
