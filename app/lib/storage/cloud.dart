@@ -421,17 +421,16 @@ class Cloud {
 	/// Sets the [student]'s [Role] to [role].
 	static Future<void> setRole(Student student, Role role) async {
 		await Collection.groups.ref.update({
-			Field.roles.name: {student.id: role.index}
+			'${Field.roles.name}.${student.id}': role.index
 		});
 	}
 
 	/// Sets the [Role] of the [student] to [Role.leader], and the user's role to [Role.trusted].
 	static Future<void> makeLeader(Student student) async {
-		final document = Collection.groups.ref;
-
-		await document.update({
-			Local.id: Role.trusted.index,
-			student.id: Role.leader.index
+		await Collection.groups.ref.update({
+			'${Field.roles.name}.${Local.id}': Role.trusted.index,
+			'${Field.roles.name}.${student.id}': Role.leader.index
 		});
+		_role = Role.trusted;
 	}
 }
