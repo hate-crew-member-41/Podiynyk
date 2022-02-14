@@ -24,7 +24,10 @@ class Event extends LabelableEntity {
 		isShown = Local.entityIsUnstored(Field.hiddenEvents, essence);
 	}
 
-	Future<void> addDetails() => Cloud.addEventDetails(this);
+	Future<void> addDetails() async {
+		final details = await Cloud.entityDetails(Collection.events, id);
+		note = details[Field.note.name];
+	}
 
 	@override
 	Field get labelCollection => Field.events;

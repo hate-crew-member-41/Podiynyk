@@ -24,7 +24,12 @@ class Subject extends LabelableEntity {
 		return entry.value[Field.name.name] as String;
 	}
 
-	Future<void> addDetails() => Cloud.addSubjectDetails(this);
+	Future<void> addDetails() async {
+		final details = await Cloud.entityDetails(Collection.subjects, id);
+		info = [
+			for (final object in details[Field.info.name]) SubjectInfo.fromCloudFormat(object)
+		]..sort();
+	}
 
 	String get eventCountRepr {
 		final eventCount = events.length;
@@ -59,16 +64,16 @@ class SubjectInfo extends LabelableEntity {
 	final String info;
 
 	SubjectInfo({
-		required String topic,
+		required String name,
 		required this.info
-	}) : super(initialName: topic);
+	}) : super(initialName: name);
 
 	SubjectInfo.fromCloudFormat(dynamic object) :
 		info = object[Field.info.name] as String,
-		super(initialName: object[Field.topic.name] as String);
+		super(initialName: object[Field.name.name] as String);
 	
 	Map<String, String> get inCloudFormat => {
-		Field.topic.name: initialName,
+		Field.name.name: initialName,
 		Field.info.name: info
 	};
 	

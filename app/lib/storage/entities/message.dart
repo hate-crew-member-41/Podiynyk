@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../cloud.dart' show Cloud;
+import '../cloud.dart';
 import '../fields.dart';
 
 
 class Message {
 	final String id;
-	final String topic;
+	final String name;
 	final DateTime date;
 
 	String? author;
@@ -14,8 +14,12 @@ class Message {
 
 	Message.fromCloudFormat(MapEntry<String, dynamic> entry) :
 		id = entry.key,
-		topic = entry.value[Field.subject.name] as String,
+		name = entry.value[Field.name.name] as String,
 		date = (entry.value[Field.date.name] as Timestamp).toDate();
 
-	Future<void> addDetails() => Cloud.addMessageDetails(this);
+	Future<void> addDetails() async {
+		final details = await Cloud.entityDetails(Collection.messages, id);
+		content = details[Field.message.name];
+		author = details[Field.author.name];
+	}
 }

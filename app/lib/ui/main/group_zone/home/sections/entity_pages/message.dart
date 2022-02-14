@@ -32,7 +32,7 @@ class _MessagePageState extends State<MessagePage> {
 
 		return EntityPage(
 			children: [
-				Text(message.topic),
+				Text(message.name),
 				Text(message.date.fullRepr),
 				if (author != null) Text("from $author"),
 				if (content != null) Text(content)

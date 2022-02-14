@@ -15,6 +15,9 @@ import 'entities/subject.dart';
 import 'entities/university.dart';
 
 
+typedef CloudData = Map<String, dynamic>;
+
+
 /// The group's [Collection] stored in [FirebaseFirestore].
 enum Collection {
 	counties,
@@ -29,16 +32,16 @@ enum Collection {
 
 extension on Collection {
 	/// [DocumentReference] to the document with the group's data of [collection] type.
-	DocumentReference<Map<String, dynamic>> get ref =>	
+	DocumentReference<CloudData> get ref =>	
 		FirebaseFirestore.instance.collection(name).doc(Local.groupId);
 	
 	/// [DocumentReference] to the details of the entity with the [id] in the group's data of [collection] type.
-	DocumentReference<Map<String, dynamic>> detailsRef(String id) =>	
+	DocumentReference<CloudData> detailsRef(String id) =>	
 		ref.collection(Collection.details.name).doc(id);
 }
 
 
-extension on Map<String, dynamic> {
+extension on CloudData {
 	int get newId {
 		int id = 0;
 		while (containsKey(id.toString())) id++;
@@ -121,7 +124,7 @@ class Cloud {
 
 			if (snapshot.exists) {
 				final data = snapshot.data()!;
-				id = Map<String, dynamic>.from(data[Field.names.name]).newId.toString();
+				id = CloudData.from(data[Field.names.name]).newId.toString();
 
 				final selfInitField = data.containsKey(Field.roles.name) ? Field.roles : Field.confirmationCounts;
 				transaction.update(document, {
@@ -279,29 +282,13 @@ class Cloud {
 		return students;
 	}
 
-	// todo: move add[Entity] logic to the entity classes
-
-	/// Initializes the [subject]'s detail fields.
-	static Future<void> addSubjectDetails(Subject subject) async {
-		final snapshot = await Collection.subjects.detailsRef(subject.id).get();
-		subject.info = [
-			for (final object in snapshot.data()![Field.info.name]) SubjectInfo.fromCloudFormat(object)
-		]..sort();
+	/// The details of the [collection] entity with the [id].
+	static Future<CloudData> entityDetails(Collection collection, String id) async {
+		final snapshot = await collection.detailsRef(id).get();
+		return snapshot.data()!;
 	}
 
-	/// Initializes the [event]'s detail fields.
-	static Future<void> addEventDetails(Event event) async {
-		final snapshot = await Collection.events.detailsRef(event.id).get();
-		event.note = snapshot.data()![Field.note.name];
-	}
-
-	/// Initializes the [message]'s detail fields.
-	static Future<void> addMessageDetails(Message message) async {
-		final snapshot = await Collection.messages.detailsRef(message.id).get();
-		
-		message.content = snapshot[Field.message.name];
-		message.author = snapshot[Field.author.name];
-	}
+	// todo: should all new entities check whether they already exist?
 
 	/// Adds a [Subject] with the [name] unless it exists.
 	static Future<void> addSubject({required String name}) async => await _addEntity(
@@ -349,7 +336,7 @@ class Cloud {
 		required String message,
 	}) async => await _addEntity(
 		collection: Collection.messages,
-		existingEquals: (existing) => existing[Field.topic.name] == topic,
+		existingEquals: (existing) => existing[Field.name.name] == topic,
 		entity: {
 			Field.subject.name: topic,
 			Field.date.name: DateTime.now()

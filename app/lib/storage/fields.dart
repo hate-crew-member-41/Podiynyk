@@ -18,6 +18,5 @@ enum Field {
 	subject,
 	subjectInfo,
 	subjects,
-	topic,
 	unfollowedSubjects
 }
