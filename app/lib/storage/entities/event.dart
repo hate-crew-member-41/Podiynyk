@@ -9,7 +9,7 @@ import '../local.dart';
 class Event extends LabelableEntity implements Comparable {
 	final String id;
 	final String? subjectName;
-	final DateTime date;
+	DateTime date;
 	late bool isHidden;
 
 	String? note;

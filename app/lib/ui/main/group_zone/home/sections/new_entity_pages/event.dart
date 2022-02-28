@@ -4,7 +4,6 @@ import 'package:podiynyk/storage/cloud.dart';
 
 import 'package:podiynyk/ui/main/common/fields.dart';
 
-import '../section.dart' show EntityDate;
 import 'entity.dart';
 
 
@@ -40,7 +39,6 @@ class NewEventPage extends StatefulWidget {
 class _NewEventPageState extends State<NewEventPage> {
 	final _nameField = TextEditingController();
 	final _subjectField = TextEditingController();
-	final _dateField = TextEditingController();
 	final _noteField = TextEditingController();
 
 	String? _subjectName;
@@ -60,16 +58,13 @@ class _NewEventPageState extends State<NewEventPage> {
 				controller: _nameField,
 				name: "name"
 			),
+			// todo: removing the chosen subject
 			if (widget._askSubject) OptionField(
 				controller: _subjectField,
 				name: "subject",
 				showOptions: _askSubject
 			),
-			OptionField(
-				controller: _dateField,
-				name: "date",
-				showOptions: _askDate
-			),
+			DateField(onDatePicked: (date) => _date = date),
 			InputField(
 				controller: _noteField,
 				name: "note"
@@ -96,28 +91,6 @@ class _NewEventPageState extends State<NewEventPage> {
 				))
 			)
 		));
-	}
-
-	Future<void> _askDate(BuildContext context) async {
-		final now = DateTime.now();
-		_date = await showDatePicker(
-			context: context,
-			initialDate: _date ?? now.add(const Duration(days: DateTime.daysPerWeek * 2)),
-			firstDate: now,
-			lastDate: now.add(const Duration(days: 365))
-		);
-		if (_date != null) {
-			await _askTime(context);
-			_dateField.text = _date!.fullRepr;
-		}
-	}
-
-	Future<void> _askTime(BuildContext context) async {
-		final time = await showTimePicker(
-			context: context,
-			initialTime: TimeOfDay.now().replacing(minute: 0)
-		);
-		if (time != null) _date = _date!.withTime(time);
 	}
 
 	bool _add(BuildContext context) {

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/event.dart';
 
-import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
+import 'package:podiynyk/ui/main/common/fields.dart';
 
 import '../section.dart' show EntityDate;
 import 'entity.dart';
@@ -45,7 +45,10 @@ class _EventPageState extends State<EventPage> {
 					onSubmitted: _setLabel
 				),
 				if (_event.subjectName != null) Text(_event.subjectName!),
-				Text(_event.date.fullRepr),  // todo: allow changing
+				DateField(
+					initialDate: _event.date,
+					onDatePicked: _setDate,
+				),
 				if (hasNote) InputField(
 					controller: _noteField,
 					name: "note",
@@ -86,6 +89,13 @@ class _EventPageState extends State<EventPage> {
 	void _setLabel(String label) {
 		_event.label = label;
 		if (label.isEmpty) _nameField.text = _event.name;
+	}
+
+	void _setDate(DateTime date) {
+		if (date == _event.date) return;
+
+		_event.date = date;
+		Cloud.updateEventDate(_event);
 	}
 
 	void _setNote(String note) {

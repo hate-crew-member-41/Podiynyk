@@ -308,6 +308,13 @@ class Cloud {
 		details: {if (note != null) Field.note.name: note},
 	);
 
+	/// Updates the [event]'s date.
+	static Future<void> updateEventDate(Event event) async {
+		await Collection.events.ref.update({
+			'${event.id}.${Field.date.name}': event.date
+		});
+	}
+
 	/// Updates the [event]'s note.
 	static Future<void> updateEventNote(Event event) async {
 		await Collection.events.detailsRef(event.id).update({

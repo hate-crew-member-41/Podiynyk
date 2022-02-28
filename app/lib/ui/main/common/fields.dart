@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:podiynyk/ui/main/group_zone/home/sections/section.dart' show EntityDate;
+
 
 class InputField extends StatefulWidget {
 	final TextEditingController controller;
@@ -45,14 +47,15 @@ class _InputFieldState extends State<InputField> {
 }
 
 
+// todo: make this private and create a more specific field from it for options lists?
 class OptionField extends StatelessWidget {
 	final TextEditingController controller;
-	final String name;
+	final String? name;
 	final void Function(BuildContext context) showOptions;
 
 	const OptionField({
 		required this.controller,
-		required this.name,
+		this.name,
 		required this.showOptions
 	});
 
@@ -67,10 +70,66 @@ class OptionField extends StatelessWidget {
 				decoration: InputDecoration(
 					border: InputBorder.none,
 					contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-					hintText: name,
+					hintText: name ?? "",
 					hintStyle: TextStyle(color: Colors.white.withOpacity(.5))
 				)
 			),
 		);
+	}
+}
+
+
+class DateField extends StatefulWidget {
+	final DateTime? initialDate;
+	final void Function(DateTime) onDatePicked;
+
+	const DateField({
+		this.initialDate,
+		required this.onDatePicked
+	});
+
+	@override
+	State<DateField> createState() => _DateFieldState();
+}
+
+class _DateFieldState extends State<DateField> {
+	final _field = TextEditingController();
+	DateTime? _date;
+
+	@override
+	void initState() {	
+		super.initState();
+		_field.text = widget.initialDate?.fullRepr ?? "";
+	}
+
+	@override
+	Widget build(BuildContext context) {
+		return OptionField(
+			controller: _field,
+			name: "date",
+			showOptions: _ask
+		);
+	}
+
+	void _ask(BuildContext context) async {
+		final now = DateTime.now();
+
+		_date = await showDatePicker(
+			context: context,
+			initialDate: _date ?? now.add(const Duration(days: DateTime.daysPerWeek * 2)),
+			firstDate: now,
+			lastDate: now.add(const Duration(days: 365))
+		);
+
+		if (_date != null) {
+			final time = await showTimePicker(
+				context: context,
+				initialTime: TimeOfDay.now().replacing(minute: 0)
+			);
+			if (time != null) _date = _date!.withTime(time);
+
+			_field.text = _date!.fullRepr;
+			widget.onDatePicked(_date!);
+		}
 	}
 }
