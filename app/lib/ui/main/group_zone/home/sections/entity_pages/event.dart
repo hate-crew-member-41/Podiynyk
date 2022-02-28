@@ -48,13 +48,14 @@ class _EventPageState extends State<EventPage> {
 				Text(_event.date.fullRepr),  // todo: allow changing
 				if (hasNote) TextField(
 					controller: _noteField,
-					decoration: const InputDecoration(hintText: "to be deleted"),
-					onSubmitted: (newNote) {}  // todo: update the note
+					decoration: const InputDecoration(hintText: "note"),
+					onSubmitted: _setNote
 				)
 			],
 			actions: [
 				if (_event.note == null) EntityActionButton(
 					text: "add a note",
+					// todo: show the form on the event page instead?
 					action: () => Navigator.of(context).push(MaterialPageRoute(
 						builder: (_) => GestureDetector(
 							onDoubleTap: _addNote,
@@ -87,9 +88,22 @@ class _EventPageState extends State<EventPage> {
 		if (label.isEmpty) _nameField.text = _event.name;
 	}
 
+	void _setNote(String note) {
+		if (note.isNotEmpty) {
+			_event.note = note;
+			Cloud.updateEventNote(_event);
+		}
+		else {
+			_noteField.text = _event.note!;
+		}
+	}
+
 	void _addNote() {
-		widget.event.note = _noteField.text;
-		Cloud.updateEventNote(widget.event);
+		final note = _noteField.text;
+		if (note.isEmpty) return;
+
+		_event.note = note;
+		Cloud.updateEventNote(_event);
 		Navigator.of(context).pop();
 	}
 }

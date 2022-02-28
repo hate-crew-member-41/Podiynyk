@@ -21,7 +21,7 @@ class Event extends LabelableEntity {
 		date = (entry.value[Field.date.name] as Timestamp).toDate(),
 		super(initialName: entry.value[Field.name.name] as String)
 	{
-		isShown = Local.entityIsUnstored(Field.hiddenEvents, essence);
+		isShown = Local.entityIsNotStored(Field.hiddenEvents, essence);
 	}
 
 	Future<void> addDetails() async {

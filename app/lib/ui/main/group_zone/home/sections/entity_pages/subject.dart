@@ -51,7 +51,7 @@ class _SubjectPageState extends State<SubjectPage> {
 						// todo: show the info item on tap
 						[for (final item in info) EntityTile(
 							title: item.name,
-							pageBuilder: () => SubjectInfoPage(subject: _subject, info: item),
+							pageBuilder: () => SubjectInfoPage(subject: _subject, item: item),
 						)],
 						newEntityPageBuilder: (_) => NewSubjectInfoPage(_subject)
 					)
@@ -109,17 +109,17 @@ class _SubjectPageState extends State<SubjectPage> {
 
 class SubjectInfoPage extends StatelessWidget {
 	final Subject subject;
-	final SubjectInfo info;
+	final SubjectInfo item;
 	final TextEditingController _topicField;
 	final TextEditingController _infoField;
 
 
 	SubjectInfoPage({
 		required this.subject,
-		required this.info
+		required this.item
 	}) :
-		_topicField = TextEditingController(text: info.name),
-		_infoField = TextEditingController(text: info.info);
+		_topicField = TextEditingController(text: item.name),
+		_infoField = TextEditingController(text: item.info);
 
 	@override
 	Widget build(BuildContext context) {
@@ -133,13 +133,13 @@ class SubjectInfoPage extends StatelessWidget {
 				TextField(
 					controller: _infoField,
 					decoration: const InputDecoration(hintText: "information"),
-					onSubmitted: (label) {}  // todo: change the info
+					onSubmitted: _setInfo
 				)
 			],
 			actions: Cloud.role == Role.ordinary ? null : [EntityActionButton(
 				text: "delete",
 				action: () {
-					subject.info!.remove(info);
+					subject.info!.remove(item);
 					Cloud.updateSubjectInfo(subject);
 				}
 			)]
@@ -147,7 +147,17 @@ class SubjectInfoPage extends StatelessWidget {
 	}
 
 	void _setLabel(String label) {
-		info.label = label;
-		if (label.isEmpty) _topicField.text = info.name;
+		item.label = label;
+		if (label.isEmpty) _topicField.text = item.name;
+	}
+
+	void _setInfo(String info) {
+		if (info.isNotEmpty) {
+			item.info = info;
+			Cloud.updateSubjectInfo(subject);
+		}
+		else {
+			_infoField.text = item.info;
+		}
 	}
 }

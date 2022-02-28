@@ -49,6 +49,8 @@ extension on CloudData {
 	}
 }
 
+// todo: move the sort logic to the entity class as compareTo method
+
 extension on List<IdentificationOption> {
 	void sortByName() => sort((a, b) => a.name.compareTo(b.name));
 }
@@ -70,7 +72,6 @@ extension on List<Message> {
 	void sortByDate() => sort((a, b) => b.date.compareTo(a.date));
 }
 
-
 class Cloud {
 	static final _cloud = FirebaseFirestore.instance;
 
@@ -86,7 +87,7 @@ class Cloud {
 		optionConstructor: ({required id, required name}) => County(id: id, name: name)
 	);
 
-	/// The [Univesity]s of the [county].
+	/// The [University]s of the [county].
 	static Future<List<University>> universities(County county) => _identificationOptions(
 		collection: Collection.counties,
 		document: county.id,
@@ -298,7 +299,7 @@ class Cloud {
 		details: {Field.info.name: <String>[]}
 	);
 
-	/// Updates the [info] in the [subject]'s details.
+	/// Updates the [subject]'s information.
 	static Future<void> updateSubjectInfo(Subject subject) async {
 		Collection.subjects.detailsRef(subject.id).update({
 			Field.info.name: [for (final item in subject.info!) item.inCloudFormat]
@@ -323,7 +324,7 @@ class Cloud {
 		details: {if (note != null) Field.note.name: note},
 	);
 
-	/// Updates the [note] in the [event]'s details.
+	/// Updates the [event]'s note.
 	static Future<void> updateEventNote(Event event) async {
 		await Collection.events.detailsRef(event.id).update({
 			Field.note.name: event.note

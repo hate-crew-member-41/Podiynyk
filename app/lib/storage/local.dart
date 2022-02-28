@@ -40,7 +40,7 @@ class Local {
 		]);
 	}
 
-	/// Whether the user has completed the identification proces.
+	/// Whether the user has completed the identification process.
 	static bool get userIsIdentified => groupId != null;
 
 	/// The id of the user's group.
@@ -88,7 +88,7 @@ class Local {
 	}
 
 	/// Whether the [collection] entity has not been stored.
-	static bool entityIsUnstored(Field collection, String essence) {
+	static bool entityIsNotStored(Field collection, String essence) {
 		return !_entities.get(collection.name)!.contains(essence);
 	}
 }

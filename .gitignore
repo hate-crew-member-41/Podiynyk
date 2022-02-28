@@ -18,6 +18,7 @@ old/
 app/analysis_options.yaml
 
 # Miscellaneous
+*txt
 *.drawio
 *.class
 *.log

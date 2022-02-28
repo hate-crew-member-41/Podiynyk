@@ -17,7 +17,7 @@ class Subject extends LabelableEntity {
 		id = entry.key,
 		super(initialName: entry.value[Field.name.name] as String)
 	{
-		isFollowed = Local.entityIsUnstored(Field.unfollowedSubjects, essence);
+		isFollowed = Local.entityIsNotStored(Field.unfollowedSubjects, essence);
 	}
 
 	static String nameFromCloudFormat(MapEntry<String, dynamic> entry) {
@@ -40,7 +40,7 @@ class Subject extends LabelableEntity {
 		}
 	}
 
-	static bool withNameIsFollowed(String name) => Local.entityIsUnstored(Field.unfollowedSubjects, name);
+	static bool withNameIsFollowed(String name) => Local.entityIsNotStored(Field.unfollowedSubjects, name);
 
 	@override
 	Field get labelCollection => Field.subjects;
@@ -61,7 +61,7 @@ class Subject extends LabelableEntity {
 
 
 class SubjectInfo extends LabelableEntity {
-	final String info;
+	String info;
 
 	SubjectInfo({
 		required String name,
