@@ -14,8 +14,7 @@ class AgendaSectionCloudData extends CloudEntitiesSectionData<Event> {
 	final Future<List<Event>> events = Cloud.events.then((events) =>
 		events.where((event) {
 			final hasSubject = event.subjectName != null;
-			return event.isShown && (
-				// todo: move this logic to the Event constructor?
+			return !event.isHidden && (
 				(hasSubject && Subject.withNameIsFollowed(event.subjectName!)) ||
 				!hasSubject
 			);

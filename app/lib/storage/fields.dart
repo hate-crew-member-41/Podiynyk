@@ -1,7 +1,8 @@
-/// A [Field] used in the [Local] storage and in the [Cloud].
+/// A [Field] used in the [Local] storage or in the [Cloud].
 enum Field {
 	author,
 	confirmationCounts,
+	content,
 	date,
 	events,
 	groupId,

@@ -4,6 +4,7 @@ import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/student.dart';
 import 'package:podiynyk/storage/entities/subject.dart';
 
+import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
 
 import '../agenda.dart' show EventTile;
 import '../section.dart' show EntityTile;
@@ -27,10 +28,10 @@ class _SubjectPageState extends State<SubjectPage> {
 
 	@override
 	void initState() {
+		super.initState();
 		_subject = widget.subject;
 		_nameField.text = _subject.name;
 		_subject.addDetails().whenComplete(() => setState(() {}));
-		super.initState();
 	}
 
 	@override
@@ -40,15 +41,14 @@ class _SubjectPageState extends State<SubjectPage> {
 
 		return EntityPage(
 			children: [
-				TextField(
+				InputField(
 					controller: _nameField,
-					decoration: const InputDecoration(hintText: "subject"),
+					name: "subject",
 					onSubmitted: _setLabel
 				),
 				if (info != null) TextButton(
 					child: const Text("information"),
 					onPressed: () => _showEntities(
-						// todo: show the info item on tap
 						[for (final item in info) EntityTile(
 							title: item.name,
 							pageBuilder: () => SubjectInfoPage(subject: _subject, item: item),
@@ -110,30 +110,29 @@ class _SubjectPageState extends State<SubjectPage> {
 class SubjectInfoPage extends StatelessWidget {
 	final Subject subject;
 	final SubjectInfo item;
-	final TextEditingController _topicField;
-	final TextEditingController _infoField;
-
+	final TextEditingController _nameField;
+	final TextEditingController _contentField;
 
 	SubjectInfoPage({
 		required this.subject,
 		required this.item
 	}) :
-		_topicField = TextEditingController(text: item.name),
-		_infoField = TextEditingController(text: item.info);
+		_nameField = TextEditingController(text: item.name),
+		_contentField = TextEditingController(text: item.content);
 
 	@override
 	Widget build(BuildContext context) {
 		return EntityPage(
 			children: [
-				TextField(
-					controller: _topicField,
-					decoration: const InputDecoration(hintText: "topic"),
+				InputField(
+					controller: _nameField,
+					name: "topic",
 					onSubmitted: _setLabel
 				),
-				TextField(
-					controller: _infoField,
-					decoration: const InputDecoration(hintText: "information"),
-					onSubmitted: _setInfo
+				InputField(
+					controller: _contentField,
+					name: "information",
+					onSubmitted: _setContent
 				)
 			],
 			actions: Cloud.role == Role.ordinary ? null : [EntityActionButton(
@@ -148,16 +147,16 @@ class SubjectInfoPage extends StatelessWidget {
 
 	void _setLabel(String label) {
 		item.label = label;
-		if (label.isEmpty) _topicField.text = item.name;
+		if (label.isEmpty) _nameField.text = item.name;
 	}
 
-	void _setInfo(String info) {
-		if (info.isNotEmpty) {
-			item.info = info;
+	void _setContent(String content) {
+		if (content.isNotEmpty) {
+			item.content = content;
 			Cloud.updateSubjectInfo(subject);
 		}
 		else {
-			_infoField.text = item.info;
+			_contentField.text = item.content;
 		}
 	}
 }

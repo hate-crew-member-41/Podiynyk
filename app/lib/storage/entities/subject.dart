@@ -17,7 +17,7 @@ class Subject extends LabelableEntity implements Comparable {
 		id = entry.key,
 		super(initialName: entry.value[Field.name.name] as String)
 	{
-		isFollowed = Local.entityIsNotStored(Field.unfollowedSubjects, essence);
+		isFollowed = !Local.entityIsStored(Field.unfollowedSubjects, essence);
 	}
 
 	static String nameFromCloudFormat(MapEntry<String, dynamic> entry) {
@@ -40,7 +40,7 @@ class Subject extends LabelableEntity implements Comparable {
 		}
 	}
 
-	static bool withNameIsFollowed(String name) => Local.entityIsNotStored(Field.unfollowedSubjects, name);
+	static bool withNameIsFollowed(String name) => !Local.entityIsStored(Field.unfollowedSubjects, name);
 
 	@override
 	Field get labelCollection => Field.subjects;
@@ -64,22 +64,22 @@ class Subject extends LabelableEntity implements Comparable {
 
 
 class SubjectInfo extends LabelableEntity {
-	String info;
+	String content;
 
 	SubjectInfo({
 		required String name,
-		required this.info
+		required this.content
 	}) : super(initialName: name);
 
 	SubjectInfo.fromCloudFormat(dynamic object) :
-		info = object[Field.info.name] as String,
+		content = object[Field.content.name] as String,
 		super(initialName: object[Field.name.name] as String);
 	
 	Map<String, String> get inCloudFormat => {
 		Field.name.name: initialName,
-		Field.info.name: info
+		Field.content.name: content
 	};
-	
+
 	@override
 	Field get labelCollection => Field.subjectInfo;
 }

@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 class InputField extends StatefulWidget {
 	final TextEditingController controller;
 	final String name;
+	final void Function(String text)? onSubmitted;
 
 	const InputField({
 		required this.controller,
-		required this.name
+		required this.name,
+		this.onSubmitted
 	});
 
 	@override
@@ -28,6 +30,7 @@ class _InputFieldState extends State<InputField> {
 		return TextField(
 			controller: widget.controller,
 			focusNode: _focusNode,
+			onSubmitted: widget.onSubmitted,
 			showCursor: false,
 			decoration: InputDecoration(
 				border: InputBorder.none,

@@ -4,6 +4,8 @@ import 'package:podiynyk/storage/cloud.dart' show Cloud;
 import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/message.dart' show Message;
 
+import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
+
 import '../section.dart' show EntityDate;
 import 'entity.dart';
 
@@ -18,29 +20,65 @@ class MessagePage extends StatefulWidget {
 }
 
 class _MessagePageState extends State<MessagePage> {
+	late final Message _message;
+	final _nameField = TextEditingController();
+	final _contentField = TextEditingController();
+
 	@override
 	void initState() {
-		widget.message.addDetails().whenComplete(() => setState(() {}));
 		super.initState();
+		_message = widget.message;
+		_nameField.text = _message.name;
+		_message.addDetails().whenComplete(() => setState(() {}));
 	}
 
 	@override
 	Widget build(BuildContext context) {
-		final message = widget.message;
-		final author = message.author;
-		final content = message.content;
+		final author = _message.author;
+		final content = _message.content;
+
+		final hasContent = content != null;
+		if (hasContent) _contentField.text = content;
 
 		return EntityPage(
 			children: [
-				Text(message.name),
-				Text(message.date.fullRepr),
+				InputField(
+					controller: _nameField,
+					name: "topic",
+					onSubmitted: _setName,
+				),
+				Text(_message.date.fullRepr),
 				if (author != null) Text("from $author"),
-				if (content != null) Text(content)
+				if (hasContent) InputField(
+					controller: _contentField,
+					name: "content",
+					onSubmitted: _setContent,
+				)
 			],
-			actions: Local.name != message.author ? null : [EntityActionButton(
+			actions: Local.name != _message.author ? null : [EntityActionButton(
 				text: "delete",
-				action: () => Cloud.deleteMessage(message)
+				action: () => Cloud.deleteMessage(_message)
 			)]
 		);
+	}
+
+	void _setName(String name) {
+		if (name.isNotEmpty) {
+			_message.name = name;
+			Cloud.updateMessageName(_message);
+		}
+		else {
+			_nameField.text = _message.name;
+		}
+	}
+
+	void _setContent(String content) {
+		if (content.isNotEmpty) {
+			_message.content = content;
+			Cloud.updateMessageContent(_message);
+		}
+		else {
+			_contentField.text = _message.content!;
+		}
 	}
 }

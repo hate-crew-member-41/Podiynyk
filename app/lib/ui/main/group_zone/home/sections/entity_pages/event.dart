@@ -25,30 +25,30 @@ class _EventPageState extends State<EventPage> {
 
 	@override
 	void initState() {
-		_event = widget.event;
-		_event.addDetails().whenComplete(() => setState(() {}));
 		super.initState();
+		_event = widget.event;
+		_nameField.text = _event.name;
+		_event.addDetails().whenComplete(() => setState(() {}));
 	}
 
 	@override
 	Widget build(BuildContext context) {
-		final hasNote = _event.note != null;
-
-		_nameField.text = _event.name;
-		if (hasNote) _noteField.text = _event.note!;
+		final note = _event.note;
+		final hasNote = note != null;
+		if (hasNote) _noteField.text = note;
 
 		return EntityPage(
 			children: [
-				TextField(
+				InputField(
 					controller: _nameField,
-					decoration: const InputDecoration(hintText: "name"),
+					name: "name",
 					onSubmitted: _setLabel
 				),
 				if (_event.subjectName != null) Text(_event.subjectName!),
 				Text(_event.date.fullRepr),  // todo: allow changing
-				if (hasNote) TextField(
+				if (hasNote) InputField(
 					controller: _noteField,
-					decoration: const InputDecoration(hintText: "note"),
+					name: "note",
 					onSubmitted: _setNote
 				)
 			],
@@ -68,7 +68,7 @@ class _EventPageState extends State<EventPage> {
 						)
 					))
 				),
-				_event.isShown ? EntityActionButton(
+				!_event.isHidden ? EntityActionButton(
 					text: "hide",
 					action: _event.hide
 				) : EntityActionButton(

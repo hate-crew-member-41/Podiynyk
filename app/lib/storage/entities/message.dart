@@ -6,7 +6,7 @@ import '../fields.dart';
 
 class Message implements Comparable {
 	final String id;
-	final String name;
+	String name;
 	final DateTime date;
 
 	String? author;
@@ -19,7 +19,7 @@ class Message implements Comparable {
 
 	Future<void> addDetails() async {
 		final details = await Cloud.entityDetails(Collection.messages, id);
-		content = details[Field.message.name];
+		content = details[Field.content.name];
 		author = details[Field.author.name];
 	}
 

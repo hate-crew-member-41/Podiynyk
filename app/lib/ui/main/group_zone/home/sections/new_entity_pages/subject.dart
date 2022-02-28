@@ -56,7 +56,7 @@ class NewSubjectInfoPage extends StatelessWidget {
 		final topic = _topicField.text, info = _infoField.text;
 		if (topic.isEmpty || info.isEmpty) return false;
 
-		_subject.info!.add(SubjectInfo(name: topic, info: info));
+		_subject.info!.add(SubjectInfo(name: topic, content: info));
 		Cloud.updateSubjectInfo(_subject);
 		return true;
 	}

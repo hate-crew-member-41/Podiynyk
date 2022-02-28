@@ -88,8 +88,8 @@ class Local {
 	}
 
 	/// Whether the [collection] entity has not been stored.
-	static bool entityIsNotStored(Field collection, String essence) {
-		return !_entities.get(collection.name)!.contains(essence);
+	static bool entityIsStored(Field collection, String essence) {
+		return _entities.get(collection.name)!.contains(essence);
 	}
 }
 

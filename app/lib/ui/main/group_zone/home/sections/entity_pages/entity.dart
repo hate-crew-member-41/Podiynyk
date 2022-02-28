@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 
 // todo: respond to actions (pop the actions page, display the new entity in the list, remove the deleted one, etc.)
+// todo: apply all labels and changes onDoubleTap on the page instead of onSubmitted?
 class EntityPage extends StatelessWidget {
 	final List<Widget> children;
 	final List<Widget>? actions;
@@ -14,7 +15,7 @@ class EntityPage extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return GestureDetector(
-			// todo: make an ampty list mean no actions instead?
+			// todo: make an empty list mean no actions instead?
 			onLongPress: actions != null ? () {
 				Navigator.of(context).push(MaterialPageRoute(builder: (context) => Scaffold(
 					body: Column(

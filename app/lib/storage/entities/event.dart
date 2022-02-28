@@ -10,7 +10,7 @@ class Event extends LabelableEntity implements Comparable {
 	final String id;
 	final String? subjectName;
 	final DateTime date;
-	late bool isShown;
+	late bool isHidden;
 
 	String? note;
 
@@ -21,7 +21,7 @@ class Event extends LabelableEntity implements Comparable {
 		date = (entry.value[Field.date.name] as Timestamp).toDate(),
 		super(initialName: entry.value[Field.name.name] as String)
 	{
-		isShown = Local.entityIsNotStored(Field.hiddenEvents, essence);
+		isHidden = Local.entityIsStored(Field.hiddenEvents, essence);
 	}
 
 	Future<void> addDetails() async {
@@ -34,12 +34,12 @@ class Event extends LabelableEntity implements Comparable {
 
 	void hide() {
 		Local.storeEntity(Field.hiddenEvents, essence);
-		isShown = false;
+		isHidden = true;
 	}
 
 	void show() {
 		Local.deleteEntity(Field.hiddenEvents, essence);
-		isShown = true;
+		isHidden = false;
 	}
 
 	@override

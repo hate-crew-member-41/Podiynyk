@@ -31,8 +31,8 @@ class NewMessagePage extends StatelessWidget {
 		if (subject.isEmpty || content.isEmpty) return false;
 
 		Cloud.addMessage(
-			topic: subject,
-			message: content,
+			name: subject,
+			content: content,
 		);
 		return true;
 	}

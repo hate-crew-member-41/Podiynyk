@@ -317,20 +317,34 @@ class Cloud {
 
 	/// Adds a [Message] with the arguments unless it exists.
 	static Future<void> addMessage({
-		required String topic,
-		required String message,
+		required String name,
+		required String content,
 	}) async => await _addEntity(
 		collection: Collection.messages,
-		existingEquals: (existing) => existing[Field.name.name] == topic,
+		existingEquals: (existing) => existing[Field.name.name] == name,
 		entity: {
-			Field.name.name: topic,
+			Field.name.name: name,
 			Field.date.name: DateTime.now()
 		},
 		details: {
-			Field.message.name: message,
+			Field.content.name: content,
 			Field.author.name: Local.name
 		},
 	);
+
+	/// Updates the [message]'s name (topic).
+	static Future<void> updateMessageName(Message message) async {
+		await Collection.messages.ref.update({
+			'${message.id}.${Field.name.name}': message.name
+		});
+	}
+
+	/// Updates the [message]'s content.
+	static Future<void> updateMessageContent(Message message) async {
+		await Collection.messages.detailsRef(message.id).update({
+			Field.content.name: message.content
+		});
+	}
 
 	// todo: define
 	/// Adds a [Question] with the arguments unless it exists.
