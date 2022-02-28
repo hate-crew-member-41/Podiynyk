@@ -6,7 +6,7 @@ import '../fields.dart';
 import '../local.dart';
 
 
-class Event extends LabelableEntity {
+class Event extends LabelableEntity implements Comparable {
 	final String id;
 	final String? subjectName;
 	final DateTime date;
@@ -44,4 +44,7 @@ class Event extends LabelableEntity {
 
 	@override
 	String get essence => '$subjectName.$initialName';
+
+	@override
+	int compareTo(dynamic other) => date.compareTo(other.date);
 }

@@ -50,27 +50,11 @@ extension on CloudData {
 }
 
 // todo: move the sort logic to the entity class as compareTo method
-
-extension on List<IdentificationOption> {
-	void sortByName() => sort((a, b) => a.name.compareTo(b.name));
-}
-
 extension on List<Student> {
 	void sortById() => sort((a, b) => int.parse(a.id).compareTo(int.parse(b.id)));
 	void sortByName() => sort((a, b) => a.name.compareTo(b.name));
 }
 
-extension on List<Subject> {
-	void sortByName() => sort((a, b) => a.name.compareTo(b.name));
-}
-
-extension on List<Event> {
-	void sortByDate() => sort((a, b) => a.date.compareTo(b.date));
-}
-
-extension on List<Message> {
-	void sortByDate() => sort((a, b) => b.date.compareTo(a.date));
-}
 
 class Cloud {
 	static final _cloud = FirebaseFirestore.instance;
@@ -112,7 +96,7 @@ class Cloud {
 				id: entry.key,
 				name: entry.value,
 			)
-		]..sortByName();
+		]..sort();
 	}
 
 	/// Adds the user to the group. If they are the group's first student, initializes the group's documents.
@@ -213,7 +197,7 @@ class Cloud {
 
 		final events = [
 			for (final entry in snapshots.last.data()!.entries) Event.fromCloudFormat(entry)
-		]..sortByDate();
+		]..sort();
 
 		return [
 			for (final entry in snapshots.first.data()!.entries) Subject.fromCloudFormat(
@@ -222,7 +206,7 @@ class Cloud {
 					event.subjectName == entry.value[Field.name.name]
 				).toList()
 			)
-		]..sortByName();
+		]..sort();
 	}
 
 	/// The sorted names of the group's [Subject]s.
@@ -238,7 +222,7 @@ class Cloud {
 		final snapshot = await Collection.events.ref.get();
 		return [
 			for (final entry in snapshot.data()!.entries) Event.fromCloudFormat(entry)
-		]..sortByDate();
+		]..sort();
 	}
 
 	/// The group's sorted non-subject [Event]s.
@@ -250,7 +234,7 @@ class Cloud {
 
 		return [
 			for (final entry in eventEntries) Event.fromCloudFormat(entry)
-		]..sortByDate();
+		]..sort();
 	}
 
 	/// The group's [Message]s without the details.
@@ -258,7 +242,7 @@ class Cloud {
 		final snapshot = await Collection.messages.ref.get();
 		return [
 			for (final entry in snapshot.data()!.entries) Message.fromCloudFormat(entry)
-		]..sortByDate();
+		]..sort();
 	}
 
 	// todo: define
@@ -339,7 +323,7 @@ class Cloud {
 		collection: Collection.messages,
 		existingEquals: (existing) => existing[Field.name.name] == topic,
 		entity: {
-			Field.subject.name: topic,
+			Field.name.name: topic,
 			Field.date.name: DateTime.now()
 		},
 		details: {

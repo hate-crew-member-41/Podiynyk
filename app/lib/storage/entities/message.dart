@@ -4,7 +4,7 @@ import '../cloud.dart';
 import '../fields.dart';
 
 
-class Message {
+class Message implements Comparable {
 	final String id;
 	final String name;
 	final DateTime date;
@@ -22,4 +22,7 @@ class Message {
 		content = details[Field.message.name];
 		author = details[Field.author.name];
 	}
+
+	@override
+	int compareTo(dynamic other) => other.date.compareTo(date);
 }

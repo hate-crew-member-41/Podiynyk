@@ -1,13 +1,13 @@
 import 'identification_option.dart';
 
 
-class Department implements IdentificationOption {
+class Department extends IdentificationOption {
 	@override
 	final String id;
 	@override
 	final String name;
 	
-	const Department({
+	Department({
 		required this.id,
 		required this.name,
 	});

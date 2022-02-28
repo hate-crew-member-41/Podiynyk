@@ -6,7 +6,7 @@ import 'event.dart';
 import 'labelable.dart';
 
 
-class Subject extends LabelableEntity {
+class Subject extends LabelableEntity implements Comparable {
 	final String id;
 	late bool isFollowed;
 	late final List<Event> events;
@@ -57,6 +57,9 @@ class Subject extends LabelableEntity {
 
 	@override
 	String get essence => initialName;
+
+	@override
+	int compareTo(dynamic other) => name.compareTo(other.name);
 }
 
 

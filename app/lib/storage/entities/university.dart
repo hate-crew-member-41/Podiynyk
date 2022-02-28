@@ -4,13 +4,13 @@ import 'identification_option.dart';
 import 'department.dart';
 
 
-class University implements IdentificationOption {
+class University extends IdentificationOption {
 	@override
 	final String id;
 	@override
 	final String name;
 	
-	const University({
+	University({
 		required this.id,
 		required this.name
 	});

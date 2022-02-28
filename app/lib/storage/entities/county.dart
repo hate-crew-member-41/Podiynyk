@@ -4,13 +4,13 @@ import 'identification_option.dart';
 import 'university.dart';
 
 
-class County implements IdentificationOption {
+class County extends IdentificationOption {
 	@override
 	final String id;
 	@override
 	final String name;
 	
-	const County({
+	County({
 		required this.id,
 		required this.name
 	});
