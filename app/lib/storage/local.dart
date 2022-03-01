@@ -13,9 +13,9 @@ class Local {
 	static Future<void> init() async {
 		await Hive.initFlutter();
 		// | uncomment, hot restart, comment | to delete all local data
-		// await Future.wait([
-		// 	(await Hive.openBox<String>(DataBox.user.name)).deleteFromDisk(),
-		// ]);
+		await Future.wait([
+			(await Hive.openBox<String>(DataBox.user.name)).deleteFromDisk(),
+		]);
 		await Future.wait([
 			Hive.openBox<String>(DataBox.user.name).then((box) => _user = box),
 			Hive.openBox<Map<String, String>>(DataBox.labels.name).then((box) => _labels = box),

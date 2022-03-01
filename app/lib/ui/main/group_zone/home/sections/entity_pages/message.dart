@@ -65,7 +65,6 @@ class _MessagePageState extends State<MessagePage> {
 	void _setName(String name) {
 		if (name.isNotEmpty) {
 			_message.name = name;
-			Cloud.updateMessageName(_message);
 		}
 		else {
 			_nameField.text = _message.name;
@@ -75,7 +74,6 @@ class _MessagePageState extends State<MessagePage> {
 	void _setContent(String content) {
 		if (content.isNotEmpty) {
 			_message.content = content;
-			Cloud.updateMessageContent(_message);
 		}
 		else {
 			_contentField.text = _message.content!;

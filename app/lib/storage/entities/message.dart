@@ -6,15 +6,26 @@ import '../fields.dart';
 
 class Message implements Comparable {
 	final String id;
-	String name;
 	final DateTime date;
-
 	String? author;
-	String? content;
+
+	String _name;
+	String get name => _name;
+	set name(String name) {
+		_name = name;
+		Cloud.updateMessageName(this);
+	}
+
+	String? _content;
+	String? get content => _content;
+	set content(String? content) {
+		_content = content;
+		Cloud.updateMessageContent(this);
+	}
 
 	Message.fromCloudFormat(MapEntry<String, dynamic> entry) :
 		id = entry.key,
-		name = entry.value[Field.name.name] as String,
+		_name = entry.value[Field.name.name] as String,
 		date = (entry.value[Field.date.name] as Timestamp).toDate();
 
 	Future<void> addDetails() async {

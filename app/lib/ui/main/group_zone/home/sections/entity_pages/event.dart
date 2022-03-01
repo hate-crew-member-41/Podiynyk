@@ -46,12 +46,12 @@ class _EventPageState extends State<EventPage> {
 				if (_event.subjectName != null) Text(_event.subjectName!),
 				DateField(
 					initialDate: _event.date,
-					onDatePicked: _setDate,
+					onDatePicked: (date) => _event.date = date,
 				),
 				if (hasNote) InputField(
 					controller: _noteField,
 					name: "note",
-					onSubmitted: _setNote
+					onSubmitted: (note) => _event.note = note.isNotEmpty ? note : null
 				)
 			],
 			actions: [
@@ -72,10 +72,10 @@ class _EventPageState extends State<EventPage> {
 				),
 				!_event.isHidden ? EntityActionButton(
 					text: "hide",
-					action: _event.hide
+					action: () => _event.isHidden = true
 				) : EntityActionButton(
 					text: "show",
-					action: _event.show
+					action: () => _event.isHidden = false
 				),
 				EntityActionButton(
 					text: "delete",
@@ -90,29 +90,11 @@ class _EventPageState extends State<EventPage> {
 		if (label.isEmpty) _nameField.text = _event.name;
 	}
 
-	void _setDate(DateTime date) {
-		if (date == _event.date) return;
-
-		_event.date = date;
-		Cloud.updateEventDate(_event);
-	}
-
-	void _setNote(String note) {
-		if (note.isNotEmpty) {
-			_event.note = note;
-			Cloud.updateEventNote(_event);
-		}
-		else {
-			_noteField.text = _event.note!;
-		}
-	}
-
 	void _addNote() {
 		final note = _noteField.text;
 		if (note.isEmpty) return;
 
 		_event.note = note;
-		Cloud.updateEventNote(_event);
 		Navigator.of(context).pop();
 	}
 }

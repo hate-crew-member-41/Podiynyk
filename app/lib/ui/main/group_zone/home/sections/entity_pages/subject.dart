@@ -51,7 +51,7 @@ class _SubjectPageState extends State<SubjectPage> {
 					onPressed: () => _showEntities(
 						[for (final item in info) EntityTile(
 							title: item.name,
-							pageBuilder: () => SubjectInfoPage(subject: _subject, item: item),
+							pageBuilder: () => SubjectInfoPage(item),
 						)],
 						newEntityPageBuilder: (_) => NewSubjectInfoPage(_subject)
 					)
@@ -67,10 +67,10 @@ class _SubjectPageState extends State<SubjectPage> {
 			actions: [
 				_subject.isFollowed ? EntityActionButton(
 					text: "unfollow",
-					action: _subject.unfollow
+					action: () => _subject.isFollowed = false
 				) : EntityActionButton(
 					text: "follow",
-					action: _subject.follow
+					action: () => _subject.isFollowed = true
 				),
 				// todo: confirmation
 				if (Cloud.role == Role.leader) EntityActionButton(
@@ -108,17 +108,13 @@ class _SubjectPageState extends State<SubjectPage> {
 
 
 class SubjectInfoPage extends StatelessWidget {
-	final Subject subject;
-	final SubjectInfo item;
+	final SubjectInfo info;
 	final TextEditingController _nameField;
 	final TextEditingController _contentField;
 
-	SubjectInfoPage({
-		required this.subject,
-		required this.item
-	}) :
-		_nameField = TextEditingController(text: item.name),
-		_contentField = TextEditingController(text: item.content);
+	SubjectInfoPage(this.info) :
+		_nameField = TextEditingController(text: info.name),
+		_contentField = TextEditingController(text: info.content);
 
 	@override
 	Widget build(BuildContext context) {
@@ -137,26 +133,22 @@ class SubjectInfoPage extends StatelessWidget {
 			],
 			actions: Cloud.role == Role.ordinary ? null : [EntityActionButton(
 				text: "delete",
-				action: () {
-					subject.info!.remove(item);
-					Cloud.updateSubjectInfo(subject);
-				}
+				action: info.delete
 			)]
 		);
 	}
 
 	void _setLabel(String label) {
-		item.label = label;
-		if (label.isEmpty) _nameField.text = item.name;
+		info.label = label;
+		if (label.isEmpty) _nameField.text = info.name;
 	}
 
 	void _setContent(String content) {
 		if (content.isNotEmpty) {
-			item.content = content;
-			Cloud.updateSubjectInfo(subject);
+			info.content = content;
 		}
 		else {
-			_contentField.text = item.content;
+			_contentField.text = info.content;
 		}
 	}
 }
