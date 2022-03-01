@@ -19,8 +19,8 @@ class Identification extends StatefulWidget {
 }
 
 class _IdentificationState extends State<Identification> {
-	static const _intro = "This text is a placeholder, so here comes Loreeeeem... "
-		"Lorem ipsum dolor, sit amet consectetur adipisicing elit. Cumque, architecto.";
+	static const _intro = "This text is an intro placeholder, so the only reason this is explained in such detail "
+		"is that some number of words is needed here.";
 
 	late Widget _content;
 

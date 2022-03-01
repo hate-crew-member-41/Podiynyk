@@ -13,7 +13,6 @@ class NewEntityPage extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return GestureDetector(
-			// todo: display the new entity in the list (consider updating the list instead of rebuilding)
 			onDoubleTap: () {
 				final added = add(context);
 				if (added) Navigator.of(context).pop();

@@ -69,7 +69,6 @@ abstract class CloudEntitiesSection<D extends CloudEntitiesSectionData<E>, E> ex
 
 	const CloudEntitiesSection(this.data);
 
-	// todo: is it always equal to this.counted?
 	Future<List<E>> get entities;
 
 	@override

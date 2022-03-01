@@ -49,12 +49,6 @@ extension on CloudData {
 	}
 }
 
-// todo: move the sort logic to the entity class as compareTo method
-extension on List<Student> {
-	void sortById() => sort((a, b) => int.parse(a.id).compareTo(int.parse(b.id)));
-	void sortByName() => sort((a, b) => a.name.compareTo(b.name));
-}
-
 
 class Cloud {
 	static final _cloud = FirebaseFirestore.instance;
@@ -151,8 +145,6 @@ class Cloud {
 		return isElected;
 	}
 
-	// todo: create a Firestore cloud function to change the document asa there are enough confirmations,
-	// todo: make the function init the group's documents instead of [enterGroup]
 	/// A [Stream] of updates of the group's [Student]s and confirmations for them to be the group's leader.
 	/// As soon as the leader is determined, `null` is returned.
 	static Stream<List<Student>?> get leaderElectionUpdates {
@@ -164,7 +156,7 @@ class Cloud {
 					id,
 					data: data
 				)
-			]..sortById();
+			]..sort((a, b) => a.compareIdTo(b));
 
 			// tofix: actually take the role from the data
 			_role = Role.ordinary;
@@ -261,7 +253,7 @@ class Cloud {
 				id,
 				data: data
 			)
-		]..sortByName();
+		]..sort();
 
 		_role = students.firstWhere((student) => student.name == Local.name).role!;
 		return students;

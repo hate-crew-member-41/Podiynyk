@@ -12,7 +12,6 @@ import 'sections/subjects.dart';
 import 'sections/settings.dart';
 
 
-// todo: restrict access to the actions (FAD, entity actions)
 class Home extends StatefulWidget {
 	const Home();
 

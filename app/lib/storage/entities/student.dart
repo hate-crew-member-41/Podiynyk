@@ -2,7 +2,7 @@ import 'labelable.dart';
 import '../fields.dart';
 
 
-class Student extends LabelableEntity {
+class Student extends LabelableEntity implements Comparable {
 	final String id;
 	final Role? role;
 	final int? confirmationCount;
@@ -19,6 +19,10 @@ class Student extends LabelableEntity {
 
 	@override
 	Field get labelCollection => Field.students;
+
+	@override
+	int compareTo(dynamic other) => name.compareTo(other.name);
+	int compareIdTo(Student other) => int.parse(id).compareTo(int.parse(other.id));
 }
 
 
