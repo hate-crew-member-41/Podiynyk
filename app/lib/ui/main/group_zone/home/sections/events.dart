@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/event.dart';
+import 'package:podiynyk/storage/entities/student.dart' show Role;
 
 import 'section.dart';
 import 'agenda.dart';
@@ -29,7 +30,7 @@ class NonSubjectEventsSection extends CloudEntitiesSection<NonSubjectEventsSecti
 	@override
 	IconData get sectionIcon => icon;
 	@override
-	Widget get actionButton => NewEntityButton(
+	Widget? get actionButton => Cloud.role == Role.ordinary ? super.actionButton : NewEntityButton(
 		pageBuilder: (_) => const NewEventPage.noSubjectEvent()
 	);
 

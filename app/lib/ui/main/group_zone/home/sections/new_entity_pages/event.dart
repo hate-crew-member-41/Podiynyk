@@ -20,10 +20,10 @@ class NewEventPage extends StatefulWidget {
 		_subjectRequired = false,
 		_subjectName = null;
 
-	const NewEventPage.subjectEvent(String subject) :
+	const NewEventPage.subjectEvent(String subjectName) :
 		_askSubject = false,
 		_subjectRequired = true,
-		_subjectName = subject,
+		_subjectName = subjectName,
 		subjectNames = null;
 
 	const NewEventPage.noSubjectEvent() :

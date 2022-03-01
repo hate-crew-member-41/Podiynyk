@@ -7,7 +7,7 @@ import 'package:podiynyk/storage/entities/subject.dart';
 import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
 
 import '../agenda.dart' show EventTile;
-import '../section.dart' show EntityTile;
+import '../section.dart' show EntityTile, NewEntityButton;
 import '../new_entity_pages/event.dart';
 import '../new_entity_pages/subject.dart' show NewSubjectInfoPage;
 import 'entity.dart';
@@ -95,11 +95,8 @@ class _SubjectPageState extends State<SubjectPage> {
 						children: entities
 					)
 				),
-				floatingActionButton: FloatingActionButton(
-					child: const Icon(Icons.add),
-					onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-						builder: newEntityPageBuilder
-					))
+				floatingActionButton: Cloud.role == Role.ordinary ? null : NewEntityButton(
+					pageBuilder: newEntityPageBuilder
 				)
 			)
 		));

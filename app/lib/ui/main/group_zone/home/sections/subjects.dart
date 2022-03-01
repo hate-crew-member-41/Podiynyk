@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/entities/student.dart' show Role;
 import 'package:podiynyk/storage/entities/subject.dart';
 
 import 'section.dart';
@@ -27,7 +28,7 @@ class SubjectsSection extends CloudEntitiesSection<SubjectsSectionCloudData, Sub
 	@override
 	IconData get sectionIcon => icon;
 	@override
-	Widget get actionButton => NewEntityButton(
+	Widget? get actionButton => Cloud.role != Role.leader ? super.actionButton : NewEntityButton(
 		pageBuilder: (_) => NewSubjectPage()
 	);
 

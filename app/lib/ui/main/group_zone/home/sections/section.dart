@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 
 extension on int {
-	/// The 2-digit [String] representation. If less than 10, a leading zero is added.
+	/// The 2-digit [String] representation. May start with '0'.
 	String get twoDigitRepr => toString().padLeft(2, '0');
 }
 
@@ -15,7 +15,7 @@ extension EntityDate on DateTime {
 		return repr;
 	}
 
-	/// The representation with the weekday and the time.
+	/// The representation with the weekday and the time if it was specified.
 	String get fullRepr {
 		late String repr;
 		switch (weekday) {

@@ -6,7 +6,7 @@ import 'sections/agenda.dart';
 import 'sections/events.dart';
 import 'sections/group.dart';
 import 'sections/messages.dart';
-import 'sections/questions.dart';
+// import 'sections/questions.dart';
 import 'sections/section.dart';
 import 'sections/subjects.dart';
 import 'sections/settings.dart';
@@ -77,11 +77,11 @@ class _HomeState extends State<Home> {
 						icon: MessagesSection.icon,
 						setSection: _setSectionFunction(() => MessagesSection())
 					),
-					SectionTile(
-						name: QuestionsSection.name,
-						icon: QuestionsSection.icon,
-						setSection: _setSectionFunction(() => QuestionsSection())
-					),
+					// SectionTile(
+					// 	name: QuestionsSection.name,
+					// 	icon: QuestionsSection.icon,
+					// 	setSection: _setSectionFunction(() => QuestionsSection())
+					// ),
 					SectionTile(
 						name: GroupSection.name,
 						icon: GroupSection.icon,
@@ -92,12 +92,12 @@ class _HomeState extends State<Home> {
 						name: SettingsSection.name,
 						icon: SettingsSection.icon,
 						setSection: _setSectionFunction(() => const SettingsSection())
-					),
+					)
 				]
 			)
 		),
 		drawerEdgeDragWidth: 150,
-		floatingActionButton: _section.actionButton,
+		floatingActionButton: _section.actionButton
 	);
 
 	void Function() _setSectionFunction<S extends Section>(S Function() sectionBuilder) => () {

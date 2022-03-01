@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/event.dart';
+import 'package:podiynyk/storage/entities/student.dart' show Role;
 
 import 'package:podiynyk/ui/main/common/fields.dart';
 
@@ -47,6 +48,7 @@ class _EventPageState extends State<EventPage> {
 				DateField(
 					initialDate: _event.date,
 					onDatePicked: (date) => _event.date = date,
+					enabled: Cloud.role != Role.ordinary
 				),
 				if (hasNote) InputField(
 					controller: _noteField,
@@ -77,7 +79,7 @@ class _EventPageState extends State<EventPage> {
 					text: "show",
 					action: () => _event.isHidden = false
 				),
-				EntityActionButton(
+				if (Cloud.role != Role.ordinary) EntityActionButton(
 					text: "delete",
 					action: () => Cloud.deleteEvent(_event)
 				)

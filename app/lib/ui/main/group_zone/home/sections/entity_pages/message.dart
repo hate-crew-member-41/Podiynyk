@@ -35,8 +35,9 @@ class _MessagePageState extends State<MessagePage> {
 	@override
 	Widget build(BuildContext context) {
 		final author = _message.author;
-		final content = _message.content;
+		final isAuthor = Local.name == author;
 
+		final content = _message.content;
 		final hasContent = content != null;
 		if (hasContent) _contentField.text = content;
 
@@ -45,6 +46,7 @@ class _MessagePageState extends State<MessagePage> {
 				InputField(
 					controller: _nameField,
 					name: "topic",
+					enabled: isAuthor,
 					onSubmitted: _setName,
 				),
 				Text(_message.date.fullRepr),
@@ -52,10 +54,11 @@ class _MessagePageState extends State<MessagePage> {
 				if (hasContent) InputField(
 					controller: _contentField,
 					name: "content",
+					enabled: isAuthor,
 					onSubmitted: _setContent,
 				)
 			],
-			actions: Local.name != _message.author ? null : [EntityActionButton(
+			actions: !isAuthor ? null : [EntityActionButton(
 				text: "delete",
 				action: () => Cloud.deleteMessage(_message)
 			)]

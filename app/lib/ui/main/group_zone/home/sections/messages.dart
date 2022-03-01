@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/message.dart';
+import 'package:podiynyk/storage/entities/student.dart' show Role;
 
 import 'section.dart';
 import 'entity_pages/message.dart';
@@ -27,7 +28,7 @@ class MessagesSection extends CloudEntitiesSection<MessagesSectionCloudData, Mes
 	@override
 	IconData get sectionIcon => icon;
 	@override
-	Widget get actionButton => NewEntityButton(
+	Widget? get actionButton => Cloud.role == Role.ordinary ? super.actionButton : NewEntityButton(
 		pageBuilder: (_) => NewMessagePage()
 	);
 

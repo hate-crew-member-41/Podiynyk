@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/student.dart';
+
+import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
 
 import 'entity.dart';
 
@@ -19,9 +21,9 @@ class StudentPage extends StatelessWidget {
 	Widget build(BuildContext context) {
 		return EntityPage(
 			children: [
-				TextField(
+				InputField(
 					controller: _nameField,
-					decoration: const InputDecoration(hintText: "name"),
+					name: "name",
 					onSubmitted: _setLabel
 				),
 				if (_student.role != Role.ordinary) Text(_student.role!.name)

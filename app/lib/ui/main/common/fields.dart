@@ -6,11 +6,13 @@ import 'package:podiynyk/ui/main/group_zone/home/sections/section.dart' show Ent
 class InputField extends StatefulWidget {
 	final TextEditingController controller;
 	final String name;
+	final bool enabled;
 	final void Function(String text)? onSubmitted;
 
 	const InputField({
 		required this.controller,
 		required this.name,
+		this.enabled = true,
 		this.onSubmitted
 	});
 
@@ -32,6 +34,7 @@ class _InputFieldState extends State<InputField> {
 		return TextField(
 			controller: widget.controller,
 			focusNode: _focusNode,
+			enabled: widget.enabled,
 			onSubmitted: widget.onSubmitted,
 			showCursor: false,
 			decoration: InputDecoration(
@@ -82,10 +85,12 @@ class OptionField extends StatelessWidget {
 class DateField extends StatefulWidget {
 	final DateTime? initialDate;
 	final void Function(DateTime) onDatePicked;
+	final bool enabled;
 
 	const DateField({
 		this.initialDate,
-		required this.onDatePicked
+		required this.onDatePicked,
+		this.enabled = true
 	});
 
 	@override
@@ -108,7 +113,7 @@ class _DateFieldState extends State<DateField> {
 		return OptionField(
 			controller: _field,
 			name: "date",
-			showOptions: _ask
+			showOptions: (context) { if (widget.enabled) _ask(context); }
 		);
 	}
 

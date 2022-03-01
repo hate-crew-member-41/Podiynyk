@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/event.dart';
+import 'package:podiynyk/storage/entities/student.dart' show Role;
 import 'package:podiynyk/storage/entities/subject.dart';
 
 import 'section.dart';
@@ -41,7 +42,7 @@ class AgendaSection extends CloudEntitiesSection<AgendaSectionCloudData, Event> 
 	@override
 	IconData get sectionIcon => icon;
 	@override
-	Widget get actionButton => const NewSubjectEventButton();
+	Widget? get actionButton => Cloud.role == Role.ordinary ? super.actionButton : const NewSubjectEventButton();
 
 	@override
 	Future<List<Event>> get entities => data.events;
