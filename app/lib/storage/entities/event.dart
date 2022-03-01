@@ -9,18 +9,19 @@ import '../local.dart';
 class Event extends LabelableEntity implements Comparable {
 	final String id;
 	final String? subjectName;
+	late final String? subjectLabel;
 	DateTime date;
 	late bool isHidden;
 
 	String? note;
 
-	// tofix: take the subject's label into account
 	Event.fromCloudFormat(MapEntry<String, dynamic> entry) :
 		id = entry.key,
 		subjectName = entry.value[Field.subject.name],
 		date = (entry.value[Field.date.name] as Timestamp).toDate(),
 		super(initialName: entry.value[Field.name.name] as String)
 	{
+		subjectLabel = subjectName != null ? Local.entityLabel(Field.subjects, subjectName!) : null;
 		isHidden = Local.entityIsStored(Field.hiddenEvents, essence);
 	}
 

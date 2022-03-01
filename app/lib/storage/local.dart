@@ -15,7 +15,6 @@ class Local {
 		// | uncomment, hot restart, comment | to delete all local data
 		// await Future.wait([
 		// 	(await Hive.openBox<String>(DataBox.user.name)).deleteFromDisk(),
-		// 	(await Hive.openBox<List<String>>(DataBox.entities.name)).deleteFromDisk(),
 		// ]);
 		await Future.wait([
 			Hive.openBox<String>(DataBox.user.name).then((box) => _user = box),

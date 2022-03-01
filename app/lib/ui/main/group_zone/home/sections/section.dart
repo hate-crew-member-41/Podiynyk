@@ -29,21 +29,19 @@ extension EntityDate on DateTime {
 		}
 
 		repr = '$repr $dateRepr';
-		if (_hasTime) repr = '$repr, ${hour.twoDigitRepr}:${minute.twoDigitRepr}';
+		if (this != withDefaultTime) repr = '$repr, ${hour.twoDigitRepr}:${minute.twoDigitRepr}';
 
 		return repr;
 	}
 
 	/// The [EntityDate] with [time]'s time parameters.
-	DateTime withTime(TimeOfDay time) => DateTime(year, month, day, time.hour, time.minute, 1);
+	DateTime withTime(TimeOfDay time) => DateTime(year, month, day, time.hour, time.minute);
 
-	/// Whether the [EntityDate] is past.
-	bool get isPast {
-		if (_hasTime) return isBefore(DateTime.now());
-		return day < DateTime.now().day;
-	}
+	/// The last moment of the [EntityDate].
+	DateTime get withDefaultTime => DateTime(year, month, day).add(const Duration(hours: 24) - const Duration(seconds: 1));
 
-	bool get _hasTime => !(hour == 0 && minute == 0 && second == 0);
+	/// Whether the [EntityDate] is before now.
+	bool get isPast => isBefore(DateTime.now());
 }
 
 

@@ -9,18 +9,18 @@ abstract class LabelableEntity {
 	String get name => _label ?? initialName;
 
 	LabelableEntity({required this.initialName}) {
-		_label = Local.entityLabel(Field.events, essence);
+		_label = Local.entityLabel(labelCollection, essence);
 	}
 
 	set label(String label) {
 		if (label == _label) return;
 
 		if (label.isEmpty || label == name) {
-			Local.deleteEntityLabel(Field.events, essence);
+			Local.deleteEntityLabel(labelCollection, essence);
 			_label = null;
 		}
 		else {
-			Local.setEntityLabel(Field.events, essence, label);
+			Local.setEntityLabel(labelCollection, essence, label);
 			_label = label;
 		}
 	}

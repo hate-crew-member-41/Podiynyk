@@ -99,6 +99,7 @@ class _DateFieldState extends State<DateField> {
 	@override
 	void initState() {	
 		super.initState();
+		_date = widget.initialDate;
 		_field.text = widget.initialDate?.fullRepr ?? "";
 	}
 
@@ -126,7 +127,7 @@ class _DateFieldState extends State<DateField> {
 				context: context,
 				initialTime: TimeOfDay.now().replacing(minute: 0)
 			);
-			if (time != null) _date = _date!.withTime(time);
+			_date = time != null ? _date!.withTime(time) : _date!.withDefaultTime;
 
 			_field.text = _date!.fullRepr;
 			widget.onDatePicked(_date!);

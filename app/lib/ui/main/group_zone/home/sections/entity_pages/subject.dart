@@ -43,7 +43,7 @@ class _SubjectPageState extends State<SubjectPage> {
 			children: [
 				InputField(
 					controller: _nameField,
-					name: "subject",
+					name: "name",
 					onSubmitted: _setLabel
 				),
 				if (info != null) TextButton(

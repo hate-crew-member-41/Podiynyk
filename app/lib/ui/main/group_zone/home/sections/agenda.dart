@@ -70,7 +70,7 @@ class EventTile extends StatelessWidget {
 
 	Widget _builder(BuildContext context) => EntityTile(
 		title: event.name,
-		subtitle: showSubject ? event.subjectName : null,
+		subtitle: showSubject ? event.subjectLabel ?? event.subjectName : null,
 		trailing: event.date.dateRepr,
 		pageBuilder: () => EventPage(event)
 	);
