@@ -41,7 +41,7 @@ class Event extends LabelableEntity implements Comparable {
 		super(initialName: entry.value[Field.name.name] as String)
 	{
 		subjectLabel = subjectName != null ? Local.entityLabel(Field.subjects, subjectName!) : null;
-		isHidden = Local.entityIsStored(Field.hiddenEvents, essence);
+		_isHidden = Local.entityIsStored(Field.hiddenEvents, essence);
 	}
 
 	Future<void> addDetails() async {

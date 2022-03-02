@@ -15,7 +15,7 @@ import 'entities/subject.dart';
 import 'entities/university.dart';
 
 
-typedef CloudData = Map<String, dynamic>;
+typedef Document = Map<String, dynamic>;
 
 
 /// The group's [Collection] stored in [FirebaseFirestore].
@@ -32,16 +32,16 @@ enum Collection {
 
 extension on Collection {
 	/// [DocumentReference] to the document with the group's data of [collection] type.
-	DocumentReference<CloudData> get ref =>	
+	DocumentReference<Document> get ref =>	
 		FirebaseFirestore.instance.collection(name).doc(Local.groupId);
 	
 	/// [DocumentReference] to the details of the entity with the [id] in the group's data of [collection] type.
-	DocumentReference<CloudData> detailsRef(String id) =>	
+	DocumentReference<Document> detailsRef(String id) =>	
 		ref.collection(Collection.details.name).doc(id);
 }
 
 
-extension on CloudData {
+extension on Document {
 	int get newId {
 		int id = 0;
 		while (containsKey(id.toString())) id++;
@@ -103,8 +103,9 @@ class Cloud {
 
 			if (snapshot.exists) {
 				final data = snapshot.data()!;
-				id = CloudData.from(data[Field.names.name]).newId.toString();
+				id = Document.from(data[Field.names.name]).newId.toString();
 
+				// todo: think about changing the document format
 				final selfInitField = data.containsKey(Field.roles.name) ? Field.roles : Field.confirmationCounts;
 				transaction.update(document, {
 					'${Field.names.name}.$id': Local.name,
@@ -146,7 +147,7 @@ class Cloud {
 	}
 
 	/// A [Stream] of updates of the group's [Student]s and confirmations for them to be the group's leader.
-	/// As soon as the leader is determined, `null` is returned.
+	/// As soon as the leader is determined, [role] is initialized and `null` is returned.
 	static Stream<List<Student>?> get leaderElectionUpdates {
 		return Collection.groups.ref.snapshots().map((snapshot) {
 			final data = snapshot.data()!;
@@ -158,8 +159,8 @@ class Cloud {
 				)
 			]..sort((a, b) => a.compareIdTo(b));
 
-			// tofix: actually take the role from the data
-			_role = Role.ordinary;
+			final roleIndex = data[Field.roles.name][Local.id] as int;
+			_role = Role.values[roleIndex];
 			return null;
 		});
 	}
@@ -191,7 +192,7 @@ class Cloud {
 			for (final entry in snapshots.last.data()!.entries) Event.fromCloudFormat(entry)
 		]..sort();
 
-		return [
+		final subjects = [
 			for (final entry in snapshots.first.data()!.entries) Subject.fromCloudFormat(
 				entry,
 				events: events.where((event) =>
@@ -199,6 +200,10 @@ class Cloud {
 				).toList()
 			)
 		]..sort();
+		Local.clearStoredEntities(Field.unfollowedSubjects, subjects);
+		Local.clearEntityLabels(Field.subjects, subjects);
+
+		return subjects;
 	}
 
 	/// The sorted names of the group's [Subject]s.
@@ -212,9 +217,14 @@ class Cloud {
 	/// The group's sorted [Event]s without the details.
 	static Future<List<Event>> get events async {
 		final snapshot = await Collection.events.ref.get();
-		return [
+
+		final events = [
 			for (final entry in snapshot.data()!.entries) Event.fromCloudFormat(entry)
 		]..sort();
+		Local.clearStoredEntities(Field.hiddenEvents, events);
+		Local.clearEntityLabels(Field.events, events);
+
+		return events;
 	}
 
 	/// The group's sorted non-subject [Event]s.
@@ -254,13 +264,14 @@ class Cloud {
 				data: data
 			)
 		]..sort();
+		Local.clearEntityLabels(Field.students, students);
 
 		_role = students.firstWhere((student) => student.name == Local.name).role!;
 		return students;
 	}
 
 	/// The details of the [collection] entity with the [id].
-	static Future<CloudData> entityDetails(Collection collection, String id) async {
+	static Future<Document> entityDetails(Collection collection, String id) async {
 		final snapshot = await collection.detailsRef(id).get();
 		return snapshot.data()!;
 	}

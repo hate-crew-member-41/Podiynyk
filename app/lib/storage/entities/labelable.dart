@@ -1,8 +1,9 @@
 import '../fields.dart';
 import '../local.dart';
+import 'storable.dart';
 
 
-abstract class LabelableEntity {
+abstract class LabelableEntity implements StorableEntity {
 	final String initialName;
 	String? _label;
 
@@ -27,5 +28,6 @@ abstract class LabelableEntity {
 
 	Field get labelCollection;
 
+	@override
 	String get essence => initialName;
 }

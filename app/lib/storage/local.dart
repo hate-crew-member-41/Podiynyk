@@ -1,6 +1,8 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'fields.dart';
+import 'entities/labelable.dart';
+import 'entities/storable.dart';
 
 
 // todo: clear stored entities when they are no more
@@ -57,6 +59,11 @@ class Local {
 	/// The user's name.
 	static String get name => _user.get(Field.name.name)!;
 
+	/// The [collection] entity's label.
+	static String? entityLabel(Field collection, String essence) {
+		return _labels.get(collection.name)![essence];
+	}
+
 	/// Sets the [collection] entity's [label].
 	static Future<void> setEntityLabel(Field collection, String essence, String label) async {
 		final field = collection.name;
@@ -69,9 +76,19 @@ class Local {
 		await _labels.put(field, _labels.get(field)!..remove(essence));
 	}
 
-	/// The [collection] entity's label.
-	static String? entityLabel(Field collection, String essence) {
-		return _labels.get(collection.name)![essence];
+	/// Deletes the [collection] entities that do not exist anymore.
+	static Future<void> clearEntityLabels(Field collection, List<LabelableEntity> existing) async {
+		final existingEssences = {for (final entity in existing) entity.essence};
+
+		final field = collection.name;
+		await _labels.put(field, _labels.get(field)!..removeWhere(
+			(essence, _) => !existingEssences.contains(essence)
+		));
+	}
+
+	/// Whether the [collection] entity has not been stored.
+	static bool entityIsStored(Field collection, String essence) {
+		return _entities.get(collection.name)!.contains(essence);
 	}
 
 	/// Stores the [collection] entity.
@@ -86,9 +103,22 @@ class Local {
 		await _entities.put(field, _entities.get(field)!..remove(essence));
 	}
 
-	/// Whether the [collection] entity has not been stored.
-	static bool entityIsStored(Field collection, String essence) {
-		return _entities.get(collection.name)!.contains(essence);
+	/// Deletes the [collection] entities that do not exist anymore.
+	static Future<void> clearStoredEntities(Field collection, List<StorableEntity> existing) async {
+		final existingEssences = {for (final entity in existing) entity.essence};
+
+		// final field = collection.name;
+		// await _entities.put(field, _entities.get(field)!..removeWhere(
+		// 	(essence) => !existingEssences.contains(essence)
+		// ));
+		final field = collection.name;
+		final labels = _entities.get(field)!;
+		print(labels);
+		labels.removeWhere(
+			(essence) => !existingEssences.contains(essence)
+		);
+		print(labels);
+		await _entities.put(field, labels);
 	}
 }
 

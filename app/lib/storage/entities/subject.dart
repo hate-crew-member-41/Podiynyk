@@ -22,7 +22,7 @@ class Subject extends LabelableEntity implements Comparable {
 		id = entry.key,
 		super(initialName: entry.value[Field.name.name] as String)
 	{
-		isFollowed = !Local.entityIsStored(Field.unfollowedSubjects, essence);
+		_isFollowed = !Local.entityIsStored(Field.unfollowedSubjects, essence);
 	}
 
 	static String nameFromCloudFormat(MapEntry<String, dynamic> entry) => entry.value[Field.name.name];
@@ -32,6 +32,7 @@ class Subject extends LabelableEntity implements Comparable {
 		info = [
 			for (final object in details[Field.info.name]) SubjectInfo.fromCloudFormat(object, subject: this)
 		]..sort();
+		Local.clearEntityLabels(Field.subjectInfo, info!);
 	}
 
 	String get eventCountRepr {
