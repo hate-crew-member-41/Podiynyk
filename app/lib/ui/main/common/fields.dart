@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/ui/main/group_zone/home/sections/section.dart' show EntityDate;
+import 'package:podiynyk/storage/entities/date.dart';
 
 
 class InputField extends StatefulWidget {

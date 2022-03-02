@@ -107,18 +107,10 @@ class Local {
 	static Future<void> clearStoredEntities(Field collection, List<StorableEntity> existing) async {
 		final existingEssences = {for (final entity in existing) entity.essence};
 
-		// final field = collection.name;
-		// await _entities.put(field, _entities.get(field)!..removeWhere(
-		// 	(essence) => !existingEssences.contains(essence)
-		// ));
 		final field = collection.name;
-		final labels = _entities.get(field)!;
-		print(labels);
-		labels.removeWhere(
+		await _entities.put(field, _entities.get(field)!..removeWhere(
 			(essence) => !existingEssences.contains(essence)
-		);
-		print(labels);
-		await _entities.put(field, labels);
+		));
 	}
 }
 
