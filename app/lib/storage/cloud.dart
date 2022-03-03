@@ -15,7 +15,7 @@ import 'entities/subject.dart';
 import 'entities/university.dart';
 
 
-typedef Document = Map<String, dynamic>;
+typedef CloudMap = Map<String, dynamic>;
 
 
 /// The group's [Collection] stored in [FirebaseFirestore].
@@ -32,16 +32,16 @@ enum Collection {
 
 extension on Collection {
 	/// [DocumentReference] to the document with the group's data of [collection] type.
-	DocumentReference<Document> get ref =>	
+	DocumentReference<CloudMap> get ref =>	
 		FirebaseFirestore.instance.collection(name).doc(Local.groupId);
 	
 	/// [DocumentReference] to the details of the entity with the [id] in the group's data of [collection] type.
-	DocumentReference<Document> detailsRef(String id) =>	
+	DocumentReference<CloudMap> detailsRef(String id) =>	
 		ref.collection(Collection.details.name).doc(id);
 }
 
 
-extension on Document {
+extension on CloudMap {
 	int get newId {
 		int id = 0;
 		while (containsKey(id.toString())) id++;
@@ -102,23 +102,23 @@ class Cloud {
 			late String id;
 
 			if (snapshot.exists) {
-				final data = snapshot.data()!;
-				id = Document.from(data[Field.names.name]).newId.toString();
+				final students = CloudMap.from(snapshot.data()![Field.students.name]);
+				id = students.newId.toString();
 
-				// todo: think about changing the document format
-				final selfInitField = data.containsKey(Field.roles.name) ? Field.roles : Field.confirmationCounts;
+				final studentsField = Field.students.name;
+				final selfInitField = _leaderIsElected(students) ? Field.role : Field.confirmationCount;
 				transaction.update(document, {
-					'${Field.names.name}.$id': Local.name,
-					'${selfInitField.name}.$id': 0
+					'$studentsField.$id.${Field.name.name}': Local.name,
+					'$studentsField.$id.${selfInitField.name}': 0
 				});
 			}
 			else {
 				id = '0';
-
-				// the [set] method does not support nested fields via dot notation
 				transaction.set(document, {
-					Field.names.name: {id: Local.name},
-					Field.confirmationCounts.name: {id: 0},
+					Field.students.name: {id: {
+						Field.name.name: Local.name,
+						Field.confirmationCount.name: 0
+					}},
 					Field.joined.name: DateTime.now()
 				});
 
@@ -132,14 +132,14 @@ class Cloud {
 		});
 	}
 
-	/// Whether the group is past the [LeaderElection] step. Updates [role].
+	/// Whether the group is past the [LeaderElection] step. Initializes [role].
 	static Future<bool> get leaderIsElected async {
 		final snapshot = await Collection.groups.ref.get();
-		final data = snapshot.data()!;
+		final students = snapshot.data()![Field.students.name];
 
-		final isElected = data.containsKey(Field.roles.name);
+		final isElected = _leaderIsElected(students);
 		if (isElected) {
-			final roleIndex = data[Field.roles.name][Local.id];
+			final roleIndex = students[Local.id][Field.role.name];
 			_role = Role.values[roleIndex];
 		}
 
@@ -147,23 +147,22 @@ class Cloud {
 	}
 
 	/// A [Stream] of updates of the group's [Student]s and confirmations for them to be the group's leader.
-	/// As soon as the leader is determined, [role] is initialized and `null` is returned.
+	/// Initializes [role] and returns `null` as soon as the leader is determined.
 	static Stream<List<Student>?> get leaderElectionUpdates {
 		return Collection.groups.ref.snapshots().map((snapshot) {
-			final data = snapshot.data()!;
+			final students = snapshot.data()![Field.students.name];
 
-			if (data.containsKey(Field.confirmationCounts.name)) return [
-				for (final id in data[Field.names.name].keys) Student.candidateFromCloudFormat(
-					id,
-					data: data
-				)
+			if (!_leaderIsElected(students)) return [
+				for (final entry in students.entries) Student.candidateFromCloudFormat(entry)
 			]..sort((a, b) => a.compareIdTo(b));
 
-			final roleIndex = data[Field.roles.name][Local.id] as int;
+			final roleIndex = students[Local.id][Field.role.name] as int;
 			_role = Role.values[roleIndex];
 			return null;
 		});
 	}
+
+	static bool _leaderIsElected(CloudMap students) => students.values.first.containsKey(Field.role.name);
 
 	/// Adds a confirmation for the student with the id [toId].
 	/// Takes one from the student with the id [fromId] if it is not `null`.
@@ -171,9 +170,10 @@ class Cloud {
 		required String toId,
 		String? fromId
 	}) async {
+		final studentsField = Field.students.name, confirmationCountField = Field.confirmationCount.name;
 		await Collection.groups.ref.update({
-			'${Field.confirmationCounts.name}.$toId': FieldValue.increment(1),
-			if (fromId != null) '${Field.confirmationCounts.name}.$fromId': FieldValue.increment(-1)
+			'$studentsField.$toId.$confirmationCountField': FieldValue.increment(1),
+			if (fromId != null) '$studentsField.$fromId.$confirmationCountField': FieldValue.increment(-1)
 		});
 	}
 
@@ -259,10 +259,7 @@ class Cloud {
 		final data = snapshot.data()!;
 
 		final students = [
-			for (final id in data[Field.names.name].keys) Student.fromCloudFormat(
-				id,
-				data: data
-			)
+			for (final entry in data[Field.students.name].entries) Student.fromCloudFormat(entry)
 		]..sort();
 		Local.clearEntityLabels(Field.students, students);
 
@@ -271,7 +268,7 @@ class Cloud {
 	}
 
 	/// The details of the [collection] entity with the [id].
-	static Future<Document> entityDetails(Collection collection, String id) async {
+	static Future<CloudMap> entityDetails(Collection collection, String id) async {
 		final snapshot = await collection.detailsRef(id).get();
 		return snapshot.data()!;
 	}
@@ -417,15 +414,16 @@ class Cloud {
 	/// Sets the [student]'s [Role] to [role].
 	static Future<void> setRole(Student student, Role role) async {
 		await Collection.groups.ref.update({
-			'${Field.roles.name}.${student.id}': role.index
+			'${Field.students.name}.${student.id}.${Field.role.name}': role.index
 		});
 	}
 
 	/// Sets the [Role] of the [student] to [Role.leader], and the user's role to [Role.trusted].
 	static Future<void> makeLeader(Student student) async {
+		final studentsField = Field.students.name, roleField = Field.role.name;
 		await Collection.groups.ref.update({
-			'${Field.roles.name}.${Local.id}': Role.trusted.index,
-			'${Field.roles.name}.${student.id}': Role.leader.index
+			'$studentsField.${Local.id}.$roleField': Role.trusted.index,
+			'$studentsField.${student.id}.$roleField': Role.leader.index
 		});
 		_role = Role.trusted;
 	}

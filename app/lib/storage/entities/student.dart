@@ -7,15 +7,17 @@ class Student extends LabelableEntity implements Comparable {
 	final Role? role;
 	final int? confirmationCount;
 
-	Student.candidateFromCloudFormat(this.id, {required Map<String, dynamic> data}) :
+	Student.candidateFromCloudFormat(MapEntry<String, dynamic> entry) :
+		id = entry.key,
 		role = null,
-		confirmationCount = data[Field.confirmationCounts.name][id] as int,
-		super(initialName: data[Field.names.name][id] as String);
+		confirmationCount = entry.value[Field.confirmationCount.name] as int,
+		super(initialName: entry.value[Field.name.name] as String);
 
-	Student.fromCloudFormat(this.id, {required Map<String, dynamic> data}) :
-		role = Role.values[data[Field.roles.name][id] as int],
+	Student.fromCloudFormat(MapEntry<String, dynamic> entry) :
+		id = entry.key,
+		role = Role.values[entry.value[Field.role.name] as int],
 		confirmationCount = null,
-		super(initialName: data[Field.names.name][id] as String);
+		super(initialName: entry.value[Field.name.name] as String);
 
 	@override
 	Field get labelCollection => Field.students;

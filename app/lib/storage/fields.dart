@@ -1,7 +1,7 @@
 /// A [Field] used in the [Local] storage or in the [Cloud].
 enum Field {
 	author,
-	confirmationCounts,
+	confirmationCount,
 	content,
 	date,
 	events,
@@ -14,7 +14,7 @@ enum Field {
 	name,
 	names,
 	note,
-	roles,
+	role,
 	students,
 	subject,
 	subjectInfo,
