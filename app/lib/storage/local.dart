@@ -5,7 +5,6 @@ import 'entities/labelable.dart';
 import 'entities/storable.dart';
 
 
-// todo: clear stored entities when they are no more
 class Local {
 	static late final Box<String> _user;
 	static late final Box<Map<String, String>> _labels;

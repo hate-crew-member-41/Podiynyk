@@ -50,7 +50,6 @@ class _InputFieldState extends State<InputField> {
 }
 
 
-// todo: make this private and create a more specific field from it for options lists?
 class OptionField extends StatelessWidget {
 	final TextEditingController controller;
 	final String? name;

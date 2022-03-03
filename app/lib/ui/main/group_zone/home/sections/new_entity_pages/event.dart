@@ -7,9 +7,6 @@ import 'package:podiynyk/ui/main/common/fields.dart';
 import 'entity.dart';
 
 
-// todo: what if there are no subjects?
-// todo: exclude the unfollowed subjects from the options?
-// todo: access the subjectNames through the context?
 class NewEventPage extends StatefulWidget {
 	final bool askSubject;
 	final bool subjectRequired;
@@ -34,6 +31,9 @@ class NewEventPage extends StatefulWidget {
 }
 
 class _NewEventPageState extends State<NewEventPage> {
+	static const _noSubjectsMessage = "To add events of specific subjects, add the subjects first. "
+		"For now, you can only add non-subject events.";
+
 	late final Future<List<String>> _subjectNames;
 
 	final _nameField = TextEditingController();
@@ -88,19 +88,29 @@ class _NewEventPageState extends State<NewEventPage> {
 		if (snapshot.connectionState == ConnectionState.waiting) return const Icon(Icons.cloud_download);
 		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
-		return ListView(
+		final subjectNames = snapshot.data!;
+		return subjectNames.isNotEmpty ? ListView(
 			shrinkWrap: true,
 			children: [
-				for (final name in snapshot.data!) ListTile(
+				for (final name in subjectNames) if (name != _subjectName) ListTile(
 					title: Text(name),
-					onTap: () {
-						_subjectName = name;
-						_subjectField.text = name;
-						Navigator.of(context).pop();
-					}
-				)
+					onTap: () => _handleSubject(context, name)
+				),
+				if (_subjectName != null) ...[
+					const ListTile(),
+					ListTile(
+						title: const Text("none"),
+						onTap: () => _handleSubject(context, null)
+					)
+				]
 			]
-		);
+		) : const Text(_noSubjectsMessage);
+	}
+
+	void _handleSubject(BuildContext context, String? subjectName) {
+		_subjectName = subjectName;
+		_subjectField.text = subjectName ?? '';
+		Navigator.of(context).pop();
 	}
 
 	bool _add(BuildContext context) {
