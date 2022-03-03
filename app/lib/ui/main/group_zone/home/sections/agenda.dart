@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/date.dart';
@@ -23,8 +22,6 @@ class AgendaSectionCloudData extends CloudEntitiesSectionData<Event> {
 		}).toList()
 	);
 
-	final Future<List<String>> subjectNames = Cloud.subjectNames;
-
 	@override
 	Future<Iterable<Event>> get counted => events.then((events) =>
 		events.where((event) => !event.date.isPast)
@@ -43,7 +40,9 @@ class AgendaSection extends CloudEntitiesSection<AgendaSectionCloudData, Event> 
 	@override
 	IconData get sectionIcon => icon;
 	@override
-	Widget? get actionButton => Cloud.role == Role.ordinary ? super.actionButton : const NewSubjectEventButton();
+	Widget? get actionButton => Cloud.role == Role.ordinary ? super.actionButton : NewEntityButton(
+		pageBuilder: (_) => const NewEventPage()
+	);
 
 	@override
 	Future<List<Event>> get entities => data.events;
@@ -76,24 +75,4 @@ class EventTile extends StatelessWidget {
 		trailing: event.date.dateRepr,
 		pageBuilder: () => EventPage(event)
 	);
-}
-
-
-// todo: fetch the subjects after the button has been pressed
-class NewSubjectEventButton extends StatelessWidget {
-	const NewSubjectEventButton();
-
-	@override
-	Widget build(BuildContext context) {
-		return FutureBuilder<List<String>>(
-			future: (context.read<CloudEntitiesSectionData>() as AgendaSectionCloudData).subjectNames,
-			builder: (context, snapshot) {
-				if (snapshot.connectionState == ConnectionState.waiting) return Container();
-				// todo: consider handling
-				return NewEntityButton(
-					pageBuilder: (_) => NewEventPage(subjectNames: snapshot.data!)
-				);
-			}
-		);
-	}
 }

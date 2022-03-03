@@ -11,33 +11,31 @@ import 'entity.dart';
 // todo: exclude the unfollowed subjects from the options?
 // todo: access the subjectNames through the context?
 class NewEventPage extends StatefulWidget {
-	final bool _askSubject;
-	final bool _subjectRequired;
-	final String? _subjectName;
-	final List<String>? subjectNames;
+	final bool askSubject;
+	final bool subjectRequired;
+	final String? subjectName;
 
-	const NewEventPage({required this.subjectNames}) :
-		_askSubject = true,
-		_subjectRequired = false,
-		_subjectName = null;
+	const NewEventPage() :
+		askSubject = true,
+		subjectRequired = false,
+		subjectName = null;
 
-	const NewEventPage.subjectEvent(String subjectName) :
-		_askSubject = false,
-		_subjectRequired = true,
-		_subjectName = subjectName,
-		subjectNames = null;
+	const NewEventPage.subjectEvent(this.subjectName) :
+		askSubject = false,
+		subjectRequired = true;
 
-	const NewEventPage.noSubjectEvent() :
-		_askSubject = false,
-		_subjectRequired = false,
-		_subjectName = null,
-		subjectNames = null;
+	const NewEventPage.nonSubjectEvent() :
+		askSubject = false,
+		subjectRequired = false,
+		subjectName = null;
 
 	@override
 	State<NewEventPage> createState() => _NewEventPageState();
 }
 
 class _NewEventPageState extends State<NewEventPage> {
+	late final Future<List<String>> _subjectNames;
+
 	final _nameField = TextEditingController();
 	final _subjectField = TextEditingController();
 	final _noteField = TextEditingController();
@@ -47,8 +45,9 @@ class _NewEventPageState extends State<NewEventPage> {
 
 	@override
 	void initState() {
-		_subjectName = widget._subjectName;
 		super.initState();
+		_subjectName = widget.subjectName;
+		if (widget.askSubject) _subjectNames = Cloud.subjectNames;
 	}
 
 	@override
@@ -60,7 +59,7 @@ class _NewEventPageState extends State<NewEventPage> {
 				name: "name"
 			),
 			// todo: removing the chosen subject
-			if (widget._askSubject) OptionField(
+			if (widget.askSubject) OptionField(
 				controller: _subjectField,
 				name: "subject",
 				showOptions: _askSubject
@@ -77,28 +76,38 @@ class _NewEventPageState extends State<NewEventPage> {
 	void _askSubject(BuildContext context) {
 		Navigator.of(context).push(MaterialPageRoute(
 			builder: (context) => Scaffold(
-				body: Center(child: ListView(
-					shrinkWrap: true,
-					children: [
-						for (final name in widget.subjectNames!) ListTile(
-							title: Text(name),
-							onTap: () {
-								_subjectName = name;
-								_subjectField.text = name;
-								Navigator.of(context).pop();
-							}
-						)
-					]
+				body: Center(child: FutureBuilder(
+					future: _subjectNames,
+					builder: _subjectsBuilder
 				))
 			)
 		));
+	}
+
+	Widget _subjectsBuilder(BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+		if (snapshot.connectionState == ConnectionState.waiting) return const Icon(Icons.cloud_download);
+		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+
+		return ListView(
+			shrinkWrap: true,
+			children: [
+				for (final name in snapshot.data!) ListTile(
+					title: Text(name),
+					onTap: () {
+						_subjectName = name;
+						_subjectField.text = name;
+						Navigator.of(context).pop();
+					}
+				)
+			]
+		);
 	}
 
 	bool _add(BuildContext context) {
 		final name = _nameField.text;
 		if (
 			name.isEmpty ||
-			(widget._subjectRequired && _subjectName == null) ||
+			(widget.subjectRequired && _subjectName == null) ||
 			_date == null
 		) return false;
 

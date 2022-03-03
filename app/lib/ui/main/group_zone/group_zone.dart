@@ -19,8 +19,8 @@ class _GroupZoneState extends State<GroupZone> {
 
 	@override
 	void initState() {
-		_leaderIsElected = widget.leaderIsElected;
 		super.initState();
+		_leaderIsElected = widget.leaderIsElected;
 	}
 
 	@override

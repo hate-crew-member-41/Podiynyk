@@ -32,7 +32,7 @@ class NonSubjectEventsSection extends CloudEntitiesSection<NonSubjectEventsSecti
 	IconData get sectionIcon => icon;
 	@override
 	Widget? get actionButton => Cloud.role == Role.ordinary ? super.actionButton : NewEntityButton(
-		pageBuilder: (_) => const NewEventPage.noSubjectEvent()
+		pageBuilder: (_) => const NewEventPage.nonSubjectEvent()
 	);
 
 	@override

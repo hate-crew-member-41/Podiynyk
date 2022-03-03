@@ -19,7 +19,7 @@ class Identification extends StatefulWidget {
 }
 
 class _IdentificationState extends State<Identification> {
-	static const _intro = "This text is an intro placeholder, so the only reason this is explained in such detail "
+	static const _intro = "This text is an intro placeholder. The only reason this is explained in such detail "
 		"is that some number of words is needed here.";
 
 	late Widget _content;
@@ -117,8 +117,6 @@ class _IdentificationFormState extends State<IdentificationForm> {
 		context: context,
 		snapshot: snapshot,
 		onTap: (county) async {
-			final navigator = Navigator.of(context);
-
 			final universityChosen = await _showOptions(
 				context: context,
 				title: "university",
@@ -126,7 +124,7 @@ class _IdentificationFormState extends State<IdentificationForm> {
 				builder: _universitiesBuilder
 			);
 
-			if (universityChosen == true) navigator.pop();
+			if (universityChosen == true) Navigator.of(context).pop();
 		}
 	);
 

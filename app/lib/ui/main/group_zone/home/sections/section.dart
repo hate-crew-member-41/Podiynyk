@@ -33,7 +33,7 @@ abstract class CloudEntitiesSection<D extends CloudEntitiesSectionData<E>, E> ex
 			builder: (context, snapshot) {
 				// todo: what is shown while awaiting
 				if (snapshot.connectionState == ConnectionState.waiting) return Center(child: Icon(sectionIcon));
-				if (snapshot.hasError) print(snapshot.error!);  // todo: consider handling
+				// if (snapshot.hasError) print(snapshot.error!);  // todo: consider handling
 
 				return ListView(
 					children: tiles(context, snapshot.data!)

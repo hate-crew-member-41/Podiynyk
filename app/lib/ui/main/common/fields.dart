@@ -25,8 +25,8 @@ class _InputFieldState extends State<InputField> {
 
 	@override
 	void initState() {
-		_focusNode.addListener(() => setState(() {}));
 		super.initState();
+		_focusNode.addListener(() => setState(() {}));
 	}
 
 	@override
