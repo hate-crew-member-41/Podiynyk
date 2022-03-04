@@ -35,7 +35,6 @@ class _NewEventPageState extends State<NewEventPage> {
 		"For now, you can only add non-subject events.";
 
 	late final Future<List<String>> _subjectNames;
-
 	final _nameField = TextEditingController();
 	final _subjectField = TextEditingController();
 	final _noteField = TextEditingController();
@@ -84,6 +83,7 @@ class _NewEventPageState extends State<NewEventPage> {
 		));
 	}
 
+	// tofix: the labels should be displayed
 	Widget _subjectsBuilder(BuildContext context, AsyncSnapshot<List<String>> snapshot) {
 		if (snapshot.connectionState == ConnectionState.waiting) return const Icon(Icons.cloud_download);
 		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling

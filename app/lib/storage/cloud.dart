@@ -386,7 +386,6 @@ class Cloud {
 		return wasWritten;
 	}
 
-	// todo: delete the events
 	/// Deletes the [subject]. The [subject]'s events are kept.
 	static Future<void> deleteSubject(Subject subject) async {
 		await Future.wait([

@@ -38,7 +38,7 @@ class Subject extends LabelableEntity implements Comparable {
 	String get eventCountRepr {
 		final eventCount = events.length;
 		switch (eventCount.compareTo(1)) {
-			case -1: return "no events";
+			case -1: return "no events";  // todo; or null?
 			case 0: return "1 event";
 			default: return "$eventCount events";
 		}
@@ -62,6 +62,7 @@ class Subject extends LabelableEntity implements Comparable {
 }
 
 
+// todo: add id
 class SubjectInfo extends LabelableEntity implements Comparable {
 	final Subject subject;
 

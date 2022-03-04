@@ -47,7 +47,6 @@ class _MessagePageState extends State<MessagePage> {
 					controller: _nameField,
 					name: "topic",
 					enabled: isAuthor,
-					onSubmitted: _setName,
 				),
 				Text(_message.date.fullRepr),
 				if (author != null) Text("from $author"),
@@ -55,7 +54,6 @@ class _MessagePageState extends State<MessagePage> {
 					controller: _contentField,
 					name: "content",
 					enabled: isAuthor,
-					onSubmitted: _setContent,
 				)
 			],
 			actions: !isAuthor ? null : [EntityActionButton(
@@ -65,21 +63,14 @@ class _MessagePageState extends State<MessagePage> {
 		);
 	}
 
-	void _setName(String name) {
-		if (name.isNotEmpty) {
-			_message.name = name;
-		}
-		else {
-			_nameField.text = _message.name;
-		}
-	}
+	@override
+	void dispose() {
+		final name = _nameField.text;
+		if (name.isNotEmpty) _message.name = name;
 
-	void _setContent(String content) {
-		if (content.isNotEmpty) {
-			_message.content = content;
-		}
-		else {
-			_contentField.text = _message.content!;
-		}
+		final content = _contentField.text;
+		if (content.isNotEmpty) _message.content = content;
+
+		super.dispose();
 	}
 }

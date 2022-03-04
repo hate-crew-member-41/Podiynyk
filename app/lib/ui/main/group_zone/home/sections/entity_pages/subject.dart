@@ -44,7 +44,6 @@ class _SubjectPageState extends State<SubjectPage> {
 				InputField(
 					controller: _nameField,
 					name: "name",
-					onSubmitted: _setLabel
 				),
 				if (info != null) TextButton(
 					child: const Text("information"),
@@ -81,11 +80,6 @@ class _SubjectPageState extends State<SubjectPage> {
 		);
 	}
 
-	void _setLabel(String label) {
-		_subject.label = label;
-		if (label.isEmpty) _nameField.text = _subject.name;
-	}
-
 	void _showEntities(List<Widget> entities, {required Widget Function(BuildContext) newEntityPageBuilder}) {
 		Navigator.of(context).push(MaterialPageRoute(
 			builder: (context) => Scaffold(
@@ -101,17 +95,36 @@ class _SubjectPageState extends State<SubjectPage> {
 			)
 		));
 	}
+
+	@override
+	void dispose() {
+		_subject.label = _nameField.text;
+		super.dispose();
+	}
 }
 
 
-class SubjectInfoPage extends StatelessWidget {
+class SubjectInfoPage extends StatefulWidget {
 	final SubjectInfo info;
-	final TextEditingController _nameField;
-	final TextEditingController _contentField;
 
-	SubjectInfoPage(this.info) :
-		_nameField = TextEditingController(text: info.name),
-		_contentField = TextEditingController(text: info.content);
+	const SubjectInfoPage(this.info);
+
+  @override
+  State<SubjectInfoPage> createState() => _SubjectInfoPageState();
+}
+
+class _SubjectInfoPageState extends State<SubjectInfoPage> {
+	late final SubjectInfo _info;
+	final TextEditingController _nameField = TextEditingController();
+	final TextEditingController _contentField = TextEditingController();
+
+	@override
+	void initState() {
+		super.initState();
+		_info = widget.info;
+		_nameField.text = _info.name;
+		_contentField.text = _info.content;
+	}
 
 	@override
 	Widget build(BuildContext context) {
@@ -120,32 +133,26 @@ class SubjectInfoPage extends StatelessWidget {
 				InputField(
 					controller: _nameField,
 					name: "topic",
-					onSubmitted: _setLabel
 				),
 				InputField(
 					controller: _contentField,
-					name: "information",
-					onSubmitted: _setContent
+					name: "content",
 				)
 			],
 			actions: Cloud.role == Role.ordinary ? null : [EntityActionButton(
 				text: "delete",
-				action: info.delete
+				action: widget.info.delete
 			)]
 		);
 	}
 
-	void _setLabel(String label) {
-		info.label = label;
-		if (label.isEmpty) _nameField.text = info.name;
-	}
+	@override
+	void dispose() {
+		widget.info.label = _nameField.text;
 
-	void _setContent(String content) {
-		if (content.isNotEmpty) {
-			info.content = content;
-		}
-		else {
-			_contentField.text = info.content;
-		}
+		final content = _contentField.text;
+		if (content.isNotEmpty) widget.info.content = content;
+
+		super.dispose();
 	}
 }

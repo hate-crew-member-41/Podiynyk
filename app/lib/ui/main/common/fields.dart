@@ -7,13 +7,11 @@ class InputField extends StatefulWidget {
 	final TextEditingController controller;
 	final String name;
 	final bool enabled;
-	final void Function(String text)? onSubmitted;
 
 	const InputField({
 		required this.controller,
 		required this.name,
 		this.enabled = true,
-		this.onSubmitted
 	});
 
 	@override
@@ -35,7 +33,6 @@ class _InputFieldState extends State<InputField> {
 			controller: widget.controller,
 			focusNode: _focusNode,
 			enabled: widget.enabled,
-			onSubmitted: widget.onSubmitted,
 			showCursor: false,
 			decoration: InputDecoration(
 				border: InputBorder.none,
@@ -53,7 +50,7 @@ class _InputFieldState extends State<InputField> {
 class OptionField extends StatelessWidget {
 	final TextEditingController controller;
 	final String? name;
-	final void Function(BuildContext context) showOptions;
+	final void Function(BuildContext) showOptions;
 
 	const OptionField({
 		required this.controller,
@@ -64,7 +61,6 @@ class OptionField extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return GestureDetector(
-			// todo: capture common functionality of [onTap] args
 			onTap: () => showOptions(context),
 			child: TextField(
 				controller: controller,

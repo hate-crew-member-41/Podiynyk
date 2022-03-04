@@ -18,7 +18,7 @@ abstract class CloudEntitiesSectionData<E> {
 	Future<int> get count => counted.then((counted) => counted.length);
 }
 
-// idea: consider an AnimatedOpacity animation with a different delay for each tile
+// idea: AnimatedOpacity with a different delay for each tile
 abstract class CloudEntitiesSection<D extends CloudEntitiesSectionData<E>, E> extends Section {
 	final D data;
 

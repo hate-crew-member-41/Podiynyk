@@ -42,9 +42,8 @@ class _EventPageState extends State<EventPage> {
 				InputField(
 					controller: _nameField,
 					name: "name",
-					onSubmitted: _setLabel
 				),
-				if (_event.subjectName != null) Text(_event.subjectName!),
+				if (_event.subjectName != null) Text(_event.subjectLabel!),
 				DateField(
 					initialDate: _event.date,
 					onDatePicked: (date) => _event.date = date,
@@ -53,7 +52,6 @@ class _EventPageState extends State<EventPage> {
 				if (hasNote) InputField(
 					controller: _noteField,
 					name: "note",
-					onSubmitted: (note) => _event.note = note.isNotEmpty ? note : null
 				)
 			],
 			actions: [
@@ -87,16 +85,21 @@ class _EventPageState extends State<EventPage> {
 		);
 	}
 
-	void _setLabel(String label) {
-		_event.label = label;
-		if (label.isEmpty) _nameField.text = _event.name;
-	}
-
 	void _addNote() {
 		final note = _noteField.text;
 		if (note.isEmpty) return;
 
 		_event.note = note;
 		Navigator.of(context).pop();
+	}
+
+	@override
+	void dispose() {
+		_event.label = _nameField.text;
+		
+		final note = _noteField.text;
+		_event.note = note.isNotEmpty ? note : null;
+
+		super.dispose();
 	}
 }

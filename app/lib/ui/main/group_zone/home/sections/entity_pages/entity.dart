@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// todo: apply all labels and changes onDoubleTap on the page instead of onSubmitted?
+
 class EntityPage extends StatelessWidget {
 	final List<Widget> children;
 	final List<Widget>? actions;

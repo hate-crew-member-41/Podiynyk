@@ -9,11 +9,23 @@ import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
 import 'entity.dart';
 
 
-class StudentPage extends StatelessWidget {
-	final Student _student;
+class StudentPage extends StatefulWidget {
+	final Student student;
+
+	const StudentPage(this.student);
+
+	@override
+	State<StudentPage> createState() => _StudentPageState();
+}
+
+class _StudentPageState extends State<StudentPage> {
+	late final Student _student;
 	final _nameField = TextEditingController();
 
-	StudentPage(this._student) {
+	@override
+	void initState() {
+		super.initState();
+		_student = widget.student;
 		_nameField.text = _student.name;
 	}
 
@@ -24,7 +36,6 @@ class StudentPage extends StatelessWidget {
 				InputField(
 					controller: _nameField,
 					name: "name",
-					onSubmitted: _setLabel
 				),
 				if (_student.role != Role.ordinary) Text(_student.role!.name)
 			],
@@ -44,8 +55,9 @@ class StudentPage extends StatelessWidget {
 		);
 	}
 
-	void _setLabel(String label) {
-		_student.label = label;
-		if(label.isEmpty) _nameField.text = _student.name;
+	@override
+	void dispose() {
+		_student.label = _nameField.text;
+		super.dispose();
 	}
 }
