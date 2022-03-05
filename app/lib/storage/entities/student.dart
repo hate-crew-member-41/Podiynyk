@@ -6,6 +6,7 @@ import '../fields.dart';
 
 class Student extends LabelableEntity implements Comparable {
 	final String id;
+	// todo: make a setter to use [Cloud.changeVote]
 	final int? confirmationCount;
 
 	Role? _role;

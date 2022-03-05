@@ -50,6 +50,7 @@ extension on CloudMap {
 }
 
 
+// think: reorder the members
 class Cloud {
 	static final _cloud = FirebaseFirestore.instance;
 
@@ -181,6 +182,31 @@ class Cloud {
 	/// The user's [Role].
 	static Role get role => _role;
 
+	/// The group's sorted [Event]s without the details.
+	static Future<List<Event>> get events async {
+		final snapshot = await Collection.events.ref.get();
+
+		final events = [
+			for (final entry in snapshot.data()!.entries) Event.fromCloudFormat(entry)
+		]..sort();
+		Local.clearStoredEntities(Field.hiddenEvents, events);
+		Local.clearEntityLabels(Field.events, events);
+
+		return events;
+	}
+
+	/// The group's sorted non-subject [Event]s without the details.
+	static Future<List<Event>> get nonSubjectEvents async {
+		final snapshot = await Collection.events.ref.get();
+		final eventEntries = snapshot.data()!.entries.where((entry) =>
+			entry.value[Field.subject.name] == null
+		);
+
+		return [
+			for (final entry in eventEntries) Event.fromCloudFormat(entry)
+		]..sort();
+	}
+
 	/// The group's sorted [Subject]s without the details.
 	static Future<List<Subject>> get subjects async {
 		final snapshots = await Future.wait([
@@ -211,31 +237,6 @@ class Cloud {
 		final snapshot = await Collection.subjects.ref.get();
 		return [
 			for (final entry in snapshot.data()!.entries) Subject.nameFromCloudFormat(entry)
-		]..sort();
-	}
-
-	/// The group's sorted [Event]s without the details.
-	static Future<List<Event>> get events async {
-		final snapshot = await Collection.events.ref.get();
-
-		final events = [
-			for (final entry in snapshot.data()!.entries) Event.fromCloudFormat(entry)
-		]..sort();
-		Local.clearStoredEntities(Field.hiddenEvents, events);
-		Local.clearEntityLabels(Field.events, events);
-
-		return events;
-	}
-
-	/// The group's sorted non-subject [Event]s.
-	static Future<List<Event>> get nonSubjectEvents async {
-		final snapshot = await Collection.events.ref.get();
-		final eventEntries = snapshot.data()!.entries.where((entry) =>
-			entry.value[Field.subject.name] == null
-		);
-
-		return [
-			for (final entry in eventEntries) Event.fromCloudFormat(entry)
 		]..sort();
 	}
 
@@ -275,21 +276,6 @@ class Cloud {
 
 	// todo: should all new entities check whether they already exist?
 
-	/// Adds a [Subject] with the [name] unless it exists.
-	static Future<void> addSubject({required String name}) async => await _addEntity(
-		collection: Collection.subjects,
-		existingEquals: (existing) => existing[Field.name.name] == name,
-		entity: {Field.name.name: name},
-		details: {Field.info.name: <String>[]}
-	);
-
-	/// Updates the [subject]'s information.
-	static Future<void> updateSubjectInfo(Subject subject) async {
-		Collection.subjects.detailsRef(subject.id).update({
-			Field.info.name: [for (final item in subject.info!) item.inCloudFormat]
-		});
-	}
-
 	/// Adds an [Event] with the arguments unless it exists. Increments the [subjectName]'s total event count.
 	static Future<void> addEvent({
 		required String name,
@@ -308,19 +294,13 @@ class Cloud {
 		details: {if (note != null) Field.note.name: note},
 	);
 
-	/// Updates the [event]'s date.
-	static Future<void> updateEventDate(Event event) async {
-		await Collection.events.ref.update({
-			'${event.id}.${Field.date.name}': event.date
-		});
-	}
-
-	/// Updates the [event]'s note.
-	static Future<void> updateEventNote(Event event) async {
-		await Collection.events.detailsRef(event.id).update({
-			Field.note.name: event.note
-		});
-	}
+	/// Adds a [Subject] with the [name] unless it exists.
+	static Future<void> addSubject({required String name}) async => await _addEntity(
+		collection: Collection.subjects,
+		existingEquals: (existing) => existing[Field.name.name] == name,
+		entity: {Field.name.name: name},
+		details: {Field.info.name: <String>[]}
+	);
 
 	/// Adds a [Message] with the arguments unless it exists.
 	static Future<void> addMessage({
@@ -338,24 +318,6 @@ class Cloud {
 			Field.author.name: Local.name
 		},
 	);
-
-	/// Updates the [message]'s name (topic).
-	static Future<void> updateMessageName(Message message) async {
-		await Collection.messages.ref.update({
-			'${message.id}.${Field.name.name}': message.name
-		});
-	}
-
-	/// Updates the [message]'s content.
-	static Future<void> updateMessageContent(Message message) async {
-		await Collection.messages.detailsRef(message.id).update({
-			Field.content.name: message.content
-		});
-	}
-
-	// todo: define
-	/// Adds a [Question] with the arguments unless it exists.
-	static Future<void> addQuestion() async {}
 
 	/// Adds the [entity] unless it exists, with the given [details] unless they are `null`.
 	/// Returns whether the [entity] was written.
@@ -386,6 +348,14 @@ class Cloud {
 		return wasWritten;
 	}
 
+	/// Deletes the [event].
+	static Future<void> deleteEvent(Event event) async {
+		await Future.wait([
+			Collection.events.ref.update({event.id: FieldValue.delete()}),
+			Collection.events.detailsRef(event.id).delete()
+		]);
+	}
+
 	/// Deletes the [subject]. The [subject]'s events are kept.
 	static Future<void> deleteSubject(Subject subject) async {
 		await Future.wait([
@@ -397,20 +367,47 @@ class Cloud {
 		]);
 	}
 
-	/// Deletes the [event].
-	static Future<void> deleteEvent(Event event) async {
-		await Future.wait([
-			Collection.events.ref.update({event.id: FieldValue.delete()}),
-			Collection.events.detailsRef(event.id).delete()
-		]);
-	}
-
 	/// Deletes the [message].
 	static Future<void> deleteMessage(Message message) async {
 		await Future.wait([
 			Collection.messages.ref.update({message.id: FieldValue.delete()}),
 			Collection.messages.detailsRef(message.id).delete()
 		]);
+	}
+
+	/// Updates the [event]'s date.
+	static Future<void> updateEventDate(Event event) async {
+		await Collection.events.ref.update({
+			'${event.id}.${Field.date.name}': event.date
+		});
+	}
+
+	/// Updates the [event]'s note.
+	static Future<void> updateEventNote(Event event) async {
+		await Collection.events.detailsRef(event.id).update({
+			Field.note.name: event.note
+		});
+	}
+
+	/// Updates the [subject]'s information.
+	static Future<void> updateSubjectInfo(Subject subject) async {
+		Collection.subjects.detailsRef(subject.id).update({
+			Field.info.name: [for (final item in subject.info!) item.inCloudFormat]
+		});
+	}
+
+	/// Updates the [message]'s name (topic).
+	static Future<void> updateMessageName(Message message) async {
+		await Collection.messages.ref.update({
+			'${message.id}.${Field.name.name}': message.name
+		});
+	}
+
+	/// Updates the [message]'s content.
+	static Future<void> updateMessageContent(Message message) async {
+		await Collection.messages.detailsRef(message.id).update({
+			Field.content.name: message.content
+		});
 	}
 
 	/// Sets the [student]'s [Role] to [role].

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/student.dart';
 
 import 'section.dart';
@@ -33,7 +33,7 @@ class GroupSection extends CloudEntitiesSection<GroupSectionCloudData, Student> 
 	List<Widget> tiles(BuildContext context, List<Student> students) => [
 		for (final student in students) EntityTile(
 			title: student.name,
-			subtitle: student.role == Role.ordinary ? null : student.role!.name,
+			subtitle: student.role == Role.ordinary ? null : student.role.name,
 			pageBuilder: () => StudentPage(student)
 		)
 	];
