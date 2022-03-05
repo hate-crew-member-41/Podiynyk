@@ -1,22 +1,36 @@
+import '../cloud.dart';
+
 import 'labelable.dart';
 import '../fields.dart';
 
 
 class Student extends LabelableEntity implements Comparable {
 	final String id;
-	// todo: change the role in the cloud via [role] setter
-	final Role? role;
 	final int? confirmationCount;
+
+	Role? _role;
+	Role get role => _role!;
+	set role(Role role) {
+		_role = role;
+
+		if (_role != Role.leader) {
+			Cloud.updateRole(this);
+		}
+		else {
+			Cloud.makeLeader(this);
+			_role = Role.trusted;
+		}
+	}
 
 	Student.candidateFromCloudFormat(MapEntry<String, dynamic> entry) :
 		id = entry.key,
-		role = null,
+		_role = null,
 		confirmationCount = entry.value[Field.confirmationCount.name] as int,
 		super(initialName: entry.value[Field.name.name] as String);
 
 	Student.fromCloudFormat(MapEntry<String, dynamic> entry) :
 		id = entry.key,
-		role = Role.values[entry.value[Field.role.name] as int],
+		_role = Role.values[entry.value[Field.role.name] as int],
 		confirmationCount = null,
 		super(initialName: entry.value[Field.name.name] as String);
 

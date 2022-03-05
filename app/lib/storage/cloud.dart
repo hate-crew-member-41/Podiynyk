@@ -263,7 +263,7 @@ class Cloud {
 		]..sort();
 		Local.clearEntityLabels(Field.students, students);
 
-		_role = students.firstWhere((student) => student.name == Local.name).role!;
+		_role = students.firstWhere((student) => student.name == Local.name).role;
 		return students;
 	}
 
@@ -414,9 +414,9 @@ class Cloud {
 	}
 
 	/// Sets the [student]'s [Role] to [role].
-	static Future<void> setRole(Student student, Role role) async {
+	static Future<void> updateRole(Student student) async {
 		await Collection.groups.ref.update({
-			'${Field.students.name}.${student.id}.${Field.role.name}': role.index
+			'${Field.students.name}.${student.id}.${Field.role.name}': student.role.index
 		});
 	}
 
