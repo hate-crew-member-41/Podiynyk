@@ -71,10 +71,25 @@ class _SubjectPageState extends State<SubjectPage> {
 					text: "follow",
 					action: () => _subject.isFollowed = true
 				),
-				// todo: confirmation
 				if (Cloud.role == Role.leader) EntityActionButton(
 					text: "delete",
-					action: () => Cloud.deleteSubject(_subject)
+					action: () => events.isNotEmpty ? showDialog(
+						context: context,
+						// todo: does this AlertDialog work?
+						builder: (_) => AlertDialog(
+							content: const Text("The subject's events will also be deleted."),
+							actions: [
+								TextButton(
+									child: const Text("exactly"),
+									onPressed: () => Cloud.deleteSubject(_subject)
+								),
+								const TextButton(
+									child: Text("cancel"),
+									onPressed: null,
+								)
+							]
+						)
+					) : Cloud.deleteSubject(_subject)
 				)
 			]
 		);

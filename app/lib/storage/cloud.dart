@@ -390,7 +390,10 @@ class Cloud {
 	static Future<void> deleteSubject(Subject subject) async {
 		await Future.wait([
 			Collection.subjects.ref.update({subject.id: FieldValue.delete()}),
-			Collection.subjects.detailsRef(subject.id).delete()
+			Collection.subjects.detailsRef(subject.id).delete(),
+			Collection.events.ref.update({
+				for (final event in subject.events) event.id: FieldValue.delete()
+			})
 		]);
 	}
 
