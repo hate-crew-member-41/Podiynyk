@@ -6,7 +6,6 @@ import '../fields.dart';
 
 class Student extends LabelableEntity implements Comparable {
 	final String id;
-	// todo: make a setter to use [Cloud.changeVote]
 	final int? confirmationCount;
 
 	Role? _role;
@@ -34,6 +33,8 @@ class Student extends LabelableEntity implements Comparable {
 		_role = Role.values[entry.value[Field.role.name] as int],
 		confirmationCount = null,
 		super(initialName: entry.value[Field.name.name] as String);
+	
+	Future<void> voteFor({String? previousId}) => Cloud.changeLeaderVote(toId: id, fromId: previousId);
 
 	@override
 	Field get labelCollection => Field.students;

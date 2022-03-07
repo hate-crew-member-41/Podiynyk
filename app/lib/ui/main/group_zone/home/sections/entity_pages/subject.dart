@@ -86,7 +86,6 @@ class _SubjectPageState extends State<SubjectPage> {
 
 		showDialog(
 			context: context,
-			// todo: does this AlertDialog work?
 			builder: (_) => AlertDialog(
 				content: const Text("The subject's events will also be deleted."),
 				actions: [

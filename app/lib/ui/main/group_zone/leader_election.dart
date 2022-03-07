@@ -79,7 +79,7 @@ class _LeaderCandidateListState extends State<LeaderCandidateList> {
 								onTap: student.name == Local.name ? null : () {
 									if (student.id == _votedForId) return;
 
-									Cloud.changeLeaderVote(toId: student.id, fromId: _votedForId);
+									student.voteFor(previousId: _votedForId);
 									_votedForId = student.id;
 								}
 							)
