@@ -9,7 +9,7 @@ import '../local.dart';
 class Event extends LabelableEntity implements Comparable {
 	final String id;
 	final String? subjectName;
-	late final String? subjectLabel;
+	late final String? _subjectLabel;
 
 	DateTime _date;
 	DateTime get date => _date;
@@ -40,13 +40,15 @@ class Event extends LabelableEntity implements Comparable {
 		_date = (entry.value[Field.date.name] as Timestamp).toDate(),
 		super(initialName: entry.value[Field.name.name] as String)
 	{
-		subjectLabel = subjectName != null ? Local.entityLabel(Field.subjects, subjectName!) : null;
+		_subjectLabel = subjectName != null ? Local.entityLabel(Field.subjects, subjectName!) : null;
 		_isHidden = Local.entityIsStored(Field.hiddenEvents, essence);
 	}
 
+	String? get subjectNameRepr => _subjectLabel ?? subjectName;
+
 	Future<void> addDetails() async {
 		final details = await Cloud.entityDetails(Collection.events, id);
-		note = details[Field.note.name];
+		_note = details[Field.note.name];
 	}
 
 	@override

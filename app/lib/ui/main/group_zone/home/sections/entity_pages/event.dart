@@ -33,6 +33,8 @@ class _EventPageState extends State<EventPage> {
 
 	@override
 	Widget build(BuildContext context) {
+		final hasSubject = _event.subjectName != null;
+
 		final note = _event.note;
 		final hasNote = note != null;
 		if (hasNote) _noteField.text = note;
@@ -43,7 +45,7 @@ class _EventPageState extends State<EventPage> {
 					controller: _nameField,
 					name: "name",
 				),
-				if (_event.subjectName != null) Text(_event.subjectLabel!),
+				if (hasSubject) Text(_event.subjectNameRepr!),
 				DateField(
 					initialDate: _event.date,
 					onDatePicked: (date) => _event.date = date,

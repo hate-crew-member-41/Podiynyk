@@ -37,7 +37,6 @@ class _SubjectPageState extends State<SubjectPage> {
 	@override
 	Widget build(BuildContext context) {
 		final info = _subject.info;
-		final events = _subject.events;
 
 		return EntityPage(
 			children: [
@@ -58,7 +57,7 @@ class _SubjectPageState extends State<SubjectPage> {
 				TextButton(
 					child: Text(_subject.eventCountRepr),
 					onPressed: () => _showEntities(
-						[for (final event in events) EventTile(event, showSubject: false)],
+						[for (final event in _subject.events) EventTile(event, showSubject: false)],
 						newEntityPageBuilder: (_) => NewEventPage.subjectEvent(_subject.name)
 					)
 				)
@@ -73,25 +72,37 @@ class _SubjectPageState extends State<SubjectPage> {
 				),
 				if (Cloud.role == Role.leader) EntityActionButton(
 					text: "delete",
-					action: () => events.isNotEmpty ? showDialog(
-						context: context,
-						// todo: does this AlertDialog work?
-						builder: (_) => AlertDialog(
-							content: const Text("The subject's events will also be deleted."),
-							actions: [
-								TextButton(
-									child: const Text("exactly"),
-									onPressed: () => Cloud.deleteSubject(_subject)
-								),
-								const TextButton(
-									child: Text("cancel"),
-									onPressed: null,
-								)
-							]
-						)
-					) : Cloud.deleteSubject(_subject)
+					action: _askDelete
 				)
 			]
+		);
+	}
+
+	void _askDelete() {
+		if (_subject.events.isEmpty) {
+			Cloud.deleteSubject(_subject);
+			return;
+		}
+
+		showDialog(
+			context: context,
+			// todo: does this AlertDialog work?
+			builder: (_) => AlertDialog(
+				content: const Text("The subject's events will also be deleted."),
+				actions: [
+					TextButton(
+						child: const Text("cancel"),
+						onPressed: () => Navigator.of(context).pop()
+					),
+					TextButton(
+						child: const Text("exactly"),
+						onPressed: () {
+							Navigator.of(context).pop();
+							Cloud.deleteSubject(_subject);
+						}
+					)
+				]
+			)
 		);
 	}
 
