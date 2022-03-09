@@ -14,9 +14,9 @@ import 'new_entity_pages/event.dart';
 class AgendaSectionCloudData extends CloudEntitiesSectionData<Event> {
 	final Future<List<Event>> events = Cloud.events.then((events) =>
 		events.where((event) {
-			final hasSubject = event.subjectName != null;
+			final hasSubject = event.subject != null;
 			return !event.isHidden && (
-				(hasSubject && Subject.withNameIsFollowed(event.subjectName!)) ||
+				(hasSubject && Subject.withNameIsFollowed(event.subject!)) ||
 				!hasSubject
 			);
 		}).toList()
@@ -70,7 +70,7 @@ class EventTile extends StatelessWidget {
 	}
 
 	Widget _builder(BuildContext context) => EntityTile(
-		title: event.name,
+		title: event.nameRepr,
 		subtitle: showSubject ? event.subjectNameRepr : null,
 		trailing: event.date.dateRepr,
 		pageBuilder: () => EventPage(event)

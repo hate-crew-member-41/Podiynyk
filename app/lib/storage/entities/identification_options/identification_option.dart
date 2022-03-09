@@ -3,5 +3,5 @@ abstract class IdentificationOption implements Comparable {
 	abstract final String name;
 
 	@override
-	int compareTo(dynamic other) => name.compareTo(other.name);
+	int compareTo(covariant IdentificationOption other) => name.compareTo(other.name);
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/storage/cloud.dart' show Cloud;
+import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/entities/message.dart';
 
 import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
 
@@ -8,7 +9,7 @@ import 'entity.dart';
 
 
 class NewMessagePage extends StatelessWidget {
-	final _topicField = TextEditingController();
+	final _nameField = TextEditingController();
 	final _contentField = TextEditingController();
 
 	@override
@@ -16,7 +17,7 @@ class NewMessagePage extends StatelessWidget {
 		add: _add,
 		children: [
 			InputField(
-				controller: _topicField,
+				controller: _nameField,
 				name: "topic"
 			),
 			InputField(
@@ -27,13 +28,14 @@ class NewMessagePage extends StatelessWidget {
 	);
 
 	bool _add() {
-		final subject = _topicField.text, content = _contentField.text;
-		if (subject.isEmpty || content.isEmpty) return false;
+		final name = _nameField.text, content = _contentField.text;
+		if (name.isEmpty || content.isEmpty) return false;
 
-		Cloud.addMessage(
-			name: subject,
-			content: content,
+		final message = Message(
+			name: name,
+			content: content
 		);
+		Cloud.addMessage(message);
 		return true;
 	}
 }

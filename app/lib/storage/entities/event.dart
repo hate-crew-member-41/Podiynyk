@@ -7,9 +7,37 @@ import '../local.dart';
 
 
 class Event extends LabelableEntity implements Comparable {
-	final String id;
-	final String? subjectName;
+	final String? subject;
 	late final String? _subjectLabel;
+
+	Event({
+		required String name,
+		required this.subject,
+		required DateTime date,
+		String? note
+	}) :
+		_date = date,
+		_note = note,
+		super(name: name);
+
+	Event.fromCloudFormat(MapEntry<String, dynamic> entry) :
+		subject = entry.value[Field.subject.name],
+		_date = (entry.value[Field.date.name] as Timestamp).toDate(),
+		super(name: entry.value[Field.name.name] as String)
+	{
+		_subjectLabel = subject != null ? Local.entityLabel(Field.subjects, subject!) : null;
+		_isHidden = Local.entityIsStored(Field.hiddenEvents, id);
+	}
+
+	CloudMap get inCloudFormat => {
+		Field.name.name: name,
+		Field.subject.name: subject,
+		Field.date.name: _date,
+	};
+
+	CloudMap get detailsInCloudFormat => {
+		if (note != null) Field.note.name: note
+	};
 
 	DateTime _date;
 	DateTime get date => _date;
@@ -23,7 +51,7 @@ class Event extends LabelableEntity implements Comparable {
 	bool get isHidden => _isHidden;
 	set isHidden(bool isHidden) {
 		_isHidden = isHidden;
-		_isHidden ? Local.storeEntity(Field.hiddenEvents, essence) : Local.deleteEntity(Field.hiddenEvents, essence);
+		_isHidden ? Local.storeEntity(Field.hiddenEvents, id) : Local.deleteEntity(Field.hiddenEvents, id);
 	}
 
 	String? _note;
@@ -34,17 +62,7 @@ class Event extends LabelableEntity implements Comparable {
 		Cloud.updateEventNote(this);
 	}
 
-	Event.fromCloudFormat(MapEntry<String, dynamic> entry) :
-		id = entry.key,
-		subjectName = entry.value[Field.subject.name],
-		_date = (entry.value[Field.date.name] as Timestamp).toDate(),
-		super(initialName: entry.value[Field.name.name] as String)
-	{
-		_subjectLabel = subjectName != null ? Local.entityLabel(Field.subjects, subjectName!) : null;
-		_isHidden = Local.entityIsStored(Field.hiddenEvents, essence);
-	}
-
-	String? get subjectNameRepr => _subjectLabel ?? subjectName;
+	String? get subjectNameRepr => _subjectLabel ?? subject;
 
 	Future<void> addDetails() async {
 		final details = await Cloud.entityDetails(Collection.events, id);
@@ -52,11 +70,11 @@ class Event extends LabelableEntity implements Comparable {
 	}
 
 	@override
+	List<dynamic> get idComponents => [subject, name];
+
+	@override
 	Field get labelCollection => Field.events;
 
 	@override
-	String get essence => '$subjectName.$initialName';
-
-	@override
-	int compareTo(dynamic other) => date.compareTo(other.date);
+	int compareTo(covariant Event other) => date.compareTo(other.date);
 }

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 abstract class Section extends StatelessWidget {
 	const Section();
 
-	/// The static [name].
+	/// The static [nameRepr].
 	String get sectionName;
 	/// The static [icon].
 	IconData get sectionIcon;

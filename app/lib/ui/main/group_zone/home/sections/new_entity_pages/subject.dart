@@ -24,7 +24,8 @@ class NewSubjectPage extends StatelessWidget {
 		final name = _nameField.text;
 		if (name.isEmpty) return false;
 
-		Cloud.addSubject(name: name);
+		final subject = Subject(name: name);
+		Cloud.addSubject(subject);
 		return true;
 	}
 }

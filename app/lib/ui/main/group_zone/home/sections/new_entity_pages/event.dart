@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/entities/event.dart';
 
 import 'package:podiynyk/ui/main/common/fields.dart';
 
@@ -122,16 +123,14 @@ class _NewEventPageState extends State<NewEventPage> {
 			_date == null
 		) return false;
 
-		// idea: show an animation of the event flying away?
-		// idea: show the result of the request on the page?
-
 		final note = _noteField.text;
-		Cloud.addEvent(
+		final event = Event(
 			name: name,
-			subjectName: _subjectName,
+			subject: _subjectName,
 			date: _date!,
 			note: note.isNotEmpty ? note : null
 		);
+		Cloud.addEvent(event);
 		return true;
 	}
 }

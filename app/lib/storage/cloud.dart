@@ -4,21 +4,21 @@ import 'package:firebase_core/firebase_core.dart';
 import 'fields.dart';
 import 'local.dart';
 
-import 'entities/county.dart';
-import 'entities/department.dart';
 import 'entities/event.dart';
-import 'entities/identification_option.dart';
 import 'entities/message.dart';
 import 'entities/question.dart';
 import 'entities/student.dart';
 import 'entities/subject.dart';
-import 'entities/university.dart';
+import 'entities/identification_options/county.dart';
+import 'entities/identification_options/department.dart';
+import 'entities/identification_options/identification_option.dart';
+import 'entities/identification_options/university.dart';
 
 
 typedef CloudMap = Map<String, dynamic>;
 
 
-/// The group's [Collection] stored in [FirebaseFirestore].
+/// An [Entity] [Collection] stored in [FirebaseFirestore].
 enum Collection {
 	counties,
 	universities,
@@ -41,12 +41,8 @@ extension on Collection {
 }
 
 
-extension on CloudMap {
-	int get newId {
-		int id = 0;
-		while (containsKey(id.toString())) id++;
-		return id;
-	}
+extension CloudId on String {
+	String get safeId => replaceAll('.', '').replaceAll('/', '');
 }
 
 
@@ -93,29 +89,28 @@ class Cloud {
 		]..sort();
 	}
 
-	/// Adds the user to the group. If they are the group's first student, initializes the group's documents.
+	/// Adds the user to the group. If they are the group's first [Student], initializes the group's documents.
 	static Future<void> enterGroup() async {
 		final document = Collection.groups.ref;
 
-		Local.id = await _cloud.runTransaction((transaction) async {
+		await _cloud.runTransaction((transaction) async {
 			final snapshot = await transaction.get(document);
-			late String id;
 
 			if (snapshot.exists) {
-				final students = CloudMap.from(snapshot.data()![Field.students.name]);
-				id = students.newId.toString();
+				final userField =  '${Field.students.name}.${Local.id}';
+				final leaderIsElected = _leaderIsElected(snapshot.data()![Field.students.name]);
 
-				final studentsField = Field.students.name;
-				final selfInitField = _leaderIsElected(students) ? Field.role : Field.confirmationCount;
 				transaction.update(document, {
-					'$studentsField.$id.${Field.name.name}': Local.name,
-					'$studentsField.$id.${selfInitField.name}': 0
+					'$userField.${Field.name.name}': Local.name,
+					if (leaderIsElected)
+						'$userField.${Field.role.name}': Role.ordinary.index
+					else 
+						'$userField.${Field.confirmationCount.name}': 0
 				});
 			}
 			else {
-				id = '0';
 				transaction.set(document, {
-					Field.students.name: {id: {
+					Field.students.name: {Local.id: {
 						Field.name.name: Local.name,
 						Field.confirmationCount.name: 0
 					}},
@@ -127,8 +122,6 @@ class Cloud {
 				Collection.messages.ref.set({});
 				Collection.questions.ref.set({});
 			}
-
-			return id;
 		});
 	}
 
@@ -181,80 +174,6 @@ class Cloud {
 	/// The user's [Role].
 	static Role get role => _role;
 
-	// todo: should all new entities check whether they already exist?
-
-	/// Adds an [Event] with the arguments unless it exists. Increments the [subjectName]'s total event count.
-	static Future<void> addEvent({
-		required String name,
-		String? subjectName,
-		required DateTime date,
-		String? note
-	}) async => await _addEntity(
-		collection: Collection.events,
-		existingEquals: (existing) =>
-			existing[Field.name.name] == name && existing[Field.subject.name] == subjectName,
-		entity: {
-			Field.name.name: name,
-			Field.subject.name: subjectName,
-			Field.date.name: date,
-		},
-		details: {if (note != null) Field.note.name: note},
-	);
-
-	/// Adds a [Subject] with the [name] unless it exists.
-	static Future<void> addSubject({required String name}) async => await _addEntity(
-		collection: Collection.subjects,
-		existingEquals: (existing) => existing[Field.name.name] == name,
-		entity: {Field.name.name: name},
-		details: {Field.info.name: <String>[]}
-	);
-
-	/// Adds a [Message] with the arguments unless it exists.
-	static Future<void> addMessage({
-		required String name,
-		required String content,
-	}) async => await _addEntity(
-		collection: Collection.messages,
-		existingEquals: (existing) => existing[Field.name.name] == name,
-		entity: {
-			Field.name.name: name,
-			Field.date.name: DateTime.now()
-		},
-		details: {
-			Field.content.name: content,
-			Field.author.name: Local.name
-		},
-	);
-
-	/// Adds the [entity] unless it exists, with the given [details] unless they are `null`.
-	/// Returns whether the [entity] was written.
-	static Future<bool> _addEntity({
-		required Collection collection,
-		required bool Function(Map<String, dynamic> existing) existingEquals,
-		required Object entity,
-		Map<String, Object>? details
-	}) async {
-		final document = collection.ref;
-
-		final id = await _cloud.runTransaction((transaction) async {
-			final snapshot = await transaction.get(document);
-			final entries = snapshot.data()!;
-
-			for (final existingEntity in entries.values) {
-				if (existingEquals(existingEntity)) return null;
-			}
-
-			final id = entries.newId.toString();
-			transaction.update(document, {id: entity});
-
-			return id;
-		});
-
-		final wasWritten = id != null;
-		if (details != null && wasWritten) await collection.detailsRef(id).set(details);
-		return wasWritten;
-	}
-
 	/// The group's sorted [Event]s without the details.
 	static Future<List<Event>> get events async {
 		final snapshot = await Collection.events.ref.get();
@@ -295,7 +214,7 @@ class Cloud {
 			for (final entry in snapshots.first.data()!.entries) Subject.fromCloudFormat(
 				entry,
 				events: events.where((event) =>
-					event.subjectName == entry.value[Field.name.name]
+					event.subject == entry.value[Field.name.name]
 				).toList()
 			)
 		]..sort();
@@ -336,7 +255,7 @@ class Cloud {
 		]..sort();
 		Local.clearEntityLabels(Field.students, students);
 
-		_role = students.firstWhere((student) => student.name == Local.name).role;
+		_role = students.firstWhere((student) => student.nameRepr == Local.name).role;
 		return students;
 	}
 
@@ -344,6 +263,35 @@ class Cloud {
 	static Future<CloudMap> entityDetails(Collection collection, String id) async {
 		final snapshot = await collection.detailsRef(id).get();
 		return snapshot.data()!;
+	}
+
+	// todo: define [addEntity] method
+
+	/// Adds the [event].
+	static Future<void> addEvent(Event event) async {
+		final collection = Collection.events, id = event.id;
+		await Future.wait([
+			collection.ref.update({id: event.inCloudFormat}),
+			collection.detailsRef(id).set(event.detailsInCloudFormat)
+		]);
+	}
+
+	/// Adds the [subject].
+	static Future<void> addSubject(Subject subject) async {
+		final collection = Collection.subjects, id = subject.id;
+		await Future.wait([
+			collection.ref.update({id: subject.inCloudFormat}),
+			collection.detailsRef(id).set(subject.detailsInCloudFormat)
+		]);
+	}
+
+	/// Adds the [message].
+	static Future<void> addMessage(Message message) async {
+		final collection = Collection.messages, id = message.id;
+		await Future.wait([
+			collection.ref.update({id: message.inCloudFormat}),
+			collection.detailsRef(id).set(message.detailsInCloudFormat)
+		]);
 	}
 
 	/// Updates the [event]'s date.

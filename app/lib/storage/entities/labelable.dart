@@ -1,33 +1,31 @@
 import '../fields.dart';
 import '../local.dart';
-import 'storable.dart';
+
+import 'entity.dart';
 
 
-abstract class LabelableEntity implements StorableEntity {
-	final String initialName;
+abstract class LabelableEntity extends Entity {
+	final String name;
 	String? _label;
 
-	String get name => _label ?? initialName;
+	String get nameRepr => _label ?? name;
 
-	LabelableEntity({required this.initialName}) {
-		_label = Local.entityLabel(labelCollection, essence);
+	LabelableEntity({required this.name}) {
+		_label = Local.entityLabel(labelCollection, id);
 	}
 
 	set label(String label) {
 		if (label == _label) return;
 
 		if (label.isEmpty || label == name) {
-			Local.deleteEntityLabel(labelCollection, essence);
+			Local.deleteEntityLabel(labelCollection, id);
 			_label = null;
 		}
 		else {
-			Local.setEntityLabel(labelCollection, essence, label);
+			Local.setEntityLabel(labelCollection, id, label);
 			_label = label;
 		}
 	}
 
 	Field get labelCollection;
-
-	@override
-	String get essence => initialName;
 }

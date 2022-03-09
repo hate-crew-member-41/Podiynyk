@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:podiynyk/storage/cloud.dart' show Cloud;
-import 'package:podiynyk/storage/local.dart' show Local;
-import 'package:podiynyk/storage/entities/county.dart';
-import 'package:podiynyk/storage/entities/department.dart';
-import 'package:podiynyk/storage/entities/identification_option.dart';
-import 'package:podiynyk/storage/entities/university.dart';
+import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/local.dart';
+import 'package:podiynyk/storage/entities/identification_options/department.dart';
+import 'package:podiynyk/storage/entities/identification_options/county.dart';
+import 'package:podiynyk/storage/entities/identification_options/identification_option.dart';
+import 'package:podiynyk/storage/entities/identification_options/university.dart';
 
 import 'common/fields.dart';
 
@@ -202,10 +202,12 @@ class _IdentificationFormState extends State<IdentificationForm> {
 	void _enterGroup(BuildContext context) {
 		if (_departmentField.text.isEmpty || _groupField.text.isEmpty || _nameField.text.isEmpty) return;
 
-		final groupName = _groupField.text.toLowerCase().replaceAll('-', ' ').replaceAll(' ', '');
-		final groupId = '${_university!.id}.${_department.id}.$groupName';
+		final groupName = _groupField.text.toLowerCase().replaceAll('-', '').replaceAll(' ', '');
+		final groupId = '${_university!.id}:${_department.id}:$groupName'.safeId;
+
 		Local.groupId = groupId;
 		Local.name = _nameField.text;
+		Local.id = Local.name.safeId;
 
 		Cloud.enterGroup().whenComplete(context.read<void Function()>());
 	}

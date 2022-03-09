@@ -30,7 +30,7 @@ class _SubjectPageState extends State<SubjectPage> {
 	void initState() {
 		super.initState();
 		_subject = widget.subject;
-		_nameField.text = _subject.name;
+		_nameField.text = _subject.nameRepr;
 		_subject.addDetails().whenComplete(() => setState(() {}));
 	}
 
@@ -48,7 +48,7 @@ class _SubjectPageState extends State<SubjectPage> {
 					child: const Text("information"),
 					onPressed: () => _showEntities(
 						[for (final item in info) EntityTile(
-							title: item.name,
+							title: item.nameRepr,
 							pageBuilder: () => SubjectInfoPage(item),
 						)],
 						newEntityPageBuilder: (_) => NewSubjectInfoPage(_subject)
@@ -58,7 +58,7 @@ class _SubjectPageState extends State<SubjectPage> {
 					child: Text(_subject.eventCountRepr),
 					onPressed: () => _showEntities(
 						[for (final event in _subject.events) EventTile(event, showSubject: false)],
-						newEntityPageBuilder: (_) => NewEventPage.subjectEvent(_subject.name)
+						newEntityPageBuilder: (_) => NewEventPage.subjectEvent(_subject.nameRepr)
 					)
 				)
 			],
@@ -147,7 +147,7 @@ class _SubjectInfoPageState extends State<SubjectInfoPage> {
 	void initState() {
 		super.initState();
 		_info = widget.info;
-		_nameField.text = _info.name;
+		_nameField.text = _info.nameRepr;
 		_contentField.text = _info.content;
 	}
 

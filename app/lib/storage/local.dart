@@ -1,8 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'fields.dart';
-import 'entities/labelable.dart';
-import 'entities/storable.dart';
+import 'entities/entity.dart';
 
 
 class Local {
@@ -78,8 +77,8 @@ class Local {
 	}
 
 	/// Deletes the [collection] entities that do not exist anymore.
-	static Future<void> clearEntityLabels(Field collection, List<LabelableEntity> existing) async {
-		final existingEssences = {for (final entity in existing) entity.essence};
+	static Future<void> clearEntityLabels(Field collection, List<Entity> existing) async {
+		final existingEssences = {for (final entity in existing) entity.id};
 
 		final field = collection.name;
 		await _labels.put(field, _labels.get(field)!..removeWhere(
@@ -105,8 +104,8 @@ class Local {
 	}
 
 	/// Deletes the [collection] entities that do not exist anymore.
-	static Future<void> clearStoredEntities(Field collection, List<StorableEntity> existing) async {
-		final existingEssences = {for (final entity in existing) entity.essence};
+	static Future<void> clearStoredEntities(Field collection, List<Entity> existing) async {
+		final existingEssences = {for (final entity in existing) entity.id};
 
 		final field = collection.name;
 		await _entities.put(field, _entities.get(field)!..removeWhere(

@@ -27,13 +27,13 @@ class _EventPageState extends State<EventPage> {
 	void initState() {
 		super.initState();
 		_event = widget.event;
-		_nameField.text = _event.name;
+		_nameField.text = _event.nameRepr;
 		_event.addDetails().whenComplete(() => setState(() {}));
 	}
 
 	@override
 	Widget build(BuildContext context) {
-		final hasSubject = _event.subjectName != null;
+		final hasSubject = _event.subject != null;
 
 		final note = _event.note;
 		final hasNote = note != null;

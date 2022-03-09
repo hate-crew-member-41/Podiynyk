@@ -7,25 +7,29 @@ import 'labelable.dart';
 
 
 class Subject extends LabelableEntity implements Comparable {
-	final String id;
 	late final List<Event> events;
 	List<SubjectInfo>? info;
+
+	Subject({required String name}) : super(name: name);
+
+	Subject.fromCloudFormat(MapEntry<String, dynamic> entry, {required this.events}) :
+		super(name: entry.value[Field.name.name] as String)
+	{
+		_isFollowed = !Local.entityIsStored(Field.unfollowedSubjects, id);
+	}
+
+	static String nameFromCloudFormat(MapEntry<String, dynamic> entry) => entry.value[Field.name.name];
+
+	CloudMap get inCloudFormat => {Field.name.name: name};
+
+	CloudMap get detailsInCloudFormat => {Field.info.name: <SubjectInfo>[]};
 
 	late bool _isFollowed;
 	bool get isFollowed => _isFollowed;
 	set isFollowed(bool isFollowed) {
 		_isFollowed = isFollowed;
-		!_isFollowed ? Local.storeEntity(Field.unfollowedSubjects, essence) : Local.deleteEntity(Field.unfollowedSubjects, essence);
+		!_isFollowed ? Local.storeEntity(Field.unfollowedSubjects, id) : Local.deleteEntity(Field.unfollowedSubjects, id);
 	}
-
-	Subject.fromCloudFormat(MapEntry<String, dynamic> entry, {required this.events}) :
-		id = entry.key,
-		super(initialName: entry.value[Field.name.name] as String)
-	{
-		_isFollowed = !Local.entityIsStored(Field.unfollowedSubjects, essence);
-	}
-
-	static String nameFromCloudFormat(MapEntry<String, dynamic> entry) => entry.value[Field.name.name];
 
 	Future<void> addDetails() async {
 		final details = await Cloud.entityDetails(Collection.subjects, id);
@@ -52,19 +56,27 @@ class Subject extends LabelableEntity implements Comparable {
 	static bool withNameIsFollowed(String name) => !Local.entityIsStored(Field.unfollowedSubjects, name);
 
 	@override
+	List<dynamic> get idComponents => [name];
+	
+	@override
 	Field get labelCollection => Field.subjects;
 
 	@override
-	String get essence => initialName;
-
-	@override
-	int compareTo(dynamic other) => name.compareTo(other.name);
+	int compareTo(covariant Subject other) => nameRepr.compareTo(other.nameRepr);
 }
 
 
 // think: add id
 class SubjectInfo extends LabelableEntity implements Comparable {
 	final Subject subject;
+
+	SubjectInfo({
+		required this.subject,
+		required String name,
+		required content
+	}) :
+		_content = content,
+		super(name: name);
 
 	String _content;
 	String get content => _content;
@@ -73,28 +85,23 @@ class SubjectInfo extends LabelableEntity implements Comparable {
 		Cloud.updateSubjectInfo(subject);
 	}
 
-	SubjectInfo({
-		required this.subject,
-		required String name,
-		required content
-	}) :
-		_content = content,
-		super(initialName: name);
-
 	SubjectInfo.fromCloudFormat(dynamic object, {required this.subject}) :
 		_content = object[Field.content.name] as String,
-		super(initialName: object[Field.name.name] as String);
+		super(name: object[Field.name.name] as String);
 
 	Map<String, String> get inCloudFormat => {
-		Field.name.name: initialName,
+		Field.name.name: name,
 		Field.content.name: content
 	};
 
 	void delete() => subject.deleteInfo(this);
 
 	@override
+	List<dynamic> get idComponents => [subject.name, name];
+
+	@override
 	Field get labelCollection => Field.subjectInfo;
 
 	@override
-	int compareTo(dynamic other) => name.compareTo(other.name);
+	int compareTo(covariant SubjectInfo other) => nameRepr.compareTo(other.nameRepr);
 }

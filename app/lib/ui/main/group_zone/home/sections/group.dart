@@ -32,7 +32,7 @@ class GroupSection extends CloudEntitiesSection<GroupSectionCloudData, Student> 
 	@override
 	List<Widget> tiles(BuildContext context, List<Student> students) => [
 		for (final student in students) EntityTile(
-			title: student.name,
+			title: student.nameRepr,
 			subtitle: student.role == Role.ordinary ? null : student.role.name,
 			pageBuilder: () => StudentPage(student)
 		)

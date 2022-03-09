@@ -26,7 +26,7 @@ class _StudentPageState extends State<StudentPage> {
 	void initState() {
 		super.initState();
 		_student = widget.student;
-		_nameField.text = _student.name;
+		_nameField.text = _student.nameRepr;
 	}
 
 	@override
@@ -39,7 +39,7 @@ class _StudentPageState extends State<StudentPage> {
 				),
 				if (_student.role != Role.ordinary) Text(_student.role.name)
 			],
-			actions: Cloud.role != Role.leader || _student.name == Local.name ? [] : [
+			actions: Cloud.role != Role.leader || _student.nameRepr == Local.name ? [] : [
 				_student.role == Role.ordinary ? EntityActionButton(
 					text: "trust",
 					action: () => _student.role = Role.trusted
@@ -55,6 +55,7 @@ class _StudentPageState extends State<StudentPage> {
 		);
 	}
 
+	// todo: changing own name
 	@override
 	void dispose() {
 		_student.label = _nameField.text;

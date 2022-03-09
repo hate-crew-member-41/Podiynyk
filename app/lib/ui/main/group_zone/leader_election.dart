@@ -72,11 +72,11 @@ class _LeaderCandidateListState extends State<LeaderCandidateList> {
 						shrinkWrap: true,
 						children: [
 							for (final student in students) ListTile(
-								title: Text(student.name),
+								title: Text(student.nameRepr),
 								trailing: student.confirmationCount == 0 ?
 									null :
 									Text(student.confirmationCount.toString()),
-								onTap: student.name == Local.name ? null : () {
+								onTap: student.nameRepr == Local.name ? null : () {
 									if (student.id == _votedForId) return;
 
 									student.voteFor(previousId: _votedForId);
