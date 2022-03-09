@@ -56,10 +56,12 @@ class _MessagePageState extends State<MessagePage> {
 					enabled: isAuthor,
 				)
 			],
-			actions: !isAuthor ? null : [EntityActionButton(
-				text: "delete",
-				action: () => Cloud.deleteMessage(_message)
-			)]
+			actions: [
+				if (isAuthor) EntityActionButton(
+					text: "delete",
+					action: () => Cloud.deleteMessage(_message)
+				)
+			]
 		);
 	}
 

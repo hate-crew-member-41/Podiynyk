@@ -62,7 +62,7 @@ class Subject extends LabelableEntity implements Comparable {
 }
 
 
-// todo: add id
+// think: add id
 class SubjectInfo extends LabelableEntity implements Comparable {
 	final Subject subject;
 

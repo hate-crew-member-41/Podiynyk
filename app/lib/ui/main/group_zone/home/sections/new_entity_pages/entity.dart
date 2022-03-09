@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 // use PageView instead of FAD, remove the empty tiles in the sections
 class NewEntityPage extends StatelessWidget {
 	final List<Widget> children;
-	final bool Function(BuildContext context) add;
+	final bool Function() add;
 
 	const NewEntityPage({
 		required this.children,
@@ -16,7 +16,7 @@ class NewEntityPage extends StatelessWidget {
 	Widget build(BuildContext context) {
 		return GestureDetector(
 			onDoubleTap: () {
-				final added = add(context);
+				final added = add();
 				if (added) Navigator.of(context).pop();
 			},
 			child: Scaffold(

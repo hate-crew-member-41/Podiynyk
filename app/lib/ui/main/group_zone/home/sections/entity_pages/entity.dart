@@ -3,23 +3,22 @@ import 'package:flutter/material.dart';
 
 class EntityPage extends StatelessWidget {
 	final List<Widget> children;
-	final List<Widget>? actions;
+	final List<Widget> actions;
 
 	const EntityPage({
 		required this.children,
-		this.actions
+		this.actions = const <Widget>[]
 	});
 
 	@override
 	Widget build(BuildContext context) {
 		return GestureDetector(
-			// todo: make an empty list mean no actions instead?
-			onLongPress: actions != null ? () {
+			onLongPress: actions.isNotEmpty ? () {
 				Navigator.of(context).push(MaterialPageRoute(builder: (context) => Scaffold(
 					body: Column(
 						mainAxisAlignment: MainAxisAlignment.center,
 						crossAxisAlignment: CrossAxisAlignment.start,
-						children: actions!
+						children: actions
 					)
 				)));
 			} : null,
@@ -50,8 +49,7 @@ class EntityActionButton extends StatelessWidget {
 			onPressed: () {
 				Navigator.of(context).pop();
 				action();
-			},
-			style: const ButtonStyle(alignment: Alignment.centerLeft)
+			}
 		);
 	}
 }

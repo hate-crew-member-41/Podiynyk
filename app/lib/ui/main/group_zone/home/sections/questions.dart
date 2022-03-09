@@ -26,7 +26,7 @@ class QuestionsSection extends CloudEntitiesSection<QuestionsSectionCloudData, Q
 	IconData get sectionIcon => icon;
 	// todo: define
 	@override
-	Widget get actionButton => const Scaffold();
+	Widget get actionButton => Container();
 
 	@override
 	Future<List<Question>> get entities => data.questions;

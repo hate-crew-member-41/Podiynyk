@@ -164,10 +164,12 @@ class _SubjectInfoPageState extends State<SubjectInfoPage> {
 					name: "content",
 				)
 			],
-			actions: Cloud.role == Role.ordinary ? null : [EntityActionButton(
-				text: "delete",
-				action: widget.info.delete
-			)]
+			actions: [
+				if (Cloud.role != Role.ordinary) EntityActionButton(
+					text: "delete",
+					action: widget.info.delete
+				)
+			]
 		);
 	}
 

@@ -20,7 +20,7 @@ class NewSubjectPage extends StatelessWidget {
 		)]
 	);
 
-	bool _add(BuildContext context) {
+	bool _add() {
 		final name = _nameField.text;
 		if (name.isEmpty) return false;
 
@@ -52,7 +52,7 @@ class NewSubjectInfoPage extends StatelessWidget {
 		]
 	);
 
-	bool _add(BuildContext context) {
+	bool _add() {
 		final topic = _topicField.text, info = _infoField.text;
 		if (topic.isEmpty || info.isEmpty) return false;
 

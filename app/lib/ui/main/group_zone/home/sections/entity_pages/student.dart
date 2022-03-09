@@ -39,7 +39,7 @@ class _StudentPageState extends State<StudentPage> {
 				),
 				if (_student.role != Role.ordinary) Text(_student.role.name)
 			],
-			actions: Cloud.role != Role.leader || _student.name == Local.name ? null : [
+			actions: Cloud.role != Role.leader || _student.name == Local.name ? [] : [
 				_student.role == Role.ordinary ? EntityActionButton(
 					text: "trust",
 					action: () => _student.role = Role.trusted

@@ -59,7 +59,7 @@ class _EventPageState extends State<EventPage> {
 			actions: [
 				if (_event.note == null) EntityActionButton(
 					text: "add a note",
-					// todo: show the form on the event page instead?
+					// todo: show the form on the event page?
 					action: () => Navigator.of(context).push(MaterialPageRoute(
 						builder: (_) => GestureDetector(
 							onDoubleTap: _addNote,

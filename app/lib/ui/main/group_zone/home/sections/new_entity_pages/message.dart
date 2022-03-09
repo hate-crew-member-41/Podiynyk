@@ -26,7 +26,7 @@ class NewMessagePage extends StatelessWidget {
 		]
 	);
 
-	bool _add(BuildContext context) {
+	bool _add() {
 		final subject = _topicField.text, content = _contentField.text;
 		if (subject.isEmpty || content.isEmpty) return false;
 
