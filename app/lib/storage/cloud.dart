@@ -50,7 +50,6 @@ extension on CloudMap {
 }
 
 
-// think: reorder the members
 class Cloud {
 	static final _cloud = FirebaseFirestore.instance;
 
@@ -182,98 +181,6 @@ class Cloud {
 	/// The user's [Role].
 	static Role get role => _role;
 
-	/// The group's sorted [Event]s without the details.
-	static Future<List<Event>> get events async {
-		final snapshot = await Collection.events.ref.get();
-
-		final events = [
-			for (final entry in snapshot.data()!.entries) Event.fromCloudFormat(entry)
-		]..sort();
-		Local.clearStoredEntities(Field.hiddenEvents, events);
-		Local.clearEntityLabels(Field.events, events);
-
-		return events;
-	}
-
-	/// The group's sorted non-subject [Event]s without the details.
-	static Future<List<Event>> get nonSubjectEvents async {
-		final snapshot = await Collection.events.ref.get();
-		final eventEntries = snapshot.data()!.entries.where((entry) =>
-			entry.value[Field.subject.name] == null
-		);
-
-		return [
-			for (final entry in eventEntries) Event.fromCloudFormat(entry)
-		]..sort();
-	}
-
-	/// The group's sorted [Subject]s without the details.
-	static Future<List<Subject>> get subjects async {
-		final snapshots = await Future.wait([
-			Collection.subjects.ref.get(),
-			Collection.events.ref.get()
-		]);
-
-		final events = [
-			for (final entry in snapshots.last.data()!.entries) Event.fromCloudFormat(entry)
-		]..sort();
-
-		final subjects = [
-			for (final entry in snapshots.first.data()!.entries) Subject.fromCloudFormat(
-				entry,
-				events: events.where((event) =>
-					event.subjectName == entry.value[Field.name.name]
-				).toList()
-			)
-		]..sort();
-		Local.clearStoredEntities(Field.unfollowedSubjects, subjects);
-		Local.clearEntityLabels(Field.subjects, subjects);
-
-		return subjects;
-	}
-
-	/// The sorted names of the group's [Subject]s.
-	static Future<List<String>> get subjectNames async {
-		final snapshot = await Collection.subjects.ref.get();
-		return [
-			for (final entry in snapshot.data()!.entries) Subject.nameFromCloudFormat(entry)
-		]..sort();
-	}
-
-	/// The group's [Message]s without the details.
-	static Future<List<Message>> get messages async {
-		final snapshot = await Collection.messages.ref.get();
-		return [
-			for (final entry in snapshot.data()!.entries) Message.fromCloudFormat(entry)
-		]..sort();
-	}
-
-	// todo: define
-	/// The group's [Question]s without the details.
-	static Future<List<Question>> get questions async {
-		return [];
-	}
-
-	/// The group's [Student]s. Updates [role].
-	static Future<List<Student>> get students async {
-		final snapshot = await Collection.groups.ref.get();
-		final data = snapshot.data()!;
-
-		final students = [
-			for (final entry in data[Field.students.name].entries) Student.fromCloudFormat(entry)
-		]..sort();
-		Local.clearEntityLabels(Field.students, students);
-
-		_role = students.firstWhere((student) => student.name == Local.name).role;
-		return students;
-	}
-
-	/// The details of the [collection] entity with the [id].
-	static Future<CloudMap> entityDetails(Collection collection, String id) async {
-		final snapshot = await collection.detailsRef(id).get();
-		return snapshot.data()!;
-	}
-
 	// todo: should all new entities check whether they already exist?
 
 	/// Adds an [Event] with the arguments unless it exists. Increments the [subjectName]'s total event count.
@@ -348,31 +255,95 @@ class Cloud {
 		return wasWritten;
 	}
 
-	/// Deletes the [event].
-	static Future<void> deleteEvent(Event event) async {
-		await Future.wait([
-			Collection.events.ref.update({event.id: FieldValue.delete()}),
-			Collection.events.detailsRef(event.id).delete()
-		]);
+	/// The group's sorted [Event]s without the details.
+	static Future<List<Event>> get events async {
+		final snapshot = await Collection.events.ref.get();
+
+		final events = [
+			for (final entry in snapshot.data()!.entries) Event.fromCloudFormat(entry)
+		]..sort();
+		Local.clearStoredEntities(Field.hiddenEvents, events);
+		Local.clearEntityLabels(Field.events, events);
+
+		return events;
 	}
 
-	/// Deletes the [subject]. The [subject]'s events are kept.
-	static Future<void> deleteSubject(Subject subject) async {
-		await Future.wait([
-			Collection.subjects.ref.update({subject.id: FieldValue.delete()}),
-			Collection.subjects.detailsRef(subject.id).delete(),
-			Collection.events.ref.update({
-				for (final event in subject.events) event.id: FieldValue.delete()
-			})
-		]);
+	/// The group's sorted non-subject [Event]s without the details.
+	static Future<List<Event>> get nonSubjectEvents async {
+		final snapshot = await Collection.events.ref.get();
+		final eventEntries = snapshot.data()!.entries.where((entry) =>
+			entry.value[Field.subject.name] == null
+		);
+
+		return [
+			for (final entry in eventEntries) Event.fromCloudFormat(entry)
+		]..sort();
 	}
 
-	/// Deletes the [message].
-	static Future<void> deleteMessage(Message message) async {
-		await Future.wait([
-			Collection.messages.ref.update({message.id: FieldValue.delete()}),
-			Collection.messages.detailsRef(message.id).delete()
+	/// The group's sorted [Subject]s without the details.
+	static Future<List<Subject>> get subjects async {
+		final snapshots = await Future.wait([
+			Collection.subjects.ref.get(),
+			Collection.events.ref.get()
 		]);
+
+		final events = [
+			for (final entry in snapshots.last.data()!.entries) Event.fromCloudFormat(entry)
+		]..sort();
+
+		final subjects = [
+			for (final entry in snapshots.first.data()!.entries) Subject.fromCloudFormat(
+				entry,
+				events: events.where((event) =>
+					event.subjectName == entry.value[Field.name.name]
+				).toList()
+			)
+		]..sort();
+		Local.clearStoredEntities(Field.unfollowedSubjects, subjects);
+		Local.clearEntityLabels(Field.subjects, subjects);
+
+		return subjects;
+	}
+
+	/// The sorted names of the group's [Subject]s.
+	static Future<List<String>> get subjectNames async {
+		final snapshot = await Collection.subjects.ref.get();
+		return [
+			for (final entry in snapshot.data()!.entries) Subject.nameFromCloudFormat(entry)
+		]..sort();
+	}
+
+	/// The group's [Message]s without the details.
+	static Future<List<Message>> get messages async {
+		final snapshot = await Collection.messages.ref.get();
+		return [
+			for (final entry in snapshot.data()!.entries) Message.fromCloudFormat(entry)
+		]..sort();
+	}
+
+	/// The group's [Question]s without the details.
+	static Future<List<Question>> get questions async {
+		return [];
+	}
+
+	/// The group's [Student]s. Updates [role].
+	static Future<List<Student>> get students async {
+		final snapshot = await Collection.groups.ref.get();
+		final data = snapshot.data()!;
+
+		final students = [
+			for (final entry in data[Field.students.name].entries) Student.fromCloudFormat(entry)
+		]..sort();
+		Local.clearEntityLabels(Field.students, students);
+
+		_role = students.firstWhere((student) => student.name == Local.name).role;
+		return students;
+	}
+
+	/// The details of the [collection] entity with the [id].
+	static Future<CloudMap> entityDetails(Collection collection, String id) async {
+		final snapshot = await collection.detailsRef(id).get();
+		return snapshot.data()!;
 	}
 
 	/// Updates the [event]'s date.
@@ -425,5 +396,32 @@ class Cloud {
 			'$studentsField.${student.id}.$roleField': Role.leader.index
 		});
 		_role = Role.trusted;
+	}
+
+	/// Deletes the [event].
+	static Future<void> deleteEvent(Event event) async {
+		await Future.wait([
+			Collection.events.ref.update({event.id: FieldValue.delete()}),
+			Collection.events.detailsRef(event.id).delete()
+		]);
+	}
+
+	/// Deletes the [subject] and its [Event]s.
+	static Future<void> deleteSubject(Subject subject) async {
+		await Future.wait([
+			Collection.subjects.ref.update({subject.id: FieldValue.delete()}),
+			Collection.subjects.detailsRef(subject.id).delete(),
+			Collection.events.ref.update({
+				for (final event in subject.events) event.id: FieldValue.delete()
+			})
+		]);
+	}
+
+	/// Deletes the [message].
+	static Future<void> deleteMessage(Message message) async {
+		await Future.wait([
+			Collection.messages.ref.update({message.id: FieldValue.delete()}),
+			Collection.messages.detailsRef(message.id).delete()
+		]);
 	}
 }
