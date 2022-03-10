@@ -57,8 +57,8 @@ class _SubjectPageState extends State<SubjectPage> {
 				TextButton(
 					child: Text(_subject.eventCountRepr),
 					onPressed: () => _showEntities(
-						[for (final event in _subject.events) EventTile(event, showSubject: false)],
-						newEntityPageBuilder: (_) => NewEventPage.subjectEvent(_subject.nameRepr)
+						[for (final event in _subject.events!) EventTile(event, showSubject: false)],
+						newEntityPageBuilder: (_) => NewEventPage.subjectEvent(_subject)
 					)
 				)
 			],
@@ -79,7 +79,7 @@ class _SubjectPageState extends State<SubjectPage> {
 	}
 
 	void _askDelete() {
-		if (_subject.events.isEmpty) {
+		if (_subject.events!.isEmpty) {
 			Cloud.deleteSubject(_subject);
 			return;
 		}

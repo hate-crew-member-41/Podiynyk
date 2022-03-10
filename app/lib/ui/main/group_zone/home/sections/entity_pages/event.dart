@@ -47,7 +47,7 @@ class _EventPageState extends State<EventPage> {
 					controller: _nameField,
 					name: "name"
 				),
-				if (hasSubject) Text(_event.subjectNameRepr!),
+				if (hasSubject) Text(_event.subject!.nameRepr),
 				DateField(
 					initialDate: _event.date,
 					onDatePicked: (date) => _event.date = date,

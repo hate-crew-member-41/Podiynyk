@@ -4,7 +4,6 @@ import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/date.dart';
 import 'package:podiynyk/storage/entities/event.dart';
 import 'package:podiynyk/storage/entities/student.dart' show Role;
-import 'package:podiynyk/storage/entities/subject.dart';
 
 import 'section.dart';
 import 'entity_pages/event.dart';
@@ -16,7 +15,7 @@ class AgendaSectionCloudData extends CloudEntitiesSectionData<Event> {
 		events.where((event) {
 			final hasSubject = event.subject != null;
 			return !event.isHidden && (
-				(hasSubject && Subject.withNameIsFollowed(event.subject!)) ||
+				(hasSubject && event.subject!.isFollowed) ||
 				!hasSubject
 			);
 		}).toList()
@@ -71,7 +70,7 @@ class EventTile extends StatelessWidget {
 
 	Widget _builder(BuildContext context) => EntityTile(
 		title: event.nameRepr,
-		subtitle: showSubject ? event.subjectNameRepr : null,
+		subtitle: showSubject ? event.subject?.nameRepr : null,
 		trailing: event.date.dateRepr,
 		pageBuilder: () => EventPage(event)
 	);

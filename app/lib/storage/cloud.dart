@@ -201,7 +201,7 @@ class Cloud {
 	}
 
 	/// The group's sorted [Subject]s without the details.
-	static Future<List<Subject>> get subjects async {
+	static Future<List<Subject>> get subjectsWithEvents async {
 		final snapshots = await Future.wait([
 			Collection.subjects.ref.get(),
 			Collection.events.ref.get()
@@ -215,7 +215,7 @@ class Cloud {
 			for (final entry in snapshots.first.data()!.entries) Subject.fromCloudFormat(
 				entry,
 				events: events.where((event) =>
-					event.subject == entry.value[Field.name.name]
+					event.subject?.name == entry.value[Field.name.name]
 				).toList()
 			)
 		]..sort();
@@ -226,10 +226,10 @@ class Cloud {
 	}
 
 	/// The sorted names of the group's [Subject]s.
-	static Future<List<String>> get subjectNames async {
+	static Future<List<Subject>> get subjects async {
 		final snapshot = await Collection.subjects.ref.get();
 		return [
-			for (final entry in snapshot.data()!.entries) Subject.nameFromCloudFormat(entry)
+			for (final entry in snapshot.data()!.entries) Subject.fromCloudFormat(entry)
 		]..sort();
 	}
 
@@ -366,7 +366,7 @@ class Cloud {
 			Collection.subjects.ref.update({subject.id: FieldValue.delete()}),
 			Collection.subjects.detailsRef(subject.id).delete(),
 			Collection.events.ref.update({
-				for (final event in subject.events) event.id: FieldValue.delete()
+				for (final event in subject.events!) event.id: FieldValue.delete()
 			})
 		]);
 	}

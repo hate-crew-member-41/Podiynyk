@@ -8,7 +8,7 @@ import 'labelable.dart';
 
 
 class Subject extends LabelableEntity implements CreatableEntity, Comparable {
-	late final List<Event> events;
+	late final List<Event>? events;
 	List<SubjectInfo>? info;
 
 	Subject({required String name}) : super(
@@ -16,12 +16,10 @@ class Subject extends LabelableEntity implements CreatableEntity, Comparable {
 		name: name
 	);
 
-	Subject.fromCloudFormat(MapEntry<String, dynamic> entry, {required this.events}) : super.fromCloud(
+	Subject.fromCloudFormat(MapEntry<String, dynamic> entry, {this.events}) : super.fromCloud(
 		id: entry.key,
 		name: entry.value[Field.name.name] as String
-	) {
-		_isFollowed = !Local.entityIsStored(Field.unfollowedSubjects, id);
-	}
+	);
 
 	static String nameFromCloudFormat(MapEntry<String, dynamic> entry) => entry.value[Field.name.name];
 
@@ -31,11 +29,9 @@ class Subject extends LabelableEntity implements CreatableEntity, Comparable {
 	@override
 	CloudMap get detailsInCloudFormat => {Field.info.name: <SubjectInfo>[]};
 
-	late bool _isFollowed;
-	bool get isFollowed => _isFollowed;
+	bool get isFollowed => !Local.entityIsStored(Field.unfollowedSubjects, id);
 	set isFollowed(bool isFollowed) {
-		_isFollowed = isFollowed;
-		!_isFollowed ? Local.storeEntity(Field.unfollowedSubjects, id) : Local.deleteEntity(Field.unfollowedSubjects, id);
+		!isFollowed ? Local.storeEntity(Field.unfollowedSubjects, id) : Local.deleteEntity(Field.unfollowedSubjects, id);
 	}
 
 	Future<void> addDetails() async {
@@ -59,7 +55,7 @@ class Subject extends LabelableEntity implements CreatableEntity, Comparable {
 	static bool withNameIsFollowed(String name) => !Local.entityIsStored(Field.unfollowedSubjects, name);
 
 	String get eventCountRepr {
-		final eventCount = events.length;
+		final eventCount = events!.length;
 		switch (eventCount.compareTo(1)) {
 			case -1: return "no events";
 			case 0: return "1 event";

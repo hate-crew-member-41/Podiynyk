@@ -6,11 +6,11 @@ import '../local.dart';
 
 import 'creatable.dart';
 import 'labelable.dart';
+import 'subject.dart';
 
 
 class Event extends LabelableEntity implements CreatableEntity, Comparable {
-	final String? subject;
-	late final String? _subjectLabel;
+	final Subject? subject;
 
 	Event({
 		required String name,
@@ -25,17 +25,16 @@ class Event extends LabelableEntity implements CreatableEntity, Comparable {
 			name: name
 		);
 
+
 	Event.fromCloudFormat(MapEntry<String, dynamic> entry) :
-		subject = entry.value[Field.subject.name],
+		subject = entry.value[Field.subject.name] != null ?
+			Subject(name: entry.value[Field.subject.name] as String) :
+			null,
 		_date = (entry.value[Field.date.name] as Timestamp).toDate(),
 		super.fromCloud(
 			id: entry.key,
 			name: entry.value[Field.name.name] as String
-		)
-	{
-		_subjectLabel = subject != null ? Local.entityLabel(Field.subjects, subject!) : null;
-		_isHidden = Local.entityIsStored(Field.hiddenEvents, id);
-	}
+		);
 
 	@override
 	CloudMap get inCloudFormat => {
@@ -57,11 +56,9 @@ class Event extends LabelableEntity implements CreatableEntity, Comparable {
 		Cloud.updateEventDate(this);
 	}
 
-	late bool _isHidden;
-	bool get isHidden => _isHidden;
+	bool get isHidden => Local.entityIsStored(Field.hiddenEvents, id);
 	set isHidden(bool isHidden) {
-		_isHidden = isHidden;
-		_isHidden ? Local.storeEntity(Field.hiddenEvents, id) : Local.deleteEntity(Field.hiddenEvents, id);
+		isHidden ? Local.storeEntity(Field.hiddenEvents, id) : Local.deleteEntity(Field.hiddenEvents, id);
 	}
 
 	String? _note;
@@ -71,8 +68,6 @@ class Event extends LabelableEntity implements CreatableEntity, Comparable {
 		_note = note;
 		Cloud.updateEventNote(this);
 	}
-
-	String? get subjectNameRepr => _subjectLabel ?? subject;
 
 	Future<void> addDetails() async {
 		final details = await Cloud.entityDetails(Collection.events, id);

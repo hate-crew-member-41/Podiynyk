@@ -11,7 +11,7 @@ import 'new_entity_pages/subject.dart';
 
 
 class SubjectsSectionCloudData extends CloudEntitiesSectionData<Subject> {
-	final subjects = Cloud.subjects;
+	final subjects = Cloud.subjectsWithEvents;
 
 	@override
 	Future<List<Subject>> get counted => subjects;
@@ -47,12 +47,12 @@ class SubjectsSection extends CloudEntitiesSection<SubjectsSectionCloudData, Sub
 	];
 
 	Widget tile(BuildContext context, Subject subject) {
-		final hasEvents = subject.events.isNotEmpty;
+		final hasEvents = subject.events!.isNotEmpty;
 
 		return EntityTile(
 			title: subject.nameRepr,
 			subtitle: hasEvents ? subject.eventCountRepr : null,
-			trailing: hasEvents ? subject.events.first.date.dateRepr : null,
+			trailing: hasEvents ? subject.events!.first.date.dateRepr : null,
 			pageBuilder: () => SubjectPage(subject)
 		);
 	}

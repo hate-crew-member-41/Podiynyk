@@ -30,7 +30,6 @@ abstract class CloudEntitiesSection<D extends CloudEntitiesSectionData<E>, E> ex
 		return FutureBuilder<List<E>>(
 			future: entities,
 			builder: (context, snapshot) {
-				// think: what is shown while awaiting
 				if (snapshot.connectionState == ConnectionState.waiting) return Center(child: Icon(sectionIcon));
 				// if (snapshot.hasError) print(snapshot.error!);  // todo: consider handling
 

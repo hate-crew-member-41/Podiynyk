@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/event.dart';
+import 'package:podiynyk/storage/entities/subject.dart' show Subject;
 
 import 'package:podiynyk/ui/main/common/fields.dart';
 
@@ -11,43 +12,42 @@ import 'entity.dart';
 class NewEventPage extends StatefulWidget {
 	final bool askSubject;
 	final bool subjectRequired;
-	final String? subjectName;
+	final Subject? subject;
 
 	const NewEventPage() :
 		askSubject = true,
 		subjectRequired = false,
-		subjectName = null;
+		subject = null;
 
-	const NewEventPage.subjectEvent(this.subjectName) :
+	const NewEventPage.subjectEvent(this.subject) :
 		askSubject = false,
 		subjectRequired = true;
 
 	const NewEventPage.nonSubjectEvent() :
 		askSubject = false,
 		subjectRequired = false,
-		subjectName = null;
+		subject = null;
 
 	@override
 	State<NewEventPage> createState() => _NewEventPageState();
 }
 
 class _NewEventPageState extends State<NewEventPage> {
-	static const _noSubjectsMessage = "To add events of specific subjects, add the subjects first. "
-		"For now, you can only add non-subject events.";
+	static const _noSubjectsMessage = "no subjects";
 
-	late final Future<List<String>> _subjectNames;
+	late final Future<List<Subject>> _subjects;
 	final _nameField = TextEditingController();
 	final _subjectField = TextEditingController();
 	final _noteField = TextEditingController();
 
-	String? _subjectName;
+	Subject? _subject;
 	DateTime? _date;
 
 	@override
 	void initState() {
 		super.initState();
-		_subjectName = widget.subjectName;
-		if (widget.askSubject) _subjectNames = Cloud.subjectNames;
+		_subject = widget.subject;
+		if (widget.askSubject) _subjects = Cloud.subjects;
 	}
 
 	@override
@@ -76,28 +76,27 @@ class _NewEventPageState extends State<NewEventPage> {
 		Navigator.of(context).push(MaterialPageRoute(
 			builder: (context) => Scaffold(
 				body: Center(child: FutureBuilder(
-					future: _subjectNames,
+					future: _subjects,
 					builder: _subjectsBuilder
 				))
 			)
 		));
 	}
 
-	// tofix: the labels should be displayed
-	Widget _subjectsBuilder(BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+	Widget _subjectsBuilder(BuildContext context, AsyncSnapshot<List<Subject>> snapshot) {
 		if (snapshot.connectionState == ConnectionState.waiting) return const Icon(Icons.cloud_download);
 		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
-		final subjectNames = snapshot.data!;
-		return subjectNames.isNotEmpty ? ListView(
+		final subjects = snapshot.data!;
+		return subjects.isNotEmpty ? ListView(
 			shrinkWrap: true,
 			children: [
-				for (final name in subjectNames) if (name != _subjectName) ListTile(
-					title: Text(name),
-					onTap: () => _handleSubject(context, name)
+				for (final subject in subjects) if (subject != _subject) ListTile(
+					title: Text(subject.nameRepr),
+					onTap: () => _handleSubject(context, subject)
 				),
-				if (_subjectName != null) ...[
-					if (subjectNames.length != 1) const ListTile(),
+				if (_subject != null) ...[
+					if (subjects.length != 1) const ListTile(),
 					ListTile(
 						title: const Text("none"),
 						onTap: () => _handleSubject(context, null)
@@ -107,9 +106,9 @@ class _NewEventPageState extends State<NewEventPage> {
 		) : const Text(_noSubjectsMessage);
 	}
 
-	void _handleSubject(BuildContext context, String? subjectName) {
-		_subjectName = subjectName;
-		_subjectField.text = subjectName ?? '';
+	void _handleSubject(BuildContext context, Subject? subject) {
+		_subject = subject;
+		_subjectField.text = subject?.nameRepr ?? '';
 		Navigator.of(context).pop();
 	}
 
@@ -117,14 +116,14 @@ class _NewEventPageState extends State<NewEventPage> {
 		final name = _nameField.text;
 		if (
 			name.isEmpty ||
-			(widget.subjectRequired && _subjectName == null) ||
+			(widget.subjectRequired && _subject == null) ||
 			_date == null
 		) return false;
 
 		final note = _noteField.text;
 		final event = Event(
 			name: name,
-			subject: _subjectName,
+			subject: _subject,
 			date: _date!,
 			note: note.isNotEmpty ? note : null
 		);
