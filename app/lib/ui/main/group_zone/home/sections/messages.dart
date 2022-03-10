@@ -41,6 +41,7 @@ class MessagesSection extends CloudEntitiesSection<MessagesSectionCloudData, Mes
 	List<Widget> tiles(BuildContext context, List<Message> messages) => [
 		for (final message in messages) EntityTile(
 			title: message.name,
+			subtitle: message.author,
 			trailing: message.date.dateRepr,
 			pageBuilder: () => MessagePage(message)
 		),
