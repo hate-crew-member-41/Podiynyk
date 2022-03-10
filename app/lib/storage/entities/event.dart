@@ -39,7 +39,7 @@ class Event extends LabelableEntity implements CreatableEntity, Comparable {
 	@override
 	CloudMap get inCloudFormat => {
 		Field.name.name: name,
-		Field.subject.name: subject,
+		Field.subject.name: subject?.name,
 		Field.date.name: _date,
 	};
 
