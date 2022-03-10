@@ -10,7 +10,17 @@ abstract class LabelableEntity extends Entity {
 
 	String get nameRepr => _label ?? name;
 
-	LabelableEntity({required this.name}) {
+	LabelableEntity({
+		required List<Object?> idComponents,
+		required this.name
+	}) : super(idComponents: idComponents) {
+		_label = Local.entityLabel(labelCollection, id);
+	}
+
+	LabelableEntity.fromCloud({
+		required String id,
+		required this.name
+	}) : super.fromCloud(id: id) {
 		_label = Local.entityLabel(labelCollection, id);
 	}
 

@@ -2,6 +2,9 @@ import '../cloud.dart' show CloudId;
 
 
 abstract class Entity {
-	String get id => idComponents.join(':').safeId;
-	List<dynamic> get idComponents;
+	final String id;
+
+	Entity({required List<Object?> idComponents}) : id = idComponents.join(':').safeId;
+
+	Entity.fromCloud({required this.id});
 }

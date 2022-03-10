@@ -18,12 +18,14 @@ class Message extends Entity implements Comparable {
 		_name = name,
 		_content = content,
 		author = Local.name,
-		date = DateTime.now();
-	
+		date = DateTime.now(),
+		super(idComponents: [Local.name, name]);
+
 	Message.fromCloudFormat(MapEntry<String, dynamic> entry) :
 		_name = entry.value[Field.name.name] as String,
 		date = (entry.value[Field.date.name] as Timestamp).toDate(),
-		author = entry.value[Field.author.name] as String;
+		author = entry.value[Field.author.name] as String,
+		super.fromCloud(id: entry.key);
 
 	CloudMap get inCloudFormat => {
 		Field.name.name: name,
@@ -53,9 +55,6 @@ class Message extends Entity implements Comparable {
 		final details = await Cloud.entityDetails(Collection.messages, id);
 		content = details[Field.content.name];
 	}
-
-	@override
-	List<dynamic> get idComponents => [author, name];
 
 	@override
 	int compareTo(covariant Message other) => other.date.compareTo(date);

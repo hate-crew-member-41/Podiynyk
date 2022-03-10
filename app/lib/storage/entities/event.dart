@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'labelable.dart';
 import '../cloud.dart';
 import '../fields.dart';
 import '../local.dart';
+
+import 'labelable.dart';
 
 
 class Event extends LabelableEntity implements Comparable {
@@ -18,12 +19,18 @@ class Event extends LabelableEntity implements Comparable {
 	}) :
 		_date = date,
 		_note = note,
-		super(name: name);
+		super(
+			idComponents: [subject, name],
+			name: name
+		);
 
 	Event.fromCloudFormat(MapEntry<String, dynamic> entry) :
 		subject = entry.value[Field.subject.name],
 		_date = (entry.value[Field.date.name] as Timestamp).toDate(),
-		super(name: entry.value[Field.name.name] as String)
+		super.fromCloud(
+			id: entry.key,
+			name: entry.value[Field.name.name] as String
+		)
 	{
 		_subjectLabel = subject != null ? Local.entityLabel(Field.subjects, subject!) : null;
 		_isHidden = Local.entityIsStored(Field.hiddenEvents, id);
@@ -68,9 +75,6 @@ class Event extends LabelableEntity implements Comparable {
 		final details = await Cloud.entityDetails(Collection.events, id);
 		_note = details[Field.note.name];
 	}
-
-	@override
-	List<dynamic> get idComponents => [subject, name];
 
 	@override
 	Field get labelCollection => Field.events;

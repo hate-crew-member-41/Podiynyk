@@ -1,3 +1,1 @@
-class Question {
-	const Question();
-}
+class Question {}

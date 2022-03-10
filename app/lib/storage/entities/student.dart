@@ -10,12 +10,18 @@ class Student extends LabelableEntity implements Comparable {
 	Student.candidateFromCloudFormat(MapEntry<String, dynamic> entry) :
 		_role = null,
 		confirmationCount = entry.value[Field.confirmationCount.name] as int,
-		super(name: entry.value[Field.name.name] as String);
+		super.fromCloud(
+			id: entry.key,
+			name: entry.value[Field.name.name] as String
+		);
 
 	Student.fromCloudFormat(MapEntry<String, dynamic> entry) :
 		_role = Role.values[entry.value[Field.role.name] as int],
 		confirmationCount = null,
-		super(name: entry.value[Field.name.name] as String);
+		super.fromCloud(
+			id: entry.key,
+			name: entry.value[Field.name.name] as String
+		);
 
 	Role? _role;
 	Role get role => _role!;
@@ -32,9 +38,6 @@ class Student extends LabelableEntity implements Comparable {
 	}
 
 	Future<void> voteFor({String? previousId}) => Cloud.changeLeaderVote(toId: id, fromId: previousId);
-
-	@override
-	List<dynamic> get idComponents => [name];
 
 	@override
 	Field get labelCollection => Field.students;

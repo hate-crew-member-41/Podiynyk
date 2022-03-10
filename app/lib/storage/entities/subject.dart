@@ -10,11 +10,15 @@ class Subject extends LabelableEntity implements Comparable {
 	late final List<Event> events;
 	List<SubjectInfo>? info;
 
-	Subject({required String name}) : super(name: name);
+	Subject({required String name}) : super(
+		idComponents: [name],
+		name: name
+	);
 
-	Subject.fromCloudFormat(MapEntry<String, dynamic> entry, {required this.events}) :
-		super(name: entry.value[Field.name.name] as String)
-	{
+	Subject.fromCloudFormat(MapEntry<String, dynamic> entry, {required this.events}) : super.fromCloud(
+		id: entry.key,
+		name: entry.value[Field.name.name] as String
+	) {
 		_isFollowed = !Local.entityIsStored(Field.unfollowedSubjects, id);
 	}
 
@@ -61,9 +65,6 @@ class Subject extends LabelableEntity implements Comparable {
 	}
 
 	@override
-	List<dynamic> get idComponents => [name];
-	
-	@override
 	Field get labelCollection => Field.subjects;
 
 	@override
@@ -80,7 +81,22 @@ class SubjectInfo extends LabelableEntity implements Comparable {
 		required content
 	}) :
 		_content = content,
-		super(name: name);
+		super(
+			idComponents: [subject.name, name],
+			name: name
+		);
+	
+	SubjectInfo.fromCloudFormat(dynamic entry, {required this.subject}) :
+		_content = entry.value[Field.content.name] as String,
+		super.fromCloud(
+			id: entry.key,
+			name: entry.value[Field.name.name] as String
+		);
+
+	Map<String, String> get inCloudFormat => {
+		Field.name.name: name,
+		Field.content.name: content
+	};
 
 	String _content;
 	String get content => _content;
@@ -89,19 +105,7 @@ class SubjectInfo extends LabelableEntity implements Comparable {
 		Cloud.updateSubjectInfo(subject, this);
 	}
 
-	SubjectInfo.fromCloudFormat(dynamic entry, {required this.subject}) :
-		_content = entry.value[Field.content.name] as String,
-		super(name: entry.value[Field.name.name] as String);
-
-	Map<String, String> get inCloudFormat => {
-		Field.name.name: name,
-		Field.content.name: content
-	};
-
 	void delete() => subject.deleteInfo(this);
-
-	@override
-	List<dynamic> get idComponents => [subject.name, name];
 
 	@override
 	Field get labelCollection => Field.subjectInfo;
