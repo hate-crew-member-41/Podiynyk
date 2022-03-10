@@ -97,8 +97,7 @@ class _NewEventPageState extends State<NewEventPage> {
 					onTap: () => _handleSubject(context, name)
 				),
 				if (_subjectName != null) ...[
-					// tofix: exclude the empty tile unless there are other subjects
-					const ListTile(),
+					if (subjectNames.length != 1) const ListTile(),
 					ListTile(
 						title: const Text("none"),
 						onTap: () => _handleSubject(context, null)

@@ -55,7 +55,6 @@ class _StudentPageState extends State<StudentPage> {
 		);
 	}
 
-	// todo: changing own name
 	@override
 	void dispose() {
 		_student.label = _nameField.text;

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 
-// todo: make detail entity fields late non-nullable, add [hasDetails] field
 class EntityPage extends StatelessWidget {
 	final List<Widget> children;
 	final List<Widget> actions;
