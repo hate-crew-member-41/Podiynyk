@@ -5,7 +5,7 @@ import 'entity.dart';
 
 
 abstract class LabelableEntity extends Entity {
-	final String name;
+	String name;
 	String? _label;
 
 	String get nameRepr => _label ?? name;
@@ -27,13 +27,13 @@ abstract class LabelableEntity extends Entity {
 	set label(String label) {
 		if (label == _label) return;
 
-		if (label.isEmpty || label == name) {
-			Local.deleteEntityLabel(labelCollection, id);
-			_label = null;
-		}
-		else {
+		if (label != name && label.isNotEmpty) {
 			Local.setEntityLabel(labelCollection, id, label);
 			_label = label;
+		}
+		else {
+			Local.deleteEntityLabel(labelCollection, id);
+			_label = null;
 		}
 	}
 

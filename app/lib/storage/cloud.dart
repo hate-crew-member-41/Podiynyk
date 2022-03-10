@@ -352,6 +352,13 @@ class Cloud {
 		_role = Role.trusted;
 	}
 
+	/// Updates the user's name.
+	static Future<void> updateName() async {
+		await Collection.groups.ref.update({
+			'${Field.students.name}.${Local.id}.${Field.name.name}': Local.name
+		});
+	}
+
 	/// Deletes the [event].
 	static Future<void> deleteEvent(Event event) async {
 		await Future.wait([
