@@ -15,7 +15,6 @@ class SettingsSection extends Section {
 	IconData get sectionIcon => icon;
 	
 
-	// todo: define
 	@override
 	Widget build(BuildContext context) {
 		return const Center(child: Icon(icon));

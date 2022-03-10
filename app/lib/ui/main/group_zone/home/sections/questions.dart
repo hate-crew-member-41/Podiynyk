@@ -24,14 +24,12 @@ class QuestionsSection extends CloudEntitiesSection<QuestionsSectionCloudData, Q
 	String get sectionName => name;
 	@override
 	IconData get sectionIcon => icon;
-	// todo: define
 	@override
 	Widget get actionButton => Container();
 
 	@override
 	Future<List<Question>> get entities => data.questions;
 
-	// todo: define
 	@override
 	List<Widget> tiles(BuildContext context, List<Question> questions) => [];
 }

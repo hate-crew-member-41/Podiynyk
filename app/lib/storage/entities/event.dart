@@ -4,10 +4,11 @@ import '../cloud.dart';
 import '../fields.dart';
 import '../local.dart';
 
+import 'creatable.dart';
 import 'labelable.dart';
 
 
-class Event extends LabelableEntity implements Comparable {
+class Event extends LabelableEntity implements CreatableEntity, Comparable {
 	final String? subject;
 	late final String? _subjectLabel;
 
@@ -36,12 +37,14 @@ class Event extends LabelableEntity implements Comparable {
 		_isHidden = Local.entityIsStored(Field.hiddenEvents, id);
 	}
 
+	@override
 	CloudMap get inCloudFormat => {
 		Field.name.name: name,
 		Field.subject.name: subject,
 		Field.date.name: _date,
 	};
 
+	@override
 	CloudMap get detailsInCloudFormat => {
 		if (note != null) Field.note.name: note
 	};

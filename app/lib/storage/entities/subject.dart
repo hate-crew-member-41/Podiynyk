@@ -2,11 +2,12 @@ import '../cloud.dart';
 import '../fields.dart';
 import '../local.dart';
 
+import 'creatable.dart';
 import 'event.dart';
 import 'labelable.dart';
 
 
-class Subject extends LabelableEntity implements Comparable {
+class Subject extends LabelableEntity implements CreatableEntity, Comparable {
 	late final List<Event> events;
 	List<SubjectInfo>? info;
 
@@ -24,8 +25,10 @@ class Subject extends LabelableEntity implements Comparable {
 
 	static String nameFromCloudFormat(MapEntry<String, dynamic> entry) => entry.value[Field.name.name];
 
+	@override
 	CloudMap get inCloudFormat => {Field.name.name: name};
 
+	@override
 	CloudMap get detailsInCloudFormat => {Field.info.name: <SubjectInfo>[]};
 
 	late bool _isFollowed;

@@ -4,10 +4,11 @@ import '../cloud.dart';
 import '../fields.dart';
 import '../local.dart';
 
+import 'creatable.dart';
 import 'entity.dart';
 
 
-class Message extends Entity implements Comparable {
+class Message extends Entity implements CreatableEntity, Comparable {
 	final DateTime date;
 	String author;
 
@@ -27,12 +28,14 @@ class Message extends Entity implements Comparable {
 		author = entry.value[Field.author.name] as String,
 		super.fromCloud(id: entry.key);
 
+	@override
 	CloudMap get inCloudFormat => {
 		Field.name.name: name,
 		Field.date.name: date,
 		Field.author.name: author
 	};
 
+	@override
 	CloudMap get detailsInCloudFormat => {
 		Field.content.name: content
 	};

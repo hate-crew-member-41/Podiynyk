@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:podiynyk/storage/entities/creatable.dart';
 
 import 'fields.dart';
 import 'local.dart';
@@ -268,29 +269,20 @@ class Cloud {
 	// todo: define [addEntity] method
 
 	/// Adds the [event].
-	static Future<void> addEvent(Event event) async {
-		final collection = Collection.events, id = event.id;
-		await Future.wait([
-			collection.ref.update({id: event.inCloudFormat}),
-			collection.detailsRef(id).set(event.detailsInCloudFormat)
-		]);
-	}
+	static Future<void> addEvent(Event event) => _addEntity(Collection.events, event);
 
 	/// Adds the [subject].
-	static Future<void> addSubject(Subject subject) async {
-		final collection = Collection.subjects, id = subject.id;
-		await Future.wait([
-			collection.ref.update({id: subject.inCloudFormat}),
-			collection.detailsRef(id).set(subject.detailsInCloudFormat)
-		]);
-	}
+	static Future<void> addSubject(Subject subject) => _addEntity(Collection.subjects, subject);
 
 	/// Adds the [message].
-	static Future<void> addMessage(Message message) async {
-		final collection = Collection.messages, id = message.id;
+	static Future<void> addMessage(Message message) => _addEntity(Collection.messages, message);
+
+	/// Adds the [collection] [entity].
+	static Future<void> _addEntity(Collection collection, CreatableEntity entity) async {
+		final id = entity.id;
 		await Future.wait([
-			collection.ref.update({id: message.inCloudFormat}),
-			collection.detailsRef(id).set(message.detailsInCloudFormat)
+			collection.ref.update({id: entity.inCloudFormat}),
+			collection.detailsRef(id).set(entity.detailsInCloudFormat)
 		]);
 	}
 

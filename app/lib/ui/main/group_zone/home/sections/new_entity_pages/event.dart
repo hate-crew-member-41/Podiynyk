@@ -58,7 +58,6 @@ class _NewEventPageState extends State<NewEventPage> {
 				controller: _nameField,
 				name: "name"
 			),
-			// todo: removing the chosen subject
 			if (widget.askSubject) OptionField(
 				controller: _subjectField,
 				name: "subject",
