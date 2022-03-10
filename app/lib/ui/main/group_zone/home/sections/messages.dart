@@ -36,7 +36,6 @@ class MessagesSection extends CloudEntitiesSection<MessagesSectionCloudData, Mes
 	@override
 	Future<List<Message>> get entities => data.messages;
 
-	// todo: include the author in the subtitle
 	@override
 	List<Widget> tiles(BuildContext context, List<Message> messages) => [
 		for (final message in messages) EntityTile(

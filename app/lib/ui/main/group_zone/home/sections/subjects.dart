@@ -46,10 +46,14 @@ class SubjectsSection extends CloudEntitiesSection<SubjectsSectionCloudData, Sub
 		const ListTile()
 	];
 
-	Widget tile(BuildContext context, Subject subject) => EntityTile(
-		title: subject.nameRepr,
-		subtitle: subject.eventCountRepr,
-		trailing: subject.events.isNotEmpty ? subject.events.first.date.dateRepr : null,
-		pageBuilder: () => SubjectPage(subject)
-	);
+	Widget tile(BuildContext context, Subject subject) {
+		final hasEvents = subject.events.isNotEmpty;
+
+		return EntityTile(
+			title: subject.nameRepr,
+			subtitle: hasEvents ? subject.eventCountRepr : null,
+			trailing: hasEvents ? subject.events.first.date.dateRepr : null,
+			pageBuilder: () => SubjectPage(subject)
+		);
+	}
 }
