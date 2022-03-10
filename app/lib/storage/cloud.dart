@@ -296,16 +296,9 @@ class Cloud {
 	/// Updates the [event]'s note.
 	static Future<void> updateEventNote(Event event) async {
 		await Collection.events.detailsRef(event.id).update({
-			Field.note.name: event.note
+			Field.note.name: event.note ?? FieldValue.delete()
 		});
 	}
-
-	// /// Updates the [subject]'s information.
-	// static Future<void> updateSubjectInfo(Subject subject) async {
-	// 	Collection.subjects.detailsRef(subject.id).update({
-	// 		Field.info.name: [for (final item in subject.info!) item.inCloudFormat]
-	// 	});
-	// }
 
 	/// Adds the [subject]'s [info].
 	static Future<void> updateSubjectInfo(Subject subject, SubjectInfo info) async {

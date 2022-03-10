@@ -20,6 +20,7 @@ class EventPage extends StatefulWidget {
 
 class _EventPageState extends State<EventPage> {
 	late final Event _event;
+	bool _showNoteField = false;
 	final _nameField = TextEditingController();
 	final _noteField = TextEditingController();
 
@@ -28,22 +29,23 @@ class _EventPageState extends State<EventPage> {
 		super.initState();
 		_event = widget.event;
 		_nameField.text = _event.nameRepr;
-		_event.addDetails().whenComplete(() => setState(() {}));
+
+		_event.addDetails().whenComplete(() => setState(() {
+			final note = _event.note;
+			_showNoteField = note != null;
+			if (_showNoteField) _noteField.text = note!;
+		}));
 	}
 
 	@override
 	Widget build(BuildContext context) {
 		final hasSubject = _event.subject != null;
 
-		final note = _event.note;
-		final hasNote = note != null;
-		if (hasNote) _noteField.text = note;
-
 		return EntityPage(
 			children: [
 				InputField(
 					controller: _nameField,
-					name: "name",
+					name: "name"
 				),
 				if (hasSubject) Text(_event.subjectNameRepr!),
 				DateField(
@@ -51,26 +53,15 @@ class _EventPageState extends State<EventPage> {
 					onDatePicked: (date) => _event.date = date,
 					enabled: Cloud.role != Role.ordinary
 				),
-				if (hasNote) InputField(
+				if (_showNoteField) InputField(
 					controller: _noteField,
-					name: "note",
+					name: "note"
 				)
 			],
 			actions: [
 				if (_event.note == null) EntityActionButton(
 					text: "add a note",
-					// todo: show the form on the event page
-					action: () => Navigator.of(context).push(MaterialPageRoute(
-						builder: (_) => GestureDetector(
-							onDoubleTap: _addNote,
-							child: Scaffold(
-								body: Center(child: InputField(
-									controller: _noteField,
-									name: "note"
-								))
-							)
-						)
-					))
+					action: () => setState(() => _showNoteField = true)
 				),
 				!_event.isHidden ? EntityActionButton(
 					text: "hide",
@@ -85,14 +76,6 @@ class _EventPageState extends State<EventPage> {
 				)
 			]
 		);
-	}
-
-	void _addNote() {
-		final note = _noteField.text;
-		if (note.isEmpty) return;
-
-		_event.note = note;
-		Navigator.of(context).pop();
 	}
 
 	@override
