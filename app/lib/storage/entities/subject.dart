@@ -34,10 +34,22 @@ class Subject extends LabelableEntity implements Comparable {
 	Future<void> addDetails() async {
 		final details = await Cloud.entityDetails(Collection.subjects, id);
 		info = [
-			for (final object in details[Field.info.name]) SubjectInfo.fromCloudFormat(object, subject: this)
+			for (final entry in details[Field.info.name].entries) SubjectInfo.fromCloudFormat(entry, subject: this)
 		]..sort();
 		Local.clearEntityLabels(Field.subjectInfo, info!);
 	}
+
+	void addInfo(SubjectInfo item) {
+		info!.add(item);
+		Cloud.updateSubjectInfo(this, item);
+	}
+
+	void deleteInfo(SubjectInfo item) {
+		info!.remove(item);
+		Cloud.deleteSubjectInfo(this, item);
+	}
+
+	static bool withNameIsFollowed(String name) => !Local.entityIsStored(Field.unfollowedSubjects, name);
 
 	String get eventCountRepr {
 		final eventCount = events.length;
@@ -47,13 +59,6 @@ class Subject extends LabelableEntity implements Comparable {
 			default: return "$eventCount events";
 		}
 	}
-
-	void deleteInfo(SubjectInfo item) {
-		info!.remove(item);
-		Cloud.updateSubjectInfo(this);
-	}
-
-	static bool withNameIsFollowed(String name) => !Local.entityIsStored(Field.unfollowedSubjects, name);
 
 	@override
 	List<dynamic> get idComponents => [name];
@@ -66,7 +71,6 @@ class Subject extends LabelableEntity implements Comparable {
 }
 
 
-// think: add id
 class SubjectInfo extends LabelableEntity implements Comparable {
 	final Subject subject;
 
@@ -82,12 +86,12 @@ class SubjectInfo extends LabelableEntity implements Comparable {
 	String get content => _content;
 	set content(String content) {
 		_content = content;
-		Cloud.updateSubjectInfo(subject);
+		Cloud.updateSubjectInfo(subject, this);
 	}
 
-	SubjectInfo.fromCloudFormat(dynamic object, {required this.subject}) :
-		_content = object[Field.content.name] as String,
-		super(name: object[Field.name.name] as String);
+	SubjectInfo.fromCloudFormat(dynamic entry, {required this.subject}) :
+		_content = entry.value[Field.content.name] as String,
+		super(name: entry.value[Field.name.name] as String);
 
 	Map<String, String> get inCloudFormat => {
 		Field.name.name: name,

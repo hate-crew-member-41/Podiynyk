@@ -32,37 +32,37 @@ class NewSubjectPage extends StatelessWidget {
 
 
 class NewSubjectInfoPage extends StatelessWidget {
-	final Subject _subject;
-	final _topicField = TextEditingController();
-	final _infoField = TextEditingController();
+	final Subject subject;
+	final _nameField = TextEditingController();
+	final _contentField = TextEditingController();
 
-	NewSubjectInfoPage(this._subject);
+	NewSubjectInfoPage({required this.subject});
 
 	@override
 	Widget build(BuildContext context) => NewEntityPage(
 		add: _add,
 		children: [
 			InputField(
-				controller: _topicField,
+				controller: _nameField,
 				name: "topic"
 			),
 			InputField(
-				controller: _infoField,
+				controller: _contentField,
 				name: "information"
 			)
 		]
 	);
 
 	bool _add() {
-		final topic = _topicField.text, info = _infoField.text;
-		if (topic.isEmpty || info.isEmpty) return false;
+		final name = _nameField.text, content = _contentField.text;
+		if (name.isEmpty || content.isEmpty) return false;
 
-		_subject.info!.add(SubjectInfo(
-			subject: _subject,
-			name: topic,
-			content: info
+		subject.addInfo(SubjectInfo(
+			subject: subject,
+			name: name,
+			content: content
 		));
-		Cloud.updateSubjectInfo(_subject);
+		// Cloud.updateSubjectInfo(subject);
 		return true;
 	}
 }

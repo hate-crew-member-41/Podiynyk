@@ -308,10 +308,24 @@ class Cloud {
 		});
 	}
 
-	/// Updates the [subject]'s information.
-	static Future<void> updateSubjectInfo(Subject subject) async {
+	// /// Updates the [subject]'s information.
+	// static Future<void> updateSubjectInfo(Subject subject) async {
+	// 	Collection.subjects.detailsRef(subject.id).update({
+	// 		Field.info.name: [for (final item in subject.info!) item.inCloudFormat]
+	// 	});
+	// }
+
+	/// Adds the [subject]'s [info].
+	static Future<void> updateSubjectInfo(Subject subject, SubjectInfo info) async {
 		Collection.subjects.detailsRef(subject.id).update({
-			Field.info.name: [for (final item in subject.info!) item.inCloudFormat]
+			'${Field.info.name}.${info.id}': info.inCloudFormat
+		});
+	}
+
+	/// Deletes the [subject]'s [info].
+	static Future<void> deleteSubjectInfo(Subject subject, SubjectInfo info) async {
+		Collection.subjects.detailsRef(subject.id).update({
+			'${Field.info.name}.${info.id}': FieldValue.delete()
 		});
 	}
 

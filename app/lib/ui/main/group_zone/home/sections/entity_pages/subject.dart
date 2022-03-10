@@ -51,7 +51,7 @@ class _SubjectPageState extends State<SubjectPage> {
 							title: item.nameRepr,
 							pageBuilder: () => SubjectInfoPage(item),
 						)],
-						newEntityPageBuilder: (_) => NewSubjectInfoPage(_subject)
+						newEntityPageBuilder: (_) => NewSubjectInfoPage(subject: _subject)
 					)
 				),
 				TextButton(
