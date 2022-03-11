@@ -15,11 +15,10 @@ class EntityPage extends StatelessWidget {
 		return GestureDetector(
 			onLongPress: actions.isNotEmpty ? () {
 				Navigator.of(context).push(MaterialPageRoute(builder: (context) => Scaffold(
-					body: Column(
-						mainAxisAlignment: MainAxisAlignment.center,
-						crossAxisAlignment: CrossAxisAlignment.start,
-						children: actions
-					)
+					body: Center(child: ListView(
+					shrinkWrap: true,
+					children: actions
+				))
 				)));
 			} : null,
 			child: Scaffold(

@@ -36,6 +36,7 @@ class App extends StatelessWidget {
 				),
 				textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(
 					textStyle: Appearance.contentText,
+					primary: Appearance.contentColor,
 					padding: Appearance.padding,
 					alignment: Alignment.centerLeft
 				)),
