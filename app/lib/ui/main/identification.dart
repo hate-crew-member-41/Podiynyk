@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/local.dart';
+
 import 'package:podiynyk/storage/entities/identification_options/department.dart';
 import 'package:podiynyk/storage/entities/identification_options/county.dart';
 import 'package:podiynyk/storage/entities/identification_options/identification_option.dart';
@@ -33,13 +35,10 @@ class _IdentificationState extends State<Identification> {
 				body: Column(
 					mainAxisAlignment: MainAxisAlignment.center,
 					crossAxisAlignment: CrossAxisAlignment.start,
-					children: const [
-						Text('Hi'),
-						Text(_intro)
-					].map((widget) => Padding(
-						padding: const EdgeInsets.all(16),
-						child: widget
-					)).toList()
+					children: [
+						Text('Hi', style: Appearance.titleText).withPadding,
+						Text(_intro, style: Appearance.contentText).withPadding
+					]
 				)
 			)
 		);
@@ -80,22 +79,26 @@ class _IdentificationFormState extends State<IdentificationForm> {
 						OptionField(
 							controller: _universityField,
 							name: "university",
-							showOptions: _showCountyOptions
+							showOptions: _showCountyOptions,
+							style: Appearance.contentText
 						),
 						OptionField(
 							controller: _departmentField,
 							name: "department",
 							showOptions: (context) => _university != null ?
 								_showDepartmentOptions(context) :
-								_showCountyOptions(context)
+								_showCountyOptions(context),
+								style: Appearance.contentText
 						),
 						InputField(
 							controller: _groupField,
 							name: "group",
+							style: Appearance.contentText
 						),
 						InputField(
 							controller: _nameField,
 							name: "name",
+							style: Appearance.contentText
 						)
 					]
 				)
@@ -193,7 +196,7 @@ class _IdentificationFormState extends State<IdentificationForm> {
 
 		return ListView(children: [
 			for (final option in snapshot.data!) ListTile(
-				title: Text(option.name),
+				title: Text(option.name, style: Appearance.contentText),
 				onTap: () => onTap(option)
 			)
 		]);

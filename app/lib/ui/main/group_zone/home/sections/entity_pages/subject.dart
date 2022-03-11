@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/student.dart';
 import 'package:podiynyk/storage/entities/subject.dart';
@@ -43,19 +44,22 @@ class _SubjectPageState extends State<SubjectPage> {
 				InputField(
 					controller: _nameField,
 					name: "name",
+					style: Appearance.titleText
 				),
 				if (info != null) TextButton(
-					child: const Text("information"),
+					child: Text("information", style: Appearance.contentText),
 					onPressed: () => _showEntities(
-						[for (final item in info) EntityTile(
-							title: item.nameRepr,
-							pageBuilder: () => SubjectInfoPage(item),
-						)],
+						[
+							for (final item in info) EntityTile(
+								title: item.nameRepr,
+								pageBuilder: () => SubjectInfoPage(item),
+							)
+						],
 						newEntityPageBuilder: (_) => NewSubjectInfoPage(subject: _subject)
 					)
 				),
 				TextButton(
-					child: Text(_subject.eventCountRepr),
+					child: Text(_subject.eventCountRepr, style: Appearance.contentText),
 					onPressed: () => _showEntities(
 						[for (final event in _subject.events!) EventTile(event, showSubject: false)],
 						newEntityPageBuilder: (_) => NewEventPage.subjectEvent(_subject)
@@ -163,10 +167,12 @@ class _SubjectInfoPageState extends State<SubjectInfoPage> {
 				InputField(
 					controller: _nameField,
 					name: "topic",
+					style: Appearance.titleText
 				),
 				InputField(
 					controller: _contentField,
 					name: "content",
+					style: Appearance.contentText
 				)
 			],
 			actions: [

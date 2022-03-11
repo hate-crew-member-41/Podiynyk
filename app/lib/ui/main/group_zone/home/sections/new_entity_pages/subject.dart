@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/subject.dart';
 
@@ -14,10 +15,13 @@ class NewSubjectPage extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) => NewEntityPage(
 		add: _add,
-		children: [InputField(
-			controller: _nameField,
-			name: "name",
-		)]
+		children: [
+			InputField(
+				controller: _nameField,
+				name: "name",
+				style: Appearance.titleText
+			)
+		]
 	);
 
 	bool _add() {
@@ -44,11 +48,13 @@ class NewSubjectInfoPage extends StatelessWidget {
 		children: [
 			InputField(
 				controller: _nameField,
-				name: "topic"
+				name: "topic",
+				style: Appearance.titleText
 			),
 			InputField(
 				controller: _contentField,
-				name: "information"
+				name: "content",
+				style: Appearance.contentText
 			)
 		]
 	);

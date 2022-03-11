@@ -266,8 +266,6 @@ class Cloud {
 		return snapshot.data()!;
 	}
 
-	// todo: define [addEntity] method
-
 	/// Adds the [event].
 	static Future<void> addEvent(Event event) => _addEntity(Collection.events, event);
 

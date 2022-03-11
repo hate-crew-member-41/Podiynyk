@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/message.dart';
 
@@ -18,11 +19,13 @@ class NewMessagePage extends StatelessWidget {
 		children: [
 			InputField(
 				controller: _nameField,
-				name: "topic"
+				name: "topic",
+				style: Appearance.titleText
 			),
 			InputField(
 				controller: _contentField,
-				name: "message"
+				name: "message",
+				style: Appearance.contentText
 			)
 		]
 	);

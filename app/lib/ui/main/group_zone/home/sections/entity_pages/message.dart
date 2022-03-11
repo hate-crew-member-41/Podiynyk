@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/date.dart';
@@ -47,13 +48,15 @@ class _MessagePageState extends State<MessagePage> {
 					controller: _nameField,
 					name: "topic",
 					enabled: isAuthor,
+					style: Appearance.titleText
 				),
-				Text(_message.date.fullRepr),
-				Text("from $author"),
+				Text(_message.date.fullRepr, style: Appearance.contentText).withPadding,
+				Text("from $author", style: Appearance.contentText).withPadding,
 				if (hasContent) InputField(
 					controller: _contentField,
 					name: "content",
 					enabled: isAuthor,
+					style: Appearance.contentText
 				)
 			],
 			actions: [

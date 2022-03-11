@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:podiynyk/storage/appearance.dart';
 
 import 'sections/agenda.dart';
 import 'sections/events.dart';
@@ -41,11 +42,9 @@ class _HomeState extends State<Home> {
 						onTap: () => Scaffold.of(context).openDrawer()
 					),
 					Row(children: [
-						if (_section is CloudEntitiesSection) EntityCount((_section as CloudEntitiesSection).data.count),
-						Padding(
-							padding: const EdgeInsets.only(left: 8),
-							child: Icon(_section.sectionIcon)
-						)
+						if (_section is CloudEntitiesSection)
+							EntityCount((_section as CloudEntitiesSection).data.count).withPadding,
+						Icon(_section.sectionIcon)
 					])
 				]
 			))
@@ -138,8 +137,8 @@ class SectionTile extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return ListTile(
-			title: Text(name),
-			leading: Icon(icon),
+			title: Text(name, style: Appearance.contentText),
+			leading: Icon(icon, color: Appearance.contentColor),
 			onTap: () {
 				setSection();
 				Navigator.of(context).pop();

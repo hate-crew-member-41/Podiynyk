@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/event.dart';
 import 'package:podiynyk/storage/entities/student.dart' show Role;
@@ -45,18 +46,21 @@ class _EventPageState extends State<EventPage> {
 			children: [
 				InputField(
 					controller: _nameField,
-					name: "name"
+					name: "name",
+					style: Appearance.titleText
 				),
-				if (hasSubject) Text(_event.subject!.nameRepr),
+				if (hasSubject) Text(_event.subject!.nameRepr, style: Appearance.contentText).withPadding,
 				DateField(
 					initialDate: _event.date,
 					onDatePicked: (date) => _event.date = date,
-					enabled: Cloud.role != Role.ordinary
+					enabled: Cloud.role != Role.ordinary,
+					style: Appearance.contentText
 				),
 				if (_showNoteField) InputField(
 					controller: _noteField,
-					name: "note"
-				)
+					name: "note",
+					style: Appearance.contentText
+				),
 			],
 			actions: [
 				if (_event.note == null) EntityActionButton(

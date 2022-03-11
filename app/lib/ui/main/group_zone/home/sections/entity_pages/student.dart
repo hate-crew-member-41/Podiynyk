@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/student.dart';
@@ -36,8 +37,10 @@ class _StudentPageState extends State<StudentPage> {
 				InputField(
 					controller: _nameField,
 					name: "name",
+					style: Appearance.titleText
 				),
-				if (_student.role != Role.ordinary) Text(_student.role.name)
+				if (_student.role != Role.ordinary)
+					Text(_student.role.name, style: Appearance.contentText).withPadding
 			],
 			actions: Cloud.role != Role.leader || _student.name == Local.name ? [] : [
 				_student.role == Role.ordinary ? EntityActionButton(

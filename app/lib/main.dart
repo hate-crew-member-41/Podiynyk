@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import 'storage/cloud.dart' show Cloud;
-import 'storage/local.dart' show Local;
+import 'storage/appearance.dart';
+import 'storage/cloud.dart';
+import 'storage/local.dart';
 
 import 'ui/loading.dart';
-import 'ui/main/main.dart';
+import 'ui/main/app_main.dart';
 
 
 void main() {
@@ -27,20 +27,21 @@ class App extends StatelessWidget {
 				}
 			),
 			theme: ThemeData(
-				brightness: Brightness.dark,
-				canvasColor: const HSVColor.fromAHSV(1, 0, 0, .1).toColor(),
+				canvasColor: Appearance.mainColor,
+				// iconTheme: IconThemeData(color: Appearance.contentColor),
 				appBarTheme: AppBarTheme(
-					backgroundColor: const HSVColor.fromAHSV(1, 0, 0, .2).toColor(),
+					backgroundColor: Appearance.accentColor,
+					titleTextStyle: Appearance.contentText,
+					iconTheme: IconThemeData(color: Appearance.contentColor)
 				),
-				textTheme: TextTheme(
-					headline6: GoogleFonts.montserrat(),  // app bar
-					subtitle1: GoogleFonts.montserrat(fontSize: 16),  // list tile's title
-					bodyText1: GoogleFonts.montserrat(),  // emphasized text
-					bodyText2: GoogleFonts.montserrat(fontSize: 14)  // plain text
-				),
+				textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(
+					textStyle: Appearance.contentText,
+					padding: Appearance.padding,
+					alignment: Alignment.centerLeft
+				)),
 				floatingActionButtonTheme: FloatingActionButtonThemeData(
-					backgroundColor: const HSVColor.fromAHSV(1, 0, 0, .2).toColor(),
-					foregroundColor: Colors.white
+					backgroundColor: Appearance.accentColor,
+					foregroundColor: Appearance.contentColor
 				)
 			)
 		);

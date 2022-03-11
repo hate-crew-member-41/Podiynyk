@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/entities/date.dart';
 
 
@@ -7,11 +8,13 @@ class InputField extends StatefulWidget {
 	final TextEditingController controller;
 	final String name;
 	final bool enabled;
+	final TextStyle style;
 
 	const InputField({
 		required this.controller,
 		required this.name,
 		this.enabled = true,
+		required this.style
 	});
 
 	@override
@@ -34,13 +37,14 @@ class _InputFieldState extends State<InputField> {
 			focusNode: _focusNode,
 			enabled: widget.enabled,
 			showCursor: false,
+			style: widget.style,
 			decoration: InputDecoration(
 				border: InputBorder.none,
-				contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-				fillColor: const HSVColor.fromAHSV(1, 0, 0, .2).toColor(),
+				contentPadding: Appearance.padding,
+				fillColor: Appearance.accentColor,
 				filled: _focusNode.hasFocus,
 				hintText: widget.name,
-				hintStyle: TextStyle(color: Colors.white.withOpacity(.5))
+				hintStyle: widget.style.copyWith(color: widget.style.color?.withOpacity(.5))
 			)
 		);
 	}
@@ -51,11 +55,13 @@ class OptionField extends StatelessWidget {
 	final TextEditingController controller;
 	final String? name;
 	final void Function(BuildContext) showOptions;
+	final TextStyle style;
 
 	const OptionField({
 		required this.controller,
 		this.name,
-		required this.showOptions
+		required this.showOptions,
+		required this.style
 	});
 
 	@override
@@ -65,11 +71,12 @@ class OptionField extends StatelessWidget {
 			child: TextField(
 				controller: controller,
 				enabled: false,
+				style: style,
 				decoration: InputDecoration(
 					border: InputBorder.none,
-					contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+					contentPadding: Appearance.padding,
 					hintText: name ?? "",
-					hintStyle: TextStyle(color: Colors.white.withOpacity(.5))
+					hintStyle: style.copyWith(color: style.color?.withOpacity(.5))
 				)
 			),
 		);
@@ -81,11 +88,13 @@ class DateField extends StatefulWidget {
 	final DateTime? initialDate;
 	final void Function(DateTime) onDatePicked;
 	final bool enabled;
+	final TextStyle style;
 
 	const DateField({
 		this.initialDate,
 		required this.onDatePicked,
-		this.enabled = true
+		this.enabled = true,
+		required this.style
 	});
 
 	@override
@@ -108,7 +117,10 @@ class _DateFieldState extends State<DateField> {
 		return OptionField(
 			controller: _field,
 			name: "date",
-			showOptions: (context) { if (widget.enabled) _ask(context); }
+			showOptions: (context) {
+				if (widget.enabled) _ask(context);
+			},
+			style: widget.style
 		);
 	}
 

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:podiynyk/storage/cloud.dart' show Cloud;
-import 'package:podiynyk/storage/local.dart' show Local;
+import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/local.dart';
 
 import 'identification.dart';
 import 'group_zone/group_zone.dart';
@@ -21,7 +21,7 @@ class _AppMainState extends State<AppMain> {
 		return Local.userIsIdentified ? FutureBuilder<bool>(
 			future: Cloud.leaderIsElected,
 			builder: (context, snapshot) {
-				if (snapshot.connectionState == ConnectionState.waiting) return const Icon(Icons.cloud_download);
+				if (snapshot.connectionState == ConnectionState.waiting) return const Scaffold(body: Icon(Icons.cloud_download));
 				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 				return GroupZone(leaderIsElected: snapshot.data!);
 			}

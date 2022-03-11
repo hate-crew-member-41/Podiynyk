@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/event.dart';
 import 'package:podiynyk/storage/entities/subject.dart' show Subject;
@@ -56,17 +57,23 @@ class _NewEventPageState extends State<NewEventPage> {
 		children: [
 			InputField(
 				controller: _nameField,
-				name: "name"
+				name: "name",
+				style: Appearance.titleText
 			),
 			if (widget.askSubject) OptionField(
 				controller: _subjectField,
 				name: "subject",
-				showOptions: _askSubject
+				showOptions: _askSubject,
+				style: Appearance.contentText
 			),
-			DateField(onDatePicked: (date) => _date = date),
+			DateField(
+				onDatePicked: (date) => _date = date,
+				style: Appearance.contentText
+			),
 			InputField(
 				controller: _noteField,
-				name: "note"
+				name: "note",
+				style: Appearance.contentText
 			)
 		]
 	);
