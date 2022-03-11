@@ -27,7 +27,7 @@ class Subject extends LabelableEntity implements CreatableEntity, Comparable {
 	CloudMap get inCloudFormat => {Field.name.name: name};
 
 	@override
-	CloudMap get detailsInCloudFormat => {Field.info.name: <SubjectInfo>[]};
+	CloudMap get detailsInCloudFormat => {Field.info.name: <String, Map<String, String>>{}};
 
 	bool get isFollowed => !Local.entityIsStored(Field.unfollowedSubjects, id);
 	set isFollowed(bool isFollowed) {

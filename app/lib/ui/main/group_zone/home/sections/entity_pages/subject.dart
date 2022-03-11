@@ -72,15 +72,15 @@ class _SubjectPageState extends State<SubjectPage> {
 				),
 				if (Cloud.role == Role.leader) EntityActionButton(
 					text: "delete",
-					action: _askDelete
+					action: () => _askDelete(context)
 				)
 			]
 		);
 	}
 
-	void _askDelete() {
+	void _askDelete(BuildContext context) {
 		if (_subject.events!.isEmpty) {
-			Cloud.deleteSubject(_subject);
+			_delete(context);
 			return;
 		}
 
@@ -97,12 +97,17 @@ class _SubjectPageState extends State<SubjectPage> {
 						child: const Text("exactly"),
 						onPressed: () {
 							Navigator.of(context).pop();
-							Cloud.deleteSubject(_subject);
+							_delete(context);
 						}
 					)
 				]
 			)
 		);
+	}
+
+	void _delete(BuildContext context) {
+		Cloud.deleteSubject(_subject);
+		Navigator.of(context).pop();
 	}
 
 	void _showEntities(List<Widget> entities, {required Widget Function(BuildContext) newEntityPageBuilder}) {

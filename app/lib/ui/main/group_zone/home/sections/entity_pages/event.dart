@@ -72,10 +72,15 @@ class _EventPageState extends State<EventPage> {
 				),
 				if (Cloud.role != Role.ordinary) EntityActionButton(
 					text: "delete",
-					action: () => Cloud.deleteEvent(_event)
+					action: () => _delete(context)
 				)
 			]
 		);
+	}
+
+	void _delete(BuildContext context) {
+		Cloud.deleteEvent(_event);
+		Navigator.of(context).pop();
 	}
 
 	@override

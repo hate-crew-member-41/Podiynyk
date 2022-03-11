@@ -59,10 +59,15 @@ class _MessagePageState extends State<MessagePage> {
 			actions: [
 				if (isAuthor) EntityActionButton(
 					text: "delete",
-					action: () => Cloud.deleteMessage(_message)
+					action: () => _delete(context)
 				)
 			]
 		);
+	}
+
+	void _delete(BuildContext context) {
+		Cloud.deleteMessage(_message);
+		Navigator.of(context).pop();
 	}
 
 	@override
