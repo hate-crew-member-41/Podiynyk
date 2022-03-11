@@ -28,18 +28,11 @@ class App extends StatelessWidget {
 			),
 			theme: ThemeData(
 				canvasColor: Appearance.mainColor,
-				// iconTheme: IconThemeData(color: Appearance.contentColor),
 				appBarTheme: AppBarTheme(
 					backgroundColor: Appearance.accentColor,
 					titleTextStyle: Appearance.contentText,
 					iconTheme: IconThemeData(color: Appearance.contentColor)
 				),
-				textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(
-					textStyle: Appearance.contentText,
-					primary: Appearance.contentColor,
-					padding: Appearance.padding,
-					alignment: Alignment.centerLeft
-				)),
 				floatingActionButtonTheme: FloatingActionButtonThemeData(
 					backgroundColor: Appearance.accentColor,
 					foregroundColor: Appearance.contentColor

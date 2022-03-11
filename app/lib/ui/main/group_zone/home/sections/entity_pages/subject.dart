@@ -46,9 +46,9 @@ class _SubjectPageState extends State<SubjectPage> {
 					name: "name",
 					style: Appearance.titleText
 				),
-				if (info != null) TextButton(
-					child: Text("information", style: Appearance.contentText),
-					onPressed: () => _showEntities(
+				if (info != null) ListTile(
+					title: Text("information", style: Appearance.contentText),
+					onTap: () => _showEntities(
 						[
 							for (final item in info) EntityTile(
 								title: item.nameRepr,
@@ -58,9 +58,9 @@ class _SubjectPageState extends State<SubjectPage> {
 						newEntityPageBuilder: (_) => NewSubjectInfoPage(subject: _subject)
 					)
 				),
-				TextButton(
-					child: Text(_subject.eventCountRepr, style: Appearance.contentText),
-					onPressed: () => _showEntities(
+				ListTile(
+					title: Text(_subject.eventCountRepr, style: Appearance.contentText),
+					onTap: () => _showEntities(
 						[for (final event in _subject.events!) EventTile(event, showSubject: false)],
 						newEntityPageBuilder: (_) => NewEventPage.subjectEvent(_subject)
 					)

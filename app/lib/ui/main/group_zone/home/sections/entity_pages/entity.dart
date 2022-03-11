@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:podiynyk/storage/appearance.dart';
+
 
 class EntityPage extends StatelessWidget {
 	final List<Widget> children;
@@ -43,9 +45,9 @@ class EntityActionButton extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
-		return TextButton(
-			child: Text(text),
-			onPressed: () {
+		return ListTile(
+			title: Text(text, style: Appearance.contentText),
+			onTap: () {
 				Navigator.of(context).pop();
 				action();
 			}

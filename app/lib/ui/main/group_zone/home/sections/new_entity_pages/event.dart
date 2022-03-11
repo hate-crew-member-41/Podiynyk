@@ -99,7 +99,7 @@ class _NewEventPageState extends State<NewEventPage> {
 			shrinkWrap: true,
 			children: [
 				for (final subject in subjects) if (subject != _subject) ListTile(
-					title: Text(subject.nameRepr),
+					title: Text(subject.nameRepr, style: Appearance.contentText),
 					onTap: () => _handleSubject(context, subject)
 				),
 				if (_subject != null) ...[
