@@ -118,10 +118,9 @@ class Cloud {
 					Field.joined.name: DateTime.now()
 				});
 
-				Collection.subjects.ref.set({});
 				Collection.events.ref.set({});
+				Collection.subjects.ref.set({});
 				Collection.messages.ref.set({});
-				Collection.questions.ref.set({});
 			}
 		});
 	}

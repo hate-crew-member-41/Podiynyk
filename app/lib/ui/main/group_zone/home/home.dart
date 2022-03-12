@@ -10,7 +10,7 @@ import 'sections/messages.dart';
 // import 'sections/questions.dart';
 import 'sections/section.dart';
 import 'sections/subjects.dart';
-import 'sections/settings.dart';
+// import 'sections/settings.dart';
 
 
 class Home extends StatefulWidget {
@@ -85,12 +85,12 @@ class _HomeState extends State<Home> {
 						icon: GroupSection.icon,
 						setSection: _setSectionFunction(() => GroupSection())
 					),
-					const ListTile(),
-					SectionTile(
-						name: SettingsSection.name,
-						icon: SettingsSection.icon,
-						setSection: _setSectionFunction(() => const SettingsSection())
-					)
+					// const ListTile(),
+					// SectionTile(
+					// 	name: SettingsSection.name,
+					// 	icon: SettingsSection.icon,
+					// 	setSection: _setSectionFunction(() => const SettingsSection())
+					// )
 				]
 			)
 		),

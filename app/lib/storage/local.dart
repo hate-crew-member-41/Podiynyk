@@ -59,8 +59,6 @@ class Local {
 
 	/// The [collection] entity's label.
 	static String? entityLabel(Field collection, String essence) {
-		// tofix: throws:
-		// type '_InternalLinkedHashMap<dynamic, dynamic>' is not a subtype of type 'Map<String, String>?' in type cast
 		return _labels.get(collection.name)![essence];
 	}
 
