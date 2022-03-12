@@ -6,7 +6,7 @@ import 'entities/entity.dart';
 
 class Local {
 	static late final Box<String> _user;
-	static late final Box<Map<String, String>> _labels;
+	static late final Box<Map> _labels;
 	static late final Box<List<String>> _entities;
 
 	/// Initializes the [Local] database and makes the data accessible.
@@ -18,7 +18,7 @@ class Local {
 		// ]);
 		await Future.wait([
 			Hive.openBox<String>(DataBox.user.name).then((box) => _user = box),
-			Hive.openBox<Map<String, String>>(DataBox.labels.name).then((box) => _labels = box),
+			Hive.openBox<Map>(DataBox.labels.name).then((box) => _labels = box),
 			Hive.openBox<List<String>>(DataBox.entities.name).then((box) => _entities = box)
 		]);
 	}

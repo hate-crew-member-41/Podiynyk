@@ -7,9 +7,9 @@ class Appearance {
 	static Color get accentColor => const HSVColor.fromAHSV(1, 0, 0, .2).toColor();
 	static Color get contentColor => Colors.white;
 
-	static TextStyle get contentText => GoogleFonts.montserrat(fontSize: 16, color: contentColor);
-	static TextStyle get smallText => GoogleFonts.montserrat(fontSize: 12, color: contentColor);
-	static TextStyle get titleText => GoogleFonts.montserrat(fontSize: 32, color: contentColor);
+	static TextStyle get contentText => GoogleFonts.montserrat(fontSize: 17, color: contentColor);
+	static TextStyle get smallText => GoogleFonts.montserrat(fontSize: 13, color: contentColor);
+	static TextStyle get titleText => GoogleFonts.montserrat(fontSize: 30, color: contentColor);
 
 	static EdgeInsetsGeometry get padding => const EdgeInsets.symmetric(horizontal: 16, vertical: 12);
 }
