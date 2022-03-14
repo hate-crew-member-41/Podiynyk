@@ -11,7 +11,8 @@ import 'new_entity_pages/event.dart';
 
 
 class AgendaSectionCloudData extends CloudEntitiesSectionData<Event> {
-	final Future<List<Event>> events = Cloud.events.then((events) =>
+	@override
+	final entities = Cloud.events.then((events) =>
 		events.where((event) {
 			final hasSubject = event.subject != null;
 			return !event.isHidden && (
@@ -22,7 +23,7 @@ class AgendaSectionCloudData extends CloudEntitiesSectionData<Event> {
 	);
 
 	@override
-	Future<Iterable<Event>> get counted => events.then((events) =>
+	Future<Iterable<Event>> get counted => entities.then((events) =>
 		events.where((event) => !event.date.isPast)
 	);
 }
@@ -42,9 +43,6 @@ class AgendaSection extends CloudEntitiesSection<AgendaSectionCloudData, Event> 
 	Widget? get actionButton => Cloud.role == Role.ordinary ? super.actionButton : NewEntityButton(
 		pageBuilder: (_) => const NewEventPage()
 	);
-
-	@override
-	Future<List<Event>> get entities => data.events;
 
 	@override
 	List<Widget> tiles(BuildContext context, List<Event> events) => [

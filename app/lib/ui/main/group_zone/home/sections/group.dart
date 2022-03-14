@@ -8,10 +8,8 @@ import 'entity_pages/student.dart';
 
 
 class GroupSectionCloudData extends CloudEntitiesSectionData<Student> {
-	final students = Cloud.students;
-
 	@override
-	Future<List<Student>> get counted => students;
+	final entities = Cloud.students;
 }
 
 
@@ -25,9 +23,6 @@ class GroupSection extends CloudEntitiesSection<GroupSectionCloudData, Student> 
 	String get sectionName => name;
 	@override
 	IconData get sectionIcon => icon;
-
-	@override
-	Future<List<Student>> get entities => data.students;
 
 	@override
 	List<Widget> tiles(BuildContext context, List<Student> students) => [

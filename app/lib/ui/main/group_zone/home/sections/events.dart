@@ -11,10 +11,11 @@ import 'new_entity_pages/event.dart';
 
 
 class NonSubjectEventsSectionCloudData extends CloudEntitiesSectionData<Event> {
-	final events = Cloud.nonSubjectEvents;
+	@override
+	final entities = Cloud.nonSubjectEvents;
 
 	@override
-	Future<Iterable<Event>> get counted => events.then((events) =>
+	Future<Iterable<Event>> get counted => entities.then((events) =>
 		events.where((event) => !event.date.isPast)
 	);
 }
@@ -34,9 +35,6 @@ class NonSubjectEventsSection extends CloudEntitiesSection<NonSubjectEventsSecti
 	Widget? get actionButton => Cloud.role == Role.ordinary ? super.actionButton : NewEntityButton(
 		pageBuilder: (_) => const NewEventPage.nonSubjectEvent()
 	);
-
-	@override
-	Future<List<Event>> get entities => data.events;
 
 	@override
 	List<Widget> tiles(BuildContext context, List<Event> events) => [

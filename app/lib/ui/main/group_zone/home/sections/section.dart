@@ -16,7 +16,9 @@ abstract class Section extends StatelessWidget {
 
 
 abstract class CloudEntitiesSectionData<E> {
-	Future<Iterable<E>> get counted;
+	abstract final Future<List<E>> entities;
+
+	Future<Iterable<E>> get counted => entities;
 	Future<int> get count => counted.then((counted) => counted.length);
 }
 
@@ -25,12 +27,10 @@ abstract class CloudEntitiesSection<D extends CloudEntitiesSectionData<E>, E> ex
 
 	const CloudEntitiesSection(this.data);
 
-	Future<List<E>> get entities;
-
 	@override
 	Widget build(BuildContext context) {
 		return FutureBuilder<List<E>>(
-			future: entities,
+			future: data.entities,
 			builder: (context, snapshot) {
 				if (snapshot.connectionState == ConnectionState.waiting) return Center(child: Icon(sectionIcon));
 				// if (snapshot.hasError) print(snapshot.error!);  // todo: consider handling

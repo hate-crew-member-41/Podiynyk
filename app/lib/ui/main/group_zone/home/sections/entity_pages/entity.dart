@@ -14,23 +14,25 @@ class EntityPage extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
-		return GestureDetector(
-			onLongPress: actions.isNotEmpty ? () {
+		return actions.isNotEmpty ? GestureDetector(
+			onLongPress: () {
 				Navigator.of(context).push(MaterialPageRoute(builder: (context) => Scaffold(
 					body: Center(child: ListView(
 					shrinkWrap: true,
 					children: actions
 				))
 				)));
-			} : null,
-			child: Scaffold(
-				body: Center(child: ListView(
-					shrinkWrap: true,
-					children: children
-				))
-			)
-		);
+			},
+			child: _builder(context)
+		) : _builder(context);
 	}
+
+	Widget _builder(BuildContext context) => Scaffold(
+		body: Center(child: ListView(
+			shrinkWrap: true,
+			children: children
+		))
+	);
 }
 
 

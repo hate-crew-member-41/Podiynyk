@@ -7,10 +7,8 @@ import 'section.dart';
 
 
 class QuestionsSectionCloudData extends CloudEntitiesSectionData<Question> {
-	final questions = Cloud.questions;
-
 	@override
-	Future<List<Question>> get counted => questions;
+	final entities = Cloud.questions;
 }
 
 
@@ -26,9 +24,6 @@ class QuestionsSection extends CloudEntitiesSection<QuestionsSectionCloudData, Q
 	IconData get sectionIcon => icon;
 	@override
 	Widget get actionButton => Container();
-
-	@override
-	Future<List<Question>> get entities => data.questions;
 
 	@override
 	List<Widget> tiles(BuildContext context, List<Question> questions) => [];

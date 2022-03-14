@@ -11,10 +11,13 @@ import 'new_entity_pages/subject.dart';
 
 
 class SubjectsSectionCloudData extends CloudEntitiesSectionData<Subject> {
-	final subjects = Cloud.subjectsWithEvents;
+	@override
+	final entities = Cloud.subjectsWithEvents;
 
 	@override
-	Future<List<Subject>> get counted => subjects;
+	Future<Iterable<Subject>> get counted => entities.then((subjects) =>
+		subjects.where((subject) => subject.isFollowed)
+	);
 }
 
 
@@ -32,9 +35,6 @@ class SubjectsSection extends CloudEntitiesSection<SubjectsSectionCloudData, Sub
 	Widget? get actionButton => Cloud.role != Role.leader ? super.actionButton : NewEntityButton(
 		pageBuilder: (_) => NewSubjectPage()
 	);
-
-	@override
-	Future<List<Subject>> get entities => data.subjects;
 
 	@override
 	List<Widget> tiles(BuildContext context, List<Subject> subjects) => [
