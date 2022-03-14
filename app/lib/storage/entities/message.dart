@@ -6,11 +6,12 @@ import '../local.dart';
 
 import 'creatable.dart';
 import 'entity.dart';
+import 'student.dart';
 
 
 class Message extends Entity implements CreatableEntity, Comparable {
 	final DateTime date;
-	String author;
+	Student author;
 
 	Message({
 		required String name,
@@ -18,14 +19,14 @@ class Message extends Entity implements CreatableEntity, Comparable {
 	}) :
 		_name = name,
 		_content = content,
-		author = Local.name,
+		author = Student(name: Local.name),
 		date = DateTime.now(),
 		super(idComponents: [Local.name, name]);
 
 	Message.fromCloudFormat(MapEntry<String, dynamic> entry) :
 		_name = entry.value[Field.name.name] as String,
 		date = (entry.value[Field.date.name] as Timestamp).toDate(),
-		author = entry.value[Field.author.name] as String,
+		author = Student(name: entry.value[Field.author.name] as String),
 		super.fromCloud(id: entry.key);
 
 	@override

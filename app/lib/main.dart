@@ -30,7 +30,7 @@ class App extends StatelessWidget {
 				canvasColor: Appearance.mainColor,
 				appBarTheme: AppBarTheme(
 					backgroundColor: Appearance.accentColor,
-					titleTextStyle: Appearance.contentText,
+					titleTextStyle: Appearance.appBarText,
 					iconTheme: IconThemeData(color: Appearance.contentColor)
 				),
 				floatingActionButtonTheme: FloatingActionButtonThemeData(

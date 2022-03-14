@@ -36,7 +36,7 @@ class _MessagePageState extends State<MessagePage> {
 	@override
 	Widget build(BuildContext context) {
 		final author = _message.author;
-		final isAuthor = author == Local.name;
+		final isAuthor = author.name == Local.name;
 
 		final content = _message.content;
 		final hasContent = content != null;
@@ -51,7 +51,7 @@ class _MessagePageState extends State<MessagePage> {
 					style: Appearance.titleText
 				),
 				Text(_message.date.fullRepr, style: Appearance.contentText).withPadding,
-				Text("from $author", style: Appearance.contentText).withPadding,
+				Text("from ${author.nameRepr}", style: Appearance.contentText).withPadding,
 				if (hasContent) InputField(
 					controller: _contentField,
 					name: "content",

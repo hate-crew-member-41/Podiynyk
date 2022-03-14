@@ -10,6 +10,7 @@ class Appearance {
 	static TextStyle get contentText => GoogleFonts.montserrat(fontSize: 17, color: contentColor);
 	static TextStyle get smallText => GoogleFonts.montserrat(fontSize: 13, color: contentColor);
 	static TextStyle get titleText => GoogleFonts.montserrat(fontSize: 30, color: contentColor);
+	static TextStyle get appBarText => GoogleFonts.montserrat(fontSize: 20, color: contentColor);
 
 	static EdgeInsetsGeometry get padding => const EdgeInsets.symmetric(horizontal: 16, vertical: 12);
 }

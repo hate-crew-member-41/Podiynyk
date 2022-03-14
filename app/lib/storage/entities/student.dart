@@ -8,6 +8,13 @@ import 'labelable.dart';
 class Student extends LabelableEntity implements Comparable {
 	final int? confirmationCount;
 
+	Student({required String name}) :
+		confirmationCount = null,
+		super(
+			idComponents: [name],
+			name: name
+		);
+
 	Student.candidateFromCloudFormat(MapEntry<String, dynamic> entry) :
 		_role = null,
 		confirmationCount = entry.value[Field.confirmationCount.name] as int,
