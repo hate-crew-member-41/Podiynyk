@@ -59,35 +59,12 @@ class _MessagePageState extends State<MessagePage> {
 				const ListTile(),
 				Text(
 					author.nameRepr,
-					style: Appearance.bodyText
+					style: Appearance.titleText
 				).withPadding,
 				Text(
 					_message.date.fullRepr,
-					style: Appearance.bodyText
-				).withPadding,
-
-				// InputField(
-				// 	controller: _nameField,
-				// 	name: "topic",
-				// 	enabled: isAuthor,
-				// 	style: Appearance.headlineText
-				// ),
-				// Text(
-				// 	"from ${author.nameRepr}",
-				// 	style: Appearance.largeTitleText
-				// ).withPadding,
-				// Text(
-				// 	_message.date.fullRepr,
-				// 	style: Appearance.titleText
-				// ).withPadding,
-				// const ListTile(),
-				// if (hasContent) InputField(
-				// 	controller: _contentField,
-				// 	name: "content",
-				// 	grows: true,
-				// 	enabled: isAuthor,
-				// 	style: Appearance.bodyText
-				// ),
+					style: Appearance.titleText
+				).withPadding
 			],
 			actions: [
 				if (isAuthor) EntityActionButton(

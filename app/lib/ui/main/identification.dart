@@ -37,7 +37,7 @@ class _IdentificationState extends State<Identification> {
 					mainAxisAlignment: MainAxisAlignment.center,
 					crossAxisAlignment: CrossAxisAlignment.start,
 					children: [
-						Text('Hi', style: Theme.of(context).textTheme.headlineMedium).withPadding,
+						Text('Hi', style: Appearance.headlineText).withPadding,
 						const Text(_intro).withPadding
 					]
 				)

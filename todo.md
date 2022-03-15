@@ -28,16 +28,6 @@ Provide an ability to go back to the identification step.
 
 ## Appearance
 
-Make fields that may contain long texts display them properly:
-- event note
-- subject info content
-- message content
-
-The final designs of the entity pages:
-- event
-- subject
-- message
-
 What is shown instead of entity tiles:
 - when they are being fetched
 - if there are none
