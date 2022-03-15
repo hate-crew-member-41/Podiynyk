@@ -51,19 +51,22 @@ class _EventPageState extends State<EventPage> {
 				),
 				if (hasSubject) Text(
 					_event.subject!.nameRepr,
-					style: Appearance.titleText
+					style: Appearance.largeTitleText
 				).withPadding,
 				DateField(
 					initialDate: _event.date,
 					onDatePicked: (date) => _event.date = date,
 					enabled: Cloud.role != Role.ordinary
 				),
-				if (_showNoteField) InputField(
-					controller: _noteField,
-					name: "note",
-					grows: true,
-					style: Appearance.bodyText
-				)
+				if (_showNoteField) ...[
+					const ListTile(),
+					InputField(
+						controller: _noteField,
+						name: "note",
+						grows: true,
+						style: Appearance.bodyText
+					)
+				]
 			],
 			actions: [
 				if (_event.note == null) EntityActionButton(

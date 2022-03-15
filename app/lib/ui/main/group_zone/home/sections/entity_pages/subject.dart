@@ -44,6 +44,7 @@ class _SubjectPageState extends State<SubjectPage> {
 					name: "name",
 					style: Appearance.headlineText
 				),
+				const ListTile(),
 				if (_subject.info != null) ListTile(
 					title: const Text("information"),
 					onTap: _showInfo

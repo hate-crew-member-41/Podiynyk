@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
@@ -50,20 +51,45 @@ class _MessagePageState extends State<MessagePage> {
 					enabled: isAuthor,
 					style: Appearance.headlineText
 				),
-				Text(
-					_message.date.fullRepr,
-					style: Appearance.titleText
-				).withPadding,
-				Text(
-					"from ${author.nameRepr}",
-					style: Appearance.titleText
-				).withPadding,
 				if (hasContent) InputField(
 					controller: _contentField,
 					name: "content",
 					grows: true,
-					enabled: isAuthor
-				)
+					enabled: isAuthor,
+					style: Appearance.bodyText
+				),
+				const ListTile(),
+				Text(
+					author.nameRepr,
+					style: Appearance.bodyText
+				).withPadding,
+				Text(
+					_message.date.fullRepr,
+					style: Appearance.bodyText
+				).withPadding,
+
+				// InputField(
+				// 	controller: _nameField,
+				// 	name: "topic",
+				// 	enabled: isAuthor,
+				// 	style: Appearance.headlineText
+				// ),
+				// Text(
+				// 	"from ${author.nameRepr}",
+				// 	style: Appearance.largeTitleText
+				// ).withPadding,
+				// Text(
+				// 	_message.date.fullRepr,
+				// 	style: Appearance.titleText
+				// ).withPadding,
+				// const ListTile(),
+				// if (hasContent) InputField(
+				// 	controller: _contentField,
+				// 	name: "content",
+				// 	grows: true,
+				// 	enabled: isAuthor,
+				// 	style: Appearance.bodyText
+				// ),
 			],
 			actions: [
 				if (isAuthor) EntityActionButton(
