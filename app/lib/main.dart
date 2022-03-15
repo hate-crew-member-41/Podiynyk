@@ -48,11 +48,14 @@ class App extends StatelessWidget {
 				appBarTheme: AppBarTheme(
 					titleTextStyle: Appearance.largeTitleText
 				),
+				listTileTheme: ListTileThemeData(
+					textColor: Appearance.primaryColor
+				),
 				inputDecorationTheme: InputDecorationTheme(
 					border: InputBorder.none,
 					fillColor: Appearance.secondaryBackgroundColor,
 					contentPadding: Appearance.padding,
-					hintStyle: TextStyle(color: Colors.white.withOpacity(.5))
+					hintStyle: TextStyle(color: Appearance.primaryColor.withOpacity(.5))
 				),
 				textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(
 					textStyle: Appearance.titleText,

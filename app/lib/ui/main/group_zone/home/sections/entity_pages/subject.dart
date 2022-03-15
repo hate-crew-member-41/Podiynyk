@@ -115,11 +115,11 @@ class _SubjectPageState extends State<SubjectPage> {
 				content: const Text("The subject's events will also be deleted."),
 				actions: [
 					TextButton(
-						child: const Text("cancel"),
+						child: const Text("no"),
 						onPressed: () => Navigator.of(context).pop()
 					),
 					TextButton(
-						child: const Text("exactly"),
+						child: const Text("yes"),
 						onPressed: () {
 							Navigator.of(context).pop();
 							_delete(context);
@@ -177,7 +177,8 @@ class _SubjectInfoPageState extends State<SubjectInfoPage> {
 				InputField(
 					controller: _contentField,
 					name: "content",
-					style: Appearance.bodyText
+					style: Appearance.bodyText,
+					grows: true
 				)
 			],
 			actions: [

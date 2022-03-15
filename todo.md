@@ -1,10 +1,10 @@
-# Additions
+# UI
 
 ## Entity actions
 
 Make them modify the UI.
 
-All:
+All entities:
 - creating and deleting ➔ the list
 - adding a label ➔ the tile
 
@@ -46,13 +46,13 @@ The loading screen. Try to also hide the fetches behind it, not just the storage
 
 ### Ideas	
 
-Entity fields are prefixed with icons.
+New-entity pages appear as a page to the right of the section. Remember to remove the empty tiles.
 
 Once the entities are fetched, each tile fades in with a different delay.
 
-New-entity pages are closed with an animation when the new entity is to be added.
+Entity fields are prefixed with icons.
 
-New-entity pages appear as a page to the right of the section. Remember to remove the empty tiles.
+New-entity pages are closed with an animation.
 
 ## Tour
 

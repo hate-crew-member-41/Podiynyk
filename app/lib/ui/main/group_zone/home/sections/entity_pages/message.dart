@@ -61,6 +61,7 @@ class _MessagePageState extends State<MessagePage> {
 				if (hasContent) InputField(
 					controller: _contentField,
 					name: "content",
+					grows: true,
 					enabled: isAuthor
 				)
 			],

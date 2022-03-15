@@ -6,12 +6,14 @@ import 'package:podiynyk/storage/entities/date.dart';
 class InputField extends StatefulWidget {
 	final TextEditingController controller;
 	final String name;
+	final bool grows;
 	final bool enabled;
 	final TextStyle? style;
 
 	const InputField({
 		required this.controller,
 		required this.name,
+		this.grows = false,
 		this.enabled = true,
 		this.style
 	});
@@ -35,6 +37,7 @@ class _InputFieldState extends State<InputField> {
 			controller: widget.controller,
 			focusNode: _focusNode,
 			enabled: widget.enabled,
+			maxLines: !widget.grows ? 1 : null,
 			showCursor: false,
 			style: widget.style,
 			decoration: InputDecoration(

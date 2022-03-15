@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:podiynyk/storage/appearance.dart';
+
 
 abstract class Section extends StatelessWidget {
 	const Section();
@@ -61,8 +63,8 @@ class EntityTile extends StatelessWidget {
 	Widget build(BuildContext context) {
 		return ListTile(
 			title: Text(title),
-			subtitle: subtitle != null ? Text(subtitle!, style: Theme.of(context).textTheme.labelMedium) : null,
-			trailing: trailing != null ? Text(trailing!, style: Theme.of(context).textTheme.titleMedium) : null,
+			subtitle: subtitle != null ? Text(subtitle!, style: Appearance.labelText) : null,
+			trailing: trailing != null ? Text(trailing!, style: Appearance.titleText) : null,
 			onTap: () => Navigator.of(context).push(MaterialPageRoute(
 				builder: (_) => pageBuilder()
 			))
