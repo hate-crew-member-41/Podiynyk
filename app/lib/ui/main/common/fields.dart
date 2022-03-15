@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/entities/date.dart';
 
 
@@ -8,13 +7,13 @@ class InputField extends StatefulWidget {
 	final TextEditingController controller;
 	final String name;
 	final bool enabled;
-	final TextStyle style;
+	final TextStyle? style;
 
 	const InputField({
 		required this.controller,
 		required this.name,
 		this.enabled = true,
-		required this.style
+		this.style
 	});
 
 	@override
@@ -39,12 +38,8 @@ class _InputFieldState extends State<InputField> {
 			showCursor: false,
 			style: widget.style,
 			decoration: InputDecoration(
-				border: InputBorder.none,
-				contentPadding: Appearance.padding,
-				fillColor: Appearance.accentColor,
 				filled: _focusNode.hasFocus,
 				hintText: widget.name,
-				hintStyle: widget.style.copyWith(color: widget.style.color?.withOpacity(.5))
 			)
 		);
 	}
@@ -53,15 +48,15 @@ class _InputFieldState extends State<InputField> {
 
 class OptionField extends StatelessWidget {
 	final TextEditingController controller;
-	final String? name;
+	final String name;
 	final void Function(BuildContext) showOptions;
-	final TextStyle style;
+	final TextStyle? style;
 
 	const OptionField({
 		required this.controller,
-		this.name,
+		required this.name,
 		required this.showOptions,
-		required this.style
+		this.style
 	});
 
 	@override
@@ -72,12 +67,7 @@ class OptionField extends StatelessWidget {
 				controller: controller,
 				enabled: false,
 				style: style,
-				decoration: InputDecoration(
-					border: InputBorder.none,
-					contentPadding: Appearance.padding,
-					hintText: name ?? "",
-					hintStyle: style.copyWith(color: style.color?.withOpacity(.5))
-				)
+				decoration: InputDecoration(hintText: name)
 			),
 		);
 	}
@@ -88,13 +78,13 @@ class DateField extends StatefulWidget {
 	final DateTime? initialDate;
 	final void Function(DateTime) onDatePicked;
 	final bool enabled;
-	final TextStyle style;
+	final TextStyle? style;
 
 	const DateField({
 		this.initialDate,
 		required this.onDatePicked,
 		this.enabled = true,
-		required this.style
+		this.style
 	});
 
 	@override
@@ -131,13 +121,19 @@ class _DateFieldState extends State<DateField> {
 			context: context,
 			initialDate: _date ?? now.add(const Duration(days: DateTime.daysPerWeek * 2)),
 			firstDate: now,
-			lastDate: now.add(const Duration(days: 365))
+			lastDate: now.add(const Duration(days: 365)),
+			helpText: '',
+			confirmText: "pick the time",
+			cancelText: "cancel"
 		);
 
 		if (_date != null) {
 			final time = await showTimePicker(
 				context: context,
-				initialTime: TimeOfDay.now().replacing(minute: 0)
+				initialTime: TimeOfDay.now().replacing(minute: 0),
+				helpText: '',
+				confirmText: "ok",
+				cancelText: "no time"
 			);
 			_date = time != null ? _date!.withTime(time) : _date!.withDefaultTime;
 

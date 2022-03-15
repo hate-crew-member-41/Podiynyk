@@ -20,12 +20,12 @@ class NewMessagePage extends StatelessWidget {
 			InputField(
 				controller: _nameField,
 				name: "topic",
-				style: Appearance.titleText
+				style: Appearance.headlineText
 			),
 			InputField(
 				controller: _contentField,
-				name: "message",
-				style: Appearance.contentText
+				name: "content",
+				style: Appearance.bodyText
 			)
 		]
 	);

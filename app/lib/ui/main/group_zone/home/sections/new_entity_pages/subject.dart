@@ -19,7 +19,7 @@ class NewSubjectPage extends StatelessWidget {
 			InputField(
 				controller: _nameField,
 				name: "name",
-				style: Appearance.titleText
+				style: Appearance.headlineText
 			)
 		]
 	);
@@ -49,12 +49,12 @@ class NewSubjectInfoPage extends StatelessWidget {
 			InputField(
 				controller: _nameField,
 				name: "topic",
-				style: Appearance.titleText
+				style: Appearance.headlineText
 			),
 			InputField(
 				controller: _contentField,
 				name: "content",
-				style: Appearance.contentText
+				style: Appearance.bodyText
 			)
 		]
 	);
@@ -68,7 +68,6 @@ class NewSubjectInfoPage extends StatelessWidget {
 			name: name,
 			content: content
 		));
-		// Cloud.updateSubjectInfo(subject);
 		return true;
 	}
 }

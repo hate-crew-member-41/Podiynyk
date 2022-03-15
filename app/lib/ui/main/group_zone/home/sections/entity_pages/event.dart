@@ -47,20 +47,22 @@ class _EventPageState extends State<EventPage> {
 				InputField(
 					controller: _nameField,
 					name: "name",
-					style: Appearance.titleText
+					style: Appearance.headlineText
 				),
-				if (hasSubject) Text(_event.subject!.nameRepr, style: Appearance.contentText).withPadding,
+				if (hasSubject) Text(
+					_event.subject!.nameRepr,
+					style: Appearance.titleText
+				).withPadding,
 				DateField(
 					initialDate: _event.date,
 					onDatePicked: (date) => _event.date = date,
-					enabled: Cloud.role != Role.ordinary,
-					style: Appearance.contentText
+					enabled: Cloud.role != Role.ordinary
 				),
 				if (_showNoteField) InputField(
 					controller: _noteField,
 					name: "note",
-					style: Appearance.contentText
-				),
+					style: Appearance.bodyText
+				)
 			],
 			actions: [
 				if (_event.note == null) EntityActionButton(

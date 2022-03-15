@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'storage/appearance.dart';
 import 'storage/cloud.dart';
@@ -26,16 +27,47 @@ class App extends StatelessWidget {
 					return const AppMain();
 				}
 			),
-			theme: ThemeData(
-				canvasColor: Appearance.mainColor,
-				appBarTheme: AppBarTheme(
-					backgroundColor: Appearance.accentColor,
-					titleTextStyle: Appearance.appBarText,
-					iconTheme: IconThemeData(color: Appearance.contentColor)
+			themeMode: ThemeMode.dark,
+			darkTheme: ThemeData(
+				colorScheme: const ColorScheme.dark().copyWith(
+					surface: Appearance.secondaryBackgroundColor,
+					primary: Appearance.primaryColor,
+					secondary: Appearance.secondaryBackgroundColor,
+					onSecondary: Appearance.primaryColor
 				),
-				floatingActionButtonTheme: FloatingActionButtonThemeData(
-					backgroundColor: Appearance.accentColor,
-					foregroundColor: Appearance.contentColor
+				canvasColor: Appearance.backgroundColor,
+				textTheme: GoogleFonts.montserratTextTheme().copyWith(
+					bodySmall: Appearance.labelText,  // date picker dates
+					bodyMedium: Appearance.bodyText,
+					bodyLarge: Appearance.labelText,  // time picker hours/minutes
+					titleSmall: Appearance.bodyText,  // date picker month
+					titleMedium: Appearance.titleText,
+					headlineMedium: Appearance.headlineText,
+					labelMedium: Appearance.labelText,
+				),
+				appBarTheme: AppBarTheme(
+					titleTextStyle: Appearance.largeTitleText
+				),
+				inputDecorationTheme: InputDecorationTheme(
+					border: InputBorder.none,
+					fillColor: Appearance.secondaryBackgroundColor,
+					contentPadding: Appearance.padding,
+					hintStyle: TextStyle(color: Colors.white.withOpacity(.5))
+				),
+				textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(
+					textStyle: Appearance.titleText,
+				)),
+				dialogTheme: DialogTheme(
+					backgroundColor: Appearance.backgroundColor,
+					titleTextStyle: Appearance.largeTitleText,
+				),
+				timePickerTheme: TimePickerThemeData(
+					backgroundColor: Appearance.backgroundColor,
+					hourMinuteColor: Appearance.secondaryBackgroundColor,
+					hourMinuteTextStyle: Appearance.displayText,
+					dayPeriodColor: Appearance.secondaryBackgroundColor,
+					dayPeriodBorderSide: BorderSide.none,
+					dialBackgroundColor: Appearance.secondaryBackgroundColor
 				)
 			)
 		);

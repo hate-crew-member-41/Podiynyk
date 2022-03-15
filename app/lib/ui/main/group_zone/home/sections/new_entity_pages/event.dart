@@ -58,22 +58,18 @@ class _NewEventPageState extends State<NewEventPage> {
 			InputField(
 				controller: _nameField,
 				name: "name",
-				style: Appearance.titleText
+				style: Appearance.headlineText
 			),
 			if (widget.askSubject) OptionField(
 				controller: _subjectField,
 				name: "subject",
 				showOptions: _askSubject,
-				style: Appearance.contentText
 			),
-			DateField(
-				onDatePicked: (date) => _date = date,
-				style: Appearance.contentText
-			),
+			DateField(onDatePicked: (date) => _date = date),
 			InputField(
 				controller: _noteField,
 				name: "note",
-				style: Appearance.contentText
+				style: Appearance.bodyText
 			)
 		]
 	);
@@ -99,7 +95,7 @@ class _NewEventPageState extends State<NewEventPage> {
 			shrinkWrap: true,
 			children: [
 				for (final subject in subjects) if (subject != _subject) ListTile(
-					title: Text(subject.nameRepr, style: Appearance.contentText),
+					title: Text(subject.nameRepr),
 					onTap: () => _handleSubject(context, subject)
 				),
 				if (_subject != null) ...[

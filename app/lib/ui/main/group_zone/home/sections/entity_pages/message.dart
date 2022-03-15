@@ -48,15 +48,20 @@ class _MessagePageState extends State<MessagePage> {
 					controller: _nameField,
 					name: "topic",
 					enabled: isAuthor,
-					style: Appearance.titleText
+					style: Appearance.headlineText
 				),
-				Text(_message.date.fullRepr, style: Appearance.contentText).withPadding,
-				Text("from ${author.nameRepr}", style: Appearance.contentText).withPadding,
+				Text(
+					_message.date.fullRepr,
+					style: Appearance.titleText
+				).withPadding,
+				Text(
+					"from ${author.nameRepr}",
+					style: Appearance.titleText
+				).withPadding,
 				if (hasContent) InputField(
 					controller: _contentField,
 					name: "content",
-					enabled: isAuthor,
-					style: Appearance.contentText
+					enabled: isAuthor
 				)
 			],
 			actions: [

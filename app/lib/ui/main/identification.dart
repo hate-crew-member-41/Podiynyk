@@ -24,29 +24,25 @@ class _IdentificationState extends State<Identification> {
 	static const _intro = "This text is an intro placeholder. The only reason this is explained in such detail "
 		"is that some number of words is needed here.";
 
-	late Widget _content;
+	bool _showIntro = true;
 
-	_IdentificationState() {
-		_content = GestureDetector(
+	@override
+	Widget build(BuildContext context) {
+		return _showIntro ? GestureDetector(
 			onDoubleTap: () => setState(() {
-				_content = const IdentificationForm();
+				_showIntro = false;
 			}),
 			child: Scaffold(
 				body: Column(
 					mainAxisAlignment: MainAxisAlignment.center,
 					crossAxisAlignment: CrossAxisAlignment.start,
 					children: [
-						Text('Hi', style: Appearance.titleText).withPadding,
-						Text(_intro, style: Appearance.contentText).withPadding
+						Text('Hi', style: Theme.of(context).textTheme.headlineMedium).withPadding,
+						const Text(_intro).withPadding
 					]
 				)
 			)
-		);
-	}
-
-	@override
-	Widget build(BuildContext context) {
-		return _content;
+		) : const IdentificationForm();
 	}
 }
 
@@ -80,7 +76,7 @@ class _IdentificationFormState extends State<IdentificationForm> {
 							controller: _universityField,
 							name: "university",
 							showOptions: _showCountyOptions,
-							style: Appearance.contentText
+							// style: Appearance.contentText
 						),
 						OptionField(
 							controller: _departmentField,
@@ -88,17 +84,17 @@ class _IdentificationFormState extends State<IdentificationForm> {
 							showOptions: (context) => _university != null ?
 								_showDepartmentOptions(context) :
 								_showCountyOptions(context),
-								style: Appearance.contentText
+								// style: Appearance.contentText
 						),
 						InputField(
 							controller: _groupField,
 							name: "group",
-							style: Appearance.contentText
+							// style: Appearance.contentText
 						),
 						InputField(
 							controller: _nameField,
 							name: "name",
-							style: Appearance.contentText
+							// style: Appearance.contentText
 						)
 					]
 				)
@@ -196,7 +192,7 @@ class _IdentificationFormState extends State<IdentificationForm> {
 
 		return ListView(children: [
 			for (final option in snapshot.data!) ListTile(
-				title: Text(option.name, style: Appearance.contentText),
+				title: Text(option.name),
 				onTap: () => onTap(option)
 			)
 		]);

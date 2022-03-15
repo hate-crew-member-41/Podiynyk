@@ -37,10 +37,12 @@ class _StudentPageState extends State<StudentPage> {
 				InputField(
 					controller: _nameField,
 					name: "name",
-					style: Appearance.titleText
+					style: Appearance.headlineText
 				),
-				if (_student.role != Role.ordinary)
-					Text(_student.role.name, style: Appearance.contentText).withPadding
+				if (_student.role != Role.ordinary) Text(
+					_student.role.name,
+					style: Appearance.titleText
+				).withPadding
 			],
 			actions: Cloud.role != Role.leader || _student.name == Local.name ? [] : [
 				_student.role == Role.ordinary ? EntityActionButton(

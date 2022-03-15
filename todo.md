@@ -28,9 +28,10 @@ Provide an ability to go back to the identification step.
 
 ## Appearance
 
-The material dialogs:
-- the event date picker
-- the confirmation to delete a subject
+Make fields that may contain long texts display them properly:
+- event note
+- subject info content
+- message content
 
 The final designs of the entity pages:
 - event
@@ -42,11 +43,6 @@ What is shown instead of entity tiles:
 - if there are none
 
 The loading screen. Try to also hide the fetches behind it, not just the storage initialization. Consider animating into the user's style as soon as the local storage has been initialized.
-
-Test the layouts with big texts:
-- event note
-- subject info content
-- message content
 
 ### Ideas	
 

@@ -137,12 +137,13 @@ class SectionTile extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return ListTile(
-			title: Text(name, style: Appearance.contentText),
-			leading: Icon(icon, color: Appearance.contentColor),
+			title: Text(name),
+			leading: Icon(icon),
 			onTap: () {
 				setSection();
 				Navigator.of(context).pop();
-			}
+			},
+			style: ListTileStyle.list
 		);
 	}
 }

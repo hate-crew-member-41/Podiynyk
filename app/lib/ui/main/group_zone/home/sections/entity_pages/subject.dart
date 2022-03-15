@@ -37,33 +37,20 @@ class _SubjectPageState extends State<SubjectPage> {
 
 	@override
 	Widget build(BuildContext context) {
-		final info = _subject.info;
-
 		return EntityPage(
 			children: [
 				InputField(
 					controller: _nameField,
 					name: "name",
-					style: Appearance.titleText
+					style: Appearance.headlineText
 				),
-				if (info != null) ListTile(
-					title: Text("information", style: Appearance.contentText),
-					onTap: () => _showEntities(
-						[
-							for (final item in info) EntityTile(
-								title: item.nameRepr,
-								pageBuilder: () => SubjectInfoPage(item),
-							)
-						],
-						newEntityPageBuilder: (_) => NewSubjectInfoPage(subject: _subject)
-					)
+				if (_subject.info != null) ListTile(
+					title: const Text("information"),
+					onTap: _showInfo
 				),
 				ListTile(
-					title: Text(_subject.eventCountRepr, style: Appearance.contentText),
-					onTap: () => _showEntities(
-						[for (final event in _subject.events!) EventTile(event, showSubject: false)],
-						newEntityPageBuilder: (_) => NewEventPage.subjectEvent(_subject)
-					)
+					title: const Text("events"),
+					onTap: _showEvents
 				)
 			],
 			actions: [
@@ -82,6 +69,39 @@ class _SubjectPageState extends State<SubjectPage> {
 		);
 	}
 
+	void _showInfo() => _showEntities(
+		[
+			for (final item in _subject.info!) EntityTile(
+				title: item.nameRepr,
+				pageBuilder: () => SubjectInfoPage(item),
+			)
+		],
+		newEntityPageBuilder: (_) => NewSubjectInfoPage(subject: _subject)
+	);
+
+	void _showEvents() => _showEntities(
+		[
+			for (final event in _subject.events!) EventTile(event, showSubject: false)
+		],
+		newEntityPageBuilder: (_) => NewEventPage.subjectEvent(_subject)
+	);
+
+	void _showEntities(List<Widget> entities, {required Widget Function(BuildContext) newEntityPageBuilder}) {
+		Navigator.of(context).push(MaterialPageRoute(
+			builder: (context) => Scaffold(
+				body: Center(
+					child: ListView(
+						shrinkWrap: true,
+						children: entities
+					)
+				),
+				floatingActionButton: Cloud.role == Role.ordinary ? null : NewEntityButton(
+					pageBuilder: newEntityPageBuilder
+				)
+			)
+		));
+	}
+
 	void _askDelete(BuildContext context) {
 		if (_subject.events!.isEmpty) {
 			_delete(context);
@@ -91,6 +111,7 @@ class _SubjectPageState extends State<SubjectPage> {
 		showDialog(
 			context: context,
 			builder: (_) => AlertDialog(
+				title: const Text("Sure?"),
 				content: const Text("The subject's events will also be deleted."),
 				actions: [
 					TextButton(
@@ -112,22 +133,6 @@ class _SubjectPageState extends State<SubjectPage> {
 	void _delete(BuildContext context) {
 		Cloud.deleteSubject(_subject);
 		Navigator.of(context).pop();
-	}
-
-	void _showEntities(List<Widget> entities, {required Widget Function(BuildContext) newEntityPageBuilder}) {
-		Navigator.of(context).push(MaterialPageRoute(
-			builder: (context) => Scaffold(
-				body: Center(
-					child: ListView(
-						shrinkWrap: true,
-						children: entities
-					)
-				),
-				floatingActionButton: Cloud.role == Role.ordinary ? null : NewEntityButton(
-					pageBuilder: newEntityPageBuilder
-				)
-			)
-		));
 	}
 
 	@override
@@ -167,12 +172,12 @@ class _SubjectInfoPageState extends State<SubjectInfoPage> {
 				InputField(
 					controller: _nameField,
 					name: "topic",
-					style: Appearance.titleText
+					style: Appearance.headlineText
 				),
 				InputField(
 					controller: _contentField,
 					name: "content",
-					style: Appearance.contentText
+					style: Appearance.bodyText
 				)
 			],
 			actions: [
