@@ -179,7 +179,6 @@ class _SubjectInfoPageState extends State<SubjectInfoPage> {
 					controller: _contentField,
 					name: "content",
 					style: Appearance.bodyText,
-					grows: true
 				)
 			],
 			actions: [

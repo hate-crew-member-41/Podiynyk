@@ -33,7 +33,7 @@ class Message extends Entity implements CreatableEntity, Comparable {
 	CloudMap get inCloudFormat => {
 		Field.name.name: name,
 		Field.date.name: date,
-		Field.author.name: author
+		Field.author.name: author.name
 	};
 
 	@override

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
@@ -54,7 +53,6 @@ class _MessagePageState extends State<MessagePage> {
 				if (hasContent) InputField(
 					controller: _contentField,
 					name: "content",
-					grows: true,
 					enabled: isAuthor,
 					style: Appearance.bodyText
 				),

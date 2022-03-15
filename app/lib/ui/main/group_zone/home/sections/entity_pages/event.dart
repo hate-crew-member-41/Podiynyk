@@ -63,7 +63,6 @@ class _EventPageState extends State<EventPage> {
 					InputField(
 						controller: _noteField,
 						name: "note",
-						grows: true,
 						style: Appearance.bodyText
 					)
 				]

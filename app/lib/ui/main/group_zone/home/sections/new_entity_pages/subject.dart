@@ -55,7 +55,6 @@ class NewSubjectInfoPage extends StatelessWidget {
 				controller: _contentField,
 				name: "content",
 				style: Appearance.bodyText,
-				grows: true
 			)
 		]
 	);

@@ -26,7 +26,6 @@ class NewMessagePage extends StatelessWidget {
 				controller: _contentField,
 				name: "content",
 				style: Appearance.bodyText,
-				grows: true
 			)
 		]
 	);
