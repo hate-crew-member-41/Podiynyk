@@ -64,8 +64,10 @@ class _NewEventPageState extends State<NewEventPage> {
 				controller: _subjectField,
 				name: "subject",
 				showOptions: _askSubject,
+				style: Appearance.largeTitleText
 			),
 			DateField(onDatePicked: (date) => _date = date),
+			const ListTile(),
 			InputField(
 				controller: _noteField,
 				name: "note",
