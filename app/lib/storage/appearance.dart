@@ -8,7 +8,7 @@ class Appearance {
 	static Color get primaryColor => Colors.white;
 
 	static TextStyle get bodyText => GoogleFonts.montserrat(fontSize: 16, height: 1.5);
-	static TextStyle get titleText => GoogleFonts.montserrat(fontSize: 18);
+	static TextStyle get titleText => GoogleFonts.montserrat(fontSize: 17);
 	static TextStyle get largeTitleText => GoogleFonts.montserrat(fontSize: 20);
 	static TextStyle get headlineText => GoogleFonts.montserrat(fontSize: 30);
 	static TextStyle get displayText => GoogleFonts.montserrat(fontSize: 40);

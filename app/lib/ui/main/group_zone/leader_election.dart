@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:podiynyk/storage/cloud.dart' show Cloud;
-import 'package:podiynyk/storage/local.dart' show Local;
+import 'package:podiynyk/storage/appearance.dart';
+import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/student.dart';
 
 
@@ -28,9 +29,9 @@ class _LeaderElectionState extends State<LeaderElection> {
 				body: Column(
 					mainAxisAlignment: MainAxisAlignment.center,
 					crossAxisAlignment: CrossAxisAlignment.start,
-					children: const [
-						Text('Almost there'),
-						Text(_intro)
+					children: [
+						Text('Almost there', style: Appearance.headlineText),
+						const Text(_intro)
 					].map((widget) => Padding(
 						padding: const EdgeInsets.all(16),
 						child: widget

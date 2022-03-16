@@ -41,7 +41,7 @@ class _StudentPageState extends State<StudentPage> {
 				),
 				if (_student.role != Role.ordinary) Text(
 					_student.role.name,
-					style: Appearance.titleText
+					style: Appearance.largeTitleText
 				).withPadding
 			],
 			actions: Cloud.role != Role.leader || _student.name == Local.name ? [] : [
