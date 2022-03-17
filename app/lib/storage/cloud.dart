@@ -36,6 +36,7 @@ extension on Collection {
 
 
 extension CloudId on String {
+	/// The string converted to be usable as a document id or a field name in [FirebaseFirestore].
 	String get safeId => replaceAll('.', '').replaceAll('/', '');
 }
 
@@ -48,41 +49,7 @@ class Cloud {
 		await Firebase.initializeApp();
 	}
 
-	// /// The [County]s of Ukraine.
-	// static Future<List<County>> get counties => _identificationOptions(
-	// 	collection: Collection.counties,
-	// 	document: Collection.counties.name,
-	// 	optionConstructor: ({required id, required name}) => County(id: id, name: name)
-	// );
-
-	// /// The [University]s of the [county].
-	// static Future<List<University>> universities(County county) => _identificationOptions(
-	// 	collection: Collection.counties,
-	// 	document: county.id,
-	// 	optionConstructor: ({required id, required name}) => University(id: id, name: name)
-	// );
-
-	// /// The [Department]s of the [university].
-	// static Future<List<Department>> departments(University university) => _identificationOptions(
-	// 	collection: Collection.universities,
-	// 	document: university.id,
-	// 	optionConstructor: ({required id, required name}) => Department(id: id, name: name)
-	// );
-
-	// static Future<List<O>> _identificationOptions<O extends IdentificationOption>({
-	// 	required Collection collection,
-	// 	required String document,
-	// 	required O Function({required String id, required String name}) optionConstructor
-	// }) async {
-	// 	final snapshot = await _cloud.collection(collection.name).doc(document).get();
-	// 	return [
-	// 		for (final entry in snapshot.data()!.entries) optionConstructor(
-	// 			id: entry.key,
-	// 			name: entry.value,
-	// 		)
-	// 	]..sort();
-	// }
-
+	/// Initializes a new group and returns its id.
 	static Future<String> initGroup() async {
 		final document = await _cloud.collection(Collection.groups.name).add({
 			Field.students.name: <String, CloudMap>{},
@@ -99,6 +66,7 @@ class Cloud {
 		return Local.groupId!;
 	}
 
+	/// Whether aa group with the [id] exists.
 	static Future<bool> groupExists(String id) async {
 		final snapshot = await _cloud.collection(Collection.groups.name).doc(id).get();
 		return snapshot.exists;
@@ -115,41 +83,6 @@ class Cloud {
 				'$userField.${Field.confirmationCount.name}': 0
 		});
 	}
-
-	// /// Adds the user to the group. If they are the group's first [Student], initializes the group's documents.
-	// static Future<void> enterGroup() async {
-	// 	final document = Collection.groups.ref;
-
-	// 	await _cloud.runTransaction((transaction) async {
-	// 		final snapshot = await transaction.get(document);
-
-	// 		if (snapshot.exists) {
-	// 			final userField =  '${Field.students.name}.${Local.id}';
-	// 			final leaderIsElected = _leaderIsElected(snapshot.data()![Field.students.name]);
-
-	// 			transaction.update(document, {
-	// 				'$userField.${Field.name.name}': Local.name,
-	// 				if (leaderIsElected)
-	// 					'$userField.${Field.role.name}': Role.ordinary.index
-	// 				else 
-	// 					'$userField.${Field.confirmationCount.name}': 0
-	// 			});
-	// 		}
-	// 		else {
-	// 			transaction.set(document, {
-	// 				Field.students.name: {Local.id: {
-	// 					Field.name.name: Local.name,
-	// 					Field.confirmationCount.name: 0
-	// 				}},
-	// 				Field.joined.name: DateTime.now()
-	// 			});
-
-	// 			Collection.events.ref.set({});
-	// 			Collection.subjects.ref.set({});
-	// 			Collection.messages.ref.set({});
-	// 		}
-	// 	});
-	// }
 
 	/// Whether the group is past the [LeaderElection] step. Initializes [role].
 	static Future<bool> get leaderIsElected async {

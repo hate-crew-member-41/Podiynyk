@@ -98,7 +98,6 @@ class _IdGeneration extends StatelessWidget {
 				InputField(
 					controller: _nameField,
 					name: "your name",
-					canGrow: false
 				)
 			]
 		);
@@ -130,12 +129,10 @@ class _IdForm extends StatelessWidget {
 						InputField(
 							controller: _idField,
 							name: "group id",
-							canGrow: false
 						),
 						InputField(
 							controller: _nameField,
 							name: "your name",
-							canGrow: false
 						)
 					]
 				)

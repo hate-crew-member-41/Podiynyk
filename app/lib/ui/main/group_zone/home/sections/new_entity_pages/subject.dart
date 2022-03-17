@@ -54,6 +54,7 @@ class NewSubjectInfoPage extends StatelessWidget {
 			InputField(
 				controller: _contentField,
 				name: "content",
+				isMultiline: true,
 				style: Appearance.bodyText,
 			)
 		]

@@ -71,6 +71,7 @@ class _NewEventPageState extends State<NewEventPage> {
 			InputField(
 				controller: _noteField,
 				name: "note",
+				isMultiline: true,
 				style: Appearance.bodyText
 			)
 		]

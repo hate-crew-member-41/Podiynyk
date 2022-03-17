@@ -178,6 +178,7 @@ class _SubjectInfoPageState extends State<SubjectInfoPage> {
 				InputField(
 					controller: _contentField,
 					name: "content",
+					isMultiline: true,
 					style: Appearance.bodyText,
 				)
 			],

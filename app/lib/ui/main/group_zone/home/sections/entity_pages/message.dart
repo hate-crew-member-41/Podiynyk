@@ -54,6 +54,7 @@ class _MessagePageState extends State<MessagePage> {
 					controller: _contentField,
 					name: "content",
 					enabled: isAuthor,
+					isMultiline: true,
 					style: Appearance.bodyText
 				),
 				const ListTile(),

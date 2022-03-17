@@ -57,10 +57,10 @@ Come up with a way to display them. They are possible here:
 - main.dart
 - ui\main\main.dart
 - ui\main\identification.dart
+- ui\main\group_zone\group_zone.dart
 - ui\main\group_zone\leader_election.dart
 - ui\main\group_zone\home\home.dart
 - ui\main\group_zone\home\sections\section.dart
-- ui\main\group_zone\home\sections\agenda.dart
 - ui\main\group_zone\home\sections\new_entity_pages\event.dart
 
 # Firestore cloud functions
