@@ -44,7 +44,7 @@ class _StudentPageState extends State<StudentPage> {
 					style: Appearance.largeTitleText
 				).withPadding
 			],
-			actions: Cloud.role != Role.leader || _student.name == Local.name ? [] : [
+			actions: Cloud.role != Role.leader || _student.name == Local.userName ? [] : [
 				_student.role == Role.ordinary ? EntityActionButton(
 					text: "trust",
 					action: () => _student.role = Role.trusted

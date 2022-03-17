@@ -35,12 +35,12 @@ class Student extends LabelableEntity implements Comparable {
 	
 	@override
 	set label(String label) {
-		if (name != Local.name) {
+		if (name != Local.userName) {
 			super.label = label;
 		}
 		else if (label != name && label.isNotEmpty) {
 			name = label;
-			Local.name = label;
+			Local.userName = label;
 			Cloud.updateName();
 		}
 	}
@@ -64,7 +64,6 @@ class Student extends LabelableEntity implements Comparable {
 
 	@override
 	int compareTo(covariant Student other) => nameRepr.compareTo(other.nameRepr);
-	int compareIdTo(Student other) => int.parse(id).compareTo(int.parse(other.id));
 }
 
 

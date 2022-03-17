@@ -1,5 +1,11 @@
 # UI
 
+## Before Home
+
+Make sure that it is safe for the user to do something wrong.
+
+Make sure that if the app is closed, the right page is displayed when it is opened.
+
 ## Entity actions
 
 Make them modify the UI.
@@ -17,26 +23,22 @@ Subjects:
 Students:
 - new role ➔ the page, the tile
 
-## Identification
-
-Change the data source to https://registry.edbo.gov.ua/opendata/universities
-
-## Leader election
-
-If the user has specified a wrong group, they are trapped at this step forever.
-Provide an ability to go back to the identification step.
-
 ## Appearance
 
 What is shown instead of entity tiles:
 - when they are being fetched
 - if there are none
 
-The loading screen. Try to also hide the fetches behind it, not just the storage initialization. Consider animating into the user's style as soon as the local storage has been initialized.
+The loading screen. Try to also hide the fetches behind it, not just the storage initializations.
+Consider animating into the user's style as soon as the local storage has been initialized.
 
-### Ideas	
+### Ideas
 
-New-entity pages appear as a page to the right of the section. Remember to remove the empty tiles.
+If the user attempts to add an entity with some necessary fields left empty,
+show a SnackBar with this information.
+
+New-entity pages appear as a page to the right of the section.
+Remember to remove the empty tiles.
 
 Once the entities are fetched, each tile fades in with a different delay.
 
@@ -46,7 +48,8 @@ New-entity pages are closed with an animation.
 
 ## Tour
 
-Besides from being available in the settings, when should it be shown for the first time? Before or after the identification?
+Besides from being available in the settings, when should it be shown for the first time?
+Before or after the identification?
 
 ## Uncaught errors
 
@@ -64,7 +67,7 @@ Come up with a way to display them. They are possible here:
 
 ## Leader election
 
-As soon as it is clear who is the leader, assign roles to the students (confirmationCount ➔ role) and initialize the group's entity documents (events, subjects, messages).
+As soon as it is clear who is the leader, assign roles to the students (confirmationCount ➔ role).
 
 ## Maintaining
 
@@ -88,7 +91,7 @@ Changing the group.
 
 ## Questions
 
-Messages that require an answer. After the user has answered, the answers of the group's students become visible on the page.
+Messages that require an answer. After the user has answered, all the answers are displayed on the page.
 
 ## Queues
 

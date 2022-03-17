@@ -15,54 +15,59 @@ class LeaderElection extends StatefulWidget {
 }
 
 class _LeaderElectionState extends State<LeaderElection> {
-	static const _intro = "The next thing you will see is the list of groupmates that have made it to this point. "
-		"When you see the leader, tap on them. If you are the leader, sit back and let them tap on you.";
+	bool _showIntro = true;
 
-	late Widget _content;
+	@override
+	Widget build(BuildContext context) {
+		return _showIntro ? _Introduction(
+			showNextPage: () => setState(() => _showIntro = false)
+		) : const _CandidateList();
+	}
+}
 
-	_LeaderElectionState() {
-		_content = GestureDetector(
-			onDoubleTap: () => setState(() {
-				_content = const LeaderCandidateList();
-			}),
+
+class _Introduction extends StatelessWidget {
+	final void Function() showNextPage;
+
+	const _Introduction({required this.showNextPage});
+
+	@override
+	Widget build(BuildContext context) {
+		return GestureDetector(
+			onDoubleTap: showNextPage,
 			child: Scaffold(
 				body: Column(
 					mainAxisAlignment: MainAxisAlignment.center,
 					crossAxisAlignment: CrossAxisAlignment.start,
 					children: [
-						Text('Almost there', style: Appearance.headlineText),
-						const Text(_intro)
-					].map((widget) => Padding(
-						padding: const EdgeInsets.all(16),
-						child: widget
-					)).toList()
+						Text('Almost there', style: Appearance.headlineText).withPadding,
+						const Text(
+							"The next thing you will see is the list of your groupmates that have made it to this point.\n\n"
+							"When you see the leader, tap on them. If you are the leader, sit back and let them tap on you."
+						).withPadding
+					]
 				)
 			)
 		);
 	}
-
-	@override
-	Widget build(BuildContext context) {
-		return _content;
-	}
 }
 
 
-class LeaderCandidateList extends StatefulWidget {
-	const LeaderCandidateList();
+class _CandidateList extends StatefulWidget {
+	const _CandidateList();
 
 	@override
-	_LeaderCandidateListState createState() => _LeaderCandidateListState();
+	_CandidateListState createState() => _CandidateListState();
 }
 
-class _LeaderCandidateListState extends State<LeaderCandidateList> {
+class _CandidateListState extends State<_CandidateList> {
 	String? _votedForId;
 
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(
 			body: Center(child: StreamBuilder<List<Student>?>(
-				stream: _updates(),
+				stream: _updates(context),
 				builder: (context, snapshot) {
 					if (snapshot.connectionState == ConnectionState.waiting) return const Icon(Icons.cloud_download);
 					// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
@@ -77,7 +82,7 @@ class _LeaderCandidateListState extends State<LeaderCandidateList> {
 								trailing: student.confirmationCount == 0 ?
 									null :
 									Text(student.confirmationCount.toString()),
-								onTap: student.nameRepr == Local.name ? null : () {
+								onTap: student.nameRepr == Local.userName ? null : () {
 									if (student.id == _votedForId) return;
 
 									student.voteFor(previousId: _votedForId);
@@ -91,12 +96,13 @@ class _LeaderCandidateListState extends State<LeaderCandidateList> {
 		);
 	}
 
-	Stream<List<Student>> _updates() async* {
+	Stream<List<Student>> _updates(BuildContext context) async* {
 		await for (final students in Cloud.leaderElectionUpdates) {
 			if (students != null) {
 				yield students;
 			}
 			else {
+				Local.leaderIsElected = true;
 				context.read<void Function()>()();
 			}
 		}

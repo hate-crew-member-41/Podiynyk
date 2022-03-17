@@ -1,19 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:podiynyk/storage/entities/creatable.dart';
 
 import 'fields.dart';
 import 'local.dart';
 
+import 'entities/creatable.dart';
 import 'entities/event.dart';
 import 'entities/message.dart';
 import 'entities/question.dart';
 import 'entities/student.dart';
 import 'entities/subject.dart';
-import 'entities/identification_options/county.dart';
-import 'entities/identification_options/department.dart';
-import 'entities/identification_options/identification_option.dart';
-import 'entities/identification_options/university.dart';
 
 
 typedef CloudMap = Map<String, dynamic>;
@@ -21,22 +17,19 @@ typedef CloudMap = Map<String, dynamic>;
 
 /// An [Entity] [Collection] stored in [FirebaseFirestore].
 enum Collection {
-	counties,
-	universities,
 	groups,
 	subjects,
 	events,
 	messages,
-	questions,
 	details
 }
 
 extension on Collection {
-	/// [DocumentReference] to the document with the group's data of [collection] type.
+	/// [DocumentReference] to the document with the group's data of [this] type.
 	DocumentReference<CloudMap> get ref =>	
 		FirebaseFirestore.instance.collection(name).doc(Local.groupId);
-	
-	/// [DocumentReference] to the details of the entity with the [id] in the group's data of [collection] type.
+
+	/// [DocumentReference] to the details of the entity with the [id] in the group's data of [this] type.
 	DocumentReference<CloudMap> detailsRef(String id) =>	
 		ref.collection(Collection.details.name).doc(id);
 }
@@ -55,75 +48,108 @@ class Cloud {
 		await Firebase.initializeApp();
 	}
 
-	/// The [County]s of Ukraine.
-	static Future<List<County>> get counties => _identificationOptions(
-		collection: Collection.counties,
-		document: Collection.counties.name,
-		optionConstructor: ({required id, required name}) => County(id: id, name: name)
-	);
+	// /// The [County]s of Ukraine.
+	// static Future<List<County>> get counties => _identificationOptions(
+	// 	collection: Collection.counties,
+	// 	document: Collection.counties.name,
+	// 	optionConstructor: ({required id, required name}) => County(id: id, name: name)
+	// );
 
-	/// The [University]s of the [county].
-	static Future<List<University>> universities(County county) => _identificationOptions(
-		collection: Collection.counties,
-		document: county.id,
-		optionConstructor: ({required id, required name}) => University(id: id, name: name)
-	);
+	// /// The [University]s of the [county].
+	// static Future<List<University>> universities(County county) => _identificationOptions(
+	// 	collection: Collection.counties,
+	// 	document: county.id,
+	// 	optionConstructor: ({required id, required name}) => University(id: id, name: name)
+	// );
 
-	/// The [Department]s of the [university].
-	static Future<List<Department>> departments(University university) => _identificationOptions(
-		collection: Collection.universities,
-		document: university.id,
-		optionConstructor: ({required id, required name}) => Department(id: id, name: name)
-	);
+	// /// The [Department]s of the [university].
+	// static Future<List<Department>> departments(University university) => _identificationOptions(
+	// 	collection: Collection.universities,
+	// 	document: university.id,
+	// 	optionConstructor: ({required id, required name}) => Department(id: id, name: name)
+	// );
 
-	static Future<List<O>> _identificationOptions<O extends IdentificationOption>({
-		required Collection collection,
-		required String document,
-		required O Function({required String id, required String name}) optionConstructor
-	}) async {
-		final snapshot = await _cloud.collection(collection.name).doc(document).get();
-		return [
-			for (final entry in snapshot.data()!.entries) optionConstructor(
-				id: entry.key,
-				name: entry.value,
-			)
-		]..sort();
+	// static Future<List<O>> _identificationOptions<O extends IdentificationOption>({
+	// 	required Collection collection,
+	// 	required String document,
+	// 	required O Function({required String id, required String name}) optionConstructor
+	// }) async {
+	// 	final snapshot = await _cloud.collection(collection.name).doc(document).get();
+	// 	return [
+	// 		for (final entry in snapshot.data()!.entries) optionConstructor(
+	// 			id: entry.key,
+	// 			name: entry.value,
+	// 		)
+	// 	]..sort();
+	// }
+
+	static Future<String> initGroup() async {
+		final document = await _cloud.collection(Collection.groups.name).add({
+			Field.students.name: <String, CloudMap>{},
+			Field.joined.name: DateTime.now()
+		});
+		Local.groupId = document.id;
+
+		await Future.wait([
+			Collection.events.ref.set(<String, CloudMap>{}),
+			Collection.subjects.ref.set(<String, CloudMap>{}),
+			Collection.messages.ref.set(<String, CloudMap>{})
+		]);
+
+		return Local.groupId!;
 	}
 
-	/// Adds the user to the group. If they are the group's first [Student], initializes the group's documents.
+	static Future<bool> groupExists(String id) async {
+		final snapshot = await _cloud.collection(Collection.groups.name).doc(id).get();
+		return snapshot.exists;
+	}
+
 	static Future<void> enterGroup() async {
-		final document = Collection.groups.ref;
+		final userField = '${Field.students.name}.${Local.userId}';
 
-		await _cloud.runTransaction((transaction) async {
-			final snapshot = await transaction.get(document);
-
-			if (snapshot.exists) {
-				final userField =  '${Field.students.name}.${Local.id}';
-				final leaderIsElected = _leaderIsElected(snapshot.data()![Field.students.name]);
-
-				transaction.update(document, {
-					'$userField.${Field.name.name}': Local.name,
-					if (leaderIsElected)
-						'$userField.${Field.role.name}': Role.ordinary.index
-					else 
-						'$userField.${Field.confirmationCount.name}': 0
-				});
-			}
-			else {
-				transaction.set(document, {
-					Field.students.name: {Local.id: {
-						Field.name.name: Local.name,
-						Field.confirmationCount.name: 0
-					}},
-					Field.joined.name: DateTime.now()
-				});
-
-				Collection.events.ref.set({});
-				Collection.subjects.ref.set({});
-				Collection.messages.ref.set({});
-			}
+		await Collection.groups.ref.update({
+			'$userField.${Field.name.name}': Local.userName,
+			if (await leaderIsElected)
+				'$userField.${Field.role.name}': Role.ordinary.index
+			else 
+				'$userField.${Field.confirmationCount.name}': 0
 		});
 	}
+
+	// /// Adds the user to the group. If they are the group's first [Student], initializes the group's documents.
+	// static Future<void> enterGroup() async {
+	// 	final document = Collection.groups.ref;
+
+	// 	await _cloud.runTransaction((transaction) async {
+	// 		final snapshot = await transaction.get(document);
+
+	// 		if (snapshot.exists) {
+	// 			final userField =  '${Field.students.name}.${Local.id}';
+	// 			final leaderIsElected = _leaderIsElected(snapshot.data()![Field.students.name]);
+
+	// 			transaction.update(document, {
+	// 				'$userField.${Field.name.name}': Local.name,
+	// 				if (leaderIsElected)
+	// 					'$userField.${Field.role.name}': Role.ordinary.index
+	// 				else 
+	// 					'$userField.${Field.confirmationCount.name}': 0
+	// 			});
+	// 		}
+	// 		else {
+	// 			transaction.set(document, {
+	// 				Field.students.name: {Local.id: {
+	// 					Field.name.name: Local.name,
+	// 					Field.confirmationCount.name: 0
+	// 				}},
+	// 				Field.joined.name: DateTime.now()
+	// 			});
+
+	// 			Collection.events.ref.set({});
+	// 			Collection.subjects.ref.set({});
+	// 			Collection.messages.ref.set({});
+	// 		}
+	// 	});
+	// }
 
 	/// Whether the group is past the [LeaderElection] step. Initializes [role].
 	static Future<bool> get leaderIsElected async {
@@ -132,7 +158,7 @@ class Cloud {
 
 		final isElected = _leaderIsElected(students);
 		if (isElected) {
-			final roleIndex = students[Local.id][Field.role.name];
+			final roleIndex = students[Local.userId][Field.role.name];
 			_role = Role.values[roleIndex];
 		}
 
@@ -147,15 +173,16 @@ class Cloud {
 
 			if (!_leaderIsElected(students)) return [
 				for (final entry in students.entries) Student.candidateFromCloudFormat(entry)
-			]..sort((a, b) => a.compareIdTo(b));
+			]..sort();
 
-			final roleIndex = students[Local.id][Field.role.name] as int;
+			final roleIndex = students[Local.userId][Field.role.name] as int;
 			_role = Role.values[roleIndex];
 			return null;
 		});
 	}
 
-	static bool _leaderIsElected(CloudMap students) => students.values.first.containsKey(Field.role.name);
+	static bool _leaderIsElected(CloudMap students) => 
+		students.isNotEmpty && students.values.first.containsKey(Field.role.name);
 
 	/// Adds a confirmation for the student with the id [toId].
 	/// Takes one from the student with the id [fromId] if it is not `null`.
@@ -255,7 +282,7 @@ class Cloud {
 		]..sort();
 		Local.clearEntityLabels(Field.students, students);
 
-		_role = students.firstWhere((student) => student.nameRepr == Local.name).role;
+		_role = students.firstWhere((student) => student.nameRepr == Local.userName).role;
 		return students;
 	}
 
@@ -336,7 +363,7 @@ class Cloud {
 	static Future<void> makeLeader(Student student) async {
 		final studentsField = Field.students.name, roleField = Field.role.name;
 		await Collection.groups.ref.update({
-			'$studentsField.${Local.id}.$roleField': Role.trusted.index,
+			'$studentsField.${Local.userId}.$roleField': Role.trusted.index,
 			'$studentsField.${student.id}.$roleField': Role.leader.index
 		});
 		_role = Role.trusted;
@@ -345,7 +372,7 @@ class Cloud {
 	/// Updates the user's name.
 	static Future<void> updateName() async {
 		await Collection.groups.ref.update({
-			'${Field.students.name}.${Local.id}.${Field.name.name}': Local.name
+			'${Field.students.name}.${Local.userId}.${Field.name.name}': Local.userName
 		});
 	}
 

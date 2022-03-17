@@ -7,12 +7,14 @@ class InputField extends StatefulWidget {
 	final TextEditingController controller;
 	final String name;
 	final bool enabled;
+	final bool canGrow;
 	final TextStyle? style;
 
 	const InputField({
 		required this.controller,
 		required this.name,
 		this.enabled = true,
+		this.canGrow = true,
 		this.style
 	});
 
@@ -35,7 +37,7 @@ class _InputFieldState extends State<InputField> {
 			controller: widget.controller,
 			focusNode: _focusNode,
 			enabled: widget.enabled,
-			maxLines: null,
+			maxLines: widget.canGrow ? null : 1,
 			showCursor: false,
 			style: widget.style,
 			decoration: InputDecoration(

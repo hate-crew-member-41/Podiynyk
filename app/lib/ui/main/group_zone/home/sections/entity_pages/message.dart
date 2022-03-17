@@ -36,7 +36,7 @@ class _MessagePageState extends State<MessagePage> {
 	@override
 	Widget build(BuildContext context) {
 		final author = _message.author;
-		final isAuthor = author.name == Local.name;
+		final isAuthor = author.name == Local.userName;
 
 		final content = _message.content;
 		final hasContent = content != null;

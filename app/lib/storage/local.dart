@@ -1,30 +1,31 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'cloud.dart' show CloudId;
 import 'fields.dart';
 import 'entities/entity.dart';
 
 
 class Local {
-	static late final Box<String> _user;
+	static late final Box<dynamic> _misc;
 	static late final Box<Map> _labels;
 	static late final Box<List<String>> _entities;
 
-	/// Initializes the [Local] database and makes the data accessible.
+	/// Initializes the storage and makes the data accessible.
 	static Future<void> init() async {
 		await Hive.initFlutter();
-		// | uncomment, hot restart, comment | to delete all local data
+		// | uncomment, hot restart, comment | to make the user unidentified
 		// await Future.wait([
-		// 	(await Hive.openBox<String>(DataBox.user.name)).deleteFromDisk(),
+		// 	(await Hive.openBox<String>(DataBox.misc.name)).deleteFromDisk(),
 		// ]);
 		await Future.wait([
-			Hive.openBox<String>(DataBox.user.name).then((box) => _user = box),
+			Hive.openBox<dynamic>(DataBox.misc.name).then((box) => _misc = box),
 			Hive.openBox<Map>(DataBox.labels.name).then((box) => _labels = box),
 			Hive.openBox<List<String>>(DataBox.entities.name).then((box) => _entities = box)
 		]);
 	}
 
-	/// Initializes the group-related [Local] data.
-	static Future<void> initGroupRelatedData() async {
+	/// Initializes the data.
+	static Future<void> initData() async {
 		await Future.wait([
 			_labels.putAll({
 				Field.students.name: <String, String>{},
@@ -43,19 +44,27 @@ class Local {
 	static bool get userIsIdentified => groupId != null;
 
 	/// The id of the user's group.
-	static String? get groupId => _user.get(Field.groupId.name);
-	/// Sets the user's [groupId] to be the non-null [id].
-	static set groupId(String? id) => _user.put(Field.groupId.name, id!);
+	static String? get groupId => _misc.get(Field.groupId.name);
+	/// Sets the user's [groupId] to the non-null [id].
+	static set groupId(String? id) => _misc.put(Field.groupId.name, id!);
 
-	/// Sets the user's [id].
-	static set id(String id) => _user.put(Field.id.name, id);
-	/// The user's [id] in the group.
-	static String get id => _user.get(Field.id.name)!;
+	/// Whether it is known who is the leader. Either `true` ot `null`.
+	static bool? get leaderIsElected => _misc.get(Field.leaderIsElected.name);
+	/// Sets [leaderIsElected] to the non-`false` value, because `false` can never be guaranteed.
+	static set leaderIsElected(bool? isElected) => _misc.put(Field.leaderIsElected.name, true);
 
-	/// Sets the user's [name].
-	static set name(String name) => _user.put(Field.name.name, name);
+	/// Sets [userId].
+	static set userId(String id) => _misc.put(Field.userId.name, id);
+	/// The user's id in the group.
+	static String get userId => _misc.get(Field.userId.name)!;
+
+	/// Sets [userName].
+	static set userName(String name) {
+		_misc.put(Field.userName.name, name);
+		_misc.put(Field.userId.name, name.safeId);
+	}
 	/// The user's name.
-	static String get name => _user.get(Field.name.name)!;
+	static String get userName => _misc.get(Field.userName.name)!;
 
 	/// The [collection] entity's label.
 	static String? entityLabel(Field collection, String essence) {
@@ -115,7 +124,7 @@ class Local {
 
 /// The [Hive] [Box]es that the local data is stored in.
 enum DataBox {
-	user,
+	misc,
 	labels,
 	entities
 }

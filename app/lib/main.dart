@@ -64,6 +64,10 @@ class App extends StatelessWidget {
 					backgroundColor: Appearance.backgroundColor,
 					titleTextStyle: Appearance.largeTitleText,
 				),
+				snackBarTheme: SnackBarThemeData(
+					backgroundColor: Appearance.secondaryBackgroundColor,
+					contentTextStyle: Appearance.bodyText
+				),
 				timePickerTheme: TimePickerThemeData(
 					backgroundColor: Appearance.backgroundColor,
 					hourMinuteColor: Appearance.secondaryBackgroundColor,

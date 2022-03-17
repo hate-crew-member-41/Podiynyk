@@ -10,6 +10,7 @@ enum Field {
 	id,
 	info,
 	joined,
+	leaderIsElected,
 	message,
 	name,
 	names,
@@ -19,5 +20,7 @@ enum Field {
 	subject,
 	subjectInfo,
 	subjects,
-	unfollowedSubjects
+	unfollowedSubjects,
+	userId,
+	userName
 }
