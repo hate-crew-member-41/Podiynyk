@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
@@ -10,58 +11,52 @@ import 'package:podiynyk/ui/main/common/fields.dart';
 import 'entity.dart';
 
 
-class EventPage extends StatefulWidget {
+class EventPage extends HookWidget {
 	final Event event;
 
 	const EventPage(this.event);
 
 	@override
-	State<EventPage> createState() => _EventPageState();
-}
-
-class _EventPageState extends State<EventPage> {
-	late final Event _event;
-	bool _showNoteField = false;
-	final _nameField = TextEditingController();
-	final _noteField = TextEditingController();
-
-	@override
-	void initState() {
-		super.initState();
-		_event = widget.event;
-		_nameField.text = _event.nameRepr;
-
-		_event.addDetails().whenComplete(() => setState(() {
-			final note = _event.note;
-			_showNoteField = note != null;
-			if (_showNoteField) _noteField.text = note!;
-		}));
-	}
-
-	@override
 	Widget build(BuildContext context) {
-		final hasSubject = _event.subject != null;
+		final nameField = useTextEditingController(text: event.nameRepr);
+		final showNoteField = useState(false);
+		final noteField = useTextEditingController();
+
+		useEffect(() {
+			event.addDetails().whenComplete(() {
+				final note = event.note;
+				showNoteField.value = note != null;
+				if (showNoteField.value) noteField.text = note!;
+			});
+
+			return () {
+				event.label = nameField.text;
+			
+				final note = noteField.text;
+				event.note = note.isNotEmpty ? note : null;
+			};
+		}, const []);
 
 		return EntityPage(
 			children: [
 				InputField(
-					controller: _nameField,
+					controller: nameField,
 					name: "name",
 					style: Appearance.headlineText
 				),
-				if (hasSubject) Text(
-					_event.subject!.nameRepr,
+				if (event.subject != null) Text(
+					event.subject!.nameRepr,
 					style: Appearance.largeTitleText
 				).withPadding,
 				DateField(
-					initialDate: _event.date,
-					onDatePicked: (date) => _event.date = date,
+					initialDate: event.date,
+					onDatePicked: (date) => event.date = date,
 					enabled: Cloud.role != Role.ordinary
 				),
-				if (_showNoteField) ...[
+				if (showNoteField.value) ...[
 					const ListTile(),
 					InputField(
-						controller: _noteField,
+						controller: noteField,
 						name: "note",
 						isMultiline: true,
 						style: Appearance.bodyText
@@ -69,16 +64,16 @@ class _EventPageState extends State<EventPage> {
 				]
 			],
 			actions: [
-				if (_event.note == null) EntityActionButton(
+				if (event.note == null) EntityActionButton(
 					text: "add a note",
-					action: () => setState(() => _showNoteField = true)
+					action: () => showNoteField.value = true
 				),
-				!_event.isHidden ? EntityActionButton(
+				!event.isHidden ? EntityActionButton(
 					text: "hide",
-					action: () => _event.isHidden = true
+					action: () => event.isHidden = true
 				) : EntityActionButton(
 					text: "show",
-					action: () => _event.isHidden = false
+					action: () => event.isHidden = false
 				),
 				if (Cloud.role != Role.ordinary) EntityActionButton(
 					text: "delete",
@@ -89,17 +84,7 @@ class _EventPageState extends State<EventPage> {
 	}
 
 	void _delete(BuildContext context) {
-		Cloud.deleteEvent(_event);
+		Cloud.deleteEvent(event);
 		Navigator.of(context).pop();
-	}
-
-	@override
-	void dispose() {
-		_event.label = _nameField.text;
-		
-		final note = _noteField.text;
-		_event.note = note.isNotEmpty ? note : null;
-
-		super.dispose();
 	}
 }

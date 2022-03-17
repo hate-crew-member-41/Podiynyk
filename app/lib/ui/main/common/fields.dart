@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 import 'package:podiynyk/storage/entities/date.dart';
 
@@ -77,7 +78,7 @@ class OptionField extends StatelessWidget {
 }
 
 
-class DateField extends StatefulWidget {
+class DateField extends HookWidget {
 	final DateTime? initialDate;
 	final void Function(DateTime) onDatePicked;
 	final bool enabled;
@@ -91,38 +92,24 @@ class DateField extends StatefulWidget {
 	});
 
 	@override
-	State<DateField> createState() => _DateFieldState();
-}
-
-class _DateFieldState extends State<DateField> {
-	final _field = TextEditingController();
-	DateTime? _date;
-
-	@override
-	void initState() {	
-		super.initState();
-		_date = widget.initialDate;
-		_field.text = widget.initialDate?.fullRepr ?? "";
-	}
-
-	@override
 	Widget build(BuildContext context) {
+		final field = useTextEditingController(text: initialDate?.fullRepr);
+		final date = useRef(initialDate);
+
 		return OptionField(
-			controller: _field,
+			controller: field,
 			name: "date",
-			showOptions: (context) {
-				if (widget.enabled) _ask(context);
-			},
-			style: widget.style
+			showOptions: enabled ? (context) => _ask(context, date, field) : (_) {},
+			style: style
 		);
 	}
 
-	void _ask(BuildContext context) async {
+	void _ask(BuildContext context, ObjectRef<DateTime?> date, TextEditingController field) async {
 		final now = DateTime.now();
 
-		_date = await showDatePicker(
+		date.value = await showDatePicker(
 			context: context,
-			initialDate: _date ?? now.add(const Duration(days: DateTime.daysPerWeek * 2)),
+			initialDate: date.value ?? now.add(const Duration(days: DateTime.daysPerWeek * 2)),
 			firstDate: now,
 			lastDate: now.add(const Duration(days: 365)),
 			helpText: '',
@@ -130,7 +117,7 @@ class _DateFieldState extends State<DateField> {
 			cancelText: "cancel"
 		);
 
-		if (_date != null) {
+		if (date.value != null) {
 			final time = await showTimePicker(
 				context: context,
 				initialTime: TimeOfDay.now().replacing(minute: 0),
@@ -138,10 +125,10 @@ class _DateFieldState extends State<DateField> {
 				confirmText: "ok",
 				cancelText: "no time"
 			);
-			_date = time != null ? _date!.withTime(time) : _date!.withDefaultTime;
+			date.value = time != null ? date.value!.withTime(time) : date.value!.withDefaultTime;
 
-			_field.text = _date!.fullRepr;
-			widget.onDatePicked(_date!);
+			field.text = date.value!.fullRepr;
+			onDatePicked(date.value!);
 		}
 	}
 }

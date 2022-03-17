@@ -14,9 +14,7 @@ class Local {
 	static Future<void> init() async {
 		await Hive.initFlutter();
 		// | uncomment, hot restart, comment | to make the user unidentified
-		// await Future.wait([
-		// 	(await Hive.openBox<String>(DataBox.misc.name)).deleteFromDisk(),
-		// ]);
+		// await Hive.deleteBoxFromDisk(DataBox.misc.name);
 		await Future.wait([
 			Hive.openBox<dynamic>(DataBox.misc.name).then((box) => _misc = box),
 			Hive.openBox<Map>(DataBox.labels.name).then((box) => _labels = box),
@@ -40,7 +38,7 @@ class Local {
 		]);
 	}
 
-	/// Whether the user has completed the identification process.
+	/// Whether the user has completed the identification step.
 	static bool get userIsIdentified => groupId != null;
 
 	/// The id of the user's group.

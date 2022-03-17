@@ -69,7 +69,9 @@ class _CandidateListState extends State<_CandidateList> {
 			body: Center(child: StreamBuilder<List<Student>?>(
 				stream: _updates(context),
 				builder: (context, snapshot) {
-					if (snapshot.connectionState == ConnectionState.waiting) return const Icon(Icons.cloud_download);
+					if (snapshot.connectionState == ConnectionState.waiting) {
+						return const Text("awaiting the groupmates");
+					}
 					// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
 					final students = snapshot.data!;
