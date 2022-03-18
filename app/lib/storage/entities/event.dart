@@ -45,7 +45,7 @@ class Event extends LabelableEntity implements CreatableEntity, Comparable {
 		Cloud.updateEventDate(this);
 	}
 
-	String? _note;
+	late String? _note;
 	String? get note => _note;
 	set note(String? note) {
 		if (note == _note) return;

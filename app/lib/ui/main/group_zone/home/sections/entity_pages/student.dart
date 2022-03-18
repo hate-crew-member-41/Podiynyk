@@ -12,9 +12,9 @@ import 'entity.dart';
 
 
 class StudentPage extends HookWidget {
-	final Student student;
-
 	const StudentPage(this.student);
+
+	final Student student;
 
 	@override
 	Widget build(BuildContext context) {

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 
 class EntityPage extends StatelessWidget {
-	final List<Widget> children;
-	final List<Widget> actions;
-
 	const EntityPage({
 		required this.children,
 		this.actions = const <Widget>[]
 	});
+
+	final List<Widget> children;
+	final List<Widget> actions;
 
 	@override
 	Widget build(BuildContext context) {

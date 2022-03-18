@@ -33,6 +33,8 @@ The changes are applied when the page is closed. Is the code for it written the 
 
 ## Appearance
 
+Include the subject in a disabled field on the page of a new event if it is being added from a specific subject.
+
 What is shown instead of entity tiles:
 - when they are being fetched
 - if there are none

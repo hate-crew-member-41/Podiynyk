@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
@@ -10,127 +11,115 @@ import 'package:podiynyk/ui/main/common/fields.dart';
 import 'entity.dart';
 
 
-class NewEventPage extends StatefulWidget {
-	final bool askSubject;
-	final bool subjectRequired;
-	final Subject? subject;
+class NewEventPage extends HookWidget {
+	const NewEventPage() : _doAskSubject = true, _initialSubject = null;
 
-	const NewEventPage() :
-		askSubject = true,
-		subjectRequired = false,
-		subject = null;
+	const NewEventPage.subjectEvent(Subject subject) : _doAskSubject = false, _initialSubject = subject;
 
-	const NewEventPage.subjectEvent(this.subject) :
-		askSubject = false,
-		subjectRequired = true;
+	const NewEventPage.nonSubjectEvent() : _doAskSubject = false, _initialSubject = null;
 
-	const NewEventPage.nonSubjectEvent() :
-		askSubject = false,
-		subjectRequired = false,
-		subject = null;
+	final bool _doAskSubject;
+	final Subject? _initialSubject;
 
 	@override
-	State<NewEventPage> createState() => _NewEventPageState();
-}
+	Widget build(BuildContext context) {
+		final nameField = useTextEditingController();
+		final subjectField = useTextEditingController();
+		final noteField = useTextEditingController();
 
-class _NewEventPageState extends State<NewEventPage> {
-	static const _noSubjectsMessage = "no subjects";
+		final subject = useRef(_initialSubject);
+		final date = useRef<DateTime?>(null);
 
-	late final Future<List<Subject>> _subjects;
-	final _nameField = TextEditingController();
-	final _subjectField = TextEditingController();
-	final _noteField = TextEditingController();
+		final subjectsFuture = useMemoized(() => _doAskSubject ? Cloud.subjects : null);
 
-	Subject? _subject;
-	DateTime? _date;
-
-	@override
-	void initState() {
-		super.initState();
-		_subject = widget.subject;
-		if (widget.askSubject) _subjects = Cloud.subjects;
+		return NewEntityPage(
+			add: () => _add(nameField.text, subject.value, date.value, noteField.text),
+			children: [
+				InputField(
+					controller: nameField,
+					name: "name",
+					style: Appearance.headlineText
+				),
+				if (_doAskSubject) OptionField(
+					controller: subjectField,
+					name: "subject",
+					showOptions: (context) => _askSubject(context, subjectsFuture!, subject, subjectField),
+					style: Appearance.largeTitleText
+				),
+				DateField(onDatePicked: (picked) => date.value = picked),
+				const ListTile(),
+				InputField(
+					controller: noteField,
+					name: "note",
+					multiline: true,
+					style: Appearance.bodyText
+				)
+			]
+		);
 	}
 
-	@override
-	Widget build(BuildContext context) => NewEntityPage(
-		add: _add,
-		children: [
-			InputField(
-				controller: _nameField,
-				name: "name",
-				style: Appearance.headlineText
-			),
-			if (widget.askSubject) OptionField(
-				controller: _subjectField,
-				name: "subject",
-				showOptions: _askSubject,
-				style: Appearance.largeTitleText
-			),
-			DateField(onDatePicked: (date) => _date = date),
-			const ListTile(),
-			InputField(
-				controller: _noteField,
-				name: "note",
-				multiline: true,
-				style: Appearance.bodyText
-			)
-		]
-	);
-
-
-	void _askSubject(BuildContext context) {
+	void _askSubject(
+		BuildContext context,
+		Future<List<Subject>> future,
+		ObjectRef<Subject?> current,
+		TextEditingController field
+	) {
 		Navigator.of(context).push(MaterialPageRoute(
 			builder: (context) => Scaffold(
-				body: Center(child: FutureBuilder(
-					future: _subjects,
-					builder: _subjectsBuilder
+				body: Center(child: FutureBuilder<List<Subject>>(
+					future: future,
+					builder: (context, snapshot) => _subjectsBuilder(context, snapshot, current, field)
 				))
 			)
 		));
 	}
 
-	Widget _subjectsBuilder(BuildContext context, AsyncSnapshot<List<Subject>> snapshot) {
-		if (snapshot.connectionState == ConnectionState.waiting) return const Icon(Icons.cloud_download);
+	Widget _subjectsBuilder(
+		BuildContext context,
+		AsyncSnapshot<List<Subject>> snapshot,
+		ObjectRef<Subject?> current,
+		TextEditingController field
+	) {
+		if (snapshot.connectionState == ConnectionState.waiting) return const Text("awaiting the subjects");
 		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
 		final subjects = snapshot.data!;
 		return subjects.isNotEmpty ? ListView(
 			shrinkWrap: true,
 			children: [
-				for (final subject in subjects) if (subject != _subject) ListTile(
+				for (final subject in subjects..remove(current.value)) ListTile(
 					title: Text(subject.nameRepr),
-					onTap: () => _handleSubject(context, subject)
+					onTap: () => _handleSubject(context, subject, current, field)
 				),
-				if (_subject != null) ...[
+				if (current.value != null) ...[
 					if (subjects.length != 1) const ListTile(),
 					ListTile(
 						title: const Text("none"),
-						onTap: () => _handleSubject(context, null)
+						onTap: () => _handleSubject(context, null, current, field)
 					)
 				]
 			]
-		) : const Text(_noSubjectsMessage);
+		) : const Text("no subjects");
 	}
 
-	void _handleSubject(BuildContext context, Subject? subject) {
-		_subject = subject;
-		_subjectField.text = subject?.nameRepr ?? '';
+	void _handleSubject(
+		BuildContext context,
+		Subject? picked,
+		ObjectRef<Subject?> current,
+		TextEditingController field
+	) {
+		current.value = picked;
+		field.text = picked != null ? picked.nameRepr : '';
 		Navigator.of(context).pop();
 	}
 
-	bool _add() {
-		final name = _nameField.text;
-		if (
-			name.isEmpty ||
-			(widget.subjectRequired && _subject == null) ||
-			_date == null
-		) return false;
+	bool _add(String name, Subject? subject, DateTime? date, String note) {
+		if (name.isEmpty || date == null) return false;
 
-		final note = _noteField.text;
 		final event = Event(
 			name: name,
-			subject: _subject,
-			date: _date!,
+			subject: subject,
+			date: date,
 			note: note.isNotEmpty ? note : null
 		);
 		Cloud.addEvent(event);

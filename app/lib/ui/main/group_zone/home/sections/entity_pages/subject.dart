@@ -16,9 +16,9 @@ import 'entity.dart';
 
 
 class SubjectPage extends HookWidget {
-	final Subject subject;
-	
 	const SubjectPage(this.subject);
+
+	final Subject subject;
 
 	@override
 	Widget build(BuildContext context) {
@@ -72,7 +72,7 @@ class SubjectPage extends HookWidget {
 				pageBuilder: () => SubjectInfoPage(item),
 			)
 		],
-		newEntityPageBuilder: (_) => NewSubjectInfoPage(subject: subject)
+		(_) => NewSubjectInfoPage(subject: subject)
 	);
 
 	void _showEvents(BuildContext context) => _showEntities(
@@ -80,13 +80,13 @@ class SubjectPage extends HookWidget {
 		[
 			for (final event in subject.events!) EventTile(event, showSubject: false)
 		],
-		newEntityPageBuilder: (_) => NewEventPage.subjectEvent(subject)
+		(_) => NewEventPage.subjectEvent(subject)
 	);
 
 	void _showEntities(
 		BuildContext context,
 		List<Widget> entities,
-		{required Widget Function(BuildContext) newEntityPageBuilder}
+		Widget Function(BuildContext) newEntityPageBuilder
 	) {
 		Navigator.of(context).push(MaterialPageRoute(
 			builder: (context) => Scaffold(

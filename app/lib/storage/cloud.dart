@@ -168,7 +168,7 @@ class Cloud {
 		]..sort();
 	}
 
-	/// The group's sorted [Subject]s without the details.
+	/// The group's sorted [Subject]s without the details, with the [Event]s.
 	static Future<List<Subject>> get subjectsWithEvents async {
 		final snapshots = await Future.wait([
 			Collection.subjects.ref.get(),
@@ -193,7 +193,7 @@ class Cloud {
 		return subjects;
 	}
 
-	/// The sorted names of the group's [Subject]s.
+	/// The the group's sorted [Subject]s without the details.
 	static Future<List<Subject>> get subjects async {
 		final snapshot = await Collection.subjects.ref.get();
 		return [
