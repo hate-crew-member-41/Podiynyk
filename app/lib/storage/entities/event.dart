@@ -26,7 +26,7 @@ class Event extends LabelableEntity implements CreatableEntity, Comparable {
 
 	Event.fromCloudFormat(MapEntry<String, dynamic> entry) :
 		subject = entry.value[Field.subject.name] != null ?
-			Subject(name: entry.value[Field.subject.name] as String) :
+			Subject.name(name: entry.value[Field.subject.name] as String) :
 			null,
 		_date = (entry.value[Field.date.name] as Timestamp).toDate(),
 		_hasDetails = false,

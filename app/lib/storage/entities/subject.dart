@@ -24,7 +24,7 @@ class Subject extends LabelableEntity implements CreatableEntity, Comparable {
 			name: entry.value[Field.name.name] as String
 		);
 
-	Subject.fromName({required String name}) :
+	Subject.name({required String name}) :
 		events = null,
 		_hasDetails = false,
 		super(
