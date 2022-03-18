@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
@@ -11,47 +12,45 @@ import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
 import 'entity.dart';
 
 
-class MessagePage extends StatefulWidget {
-	final Message message;
-
+class MessagePage extends HookWidget {
 	const MessagePage(this.message);
 
-	@override
-	State<MessagePage> createState() => _MessagePageState();
-}
-
-class _MessagePageState extends State<MessagePage> {
-	late final Message _message;
-	final _nameField = TextEditingController();
-	final _contentField = TextEditingController();
-
-	@override
-	void initState() {
-		super.initState();
-		_message = widget.message;
-		_nameField.text = _message.name;
-		_message.addDetails().whenComplete(() => setState(() {}));
-	}
+	final Message message;
 
 	@override
 	Widget build(BuildContext context) {
-		final author = _message.author;
-		final isAuthor = author.name == Local.userName;
+		final nameField = useTextEditingController(text: message.name);
+		final contentField = useTextEditingController();
 
-		final content = _message.content;
-		final hasContent = content != null;
-		if (hasContent) _contentField.text = content;
+		final hasDetails = useState(message.hasDetails);
+
+		useEffect(() {
+			message.addDetails().whenComplete(() {
+				hasDetails.value = message.hasDetails;
+				contentField.text = message.content;
+			});
+
+			return () {
+				final name = nameField.text;
+				if (name.isNotEmpty) message.name = name;
+
+				final content = contentField.text;
+				if (content.isNotEmpty) message.content = content;
+			};
+		}, const []);
+
+		final isAuthor = message.author.name == Local.userName;
 
 		return EntityPage(
 			children: [
 				InputField(
-					controller: _nameField,
+					controller: nameField,
 					name: "topic",
 					enabled: isAuthor,
 					style: Appearance.headlineText
 				),
-				if (hasContent) InputField(
-					controller: _contentField,
+				if (message.hasDetails) InputField(
+					controller: contentField,
 					name: "content",
 					enabled: isAuthor,
 					multiline: true,
@@ -59,11 +58,11 @@ class _MessagePageState extends State<MessagePage> {
 				),
 				const ListTile(),
 				Text(
-					author.nameRepr,
+					message.author.nameRepr,
 					style: Appearance.titleText
 				).withPadding,
 				Text(
-					_message.date.fullRepr,
+					message.date.fullRepr,
 					style: Appearance.titleText
 				).withPadding
 			],
@@ -77,18 +76,7 @@ class _MessagePageState extends State<MessagePage> {
 	}
 
 	void _delete(BuildContext context) {
-		Cloud.deleteMessage(_message);
+		Cloud.deleteMessage(message);
 		Navigator.of(context).pop();
-	}
-
-	@override
-	void dispose() {
-		final name = _nameField.text;
-		if (name.isNotEmpty) _message.name = name;
-
-		final content = _contentField.text;
-		if (content.isNotEmpty) _message.content = content;
-
-		super.dispose();
 	}
 }

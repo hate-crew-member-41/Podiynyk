@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
@@ -14,53 +15,46 @@ import '../new_entity_pages/subject.dart' show NewSubjectInfoPage;
 import 'entity.dart';
 
 
-class SubjectPage extends StatefulWidget {
+class SubjectPage extends HookWidget {
 	final Subject subject;
 	
 	const SubjectPage(this.subject);
 
 	@override
-	State<SubjectPage> createState() => _SubjectPageState();
-}
-
-class _SubjectPageState extends State<SubjectPage> {
-	late final Subject _subject;
-	final _nameField = TextEditingController();
-
-	@override
-	void initState() {
-		super.initState();
-		_subject = widget.subject;
-		_nameField.text = _subject.nameRepr;
-		_subject.addDetails().whenComplete(() => setState(() {}));
-	}
-
-	@override
 	Widget build(BuildContext context) {
+		final nameField = useTextEditingController(text: subject.nameRepr);
+
+		final hasDetails = useState(subject.hasDetails);
+
+		useEffect(() {
+			subject.addDetails().whenComplete(() => hasDetails.value = subject.hasDetails);
+			return () => subject.label = nameField.text;
+		}, const []);
+
 		return EntityPage(
 			children: [
 				InputField(
-					controller: _nameField,
+					controller: nameField,
 					name: "name",
 					style: Appearance.headlineText
 				),
 				const ListTile(),
-				if (_subject.info != null) ListTile(
+				if (subject.info != null) ListTile(
 					title: const Text("information"),
-					onTap: _showInfo
+					onTap: () => _showInfo(context)
 				),
 				ListTile(
 					title: const Text("events"),
-					onTap: _showEvents
+					onTap: () => _showEvents(context)
 				)
 			],
 			actions: [
-				_subject.isFollowed ? EntityActionButton(
+				subject.isFollowed ? EntityActionButton(
 					text: "unfollow",
-					action: () => _subject.isFollowed = false
+					action: () => subject.isFollowed = false
 				) : EntityActionButton(
 					text: "follow",
-					action: () => _subject.isFollowed = true
+					action: () => subject.isFollowed = true
 				),
 				if (Cloud.userRole == Role.leader) EntityActionButton(
 					text: "delete",
@@ -70,24 +64,30 @@ class _SubjectPageState extends State<SubjectPage> {
 		);
 	}
 
-	void _showInfo() => _showEntities(
+	void _showInfo(BuildContext context) => _showEntities(
+		context,
 		[
-			for (final item in _subject.info!) EntityTile(
+			for (final item in subject.info!) EntityTile(
 				title: item.nameRepr,
 				pageBuilder: () => SubjectInfoPage(item),
 			)
 		],
-		newEntityPageBuilder: (_) => NewSubjectInfoPage(subject: _subject)
+		newEntityPageBuilder: (_) => NewSubjectInfoPage(subject: subject)
 	);
 
-	void _showEvents() => _showEntities(
+	void _showEvents(BuildContext context) => _showEntities(
+		context,
 		[
-			for (final event in _subject.events!) EventTile(event, showSubject: false)
+			for (final event in subject.events!) EventTile(event, showSubject: false)
 		],
-		newEntityPageBuilder: (_) => NewEventPage.subjectEvent(_subject)
+		newEntityPageBuilder: (_) => NewEventPage.subjectEvent(subject)
 	);
 
-	void _showEntities(List<Widget> entities, {required Widget Function(BuildContext) newEntityPageBuilder}) {
+	void _showEntities(
+		BuildContext context,
+		List<Widget> entities,
+		{required Widget Function(BuildContext) newEntityPageBuilder}
+	) {
 		Navigator.of(context).push(MaterialPageRoute(
 			builder: (context) => Scaffold(
 				body: Center(
@@ -104,7 +104,7 @@ class _SubjectPageState extends State<SubjectPage> {
 	}
 
 	void _askDelete(BuildContext context) {
-		if (_subject.events!.isEmpty) {
+		if (subject.events!.isEmpty) {
 			_delete(context);
 			return;
 		}
@@ -132,51 +132,38 @@ class _SubjectPageState extends State<SubjectPage> {
 	}
 
 	void _delete(BuildContext context) {
-		Cloud.deleteSubject(_subject);
+		Cloud.deleteSubject(subject);
 		Navigator.of(context).pop();
-	}
-
-	@override
-	void dispose() {
-		_subject.label = _nameField.text;
-		super.dispose();
 	}
 }
 
 
-class SubjectInfoPage extends StatefulWidget {
+class SubjectInfoPage extends HookWidget {
 	final SubjectInfo info;
 
 	const SubjectInfoPage(this.info);
 
-  @override
-  State<SubjectInfoPage> createState() => _SubjectInfoPageState();
-}
-
-class _SubjectInfoPageState extends State<SubjectInfoPage> {
-	late final SubjectInfo _info;
-	final TextEditingController _nameField = TextEditingController();
-	final TextEditingController _contentField = TextEditingController();
-
-	@override
-	void initState() {
-		super.initState();
-		_info = widget.info;
-		_nameField.text = _info.nameRepr;
-		_contentField.text = _info.content;
-	}
-
 	@override
 	Widget build(BuildContext context) {
+		final nameField = useTextEditingController(text: info.nameRepr);
+		final contentField = useTextEditingController(text: info.content);
+
+		useEffect(() => () {
+			info.label = nameField.text;
+
+			final content = contentField.text;
+			if (content.isNotEmpty) info.content = content;
+		}, const []);
+
 		return EntityPage(
 			children: [
 				InputField(
-					controller: _nameField,
+					controller: nameField,
 					name: "topic",
 					style: Appearance.headlineText
 				),
 				InputField(
-					controller: _contentField,
+					controller: contentField,
 					name: "content",
 					multiline: true,
 					style: Appearance.bodyText,
@@ -185,19 +172,9 @@ class _SubjectInfoPageState extends State<SubjectInfoPage> {
 			actions: [
 				if (Cloud.userRole != Role.ordinary) EntityActionButton(
 					text: "delete",
-					action: widget.info.delete
+					action: info.delete
 				)
 			]
 		);
-	}
-
-	@override
-	void dispose() {
-		widget.info.label = _nameField.text;
-
-		final content = _contentField.text;
-		if (content.isNotEmpty) widget.info.content = content;
-
-		super.dispose();
 	}
 }

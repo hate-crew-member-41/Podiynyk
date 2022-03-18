@@ -12,9 +12,9 @@ import 'entity.dart';
 
 
 class EventPage extends HookWidget {
-	final Event event;
-
 	const EventPage(this.event);
+
+	final Event event;
 
 	@override
 	Widget build(BuildContext context) {
