@@ -8,14 +8,14 @@ class InputField extends StatefulWidget {
 	final TextEditingController controller;
 	final String name;
 	final bool enabled;
-	final bool isMultiline;
+	final bool multiline;
 	final TextStyle? style;
 
 	const InputField({
 		required this.controller,
 		required this.name,
 		this.enabled = true,
-		this.isMultiline = false,
+		this.multiline = false,
 		this.style
 	});
 
@@ -38,7 +38,7 @@ class _InputFieldState extends State<InputField> {
 			controller: widget.controller,
 			focusNode: _focusNode,
 			enabled: widget.enabled,
-			maxLines: widget.isMultiline ? null : 1,
+			maxLines: widget.multiline ? null : 1,
 			showCursor: false,
 			style: widget.style,
 			decoration: InputDecoration(

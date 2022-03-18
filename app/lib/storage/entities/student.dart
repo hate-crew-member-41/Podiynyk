@@ -6,8 +6,6 @@ import 'labelable.dart';
 
 
 class Student extends LabelableEntity implements Comparable {
-	final int? confirmationCount;
-
 	Student({required String name}) :
 		confirmationCount = null,
 		super(
@@ -22,8 +20,6 @@ class Student extends LabelableEntity implements Comparable {
 			id: entry.key,
 			name: entry.value[Field.name.name] as String
 		);
-	
-	Future<void> voteFor({String? previousId}) => Cloud.changeLeaderVote(toId: id, fromId: previousId);
 
 	Student.fromCloudFormat(MapEntry<String, dynamic> entry) :
 		_role = Role.values[entry.value[Field.role.name] as int],
@@ -32,18 +28,8 @@ class Student extends LabelableEntity implements Comparable {
 			id: entry.key,
 			name: entry.value[Field.name.name] as String
 		);
-	
-	@override
-	set label(String label) {
-		if (name != Local.userName) {
-			super.label = label;
-		}
-		else if (label != name && label.isNotEmpty) {
-			name = label;
-			Local.userName = label;
-			Cloud.updateName();
-		}
-	}
+
+	final int? confirmationCount;
 
 	Role? _role;
 	Role get role => _role!;
@@ -58,6 +44,20 @@ class Student extends LabelableEntity implements Comparable {
 			_role = Role.trusted;
 		}
 	}
+
+	@override
+	set label(String label) {
+		if (name != Local.userName) {
+			super.label = label;
+		}
+		else if (label != name && label.isNotEmpty) {
+			name = label;
+			Local.userName = label;
+			Cloud.updateName();
+		}
+	}
+
+	Future<void> voteFor({String? previousId}) => Cloud.changeLeaderVote(toId: id, fromId: previousId);
 
 	@override
 	Field get labelCollection => Field.students;

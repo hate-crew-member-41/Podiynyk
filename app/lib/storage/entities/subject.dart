@@ -8,37 +8,59 @@ import 'labelable.dart';
 
 
 class Subject extends LabelableEntity implements CreatableEntity, Comparable {
-	late final List<Event>? events;
+	Subject({required String name}) :
+		events = <Event>[],
+		info = <SubjectInfo>[],
+		_hasDetails = true,
+		super(
+			idComponents: [name],
+			name: name
+		);
+
+	Subject.fromCloudFormat(MapEntry<String, dynamic> entry, {this.events}) :
+		_hasDetails = false,
+		super.fromCloud(
+			id: entry.key,
+			name: entry.value[Field.name.name] as String
+		);
+
+	Subject.fromName({required String name}) :
+		events = null,
+		_hasDetails = false,
+		super(
+			idComponents: [name],
+			name: name
+		);
+
+	final List<Event>? events;
 	List<SubjectInfo>? info;
 
-	Subject({required String name}) : super(
-		idComponents: [name],
-		name: name
-	);
-
-	Subject.fromCloudFormat(MapEntry<String, dynamic> entry, {this.events}) : super.fromCloud(
-		id: entry.key,
-		name: entry.value[Field.name.name] as String
-	);
-
-	static String nameFromCloudFormat(MapEntry<String, dynamic> entry) => entry.value[Field.name.name];
-
-	@override
-	CloudMap get inCloudFormat => {Field.name.name: name};
-
-	@override
-	CloudMap get detailsInCloudFormat => {Field.info.name: <String, Map<String, String>>{}};
+	bool _hasDetails;
+	bool get hasDetails => _hasDetails;
 
 	bool get isFollowed => !Local.entityIsStored(Field.unfollowedSubjects, id);
 	set isFollowed(bool isFollowed) {
 		!isFollowed ? Local.storeEntity(Field.unfollowedSubjects, id) : Local.deleteEntity(Field.unfollowedSubjects, id);
 	}
 
+	String get eventCountRepr {
+		final eventCount = events!.length;
+		switch (eventCount) {
+			case 0: return "no events";
+			case 1: return "1 event";
+			default: return "$eventCount events";
+		}
+	}
+
 	Future<void> addDetails() async {
+		if (_hasDetails) return;
+
 		final details = await Cloud.entityDetails(Collection.subjects, id);
 		info = [
 			for (final entry in details[Field.info.name].entries) SubjectInfo.fromCloudFormat(entry, subject: this)
 		]..sort();
+		_hasDetails = true;
+
 		Local.clearEntityLabels(Field.subjectInfo, info!);
 	}
 
@@ -52,16 +74,11 @@ class Subject extends LabelableEntity implements CreatableEntity, Comparable {
 		Cloud.deleteSubjectInfo(this, item);
 	}
 
-	static bool withNameIsFollowed(String name) => !Local.entityIsStored(Field.unfollowedSubjects, name);
+	@override
+	CloudMap get inCloudFormat => {Field.name.name: name};
 
-	String get eventCountRepr {
-		final eventCount = events!.length;
-		switch (eventCount.compareTo(1)) {
-			case -1: return "no events";
-			case 0: return "1 event";
-			default: return "$eventCount events";
-		}
-	}
+	@override
+	CloudMap get detailsInCloudFormat => {Field.info.name: <String, Map<String, String>>{}};
 
 	@override
 	Field get labelCollection => Field.subjects;
@@ -72,8 +89,6 @@ class Subject extends LabelableEntity implements CreatableEntity, Comparable {
 
 
 class SubjectInfo extends LabelableEntity implements Comparable {
-	final Subject subject;
-
 	SubjectInfo({
 		required this.subject,
 		required String name,
@@ -91,11 +106,8 @@ class SubjectInfo extends LabelableEntity implements Comparable {
 			id: entry.key,
 			name: entry.value[Field.name.name] as String
 		);
-
-	Map<String, String> get inCloudFormat => {
-		Field.name.name: name,
-		Field.content.name: content
-	};
+	
+	final Subject subject;
 
 	String _content;
 	String get content => _content;
@@ -105,6 +117,11 @@ class SubjectInfo extends LabelableEntity implements Comparable {
 	}
 
 	void delete() => subject.deleteInfo(this);
+
+	Map<String, String> get inCloudFormat => {
+		Field.name.name: name,
+		Field.content.name: content
+	};
 
 	@override
 	Field get labelCollection => Field.subjectInfo;

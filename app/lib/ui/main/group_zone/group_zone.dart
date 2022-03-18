@@ -18,8 +18,20 @@ class GroupZone extends StatefulWidget {
 class _GroupZoneState extends State<GroupZone> {
 	@override
 	Widget build(BuildContext context) {
-		if (Local.leaderIsElected == true) return const Home();
-		
+		if (Local.leaderIsElected == true) {
+			return FutureBuilder(
+				future: Cloud.initRole(),
+				builder: (context, snapshot) {
+					if (snapshot.connectionState == ConnectionState.waiting) {
+						return const Scaffold(body: Center(child: Text("syncing the role")));
+					}
+					// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+
+					return const Home();
+				}
+			);
+		}
+
 		return FutureBuilder<bool>(
 			future: Cloud.leaderIsElected,
 			builder: (context, snapshot) {
@@ -28,10 +40,7 @@ class _GroupZoneState extends State<GroupZone> {
 				}
 				// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
-				if (snapshot.data!) {
-					Local.leaderIsElected = true;
-					return const Home();
-				}
+				if (snapshot.data!) return const Home();
 
 				return Provider.value(
 					value: () => setState(() {}),

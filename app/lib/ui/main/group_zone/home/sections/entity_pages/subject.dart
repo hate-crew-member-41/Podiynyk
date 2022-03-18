@@ -62,7 +62,7 @@ class _SubjectPageState extends State<SubjectPage> {
 					text: "follow",
 					action: () => _subject.isFollowed = true
 				),
-				if (Cloud.role == Role.leader) EntityActionButton(
+				if (Cloud.userRole == Role.leader) EntityActionButton(
 					text: "delete",
 					action: () => _askDelete(context)
 				)
@@ -96,7 +96,7 @@ class _SubjectPageState extends State<SubjectPage> {
 						children: entities
 					)
 				),
-				floatingActionButton: Cloud.role == Role.ordinary ? null : NewEntityButton(
+				floatingActionButton: Cloud.userRole == Role.ordinary ? null : NewEntityButton(
 					pageBuilder: newEntityPageBuilder
 				)
 			)
@@ -178,12 +178,12 @@ class _SubjectInfoPageState extends State<SubjectInfoPage> {
 				InputField(
 					controller: _contentField,
 					name: "content",
-					isMultiline: true,
+					multiline: true,
 					style: Appearance.bodyText,
 				)
 			],
 			actions: [
-				if (Cloud.role != Role.ordinary) EntityActionButton(
+				if (Cloud.userRole != Role.ordinary) EntityActionButton(
 					text: "delete",
 					action: widget.info.delete
 				)

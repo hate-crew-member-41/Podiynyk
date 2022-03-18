@@ -84,32 +84,31 @@ class Cloud {
 		});
 	}
 
-	/// Whether the group is past the [LeaderElection] step. Initializes [role].
+	/// Whether the group is past the [LeaderElection] step. Initializes [userRole].
 	static Future<bool> get leaderIsElected async {
 		final snapshot = await Collection.groups.ref.get();
-		final students = snapshot.data()![Field.students.name];
+		final students = snapshot[Field.students.name];
 
 		final isElected = _leaderIsElected(students);
 		if (isElected) {
-			final roleIndex = students[Local.userId][Field.role.name];
-			_role = Role.values[roleIndex];
+			Local.leaderIsElected = true;
+			_updateUserRole(students);
 		}
 
 		return isElected;
 	}
 
 	/// A [Stream] of updates of the group's [Student]s and confirmations for them to be the group's leader.
-	/// Initializes [role] and returns `null` as soon as the leader is determined.
+	/// Initializes [userRole] and returns `null` as soon as the leader is determined.
 	static Stream<List<Student>?> get leaderElectionUpdates {
 		return Collection.groups.ref.snapshots().map((snapshot) {
-			final students = snapshot.data()![Field.students.name];
+			final students = snapshot[Field.students.name];
 
 			if (!_leaderIsElected(students)) return [
 				for (final entry in students.entries) Student.candidateFromCloudFormat(entry)
 			]..sort();
 
-			final roleIndex = students[Local.userId][Field.role.name] as int;
-			_role = Role.values[roleIndex];
+			_updateUserRole(students);
 			return null;
 		});
 	}
@@ -130,9 +129,19 @@ class Cloud {
 		});
 	}
 
-	static late Role _role;
+	static late Role _userRole;
 	/// The user's [Role].
-	static Role get role => _role;
+	static Role get userRole => _userRole;
+
+	static Future<void> initRole() async {
+		final snapshot = await Collection.groups.ref.get();
+		_updateUserRole(snapshot[Field.students.name]);
+	}
+
+	static void _updateUserRole(CloudMap students) {
+		final index = students[Local.userId][Field.role.name] as int;
+		_userRole = Role.values[index];
+	}
 
 	/// The group's sorted [Event]s without the details.
 	static Future<List<Event>> get events async {
@@ -205,7 +214,7 @@ class Cloud {
 		return [];
 	}
 
-	/// The group's [Student]s. Updates [role].
+	/// The group's [Student]s. Updates [userRole].
 	static Future<List<Student>> get students async {
 		final snapshot = await Collection.groups.ref.get();
 		final data = snapshot.data()!;
@@ -215,7 +224,7 @@ class Cloud {
 		]..sort();
 		Local.clearEntityLabels(Field.students, students);
 
-		_role = students.firstWhere((student) => student.nameRepr == Local.userName).role;
+		_userRole = students.firstWhere((student) => student.nameRepr == Local.userName).role;
 		return students;
 	}
 
@@ -285,21 +294,21 @@ class Cloud {
 		});
 	}
 
-	/// Sets the [student]'s [Role] to [role].
+	/// Sets the [student]'s [Role] to [userRole].
 	static Future<void> updateRole(Student student) async {
 		await Collection.groups.ref.update({
 			'${Field.students.name}.${student.id}.${Field.role.name}': student.role.index
 		});
 	}
 
-	/// Sets the [Role] of the [student] to [Role.leader], and the user's role to [Role.trusted].
+	/// Sets the the [student]'s [Role] to [Role.leader], and the user's role to [Role.trusted].
 	static Future<void> makeLeader(Student student) async {
 		final studentsField = Field.students.name, roleField = Field.role.name;
 		await Collection.groups.ref.update({
 			'$studentsField.${Local.userId}.$roleField': Role.trusted.index,
 			'$studentsField.${student.id}.$roleField': Role.leader.index
 		});
-		_role = Role.trusted;
+		_userRole = Role.trusted;
 	}
 
 	/// Updates the user's name.

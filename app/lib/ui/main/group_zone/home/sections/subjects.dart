@@ -32,7 +32,7 @@ class SubjectsSection extends CloudEntitiesSection<SubjectsSectionCloudData, Sub
 	@override
 	IconData get sectionIcon => icon;
 	@override
-	Widget? get actionButton => Cloud.role != Role.leader ? super.actionButton : NewEntityButton(
+	Widget? get actionButton => Cloud.userRole != Role.leader ? super.actionButton : NewEntityButton(
 		pageBuilder: (_) => NewSubjectPage()
 	);
 

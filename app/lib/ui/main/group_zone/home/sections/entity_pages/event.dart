@@ -19,15 +19,19 @@ class EventPage extends HookWidget {
 	@override
 	Widget build(BuildContext context) {
 		final nameField = useTextEditingController(text: event.nameRepr);
-		final showNoteField = useState(false);
 		final noteField = useTextEditingController();
+
+		final hasDetails = useState(event.hasDetails);
+		final showNote = useState(event.hasDetails && event.note != null);
 
 		useEffect(() {
 			event.addDetails().whenComplete(() {
-				final note = event.note;
-				showNoteField.value = note != null;
-				if (showNoteField.value) noteField.text = note!;
+				hasDetails.value = event.hasDetails;
+				showNote.value = event.note != null;
+				if (showNote.value) noteField.text = event.note!;
 			});
+
+			if (showNote.value) noteField.text = event.note!;
 
 			return () {
 				event.label = nameField.text;
@@ -51,22 +55,22 @@ class EventPage extends HookWidget {
 				DateField(
 					initialDate: event.date,
 					onDatePicked: (date) => event.date = date,
-					enabled: Cloud.role != Role.ordinary
+					enabled: Cloud.userRole != Role.ordinary
 				),
-				if (showNoteField.value) ...[
+				if (showNote.value) ...[
 					const ListTile(),
 					InputField(
 						controller: noteField,
 						name: "note",
-						isMultiline: true,
+						multiline: true,
 						style: Appearance.bodyText
 					)
 				]
 			],
 			actions: [
-				if (event.note == null) EntityActionButton(
+				if (event.hasDetails && event.note == null) EntityActionButton(
 					text: "add a note",
-					action: () => showNoteField.value = true
+					action: () => showNote.value = true
 				),
 				!event.isHidden ? EntityActionButton(
 					text: "hide",
@@ -75,7 +79,7 @@ class EventPage extends HookWidget {
 					text: "show",
 					action: () => event.isHidden = false
 				),
-				if (Cloud.role != Role.ordinary) EntityActionButton(
+				if (Cloud.userRole != Role.ordinary) EntityActionButton(
 					text: "delete",
 					action: () => _delete(context)
 				)
