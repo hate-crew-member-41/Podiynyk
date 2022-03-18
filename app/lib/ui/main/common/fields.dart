@@ -4,13 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:podiynyk/storage/entities/date.dart';
 
 
-class InputField extends StatefulWidget {
-	final TextEditingController controller;
-	final String name;
-	final bool enabled;
-	final bool multiline;
-	final TextStyle? style;
-
+class InputField extends HookWidget {
 	const InputField({
 		required this.controller,
 		required this.name,
@@ -19,31 +13,27 @@ class InputField extends StatefulWidget {
 		this.style
 	});
 
-	@override
-	_InputFieldState createState() => _InputFieldState();
-}
-
-class _InputFieldState extends State<InputField> {
-	final _focusNode = FocusNode();
-
-	@override
-	void initState() {
-		super.initState();
-		_focusNode.addListener(() => setState(() {}));
-	}
+	final TextEditingController controller;
+	final String name;
+	final bool enabled;
+	final bool multiline;
+	final TextStyle? style;
 
 	@override
 	Widget build(BuildContext context) {
+		final focusNode = useFocusNode();
+		useListenable(focusNode);
+
 		return TextField(
-			controller: widget.controller,
-			focusNode: _focusNode,
-			enabled: widget.enabled,
-			maxLines: widget.multiline ? null : 1,
+			controller: controller,
+			focusNode: focusNode,
+			enabled: enabled,
+			maxLines: multiline ? null : 1,
 			showCursor: false,
-			style: widget.style,
+			style: style,
 			decoration: InputDecoration(
-				filled: _focusNode.hasFocus,
-				hintText: widget.name,
+				filled: focusNode.hasFocus,
+				hintText: name,
 			)
 		);
 	}
@@ -51,11 +41,6 @@ class _InputFieldState extends State<InputField> {
 
 
 class OptionField extends StatelessWidget {
-	final TextEditingController controller;
-	final String name;
-	final void Function(BuildContext) showOptions;
-	final TextStyle? style;
-
 	const OptionField({
 		required this.controller,
 		required this.name,
@@ -63,33 +48,40 @@ class OptionField extends StatelessWidget {
 		this.style
 	});
 
+	final TextEditingController controller;
+	final String name;
+	final void Function(BuildContext)? showOptions;
+	final TextStyle? style;
+
 	@override
 	Widget build(BuildContext context) {
-		return GestureDetector(
-			onTap: () => showOptions(context),
-			child: TextField(
-				controller: controller,
-				enabled: false,
-				style: style,
-				decoration: InputDecoration(hintText: name)
-			),
-		);
+		return showOptions != null ? GestureDetector(
+			onTap: () => showOptions!(context),
+			child: _builder(context),
+		) : _builder(context);
 	}
+
+	Widget _builder(context) => TextField(
+		controller: controller,
+		enabled: false,
+		style: style,
+		decoration: InputDecoration(hintText: name)
+	);
 }
 
 
 class DateField extends HookWidget {
-	final DateTime? initialDate;
-	final void Function(DateTime) onDatePicked;
-	final bool enabled;
-	final TextStyle? style;
-
 	const DateField({
 		this.initialDate,
 		required this.onDatePicked,
 		this.enabled = true,
 		this.style
 	});
+
+	final DateTime? initialDate;
+	final void Function(DateTime) onDatePicked;
+	final bool enabled;
+	final TextStyle? style;
 
 	@override
 	Widget build(BuildContext context) {
@@ -99,7 +91,7 @@ class DateField extends HookWidget {
 		return OptionField(
 			controller: field,
 			name: "date",
-			showOptions: enabled ? (context) => _ask(context, date, field) : (_) {},
+			showOptions: enabled ? (context) => _ask(context, date, field) : null,
 			style: style
 		);
 	}

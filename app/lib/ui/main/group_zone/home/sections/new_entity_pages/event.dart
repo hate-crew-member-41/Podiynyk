@@ -12,19 +12,29 @@ import 'entity.dart';
 
 
 class NewEventPage extends HookWidget {
-	const NewEventPage() : _doAskSubject = true, _initialSubject = null;
+	const NewEventPage() :
+		_doAskSubject = true,
+		_subjectIsDefined = false,
+		_initialSubject = null;
 
-	const NewEventPage.subjectEvent(Subject subject) : _doAskSubject = false, _initialSubject = subject;
+	const NewEventPage.subjectEvent(Subject subject) :
+		_doAskSubject = false,
+		_subjectIsDefined = true,
+		_initialSubject = subject;
 
-	const NewEventPage.nonSubjectEvent() : _doAskSubject = false, _initialSubject = null;
+	const NewEventPage.nonSubjectEvent() :
+		_doAskSubject = false,
+		_subjectIsDefined = false,
+		_initialSubject = null;
 
 	final bool _doAskSubject;
+	final bool _subjectIsDefined;
 	final Subject? _initialSubject;
 
 	@override
 	Widget build(BuildContext context) {
 		final nameField = useTextEditingController();
-		final subjectField = useTextEditingController();
+		final subjectField = useTextEditingController(text: _initialSubject?.nameRepr);
 		final noteField = useTextEditingController();
 
 		final subject = useRef(_initialSubject);
@@ -40,10 +50,12 @@ class NewEventPage extends HookWidget {
 					name: "name",
 					style: Appearance.headlineText
 				),
-				if (_doAskSubject) OptionField(
+				if (_doAskSubject || _subjectIsDefined) OptionField(
 					controller: subjectField,
 					name: "subject",
-					showOptions: (context) => _askSubject(context, subjectsFuture!, subject, subjectField),
+					showOptions: !_subjectIsDefined ?
+						(context) => _askSubject(context, subjectsFuture!, subject, subjectField) :
+						null,
 					style: Appearance.largeTitleText
 				),
 				DateField(onDatePicked: (picked) => date.value = picked),
