@@ -22,29 +22,26 @@ class Local {
 		]);
 	}
 
-	/// Initializes the data.
-	static Future<void> initData() async {
-		await Future.wait([
-			_labels.putAll({
-				Field.students.name: <String, String>{},
-				Field.subjects.name: <String, String>{},
-				Field.subjectInfo.name: <String, String>{},
-				Field.events.name: <String, String>{}
-			}),
-			_entities.putAll({
-				Field.unfollowedSubjects.name: <String>[],
-				Field.hiddenEvents.name: <String>[]
-			})
-		]);
-	}
-
 	/// Whether the user has completed the identification step.
 	static bool get userIsIdentified => groupId != null;
 
 	/// The id of the user's group.
 	static String? get groupId => _misc.get(Field.groupId.name);
-	/// Sets the user's [groupId] to the non-null [id].
-	static set groupId(String? id) => _misc.put(Field.groupId.name, id!);
+	/// Sets the user's [groupId] to the non-null [id] and initializes the data.
+	static set groupId(String? id) {
+		_misc.put(Field.groupId.name, id!);
+
+		_labels.putAll({
+			Field.students.name: <String, String>{},
+			Field.subjects.name: <String, String>{},
+			Field.subjectInfo.name: <String, String>{},
+			Field.events.name: <String, String>{}
+		});
+		_entities.putAll({
+			Field.unfollowedSubjects.name: <String>[],
+			Field.hiddenEvents.name: <String>[]
+		});
+	}
 
 	/// Whether it is known who is the leader. Either `true` ot `null`.
 	static bool? get leaderIsElected => _misc.get(Field.leaderIsElected.name);

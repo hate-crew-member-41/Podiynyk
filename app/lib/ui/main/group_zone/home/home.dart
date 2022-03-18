@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:provider/provider.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
@@ -13,43 +14,39 @@ import 'sections/subjects.dart';
 // import 'sections/settings.dart';
 
 
-class Home extends StatefulWidget {
+class Home extends HookWidget {
 	const Home();
 
 	@override
-	State<Home> createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-	Section _section = AgendaSection();
-
-	@override
 	Widget build(BuildContext context) {
-		return _section is CloudEntitiesSection ? Provider.value(
-			value: (_section as CloudEntitiesSection).data,
-			builder: (context, _) => _builder(context),
-		) : _builder(context);
+		final section = useState<Section>(AgendaSection());
+		print('building ${section.value}');
+
+		return section.value is CloudEntitiesSection ? Provider.value(
+			value: (section.value as CloudEntitiesSection).data,
+			builder: (context, _) => _builder(context, section),
+		) : _builder(context, section);
 	}
 
-	Widget _builder(BuildContext context) => Scaffold(
+	Widget _builder(BuildContext context, ValueNotifier<Section> section) => Scaffold(
 		appBar: AppBar(
 			automaticallyImplyLeading: false,
 			title: Builder(builder: (context) => Row(
 				mainAxisAlignment: MainAxisAlignment.spaceBetween,
 				children: [
 					GestureDetector(
-						child: Text(_section.sectionName),
+						child: Text(section.value.sectionName),
 						onTap: () => Scaffold.of(context).openDrawer()
 					),
 					Row(children: [
-						if (_section is CloudEntitiesSection)
-							EntityCount((_section as CloudEntitiesSection).data.count).withPadding,
-						Icon(_section.sectionIcon)
+						if (section.value is CloudEntitiesSection)
+							EntityCount((section.value as CloudEntitiesSection).data.count).withPadding,
+						Icon(section.value.sectionIcon)
 					])
 				]
 			))
 		),
-		body: _section,
+		body: section.value,
 		drawer: Drawer(
 			child: Column(
 				mainAxisAlignment: MainAxisAlignment.center,
@@ -57,49 +54,52 @@ class _HomeState extends State<Home> {
 					SectionTile(
 						name: AgendaSection.name,
 						icon: AgendaSection.icon,
-						setSection: _setSectionFunction(() => AgendaSection())
+						setSection: _setSectionFunction(() => AgendaSection(), section)
 					),
 					SectionTile(
 						name: SubjectsSection.name,
 						icon: SubjectsSection.icon,
-						setSection: _setSectionFunction(() => SubjectsSection())
+						setSection: _setSectionFunction(() => SubjectsSection(), section)
 					),
 					SectionTile(
 						name: NonSubjectEventsSection.name,
 						icon: NonSubjectEventsSection.icon,
-						setSection: _setSectionFunction(() => NonSubjectEventsSection())
+						setSection: _setSectionFunction(() => NonSubjectEventsSection(), section)
 					),
 					const ListTile(),
 					SectionTile(
 						name: MessagesSection.name,
 						icon: MessagesSection.icon,
-						setSection: _setSectionFunction(() => MessagesSection())
+						setSection: _setSectionFunction(() => MessagesSection(), section)
 					),
 					// SectionTile(
 					// 	name: QuestionsSection.name,
 					// 	icon: QuestionsSection.icon,
-					// 	setSection: _setSectionFunction(() => QuestionsSection())
+					// 	setSection: _setSectionFunction(() => QuestionsSection(), section)
 					// ),
 					SectionTile(
 						name: GroupSection.name,
 						icon: GroupSection.icon,
-						setSection: _setSectionFunction(() => GroupSection())
+						setSection: _setSectionFunction(() => GroupSection(), section)
 					),
 					// const ListTile(),
 					// SectionTile(
 					// 	name: SettingsSection.name,
 					// 	icon: SettingsSection.icon,
-					// 	setSection: _setSectionFunction(() => const SettingsSection())
+					// 	setSection: _setSectionFunction(() => const SettingsSection(), section)
 					// )
 				]
 			)
 		),
 		drawerEdgeDragWidth: 150,
-		floatingActionButton: _section.actionButton
+		floatingActionButton: section.value.actionButton
 	);
 
-	void Function() _setSectionFunction<S extends Section>(S Function() sectionBuilder) => () {
-		if (_section is! S) setState(() => _section = sectionBuilder());
+	void Function() _setSectionFunction<S extends Section>(
+		S Function() sectionBuilder,
+		ValueNotifier<Section> section
+	) => () {
+		if (section.value is! S) section.value = sectionBuilder();
 	};
 }
 

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:provider/provider.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
@@ -7,21 +9,18 @@ import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/student.dart';
 
 
-class LeaderElection extends StatefulWidget {
+class LeaderElection extends HookWidget {
 	const LeaderElection();
 
 	@override
-	State<LeaderElection> createState() => _LeaderElectionState();
-}
-
-class _LeaderElectionState extends State<LeaderElection> {
-	bool _showIntro = true;
-
-	@override
 	Widget build(BuildContext context) {
-		return _showIntro ? _Introduction(
-			showNextPage: () => setState(() => _showIntro = false)
-		) : const _CandidateList();
+		final showIntro = useState(true);
+
+		if (showIntro.value) return _Introduction(
+			showNextPage: () => showIntro.value = false
+		);
+		
+		return const _CandidateList();
 	}
 }
 
@@ -53,47 +52,17 @@ class _Introduction extends StatelessWidget {
 }
 
 
-class _CandidateList extends StatefulWidget {
+class _CandidateList extends HookWidget {
 	const _CandidateList();
 
 	@override
-	_CandidateListState createState() => _CandidateListState();
-}
-
-class _CandidateListState extends State<_CandidateList> {
-	String? _votedForId;
-
-	@override
 	Widget build(BuildContext context) {
+		final votedForId = useRef<String?>(null);
+
 		return Scaffold(
-			body: Center(child: StreamBuilder<List<Student>?>(
+			body: Center(child: StreamBuilder<List<Student>>(
 				stream: _updates(context),
-				builder: (context, snapshot) {
-					if (snapshot.connectionState == ConnectionState.waiting) {
-						return const Text("awaiting the groupmates");
-					}
-					// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
-
-					final students = snapshot.data!;
-  
-					return ListView(
-						shrinkWrap: true,
-						children: [
-							for (final student in students) ListTile(
-								title: Text(student.nameRepr),
-								trailing: student.confirmationCount == 0 ?
-									null :
-									Text(student.confirmationCount.toString()),
-								onTap: student.nameRepr == Local.userName ? null : () {
-									if (student.id == _votedForId) return;
-
-									student.voteFor(previousId: _votedForId);
-									_votedForId = student.id;
-								}
-							)
-						]
-					);
-				}
+				builder: (context, snapshot) => _builder(context, snapshot, votedForId)
 			))
 		);
 	}
@@ -108,5 +77,35 @@ class _CandidateListState extends State<_CandidateList> {
 				context.read<void Function()>()();
 			}
 		}
+	}
+
+	Widget _builder(BuildContext context, AsyncSnapshot<List<Student>> snapshot, ObjectRef<String?> votedForId) {
+		if (snapshot.connectionState == ConnectionState.waiting) {
+			return const Text("awaiting the students");
+		}
+		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+
+		final students = snapshot.data!;
+
+		return ListView(
+			shrinkWrap: true,
+			children: [
+				for (final student in students) ListTile(
+					title: Text(student.nameRepr),
+					trailing: student.confirmationCount == 0 ? null : Text(
+						student.confirmationCount.toString(),
+						style: Appearance.titleText
+					),
+					onTap: student.name != Local.userName ? () => _handleVote(student, votedForId) : null
+				)
+			]
+		);
+	}
+
+	void _handleVote(Student student, ObjectRef<String?> currentId) {
+		if (student.id == currentId.value) return;
+
+		student.voteFor(previousId: currentId.value);
+		currentId.value;
 	}
 }

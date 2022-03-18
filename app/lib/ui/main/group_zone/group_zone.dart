@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:provider/provider.dart';
 
 import 'package:podiynyk/storage/cloud.dart';
@@ -8,16 +10,13 @@ import 'leader_election.dart';
 import 'home/home.dart';
 
 
-class GroupZone extends StatefulWidget {
+class GroupZone extends HookWidget {
 	const GroupZone();
 
 	@override
-	State<GroupZone> createState() => _GroupZoneState();
-}
-
-class _GroupZoneState extends State<GroupZone> {
-	@override
 	Widget build(BuildContext context) {
+		final leaderIsElected = useState(Local.leaderIsElected);
+
 		if (Local.leaderIsElected == true) {
 			return FutureBuilder(
 				future: Cloud.initRole(),
@@ -43,7 +42,7 @@ class _GroupZoneState extends State<GroupZone> {
 				if (snapshot.data!) return const Home();
 
 				return Provider.value(
-					value: () => setState(() {}),
+					value: () => leaderIsElected.value = Local.leaderIsElected,
 					child: const LeaderElection()
 				);
 			}
