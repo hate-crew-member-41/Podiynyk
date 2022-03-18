@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:provider/provider.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
@@ -9,23 +11,23 @@ import 'package:podiynyk/storage/local.dart';
 import 'common/fields.dart' show InputField;
 
 
-class Identification extends StatefulWidget {
+class Identification extends HookWidget {
 	const Identification();
 
 	@override
-	State<Identification> createState() => _IdentificationState();
-}
-
-class _IdentificationState extends State<Identification> {
-	bool? _userIsFirst;
-
-	@override
 	Widget build(BuildContext context) {
-		if (_userIsFirst == null) return _Introduction(
-			showNextPage: (userIsFirst) => setState(() => _userIsFirst = userIsFirst)
-		);
+		final userIsFirst = useState<bool?>(null);
 
-		return _userIsFirst! ? _IdGeneration() : _IdForm();
+		switch (userIsFirst.value) {
+			case true:
+				return _IdGeneration();
+			case false:
+				return _IdForm();
+			default:
+				return _Introduction(
+					showNextPage: (userIsFirst_) => userIsFirst.value = userIsFirst_
+				);
+		}
 	}
 }
 
@@ -58,23 +60,23 @@ class _Introduction extends StatelessWidget {
 }
 
 
-class _IdGeneration extends StatelessWidget {
-	final _nameField = TextEditingController();
-
+class _IdGeneration extends HookWidget {
 	@override
 	Widget build(BuildContext context) {
+		final nameField = useTextEditingController();
+
 		return GestureDetector(
-			onDoubleTap: () => _handleName(context),
+			onDoubleTap: () => _handleName(context, nameField),
 			child: Scaffold(
-				body: FutureBuilder(
+				body: FutureBuilder<String>(
 					future: Cloud.initGroup(),
-					builder: _builder
+					builder: (context, snapshot) => _builder(context, snapshot, nameField)
 				)
 			)
 		);
 	}
 
-	Widget _builder(BuildContext context, AsyncSnapshot<String> snapshot) {
+	Widget _builder(BuildContext context, AsyncSnapshot<String> snapshot, TextEditingController nameField) {
 		if (snapshot.connectionState == ConnectionState.waiting) {
 			return const Center(child: Text('generating a new id'));
 		}
@@ -92,19 +94,19 @@ class _IdGeneration extends StatelessWidget {
 				).withPadding,
 				const Text(
 					"Share this id with your groupmates. It is already on the clipboard.\n\n"
-					"They should be here in a moment. While they are making their way...",
+					"They should be here in a moment. While they are making their way, how will they recognize you?",
 					textAlign: TextAlign.start
 				).withPadding,
 				InputField(
-					controller: _nameField,
+					controller: nameField,
 					name: "your name",
 				)
 			]
 		);
 	}
 
-	void _handleName(BuildContext context) {
-		final name = _nameField.text;
+	void _handleName(BuildContext context, TextEditingController nameField) {
+		final name = nameField.text;
 		if (name.isEmpty) return;
 
 		Local.userName = name;
@@ -114,24 +116,24 @@ class _IdGeneration extends StatelessWidget {
 }
 
 
-class _IdForm extends StatelessWidget {
-	final _idField = TextEditingController();
-	final _nameField = TextEditingController();
-
+class _IdForm extends HookWidget {
 	@override
 	Widget build(BuildContext context) {
+		final idField = useTextEditingController();
+		final nameField = useTextEditingController();
+
 		return GestureDetector(
-			onDoubleTap: () => _handleId(context),
+			onDoubleTap: () => _handleId(context, idField, nameField.text),
 			child: Scaffold(
 				body: Column(
 					mainAxisAlignment: MainAxisAlignment.center,
 					children: [
 						InputField(
-							controller: _idField,
+							controller: idField,
 							name: "group id",
 						),
 						InputField(
-							controller: _nameField,
+							controller: nameField,
 							name: "your name",
 						)
 					]
@@ -140,9 +142,8 @@ class _IdForm extends StatelessWidget {
 		);
 	}
 
-	Future<void> _handleId(BuildContext context) async {
-		final id = _idField.text;
-		final name = _nameField.text;
+	Future<void> _handleId(BuildContext context, TextEditingController idField, String name) async {
+		final id = idField.text;
 		if (id.isEmpty || name.isEmpty) return;
 
 		Local.userName = name;
@@ -158,7 +159,7 @@ class _IdForm extends StatelessWidget {
 				duration: Duration(seconds: 2),
 				content: Text("This id does not exist.")
 			));
-			_idField.clear();
+			idField.clear();
 		}
 	}
 }
