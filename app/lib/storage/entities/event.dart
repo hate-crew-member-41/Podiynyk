@@ -20,7 +20,7 @@ class Event extends LabelableEntity implements CreatableEntity, Comparable {
 		_note = note,
 		_hasDetails = true,
 		super(
-			idComponents: [subject, name],
+			idComponents: [subject?.name, name],
 			name: name
 		);
 
@@ -40,7 +40,6 @@ class Event extends LabelableEntity implements CreatableEntity, Comparable {
 	DateTime _date;
 	DateTime get date => _date;
 	set date(DateTime date) {
-		if (date == _date) return;
 		_date = date;
 		Cloud.updateEventDate(this);
 	}
@@ -48,8 +47,7 @@ class Event extends LabelableEntity implements CreatableEntity, Comparable {
 	late String? _note;
 	String? get note => _note;
 	set note(String? note) {
-		if (note == _note) return;
-		_note = note;
+		_note = note!.isNotEmpty ? note : null;
 		Cloud.updateEventNote(this);
 	}
 

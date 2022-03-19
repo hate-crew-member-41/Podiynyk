@@ -28,7 +28,10 @@ class SubjectPage extends HookWidget {
 
 		useEffect(() {
 			subject.addDetails().whenComplete(() => hasDetails.value = subject.hasDetails);
-			return () => subject.label = nameField.text;
+
+			return () {
+				if (nameField.text != subject.nameRepr) subject.nameRepr = nameField.text;
+			};
 		}, const []);
 
 		return EntityPage(
@@ -149,8 +152,8 @@ class SubjectInfoPage extends HookWidget {
 		final contentField = useTextEditingController(text: info.content);
 
 		useEffect(() => () {
-			info.label = nameField.text;
-			if (contentField.text.isNotEmpty) info.content = contentField.text;
+			if (nameField.text != info.nameRepr) info.nameRepr = nameField.text;
+			if (contentField.text != info.content) info.content = contentField.text;
 		}, const []);
 
 		return EntityPage(

@@ -34,7 +34,7 @@ class Message extends Entity implements CreatableEntity, Comparable {
 	String _name;
 	String get name => _name;
 	set name(String name) {
-		if (name == _name) return;
+		if (name.isEmpty) return;
 		_name = name;
 		Cloud.updateMessageName(this);
 	}
@@ -42,7 +42,7 @@ class Message extends Entity implements CreatableEntity, Comparable {
 	late String _content;
 	String get content => _content;
 	set content(String content) {
-		if (content == _content) return;
+		if (content.isEmpty) return;
 		_content = content;
 		Cloud.updateMessageContent(this);
 	}

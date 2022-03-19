@@ -19,8 +19,12 @@ class StudentPage extends HookWidget {
 	@override
 	Widget build(BuildContext context) {
 		final nameField = useTextEditingController(text: student.nameRepr);
+		final role = useRef(student.role);
 
-		useEffect(() => () => student.label = nameField.text);
+		useEffect(() => () {
+			if (nameField.text != student.nameRepr) student.nameRepr = nameField.text;
+			if (role.value != student.role) student.role = role.value;
+		});
 
 		return EntityPage(
 			children: [
@@ -37,10 +41,10 @@ class StudentPage extends HookWidget {
 			actions: Cloud.userRole != Role.leader || student.name == Local.userName ? [] : [
 				student.role == Role.ordinary ? EntityActionButton(
 					text: "trust",
-					action: () => student.role = Role.trusted
+					action: () => role.value = Role.trusted
 				) : EntityActionButton(
 					text: "untrust",
-					action: () => student.role = Role.ordinary
+					action: () => role.value = Role.ordinary
 				),
 				EntityActionButton(
 					text: "make the leader",

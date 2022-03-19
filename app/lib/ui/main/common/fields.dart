@@ -73,13 +73,13 @@ class OptionField extends StatelessWidget {
 class DateField extends HookWidget {
 	const DateField({
 		this.initialDate,
-		required this.onDatePicked,
+		required this.onPicked,
 		this.enabled = true,
 		this.style
 	});
 
 	final DateTime? initialDate;
-	final void Function(DateTime) onDatePicked;
+	final void Function(DateTime) onPicked;
 	final bool enabled;
 	final TextStyle? style;
 
@@ -120,7 +120,7 @@ class DateField extends HookWidget {
 			date.value = time != null ? date.value!.withTime(time) : date.value!.withDefaultTime;
 
 			field.text = date.value!.fullRepr;
-			onDatePicked(date.value!);
+			onPicked(date.value!);
 		}
 	}
 }

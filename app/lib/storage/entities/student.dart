@@ -46,13 +46,13 @@ class Student extends LabelableEntity implements Comparable {
 	}
 
 	@override
-	set label(String label) {
+	set nameRepr(String repr) {
 		if (name != Local.userName) {
-			super.label = label;
+			super.nameRepr = repr;
 		}
-		else if (label != name && label.isNotEmpty) {
-			name = label;
-			Local.userName = label;
+		else if (repr != name && repr.isNotEmpty) {
+			name = repr;
+			Local.userName = repr;
 			Cloud.updateName();
 		}
 	}

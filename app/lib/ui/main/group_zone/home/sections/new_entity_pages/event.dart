@@ -58,7 +58,7 @@ class NewEventPage extends HookWidget {
 						null,
 					style: Appearance.largeTitleText
 				),
-				DateField(onDatePicked: (picked) => date.value = picked),
+				DateField(onPicked: (picked) => date.value = picked),
 				const ListTile(),
 				InputField(
 					controller: noteField,

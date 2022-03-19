@@ -31,8 +31,8 @@ class MessagePage extends HookWidget {
 			});
 
 			return () {
-				if (nameField.text.isNotEmpty) message.name = nameField.text;
-				if (contentField.text.isNotEmpty) message.content = contentField.text;
+				if (nameField.text != message.name) message.name = nameField.text;
+				if (contentField.text != message.content) message.content = contentField.text;
 			};
 		}, const []);
 

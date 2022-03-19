@@ -19,6 +19,7 @@ class EventPage extends HookWidget {
 	@override
 	Widget build(BuildContext context) {
 		final nameField = useTextEditingController(text: event.nameRepr);
+		final date = useRef(event.date);
 		final noteField = useTextEditingController();
 
 		final hasDetails = useState(event.hasDetails);
@@ -34,8 +35,9 @@ class EventPage extends HookWidget {
 			if (showNote.value) noteField.text = event.note!;
 
 			return () {
-				event.label = nameField.text;
-				event.note = noteField.text.isNotEmpty ? noteField.text : null;
+				if (nameField.text != event.nameRepr) event.nameRepr = nameField.text;
+				if (date.value != event.date) event.date = date.value;
+				if (noteField.text != event.note) event.note = noteField.text;
 			};
 		}, const []);
 
@@ -52,7 +54,7 @@ class EventPage extends HookWidget {
 				).withPadding,
 				DateField(
 					initialDate: event.date,
-					onDatePicked: (date) => event.date = date,
+					onPicked: (picked) => date.value = picked,
 					enabled: Cloud.userRole != Role.ordinary
 				),
 				if (showNote.value) ...[

@@ -116,6 +116,7 @@ class SubjectInfo extends LabelableEntity implements Comparable {
 	String _content;
 	String get content => _content;
 	set content(String content) {
+		if (content.isEmpty) return;
 		_content = content;
 		Cloud.updateSubjectInfo(subject, this);
 	}

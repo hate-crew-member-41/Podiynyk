@@ -5,11 +5,6 @@ import 'entity.dart';
 
 
 abstract class LabelableEntity extends Entity {
-	String name;
-	String? _label;
-
-	String get nameRepr => _label ?? name;
-
 	LabelableEntity({
 		required List<Object?> idComponents,
 		required this.name
@@ -24,16 +19,18 @@ abstract class LabelableEntity extends Entity {
 		_label = Local.entityLabel(labelCollection, id);
 	}
 
-	set label(String label) {
-		if (label == _label) return;
+	String name;
+	String? _label;
 
-		if (label != name && label.isNotEmpty) {
-			Local.setEntityLabel(labelCollection, id, label);
-			_label = label;
+	String get nameRepr => _label ?? name;
+	set nameRepr(String repr) {
+		if (repr != name && repr.isNotEmpty) {
+			_label = repr;
+			Local.setEntityLabel(labelCollection, id, repr);
 		}
-		else {
-			Local.deleteEntityLabel(labelCollection, id);
+		else if (_label != null) {
 			_label = null;
+			Local.deleteEntityLabel(labelCollection, id);
 		}
 	}
 
