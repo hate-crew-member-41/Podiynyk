@@ -32,7 +32,7 @@ class GroupZone extends HookWidget {
 		}
 
 		return FutureBuilder<bool>(
-			future: Cloud.leaderIsElected,
+			future: Cloud.leaderIsElected(),
 			builder: (context, snapshot) {
 				if (snapshot.connectionState == ConnectionState.waiting) {
 					return const Scaffold(body: Center(child: Text("checking if the leader is known")));

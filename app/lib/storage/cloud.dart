@@ -77,7 +77,7 @@ class Cloud {
 
 		await Collection.groups.ref.update({
 			'$userField.${Field.name.name}': Local.userName,
-			if (await leaderIsElected)
+			if (await leaderIsElected(initUserRole: false))
 				'$userField.${Field.role.name}': Role.ordinary.index
 			else 
 				'$userField.${Field.confirmationCount.name}': 0
@@ -85,14 +85,14 @@ class Cloud {
 	}
 
 	/// Whether the group is past the [LeaderElection] step. Initializes [userRole].
-	static Future<bool> get leaderIsElected async {
+	static Future<bool> leaderIsElected({bool initUserRole = true}) async {
 		final snapshot = await Collection.groups.ref.get();
 		final students = snapshot[Field.students.name];
 
 		final isElected = _leaderIsElected(students);
 		if (isElected) {
 			Local.leaderIsElected = true;
-			_updateUserRole(students);
+			 if (initUserRole) _updateUserRole(students);
 		}
 
 		return isElected;

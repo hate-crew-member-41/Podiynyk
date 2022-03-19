@@ -25,7 +25,7 @@ class Identification extends HookWidget {
 				return _IdForm();
 			default:
 				return _Introduction(
-					showNextPage: (userIsFirst_) => userIsFirst.value = userIsFirst_
+					showNextPage: (isFirst) => userIsFirst.value = isFirst
 				);
 		}
 	}
@@ -105,12 +105,12 @@ class _IdGeneration extends HookWidget {
 		);
 	}
 
-	void _handleName(BuildContext context, TextEditingController nameField) {
+	Future<void> _handleName(BuildContext context, TextEditingController nameField) async {
 		final name = nameField.text;
 		if (name.isEmpty) return;
 
 		Local.userName = name;
-		Cloud.enterGroup();
+		await Cloud.enterGroup();
 		context.read<void Function()>()();
 	}
 }
@@ -123,7 +123,7 @@ class _IdForm extends HookWidget {
 		final nameField = useTextEditingController();
 
 		return GestureDetector(
-			onDoubleTap: () => _handleId(context, idField, nameField.text),
+			onDoubleTap: () => _handleForm(context, idField, nameField.text),
 			child: Scaffold(
 				body: Column(
 					mainAxisAlignment: MainAxisAlignment.center,
@@ -142,7 +142,7 @@ class _IdForm extends HookWidget {
 		);
 	}
 
-	Future<void> _handleId(BuildContext context, TextEditingController idField, String name) async {
+	Future<void> _handleForm(BuildContext context, TextEditingController idField, String name) async {
 		final id = idField.text;
 		if (id.isEmpty || name.isEmpty) return;
 
@@ -151,7 +151,7 @@ class _IdForm extends HookWidget {
 
 		if (exists) {
 			Local.groupId = id;
-			Cloud.enterGroup();
+			await Cloud.enterGroup();
 			context.read<void Function()>()();
 		}
 		else {
