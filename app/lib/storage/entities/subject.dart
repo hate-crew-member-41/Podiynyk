@@ -64,14 +64,18 @@ class Subject extends LabelableEntity implements CreatableEntity, Comparable {
 		Local.clearEntityLabels(Field.subjectInfo, info!);
 	}
 
-	void addInfo(SubjectInfo item) {
-		info!.add(item);
-		Cloud.updateSubjectInfo(this, item);
+	Future<void> addEvent(Event event) async {
+		
 	}
 
-	void deleteInfo(SubjectInfo item) {
+	Future<void> addInfo(SubjectInfo item) async {
+		info!.add(item);
+		await Cloud.updateSubjectInfo(this, item);
+	}
+
+	Future<void> deleteInfo(SubjectInfo item) async {
 		info!.remove(item);
-		Cloud.deleteSubjectInfo(this, item);
+		await Cloud.deleteSubjectInfo(this, item);
 	}
 
 	@override

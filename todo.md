@@ -1,13 +1,5 @@
 # App
 
-## Before Home
-
-Take time to come up with a better version of identification step.
-
-Make sure that it is safe for the user to do something wrong.
-
-Make sure that if the app is closed, the right page is displayed when it is opened.
-
 ## Reacting
 
 Make the UI react to changes.
@@ -27,9 +19,41 @@ Subjects:
 Students:
 - new role ➔ the page, the tile
 
-## Entity pages
+All the possible actions affect the shared group data. The only exceptions are adding a label and hiding/showing.
 
-The changes are applied when the page is closed. Is the code for it written the best it can be?
+### Option 1: using streams
+
+Since the actions change the cloud documents, the section can listen to the changes.
+But in this case they will not know that a local change has been made. And if this change affects the list order,
+the whole section needs to be rebuilt.
+
+### Option 2: rebuilding
+
+Simply rebuilding the section if any change has been made, to fetch the new data.
+
+### Option 3: modifying the data
+
+The data is only fetched once in the lifespan of a section, and is stored in a list that is modified.
+The entity objects are also mutable.
+
+But this approach assumes that entities are always added, which is not the case.
+If the user adds an entity that already exists, it is not actually added, but this option will display the duplicate anyway.
+To display the actual data, a read from the cloud will need to be done.
+In other words, this is an overcomplicated version of option 2, at least with adding entities.
+
+When the list is modified according to the user's last action, it is implied by them that the list now shows the actual current data.
+But it is not synchronized after all actions, so this is not guaranteed and the user might be shown a non-existing version of data.
+
+My conclusion is to go with option 2: simply rebuilding the section after all actions to display the actual data.
+However, this means I should make the entities immutable. They have been being developed as mutable because I was leaning towards the option 3.
+
+## Before Home
+
+Take time to come up with a better version of the identification step.
+
+Make sure that it is safe for the user to do something wrong.
+
+Make sure that if the app is closed, the right page is displayed when it is opened.
 
 ## Appearance
 

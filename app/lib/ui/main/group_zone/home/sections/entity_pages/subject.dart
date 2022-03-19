@@ -150,9 +150,7 @@ class SubjectInfoPage extends HookWidget {
 
 		useEffect(() => () {
 			info.label = nameField.text;
-
-			final content = contentField.text;
-			if (content.isNotEmpty) info.content = content;
+			if (contentField.text.isNotEmpty) info.content = contentField.text;
 		}, const []);
 
 		return EntityPage(

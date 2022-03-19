@@ -130,11 +130,11 @@ class _IdForm extends HookWidget {
 					children: [
 						InputField(
 							controller: idField,
-							name: "group id",
+							name: "group id"
 						),
 						InputField(
 							controller: nameField,
-							name: "your name",
+							name: "your name"
 						)
 					]
 				)

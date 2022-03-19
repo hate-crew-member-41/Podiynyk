@@ -68,24 +68,27 @@ class Local {
 
 	/// Sets the [collection] entity's [label].
 	static Future<void> setEntityLabel(Field collection, String essence, String label) async {
-		final field = collection.name;
-		await _labels.put(field, _labels.get(field)!..[essence] = label);
+		await _labels.put(
+			collection.name,
+			_labels.get(collection.name)!..[essence] = label
+		);
 	}
 
 	/// Deletes the [collection] entity's label.
 	static Future<void> deleteEntityLabel(Field collection, String essence) async {
-		final field = collection.name;
-		await _labels.put(field, _labels.get(field)!..remove(essence));
+		await _labels.put(
+			collection.name,
+			_labels.get(collection.name)!..remove(essence)
+		);
 	}
 
 	/// Deletes the [collection] entities that do not exist anymore.
 	static Future<void> clearEntityLabels(Field collection, List<Entity> existing) async {
 		final existingEssences = {for (final entity in existing) entity.id};
-
-		final field = collection.name;
-		await _labels.put(field, _labels.get(field)!..removeWhere(
+		final cleared  = _labels.get(collection.name)!..removeWhere(
 			(essence, _) => !existingEssences.contains(essence)
-		));
+		);
+		await _labels.put(collection.name, cleared);
 	}
 
 	/// Whether the [collection] entity has not been stored.
@@ -95,24 +98,27 @@ class Local {
 
 	/// Stores the [collection] entity.
 	static Future<void> storeEntity(Field collection, String essence) async {
-		final field = collection.name;
-		await _entities.put(field, _entities.get(field)!..add(essence));
+		await _entities.put(
+			collection.name,
+			_entities.get(collection.name)!..add(essence)
+		);
 	}
 
 	/// Deletes the [collection] entity.
 	static Future<void> deleteEntity(Field collection, String essence) async {
-		final field = collection.name;
-		await _entities.put(field, _entities.get(field)!..remove(essence));
+		await _entities.put(
+			collection.name,
+			_entities.get(collection.name)!..remove(essence)
+		);
 	}
 
 	/// Deletes the [collection] entities that do not exist anymore.
 	static Future<void> clearStoredEntities(Field collection, List<Entity> existing) async {
 		final existingEssences = {for (final entity in existing) entity.id};
-
-		final field = collection.name;
-		await _entities.put(field, _entities.get(field)!..removeWhere(
+		final cleared = _entities.get(collection.name)!..removeWhere(
 			(essence) => !existingEssences.contains(essence)
-		));
+		);
+		await _entities.put(collection.name, cleared);
 	}
 }
 

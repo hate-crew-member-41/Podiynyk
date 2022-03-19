@@ -18,7 +18,7 @@ class AppMain extends HookWidget {
 
 		if (Local.userIsIdentified) return const GroupZone();
 
-		return Provider.value(
+		return Provider<void Function()>.value(
 			value: () => userIsIdentified.value = Local.userIsIdentified,
 			child: const Identification()
 		);

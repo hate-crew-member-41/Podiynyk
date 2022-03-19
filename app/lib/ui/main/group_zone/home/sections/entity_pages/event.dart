@@ -35,9 +35,7 @@ class EventPage extends HookWidget {
 
 			return () {
 				event.label = nameField.text;
-			
-				final note = noteField.text;
-				event.note = note.isNotEmpty ? note : null;
+				event.note = noteField.text.isNotEmpty ? noteField.text : null;
 			};
 		}, const []);
 

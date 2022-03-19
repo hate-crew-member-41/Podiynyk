@@ -41,7 +41,7 @@ class GroupZone extends HookWidget {
 
 				if (snapshot.data!) return const Home();
 
-				return Provider.value(
+				return Provider<void Function()>.value(
 					value: () => leaderIsElected.value = Local.leaderIsElected,
 					child: const LeaderElection()
 				);

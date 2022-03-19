@@ -20,7 +20,6 @@ class Home extends HookWidget {
 	@override
 	Widget build(BuildContext context) {
 		final section = useState<Section>(AgendaSection());
-		print('building ${section.value}');
 
 		return section.value is CloudEntitiesSection ? Provider.value(
 			value: (section.value as CloudEntitiesSection).data,
