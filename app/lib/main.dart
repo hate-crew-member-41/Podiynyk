@@ -32,6 +32,7 @@ class App extends StatelessWidget {
 				colorScheme: const ColorScheme.dark().copyWith(
 					surface: Appearance.secondaryBackgroundColor,
 					primary: Appearance.primaryColor,
+					onPrimary: Appearance.backgroundColor,
 					secondary: Appearance.secondaryBackgroundColor,
 					onSecondary: Appearance.primaryColor
 				),
@@ -43,7 +44,7 @@ class App extends StatelessWidget {
 					titleSmall: Appearance.bodyText,  // date picker month
 					titleMedium: Appearance.titleText,
 					headlineMedium: Appearance.headlineText,
-					labelMedium: Appearance.labelText,
+					labelMedium: Appearance.labelText
 				),
 				appBarTheme: AppBarTheme(
 					titleTextStyle: Appearance.largeTitleText
@@ -58,11 +59,11 @@ class App extends StatelessWidget {
 					hintStyle: TextStyle(color: Appearance.primaryColor.withOpacity(.5))
 				),
 				textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(
-					textStyle: Appearance.titleText,
+					textStyle: Appearance.titleText
 				)),
 				dialogTheme: DialogTheme(
 					backgroundColor: Appearance.backgroundColor,
-					titleTextStyle: Appearance.largeTitleText,
+					titleTextStyle: Appearance.largeTitleText
 				),
 				snackBarTheme: SnackBarThemeData(
 					backgroundColor: Appearance.secondaryBackgroundColor,

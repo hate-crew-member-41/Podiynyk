@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 
 class Appearance {
-	static Color get backgroundColor => const HSVColor.fromAHSV(1, 220, .6, .1).toColor();
-	static Color get secondaryBackgroundColor => const HSVColor.fromAHSV(1, 220, .6, .2).toColor();
+	static Color get backgroundColor => const HSVColor.fromAHSV(1, 220, 0, .1).toColor();
+	static Color get secondaryBackgroundColor => const HSVColor.fromAHSV(1, 220, 0, .2).toColor();
 	static Color get primaryColor => Colors.white;
 
 	static TextStyle get bodyText => GoogleFonts.montserrat(fontSize: 16, height: 1.5);

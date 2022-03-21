@@ -14,12 +14,14 @@ class EntityPage extends StatelessWidget {
 	Widget build(BuildContext context) {
 		return actions.isNotEmpty ? GestureDetector(
 			onLongPress: () {
-				Navigator.of(context).push(MaterialPageRoute(builder: (context) => Scaffold(
-					body: Center(child: ListView(
-					shrinkWrap: true,
-					children: actions
-				))
-				)));
+				Navigator.of(context).push(MaterialPageRoute(
+					builder: (context) => Scaffold(
+						body: Center(child: ListView(
+							shrinkWrap: true,
+							children: actions
+						))
+					)
+				));
 			},
 			child: _builder(context)
 		) : _builder(context);
@@ -28,7 +30,11 @@ class EntityPage extends StatelessWidget {
 	Widget _builder(BuildContext context) => Scaffold(
 		body: Center(child: ListView(
 			shrinkWrap: true,
-			children: children
+			children: [
+				const ListTile(),
+				...children,
+				const ListTile()
+			]
 		))
 	);
 }

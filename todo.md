@@ -45,7 +45,7 @@ When the list is modified according to the user's last action, it is implied by 
 But it is not synchronized after all actions, so this is not guaranteed and the user might be shown a non-existing version of data.
 
 My conclusion is to go with option 2: simply rebuilding the section after all actions to display the actual data.
-However, this means I should make the entities immutable. They have been being developed as mutable because I was leaning towards the option 3.
+However, this means I should make the entities immutable. They've been being developed as mutable because I've been leaning towards the option 3.
 
 ## Before Home
 
@@ -55,14 +55,19 @@ Make sure that it is safe for the user to do something wrong.
 
 Make sure that if the app is closed, the right page is displayed when it is opened.
 
+Try to also hide all required fetches behind the loading screen, not just the storage initializations.
+Consider animating into the user's style as soon as the local storage has been initialized.
+
 ## Appearance
 
 What is shown instead of entity tiles:
 - when they are being fetched
 - if there are none
 
-The loading screen. Try to also hide the fetches behind it, not just the storage initializations.
-Consider animating into the user's style as soon as the local storage has been initialized.
+What is shown instead of the entity's details while they are being fetched.
+How they enter the page.
+
+The loading screen.
 
 ### Ideas
 

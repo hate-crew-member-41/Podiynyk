@@ -53,10 +53,10 @@ class Local {
 	/// The user's id in the group.
 	static String get userId => _misc.get(Field.userId.name)!;
 
-	/// Sets [userName].
+	/// Sets [userName] and initializes [userId] if needed.
 	static set userName(String name) {
 		_misc.put(Field.userName.name, name);
-		_misc.put(Field.userId.name, name.safeId);
+		if (_misc.get(Field.userId.name) == null) _misc.put(Field.userId.name, name.safeId);
 	}
 	/// The user's name.
 	static String get userName => _misc.get(Field.userName.name)!;
