@@ -57,11 +57,11 @@ class MessagePage extends HookWidget {
 				Text(
 					message.author.nameRepr,
 					style: Appearance.titleText
-				).withPadding,
+				).withPadding(),
 				Text(
 					message.date.fullRepr,
 					style: Appearance.titleText
-				).withPadding
+				).withPadding()
 			],
 			actions: [
 				if (isAuthor) EntityActionButton(

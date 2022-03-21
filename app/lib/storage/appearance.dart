@@ -14,13 +14,13 @@ class Appearance {
 	static TextStyle get displayText => GoogleFonts.montserrat(fontSize: 40);
 	static TextStyle get labelText => GoogleFonts.montserrat(fontSize: 14);
 
-	static EdgeInsetsGeometry get padding => const EdgeInsets.symmetric(horizontal: 16, vertical: 8);
+	static EdgeInsets get padding => const EdgeInsets.symmetric(horizontal: 16, vertical: 8);
 }
 
 
 extension StyledWidget on Widget {
-	Widget get withPadding => Padding(
-		padding: Appearance.padding,
+	Widget withPadding({bool horizontal = true}) => Padding(
+		padding: horizontal ? Appearance.padding : Appearance.padding.copyWith(left: 0, right: 0),
 		child: this
 	);
 }

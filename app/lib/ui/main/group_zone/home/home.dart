@@ -39,7 +39,7 @@ class Home extends HookWidget {
 					),
 					Row(children: [
 						if (section.value is CloudEntitiesSection)
-							EntityCount((section.value as CloudEntitiesSection).data.count).withPadding,
+							EntityCount((section.value as CloudEntitiesSection).data.count).withPadding(),
 						Icon(section.value.sectionIcon)
 					])
 				]

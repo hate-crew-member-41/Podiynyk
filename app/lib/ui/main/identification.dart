@@ -47,11 +47,11 @@ class _Introduction extends StatelessWidget {
 					mainAxisAlignment: MainAxisAlignment.center,
 					crossAxisAlignment: CrossAxisAlignment.start,
 					children: [
-						Text('Hi', style: Appearance.headlineText).withPadding,
+						Text('Hi', style: Appearance.headlineText).withPadding(),
 						const Text(
 							"If you have the group id, tap twice. Otherwise, tap and hold.\n\n"
 							"By the way, whenever you are looking for a button to go forward, just tap twice."
-						).withPadding
+						).withPadding()
 					]
 				)
 			)
@@ -91,12 +91,12 @@ class _IdGeneration extends HookWidget {
 				SelectableText(
 					id,
 					style: Appearance.largeTitleText.copyWith(letterSpacing: 3),
-				).withPadding,
+				).withPadding(),
 				const Text(
 					"Share this id with your groupmates. It is already on the clipboard.\n\n"
 					"They should be here in a moment. While they are making their way, how will they recognize you?",
 					textAlign: TextAlign.start
-				).withPadding,
+				).withPadding(),
 				InputField(
 					controller: nameField,
 					name: "your name",

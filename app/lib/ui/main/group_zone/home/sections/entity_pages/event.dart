@@ -51,7 +51,7 @@ class EventPage extends HookWidget {
 				if (event.subject != null) Text(
 					event.subject!.nameRepr,
 					style: Appearance.largeTitleText
-				).withPadding,
+				).withPadding(),
 				DateField(
 					initialDate: event.date,
 					onPicked: (picked) => date.value = picked,

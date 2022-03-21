@@ -49,14 +49,17 @@ However, this means I should make the entities immutable. They've been being dev
 
 ## Before Home
 
-Take time to come up with a better version of the identification step.
-
 Make sure that it is safe for the user to do something wrong.
 
 Make sure that if the app is closed, the right page is displayed when it is opened.
 
 Try to also hide all required fetches behind the loading screen, not just the storage initializations.
 Consider animating into the user's style as soon as the local storage has been initialized.
+
+## Student names
+
+When the user is at the identification step, they can enter any name. What if the name has already been entered?
+The same question is relevant when the user changes their name later.
 
 ## Appearance
 
@@ -71,10 +74,11 @@ The loading screen.
 
 ### Ideas
 
-If the user attempts to delete a subject with events, show a SnackBar instead of the dialog.
+If the user attempts to add an entity with some required fields unfilled, show a SnackBar with this information,
+or color the fields and made the color fade out.
 
-If the user attempts to add an entity with some necessary fields left empty,
-show a SnackBar with this information.
+When the user uses the go-forward gesture and what comes next depends on the result of a future,
+show a SnackBar to show that something is being done. As it is now, it looks as if nothing happens for some time.
 
 New-entity pages appear as a page to the right of the section.
 Remember to remove the empty tiles.

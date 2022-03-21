@@ -39,11 +39,11 @@ class _Introduction extends StatelessWidget {
 					mainAxisAlignment: MainAxisAlignment.center,
 					crossAxisAlignment: CrossAxisAlignment.start,
 					children: [
-						Text('Almost there', style: Appearance.headlineText).withPadding,
+						Text('Almost there', style: Appearance.headlineText).withPadding(),
 						const Text(
 							"The next thing you will see is the list of your groupmates that have made it to this point.\n\n"
 							"When you see the leader, tap on them. If you are the leader, sit back and let them tap on you."
-						).withPadding
+						).withPadding()
 					]
 				)
 			)

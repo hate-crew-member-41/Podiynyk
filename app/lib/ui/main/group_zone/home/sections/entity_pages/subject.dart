@@ -34,37 +34,39 @@ class SubjectPage extends HookWidget {
 			};
 		}, const []);
 
-		return EntityPage(
-			children: [
-				InputField(
-					controller: nameField,
-					name: "name",
-					style: Appearance.headlineText
-				),
-				const ListTile(),
-				if (subject.info != null) ListTile(
-					title: const Text("information"),
-					onTap: () => _showInfo(context)
-				),
-				ListTile(
-					title: const Text("events"),
-					onTap: () => _showEvents(context)
-				)
-			],
-			actions: [
-				subject.isFollowed ? EntityActionButton(
-					text: "unfollow",
-					action: () => subject.isFollowed = false
-				) : EntityActionButton(
-					text: "follow",
-					action: () => subject.isFollowed = true
-				),
-				if (Cloud.userRole == Role.leader) EntityActionButton(
-					text: "delete",
-					action: () => _askDelete(context)
-				)
-			]
-		);
+		return ScaffoldMessenger(child: Builder(
+			builder: (context) => EntityPage(
+				children: [
+					InputField(
+						controller: nameField,
+						name: "name",
+						style: Appearance.headlineText
+					),
+					const ListTile(),
+					if (subject.info != null) ListTile(
+						title: const Text("information"),
+						onTap: () => _showInfo(context)
+					),
+					ListTile(
+						title: const Text("events"),
+						onTap: () => _showEvents(context)
+					)
+				],
+				actions: [
+					subject.isFollowed ? EntityActionButton(
+						text: "unfollow",
+						action: () => subject.isFollowed = false
+					) : EntityActionButton(
+						text: "follow",
+						action: () => subject.isFollowed = true
+					),
+					if (Cloud.userRole == Role.leader) EntityActionButton(
+						text: "delete",
+						action: () => _askDelete(context)
+					)
+				]
+			),
+		));
 	}
 
 	void _showInfo(BuildContext context) => _showEntities(
@@ -112,26 +114,24 @@ class SubjectPage extends HookWidget {
 			return;
 		}
 
-		showDialog(
-			context: context,
-			builder: (_) => AlertDialog(
-				title: const Text("Sure?"),
-				content: const Text("The subject's events will also be deleted."),
-				actions: [
-					TextButton(
-						child: const Text("no"),
-						onPressed: () => Navigator.of(context).pop()
-					),
-					TextButton(
-						child: const Text("yes"),
+		final messenger = ScaffoldMessenger.of(context);
+		messenger.showSnackBar(SnackBar(
+			padding: Appearance.padding,
+			content: Column(
+				mainAxisSize: MainAxisSize.min,
+				crossAxisAlignment: CrossAxisAlignment.start,
+				children: [
+					const Text("The events will also be deleted.").withPadding(horizontal: false),
+					ElevatedButton(
+						child: const Text("continue"),
 						onPressed: () {
-							Navigator.of(context).pop();
+							messenger.hideCurrentSnackBar();
 							_delete(context);
 						}
 					)
 				]
 			)
-		);
+		));
 	}
 
 	void _delete(BuildContext context) {
