@@ -13,7 +13,6 @@ class SettingsSection extends Section {
 	String get sectionName => name;
 	@override
 	IconData get sectionIcon => icon;
-	
 
 	@override
 	Widget build(BuildContext context) {

@@ -10,9 +10,9 @@ import 'entity_pages/event.dart';
 import 'new_entity_pages/event.dart';
 
 
-class AgendaSectionCloudData extends CloudEntitiesSectionData<Event> {
+class AgendaSectionData extends CloudEntitiesSectionData<Event> {
 	@override
-	final entities = Cloud.events.then((events) =>
+	Future<List<Event>> get entities => Cloud.events.then((events) =>
 		events.where((event) {
 			final hasSubject = event.subject != null;
 			return !event.isHidden && (
@@ -23,31 +23,33 @@ class AgendaSectionCloudData extends CloudEntitiesSectionData<Event> {
 	);
 
 	@override
-	Future<Iterable<Event>> get counted => entities.then((events) =>
+	Future<Iterable<Event>> get counted => currentEntities.then((events) =>
 		events.where((event) => !event.date.isPast)
 	);
 }
 
 
-class AgendaSection extends CloudEntitiesSection<AgendaSectionCloudData, Event> {
+class AgendaSection extends CloudEntitiesSection<AgendaSectionData, Event> {
 	static const name = "agenda";
 	static const icon = Icons.import_contacts;
-
-	AgendaSection() : super(AgendaSectionCloudData());
 
 	@override
 	String get sectionName => name;
 	@override
 	IconData get sectionIcon => icon;
+
 	@override
-	Widget? get actionButton => Cloud.userRole == Role.ordinary ? super.actionButton : NewEntityButton(
+	Widget? get actionButton => Cloud.userRole == Role.ordinary ? null : NewEntityButton(
 		pageBuilder: (_) => const NewEventPage()
 	);
 
 	@override
+	AgendaSectionData get data => AgendaSectionData();
+
+	@override
 	List<Widget> tiles(BuildContext context, List<Event> events) => [
 		for (final entity in events) EventTile(entity),
-		const ListTile()
+		if (Cloud.userRole != Role.ordinary) const ListTile()
 	];
 }
 

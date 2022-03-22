@@ -2,10 +2,10 @@
 
 ## Reacting
 
-Make the UI react to changes.
+Make the UI react to the following changes.
 
 All entities:
-- creating and deleting ➔ the list
+- deleting ➔ the list
 - adding a label ➔ the tile
 - hiding/showing ➔ the actions
 
@@ -19,33 +19,8 @@ Subjects:
 Students:
 - new role ➔ the page, the tile
 
-All the possible actions affect the shared group data. The only exceptions are adding a label and hiding/showing.
-
-### Option 1: using streams
-
-Since the actions change the cloud documents, the section can listen to the changes.
-But in this case they will not know that a local change has been made. And if this change affects the list order,
-the whole section needs to be rebuilt.
-
-### Option 2: rebuilding
-
-Simply rebuilding the section if any change has been made, to fetch the new data.
-
-### Option 3: modifying the data
-
-The data is only fetched once in the lifespan of a section, and is stored in a list that is modified.
-The entity objects are also mutable.
-
-But this approach assumes that entities are always added, which is not the case.
-If the user adds an entity that already exists, it is not actually added, but this option will display the duplicate anyway.
-To display the actual data, a read from the cloud will need to be done.
-In other words, this is an overcomplicated version of option 2, at least with adding entities.
-
-When the list is modified according to the user's last action, it is implied by them that the list now shows the actual current data.
-But it is not synchronized after all actions, so this is not guaranteed and the user might be shown a non-existing version of data.
-
-My conclusion is to go with option 2: simply rebuilding the section after all actions to display the actual data.
-However, this means I should make the entities immutable. They've been being developed as mutable because I've been leaning towards the option 3.
+Just after the entity has been added, the section updates. Why does the section show for a moment that it awaits,
+even though the future has already been awaited for, before the section was even notified it needs to update.
 
 ## Before Home
 
@@ -115,6 +90,8 @@ As soon as it is clear who is the leader, assign roles to the students (confirma
 ## Maintaining
 
 Clean the past events every midnight.
+
+Update the message's author field if the author has changes their name.
 
 Clean the old groups biannually.
 

@@ -37,11 +37,10 @@ class NewMessagePage extends HookWidget {
 	bool _add(String name, String content) {
 		if (name.isEmpty || content.isEmpty) return false;
 
-		final message = Message(
+		Cloud.addMessage(Message(
 			name: name,
 			content: content
-		);
-		Cloud.addMessage(message);
+		));
 		return true;
 	}
 }

@@ -68,12 +68,11 @@ class NewSubjectInfoPage extends HookWidget {
 	bool _add(String name, String content) {
 		if (name.isEmpty || content.isEmpty) return false;
 
-		final info = SubjectInfo(
+		subject.addInfo(SubjectInfo(
 			subject: subject,
 			name: name,
 			content: content
-		);
-		subject.addInfo(info);
+		));
 		return true;
 	}
 }

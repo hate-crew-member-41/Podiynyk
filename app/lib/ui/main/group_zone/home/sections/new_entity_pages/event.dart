@@ -128,13 +128,12 @@ class NewEventPage extends HookWidget {
 	bool _add(String name, Subject? subject, DateTime? date, String note) {
 		if (name.isEmpty || date == null) return false;
 
-		final event = Event(
+		Cloud.addEvent(Event(
 			name: name,
 			subject: subject,
 			date: date,
 			note: note.isNotEmpty ? note : null
-		);
-		Cloud.addEvent(event);
+		));
 		return true;
 	}
 }

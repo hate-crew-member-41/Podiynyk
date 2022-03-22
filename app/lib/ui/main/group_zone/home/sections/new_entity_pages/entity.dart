@@ -15,7 +15,7 @@ class NewEntityPage extends StatelessWidget {
 		return GestureDetector(
 			onDoubleTap: () {
 				final added = add();
-				if (added) Navigator.of(context).pop();
+				if (added) Navigator.of(context).pop(true);
 			},
 			child: Scaffold(
 				body: Center(child: ListView(

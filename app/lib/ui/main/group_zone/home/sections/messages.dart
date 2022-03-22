@@ -10,26 +10,28 @@ import 'entity_pages/message.dart';
 import 'new_entity_pages/message.dart';
 
 
-class MessagesSectionCloudData extends CloudEntitiesSectionData<Message> {
+class MessagesSectionData extends CloudEntitiesSectionData<Message> {
 	@override
-	final entities = Cloud.messages;
+	Future<List<Message>> get entities => Cloud.messages;
 }
 
 
-class MessagesSection extends CloudEntitiesSection<MessagesSectionCloudData, Message> {
+class MessagesSection extends CloudEntitiesSection<MessagesSectionData, Message> {
 	static const name = "messages";
 	static const icon = Icons.messenger;
-
-	MessagesSection() : super(MessagesSectionCloudData());
 
 	@override
 	String get sectionName => name;
 	@override
 	IconData get sectionIcon => icon;
+
 	@override
-	Widget? get actionButton => Cloud.userRole == Role.ordinary ? super.actionButton : NewEntityButton(
+	Widget? get actionButton => Cloud.userRole == Role.ordinary ? null : NewEntityButton(
 		pageBuilder: (_) => NewMessagePage()
 	);
+
+	@override
+	MessagesSectionData get data => MessagesSectionData();
 
 	@override
 	List<Widget> tiles(BuildContext context, List<Message> messages) => [
@@ -39,6 +41,6 @@ class MessagesSection extends CloudEntitiesSection<MessagesSectionCloudData, Mes
 			trailing: message.date.dateRepr,
 			pageBuilder: () => MessagePage(message)
 		),
-		const ListTile()
+		if (Cloud.userRole != Role.ordinary) const ListTile()
 	];
 }

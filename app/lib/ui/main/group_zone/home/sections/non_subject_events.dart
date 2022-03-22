@@ -10,35 +10,37 @@ import 'agenda.dart';
 import 'new_entity_pages/event.dart';
 
 
-class NonSubjectEventsSectionCloudData extends CloudEntitiesSectionData<Event> {
+class NonSubjectEventsSectionData extends CloudEntitiesSectionData<Event> {
 	@override
-	final entities = Cloud.nonSubjectEvents;
+	Future<List<Event>> get entities => Cloud.nonSubjectEvents;
 
 	@override
-	Future<Iterable<Event>> get counted => entities.then((events) =>
+	Future<Iterable<Event>> get counted => currentEntities.then((events) =>
 		events.where((event) => !event.date.isPast)
 	);
 }
 
 
-class NonSubjectEventsSection extends CloudEntitiesSection<NonSubjectEventsSectionCloudData, Event> {
+class NonSubjectEventsSection extends CloudEntitiesSection<NonSubjectEventsSectionData, Event> {
 	static const name = "events";
 	static const icon = Icons.event_note;
-
-	NonSubjectEventsSection() : super(NonSubjectEventsSectionCloudData());
 
 	@override
 	String get sectionName => name;
 	@override
 	IconData get sectionIcon => icon;
+
 	@override
-	Widget? get actionButton => Cloud.userRole == Role.ordinary ? super.actionButton : NewEntityButton(
+	Widget? get actionButton => Cloud.userRole == Role.ordinary ? null : NewEntityButton(
 		pageBuilder: (_) => const NewEventPage.nonSubjectEvent()
 	);
 
 	@override
+	NonSubjectEventsSectionData get data => NonSubjectEventsSectionData();
+
+	@override
 	List<Widget> tiles(BuildContext context, List<Event> events) => [
 		for (final event in events) EventTile(event),
-		const ListTile()
+		if (Cloud.userRole != Role.ordinary) const ListTile()
 	];
 }

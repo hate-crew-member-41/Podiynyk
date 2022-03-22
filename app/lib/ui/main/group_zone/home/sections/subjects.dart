@@ -10,41 +10,48 @@ import 'entity_pages/subject.dart';
 import 'new_entity_pages/subject.dart';
 
 
-class SubjectsSectionCloudData extends CloudEntitiesSectionData<Subject> {
+class SubjectsSectionData extends CloudEntitiesSectionData<Subject> {
 	@override
-	final entities = Cloud.subjectsWithEvents;
+	Future<List<Subject>> get entities => Cloud.subjectsWithEvents;
 
 	@override
-	Future<Iterable<Subject>> get counted => entities.then((subjects) =>
+	Future<Iterable<Subject>> get counted => currentEntities.then((subjects) =>
 		subjects.where((subject) => subject.isFollowed)
 	);
 }
 
 
-class SubjectsSection extends CloudEntitiesSection<SubjectsSectionCloudData, Subject> {
+class SubjectsSection extends CloudEntitiesSection<SubjectsSectionData, Subject> {
 	static const name = "subjects";
 	static const icon = Icons.school;
-
-	SubjectsSection() : super(SubjectsSectionCloudData());
 
 	@override
 	String get sectionName => name;
 	@override
 	IconData get sectionIcon => icon;
 	@override
-	Widget? get actionButton => Cloud.userRole != Role.leader ? super.actionButton : NewEntityButton(
+	
+	Widget? get actionButton => Cloud.userRole != Role.leader ? null : NewEntityButton(
 		pageBuilder: (_) => NewSubjectPage()
 	);
 
 	@override
-	List<Widget> tiles(BuildContext context, List<Subject> subjects) => [
-		for (final subject in subjects.where((subject) => subject.isFollowed)) tile(context, subject),
-		for (final subject in subjects.where((subject) => !subject.isFollowed)) Opacity(
-			opacity: 0.5,
-			child: tile(context, subject)
-		),
-		const ListTile()
-	];
+	SubjectsSectionData get data => SubjectsSectionData();
+
+	@override
+	List<Widget> tiles(BuildContext context, List<Subject> subjects) {
+		final followed = subjects.where((subject) => subject.isFollowed);
+		final unfollowed = subjects.where((subject) => !subject.isFollowed);
+
+		return [
+			for (final subject in followed) tile(context, subject),
+			for (final subject in unfollowed) Opacity(
+				opacity: 0.5,
+				child: tile(context, subject)
+			),
+			if (Cloud.userRole == Role.leader) const ListTile()
+		];
+	}
 
 	Widget tile(BuildContext context, Subject subject) {
 		final hasEvents = subject.events!.isNotEmpty;

@@ -6,24 +6,23 @@ import 'package:podiynyk/storage/entities/question.dart';
 import 'section.dart';
 
 
-class QuestionsSectionCloudData extends CloudEntitiesSectionData<Question> {
+class QuestionsSectionData extends CloudEntitiesSectionData<Question> {
 	@override
-	final entities = Cloud.questions;
+	Future<List<Question>> get entities => Cloud.questions;
 }
 
 
-class QuestionsSection extends CloudEntitiesSection<QuestionsSectionCloudData, Question> {
+class QuestionsSection extends CloudEntitiesSection<QuestionsSectionData, Question> {
 	static const name = "questions";
 	static const icon = Icons.question_answer;
-
-	QuestionsSection() : super(QuestionsSectionCloudData());
 
 	@override
 	String get sectionName => name;
 	@override
 	IconData get sectionIcon => icon;
+
 	@override
-	Widget get actionButton => Container();
+	QuestionsSectionData get data => QuestionsSectionData();
 
 	@override
 	List<Widget> tiles(BuildContext context, List<Question> questions) => [];

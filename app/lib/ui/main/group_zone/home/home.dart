@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:podiynyk/storage/appearance.dart';
 
 import 'sections/agenda.dart';
-import 'sections/events.dart';
+import 'sections/non_subject_events.dart';
 import 'sections/group.dart';
 import 'sections/messages.dart';
 // import 'sections/questions.dart';
@@ -21,10 +21,12 @@ class Home extends HookWidget {
 	Widget build(BuildContext context) {
 		final section = useState<Section>(AgendaSection());
 
-		return section.value is CloudEntitiesSection ? Provider.value(
+		if (section.value is CloudEntitiesSection) return ChangeNotifierProvider.value(
 			value: (section.value as CloudEntitiesSection).data,
-			builder: (context, _) => _builder(context, section),
-		) : _builder(context, section);
+			builder: (context, _) => _builder(context, section)
+		);
+		
+		return _builder(context, section);
 	}
 
 	Widget _builder(BuildContext context, ValueNotifier<Section> section) => Scaffold(
@@ -38,8 +40,9 @@ class Home extends HookWidget {
 						onTap: () => Scaffold.of(context).openDrawer()
 					),
 					Row(children: [
-						if (section.value is CloudEntitiesSection)
-							EntityCount((section.value as CloudEntitiesSection).data.count).withPadding(),
+						if (section.value is CloudEntitiesSection) EntityCount(
+							context.watch<CloudEntitiesSectionData>().count
+						).withPadding(),
 						Icon(section.value.sectionIcon)
 					])
 				]
