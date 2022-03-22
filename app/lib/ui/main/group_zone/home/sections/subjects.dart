@@ -12,12 +12,10 @@ import 'new_entity_pages/subject.dart';
 
 class SubjectsSectionData extends CloudEntitiesSectionData<Subject> {
 	@override
-	Future<List<Subject>> get entities => Cloud.subjectsWithEvents;
+	Future<List<Subject>> get entitiesFuture => Cloud.subjectsWithEvents;
 
 	@override
-	Future<Iterable<Subject>> get counted => currentEntities.then((subjects) =>
-		subjects.where((subject) => subject.isFollowed)
-	);
+	Iterable<Subject>? get countedEntities => entities?.where((subject) => subject.isFollowed);
 }
 
 

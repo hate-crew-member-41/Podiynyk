@@ -1,5 +1,9 @@
 # App
 
+Make sure that too much of the widget tree is not rebuilt. Check:
+- hooks: useState, useListenable
+- context.watch
+
 ## Reacting
 
 Make the UI react to the following changes.
@@ -18,9 +22,6 @@ Subjects:
 
 Students:
 - new role ➔ the page, the tile
-
-Just after the entity has been added, the section updates. Why does the section show for a moment that it awaits,
-even though the future has already been awaited for, before the section was even notified it needs to update.
 
 ## Before Home
 

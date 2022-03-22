@@ -19,23 +19,20 @@ abstract class Section extends HookWidget {
 
 abstract class CloudEntitiesSectionData<E> with ChangeNotifier {
 	CloudEntitiesSectionData() {
-		_currentEntities = entities;
+		update();
 	}
 
-	late Future<List<E>> _currentEntities;
-	Future<List<E>> get currentEntities => _currentEntities;
+	List<E>? _entities;
+	List<E>? get entities => _entities;
 
-	Future<List<E>> get entities;
+	Iterable<E>? get countedEntities => _entities;
 
-	Future<Iterable<E>> get counted => currentEntities;
-
-	Future<int> get count => counted.then((counted) => counted.length);
+	Future<List<E>> get entitiesFuture;
 
 	void rebuild() => notifyListeners();
 
 	Future<void> update() async {
-		_currentEntities = entities;
-		await _currentEntities;
+		_entities = await entitiesFuture;
 		notifyListeners();
 	}
 }
@@ -48,18 +45,9 @@ abstract class CloudEntitiesSection<D extends CloudEntitiesSectionData<E>, E> ex
 	@override
 	Widget build(BuildContext context) {
 		final data = context.watch<CloudEntitiesSectionData>() as D;
+		if (data.entities == null) return Center(child: Icon(sectionIcon));
 
-		return FutureBuilder<List<E>>(
-			future: data.currentEntities,
-			builder: (context, snapshot) {
-				if (snapshot.connectionState == ConnectionState.waiting) {
-					return Center(child: Icon(sectionIcon));
-				}
-				// if (snapshot.hasError) print(snapshot.error!);  // todo: consider handling
-
-				return ListView(children: tiles(context, snapshot.data!));
-			}
-		);
+		return ListView(children: tiles(context, data.entities!));
 	}
 
 	List<Widget> tiles(BuildContext context, List<E> entities);

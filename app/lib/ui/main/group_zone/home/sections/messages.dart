@@ -12,7 +12,7 @@ import 'new_entity_pages/message.dart';
 
 class MessagesSectionData extends CloudEntitiesSectionData<Message> {
 	@override
-	Future<List<Message>> get entities => Cloud.messages;
+	Future<List<Message>> get entitiesFuture => Cloud.messages;
 }
 
 

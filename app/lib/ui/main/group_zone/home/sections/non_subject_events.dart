@@ -12,12 +12,10 @@ import 'new_entity_pages/event.dart';
 
 class NonSubjectEventsSectionData extends CloudEntitiesSectionData<Event> {
 	@override
-	Future<List<Event>> get entities => Cloud.nonSubjectEvents;
+	Future<List<Event>> get entitiesFuture => Cloud.nonSubjectEvents;
 
 	@override
-	Future<Iterable<Event>> get counted => currentEntities.then((events) =>
-		events.where((event) => !event.date.isPast)
-	);
+	Iterable<Event>? get countedEntities => entities?.where((event) => !event.date.isPast);
 }
 
 

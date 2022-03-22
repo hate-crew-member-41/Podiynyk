@@ -8,7 +8,7 @@ import 'section.dart';
 
 class QuestionsSectionData extends CloudEntitiesSectionData<Question> {
 	@override
-	Future<List<Question>> get entities => Cloud.questions;
+	Future<List<Question>> get entitiesFuture => Cloud.questions;
 }
 
 

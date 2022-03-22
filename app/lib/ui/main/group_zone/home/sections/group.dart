@@ -9,7 +9,7 @@ import 'entity_pages/student.dart';
 
 class GroupSectionData extends CloudEntitiesSectionData<Student> {
 	@override
-	Future<List<Student>> get entities => Cloud.students;
+	Future<List<Student>> get entitiesFuture => Cloud.students;
 }
 
 

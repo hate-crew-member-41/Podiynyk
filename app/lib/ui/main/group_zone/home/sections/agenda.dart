@@ -12,7 +12,7 @@ import 'new_entity_pages/event.dart';
 
 class AgendaSectionData extends CloudEntitiesSectionData<Event> {
 	@override
-	Future<List<Event>> get entities => Cloud.events.then((events) =>
+	Future<List<Event>> get entitiesFuture => Cloud.events.then((events) =>
 		events.where((event) {
 			final hasSubject = event.subject != null;
 			return !event.isHidden && (
@@ -23,9 +23,7 @@ class AgendaSectionData extends CloudEntitiesSectionData<Event> {
 	);
 
 	@override
-	Future<Iterable<Event>> get counted => currentEntities.then((events) =>
-		events.where((event) => !event.date.isPast)
-	);
+	Iterable<Event>? get countedEntities => entities?.where((event) => !event.date.isPast);
 }
 
 

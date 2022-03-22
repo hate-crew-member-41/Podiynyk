@@ -19,7 +19,7 @@ class Message extends Entity implements CreatableEntity, Comparable {
 		author = Student(name: Local.userName),
 		date = DateTime.now(),
 		_hasDetails = true,
-		super(idComponents: [Local.userName, name]);
+		super(idComponents: [Local.userId, name]);
 
 	Message.fromCloudFormat(MapEntry<String, dynamic> entry) :
 		_name = entry.value[Field.name.name] as String,
