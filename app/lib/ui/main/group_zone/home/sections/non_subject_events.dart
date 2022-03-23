@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/event.dart';
@@ -9,13 +10,14 @@ import 'agenda.dart';
 import 'new_entity_pages/event.dart';
 
 
-// class NonSubjectEventsSectionData extends CloudEntitiesSectionData<Event> {
-// 	@override
-// 	Future<List<Event>> get entitiesFuture => Cloud.nonSubjectEvents;
+class NonSubjectEventsNotifier extends EntitiesNotifier<Event> {
+	@override
+	Future<Iterable<Event>> get entities => Cloud.nonSubjectEvents;
+}
 
-// 	@override
-// 	Iterable<Event>? get countedEntities => entities?.where((event) => !event.date.isPast);
-// }
+final nonSubjectEventsNotifierProvider = StateNotifierProvider<NonSubjectEventsNotifier, Iterable<Event>?>((ref) {
+	return NonSubjectEventsNotifier();
+});
 
 
 class NonSubjectEventsSection extends EntitiesSection<Event> {
@@ -28,7 +30,7 @@ class NonSubjectEventsSection extends EntitiesSection<Event> {
 	IconData get sectionIcon => icon;
 
 	@override
-	Future<Iterable<Event>> get entities => Cloud.nonSubjectEvents;
+	StateNotifierProvider<EntitiesNotifier<Event>, Iterable<Event>?> get provider => nonSubjectEventsNotifierProvider;
 
 	@override
 	List<Widget> tiles(BuildContext context, Iterable<Event> events) => [

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
+import 'package:podiynyk/storage/entities/entity.dart';
 
 
-abstract class Section extends HookWidget {
+abstract class Section extends ConsumerWidget {
 	const Section();
 
 	/// The static name.
@@ -16,41 +17,32 @@ abstract class Section extends HookWidget {
 }
 
 
-// abstract class CloudEntitiesSectionData<E> with ChangeNotifier {
-// 	CloudEntitiesSectionData() {
-// 		update();
-// 	}
-
-// 	List<E>? _entities;
-// 	List<E>? get entities => _entities;
-
-// 	Iterable<E>? get countedEntities => _entities;
-
-// 	Future<List<E>> get entitiesFuture;
-
-// 	void rebuild() => notifyListeners();
-
-// 	Future<void> update() async {
-// 		_entities = await entitiesFuture;
-// 		notifyListeners();
-// 	}
-// }
-
-abstract class EntitiesSection<E> extends Section {
-	const EntitiesSection();
+abstract class EntitiesNotifier<E extends Entity> extends StateNotifier<Iterable<E>?> {
+	EntitiesNotifier(): super(null) {
+		update();
+	}
 
 	Future<Iterable<E>> get entities;
 
-	@override
-	Widget build(BuildContext context) {
-		final snapshot = useFuture(useMemoized(() => entities));
+	Future<void> update() async {
+		state = await entities;
+	}
+}
 
-		if (snapshot.connectionState == ConnectionState.waiting) {
-			return Center(child: Icon(sectionIcon));
-		}
+
+abstract class EntitiesSection<E extends Entity> extends Section {
+	const EntitiesSection();
+
+	StateNotifierProvider<EntitiesNotifier<E>, Iterable<E>?> get provider;
+
+	@override
+	Widget build(BuildContext context, WidgetRef ref) {
+		final entities = ref.watch(provider);
+
+		if (entities == null) return Center(child: Icon(sectionIcon));
 		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
-		return ListView(children: tiles(context, snapshot.data!));
+		return ListView(children: tiles(context, entities));
 	}
 
 	List<Widget> tiles(BuildContext context, Iterable<E> entities);

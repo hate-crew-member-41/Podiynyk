@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+import '../agenda.dart';
 
 
-class NewEntityPage extends StatelessWidget {
+class NewEntityPage extends ConsumerWidget {
 	const NewEntityPage({
 		required this.children,
 		required this.handleForm
@@ -11,7 +14,7 @@ class NewEntityPage extends StatelessWidget {
 	final Future<bool> Function() handleForm;
 
 	@override
-	Widget build(BuildContext context) {
+	Widget build(BuildContext context, WidgetRef ref) {
 		return GestureDetector(
 			onDoubleTap: () async {
 				final added = await handleForm();

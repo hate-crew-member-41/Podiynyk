@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/date.dart';
@@ -10,10 +11,14 @@ import 'entity_pages/message.dart';
 import 'new_entity_pages/message.dart';
 
 
-// class MessagesSectionData extends CloudEntitiesSectionData<Message> {
-// 	@override
-// 	Future<List<Message>> get entitiesFuture => Cloud.messages;
-// }
+class MessagesNotifier extends EntitiesNotifier<Message> {
+	@override
+	Future<Iterable<Message>> get entities => Cloud.messages;
+}
+
+final messagesNotifierProvider = StateNotifierProvider<MessagesNotifier, Iterable<Message>?>((ref) {
+	return MessagesNotifier();
+});
 
 
 class MessagesSection extends EntitiesSection<Message> {
@@ -26,7 +31,7 @@ class MessagesSection extends EntitiesSection<Message> {
 	IconData get sectionIcon => icon;
 
 	@override
-	Future<Iterable<Message>> get entities => Cloud.messages;
+	StateNotifierProvider<EntitiesNotifier<Message>, Iterable<Message>?> get provider => messagesNotifierProvider;
 
 	@override
 	List<Widget> tiles(BuildContext context, Iterable<Message> messages) => [

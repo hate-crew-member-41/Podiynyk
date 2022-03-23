@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/date.dart';
@@ -10,13 +11,14 @@ import 'entity_pages/subject.dart';
 import 'new_entity_pages/subject.dart';
 
 
-// class SubjectsSectionData extends CloudEntitiesSectionData<Subject> {
-// 	@override
-// 	Future<List<Subject>> get entitiesFuture => Cloud.subjectsWithEvents;
+class SubjectsNotifier extends EntitiesNotifier<Subject> {
+	@override
+	Future<Iterable<Subject>> get entities => Cloud.subjectsWithEvents;
+}
 
-// 	@override
-// 	Iterable<Subject>? get countedEntities => entities?.where((subject) => subject.isFollowed);
-// }
+final subjectsNotifierProvider = StateNotifierProvider<SubjectsNotifier, Iterable<Subject>?>((ref) {
+	return SubjectsNotifier();
+});
 
 
 class SubjectsSection extends EntitiesSection<Subject> {
@@ -29,7 +31,7 @@ class SubjectsSection extends EntitiesSection<Subject> {
 	IconData get sectionIcon => icon;
 
 	@override
-	Future<Iterable<Subject>> get entities => Cloud.subjectsWithEvents;
+	StateNotifierProvider<EntitiesNotifier<Subject>, Iterable<Subject>?> get provider => subjectsNotifierProvider;
 
 	@override
 	List<Widget> tiles(BuildContext context, Iterable<Subject> subjects) {

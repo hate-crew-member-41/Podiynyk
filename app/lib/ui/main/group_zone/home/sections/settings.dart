@@ -15,7 +15,7 @@ class SettingsSection extends Section {
 	IconData get sectionIcon => icon;
 
 	@override
-	Widget build(BuildContext context) {
+	Widget build(BuildContext context, _) {
 		return const Center(child: Icon(icon));
 	}
 }

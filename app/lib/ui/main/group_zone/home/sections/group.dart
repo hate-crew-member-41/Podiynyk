@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/student.dart';
@@ -7,10 +8,14 @@ import 'section.dart';
 import 'entity_pages/student.dart';
 
 
-// class GroupSectionData extends CloudEntitiesSectionData<Student> {
-// 	@override
-// 	Future<List<Student>> get entitiesFuture => Cloud.students;
-// }
+class GroupNotifier extends EntitiesNotifier<Student> {
+	@override
+	Future<Iterable<Student>> get entities => Cloud.students;
+}
+
+final groupNotifierProvider = StateNotifierProvider<GroupNotifier, Iterable<Student>?>((ref) {
+	return GroupNotifier();
+});
 
 
 class GroupSection extends EntitiesSection<Student> {
@@ -23,7 +28,7 @@ class GroupSection extends EntitiesSection<Student> {
 	IconData get sectionIcon => icon;
 
 	@override
-	Future<Iterable<Student>> get entities => Cloud.students;
+	StateNotifierProvider<EntitiesNotifier<Student>, Iterable<Student>?> get provider => groupNotifierProvider;
 
 	@override
 	List<Widget> tiles(BuildContext context, Iterable<Student> students) => [

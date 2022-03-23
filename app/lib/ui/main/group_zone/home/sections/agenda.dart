@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/date.dart';
@@ -10,21 +11,22 @@ import 'entity_pages/event.dart';
 import 'new_entity_pages/event.dart';
 
 
-// class AgendaSectionData extends CloudEntitiesSectionData<Event> {
-// 	@override
-// 	Future<List<Event>> get entitiesFuture => Cloud.events.then((events) =>
-// 		events.where((event) {
-// 			final hasSubject = event.subject != null;
-// 			return !event.isHidden && (
-// 				(hasSubject && event.subject!.isFollowed) ||
-// 				!hasSubject
-// 			);
-// 		}).toList()
-// 	);
+class AgendaNotifier extends EntitiesNotifier<Event> {
+	@override
+	Future<Iterable<Event>> get entities async {
+		final events = await Cloud.events;
 
-// 	@override
-// 	Iterable<Event>? get countedEntities => entities?.where((event) => !event.date.isPast);
-// }
+		return events.where((event) {
+			final hasSubject = event.subject != null;
+			final subjectIsFollowed = hasSubject && event.subject!.isFollowed;
+			return !event.isHidden && (subjectIsFollowed || !hasSubject);
+		});
+	}
+}
+
+final agendaNotifierProvider = StateNotifierProvider<AgendaNotifier, Iterable<Event>?>((ref) {
+	return AgendaNotifier();
+});
 
 
 class AgendaSection extends EntitiesSection<Event> {
@@ -37,15 +39,7 @@ class AgendaSection extends EntitiesSection<Event> {
 	IconData get sectionIcon => icon;
 
 	@override
-	Future<Iterable<Event>> get entities async {
-		final events = await Cloud.events;
-
-		return events.where((event) {
-			final hasSubject = event.subject != null;
-			final subjectIsFollowed = hasSubject && event.subject!.isFollowed;
-			return !event.isHidden && (subjectIsFollowed || !hasSubject);
-		});
-	}
+	StateNotifierProvider<EntitiesNotifier<Event>, Iterable<Event>?> get provider => agendaNotifierProvider;
 
 	@override
 	List<Widget> tiles(BuildContext context, Iterable<Event> events) => [
