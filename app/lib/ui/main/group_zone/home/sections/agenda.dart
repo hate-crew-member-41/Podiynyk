@@ -38,7 +38,7 @@ class AgendaSection extends CloudEntitiesSection<AgendaSectionData, Event> {
 
 	@override
 	Widget? get actionButton => Cloud.userRole == Role.ordinary ? null : NewEntityButton(
-		pageBuilder: (_) => const NewEventPage()
+		pageBuilder: () => const NewEventPage()
 	);
 
 	@override

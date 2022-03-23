@@ -1,21 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../section.dart';
 
 
 class NewEntityPage extends StatelessWidget {
 	const NewEntityPage({
 		required this.children,
-		required this.add
+		required this.handleForm
 	});
 
 	final List<Widget> children;
-	final bool Function() add;
+	final Future<bool> Function() handleForm;
 
 	@override
 	Widget build(BuildContext context) {
 		return GestureDetector(
-			onDoubleTap: () {
-				final added = add();
-				if (added) Navigator.of(context).pop(true);
+			onDoubleTap: () async {
+				final added = await handleForm();
+				if (added) {
+					context.read<CloudEntitiesSectionData>().update();
+					Navigator.of(context).pop();
+				}
 			},
 			child: Scaffold(
 				body: Center(child: ListView(

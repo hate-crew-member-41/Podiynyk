@@ -27,7 +27,7 @@ class MessagesSection extends CloudEntitiesSection<MessagesSectionData, Message>
 
 	@override
 	Widget? get actionButton => Cloud.userRole == Role.ordinary ? null : NewEntityButton(
-		pageBuilder: (_) => NewMessagePage()
+		pageBuilder: () => NewMessagePage()
 	);
 
 	@override

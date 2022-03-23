@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:provider/provider.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
@@ -8,6 +9,7 @@ import 'package:podiynyk/storage/entities/student.dart' show Role;
 
 import 'package:podiynyk/ui/main/common/fields.dart';
 
+import '../section.dart';
 import 'entity.dart';
 
 
@@ -37,7 +39,9 @@ class EventPage extends HookWidget {
 			return () {
 				if (nameField.text != event.nameRepr) event.nameRepr = nameField.text;
 				if (date.value != event.date) event.date = date.value;
-				if (noteField.text != event.note) event.note = noteField.text;
+
+				final note = noteField.text.isNotEmpty ? noteField.text : null;
+				if (note != event.note) event.note = note;
 			};
 		}, const []);
 
@@ -88,7 +92,7 @@ class EventPage extends HookWidget {
 	}
 
 	void _delete(BuildContext context) {
-		Cloud.deleteEvent(event);
+		event.delete();
 		Navigator.of(context).pop();
 	}
 }

@@ -67,6 +67,8 @@ class Event extends LabelableEntity implements CreatableEntity, Comparable {
 		_hasDetails = true;
 	}
 
+	Future<void> delete() => Cloud.deleteEvent(this);
+
 	@override
 	CloudMap get inCloudFormat => {
 		Field.name.name: name,

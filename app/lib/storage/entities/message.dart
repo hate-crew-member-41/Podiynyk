@@ -58,6 +58,8 @@ class Message extends Entity implements CreatableEntity, Comparable {
 		_hasDetails = true;
 	}
 
+	Future<void> delete() => Cloud.deleteMessage(this);
+
 	@override
 	CloudMap get inCloudFormat => {
 		Field.name.name: name,

@@ -78,6 +78,8 @@ class Subject extends LabelableEntity implements CreatableEntity, Comparable {
 		await Cloud.deleteSubjectInfo(this, item);
 	}
 
+	Future<void> delete() => Cloud.deleteSubject(this);
+
 	@override
 	CloudMap get inCloudFormat => {Field.name.name: name};
 

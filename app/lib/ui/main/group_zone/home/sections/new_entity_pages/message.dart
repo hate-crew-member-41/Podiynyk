@@ -17,7 +17,7 @@ class NewMessagePage extends HookWidget {
 		final contentField = useTextEditingController();
 
 		return NewEntityPage(
-			add: () => _add(nameField.text, contentField.text),
+			handleForm: () => _handleForm(nameField.text, contentField.text),
 			children: [
 				InputField(
 					controller: nameField,
@@ -34,10 +34,10 @@ class NewMessagePage extends HookWidget {
 		);
 	}
 
-	bool _add(String name, String content) {
+	Future<bool> _handleForm(String name, String content) async {
 		if (name.isEmpty || content.isEmpty) return false;
 
-		Cloud.addMessage(Message(
+		await Cloud.addMessage(Message(
 			name: name,
 			content: content
 		));

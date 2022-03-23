@@ -82,7 +82,7 @@ class EntityTile extends StatelessWidget {
 
 
 class NewEntityButton extends StatelessWidget {
-	final Widget Function(BuildContext) pageBuilder;
+	final Widget Function() pageBuilder;
 
 	const NewEntityButton({required this.pageBuilder});
 
@@ -90,10 +90,12 @@ class NewEntityButton extends StatelessWidget {
 	Widget build(BuildContext context) {
 		return FloatingActionButton(
 			child: const Icon(Icons.add),
-			onPressed: () async {
-				final added = await Navigator.of(context).push<bool>(MaterialPageRoute(builder: pageBuilder));
-				if (added == true) context.read<CloudEntitiesSectionData>().update();
-			}
+			onPressed: () => Navigator.of(context).push<bool>(MaterialPageRoute(
+				builder: (_) => ChangeNotifierProvider.value(
+					value: context.read<CloudEntitiesSectionData>(),
+					child: pageBuilder()
+				) 
+			))
 		);
 	}
 }

@@ -1,5 +1,7 @@
 # App
 
+Make sure that no widgets have initializations in the constructor.
+
 Make sure that too much of the widget tree is not rebuilt. Check:
 - hooks: useState, useListenable
 - context.watch
@@ -22,6 +24,9 @@ Subjects:
 
 Students:
 - new role ➔ the page, the tile
+
+Updating the section seemed easy: provide the CloudEntitiesSectionData to the entity page and call the rebuild/update method if needed.
+However, calling the rebuild method in the callback returned to the useEffect hook causes an unclear error.
 
 ## Before Home
 
@@ -47,6 +52,10 @@ What is shown instead of the entity's details while they are being fetched.
 How they enter the page.
 
 The loading screen.
+
+Why is the current typed word underlined?
+
+Consider adding some automatic focus changes to new-entity forms.
 
 ### Ideas
 

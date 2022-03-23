@@ -16,7 +16,7 @@ class NewSubjectPage extends HookWidget {
 		final nameField = useTextEditingController();
 
 		return NewEntityPage(
-			add: () => _add(nameField.text),
+			handleForm: () => _handleForm(nameField.text),
 			children: [
 				InputField(
 					controller: nameField,
@@ -27,11 +27,10 @@ class NewSubjectPage extends HookWidget {
 		);
 	}
 
-	bool _add(String name) {
+	Future<bool> _handleForm(String name) async {
 		if (name.isEmpty) return false;
 
-		final subject = Subject(name: name);
-		Cloud.addSubject(subject);
+		await Cloud.addSubject(Subject(name: name));
 		return true;
 	}
 }
@@ -48,7 +47,7 @@ class NewSubjectInfoPage extends HookWidget {
 		final contentField = useTextEditingController();
 
 		return NewEntityPage(
-			add: () => _add(nameField.text, contentField.text),
+			handleForm: () => _handleForm(nameField.text, contentField.text),
 			children: [
 				InputField(
 					controller: nameField,
@@ -65,10 +64,10 @@ class NewSubjectInfoPage extends HookWidget {
 		);
 	}
 
-	bool _add(String name, String content) {
+	Future<bool> _handleForm(String name, String content) async {
 		if (name.isEmpty || content.isEmpty) return false;
 
-		subject.addInfo(SubjectInfo(
+		await subject.addInfo(SubjectInfo(
 			subject: subject,
 			name: name,
 			content: content

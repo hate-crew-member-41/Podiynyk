@@ -43,7 +43,7 @@ class NewEventPage extends HookWidget {
 		final subjectsFuture = useMemoized(() => _doAskSubject ? Cloud.subjects : null);
 
 		return NewEntityPage(
-			add: () => _add(nameField.text, subject.value, date.value, noteField.text),
+			handleForm: () => _handleForm(nameField.text, subject.value, date.value, noteField.text),
 			children: [
 				InputField(
 					controller: nameField,
@@ -125,10 +125,10 @@ class NewEventPage extends HookWidget {
 		Navigator.of(context).pop();
 	}
 
-	bool _add(String name, Subject? subject, DateTime? date, String note) {
+	Future<bool> _handleForm(String name, Subject? subject, DateTime? date, String note) async {
 		if (name.isEmpty || date == null) return false;
 
-		Cloud.addEvent(Event(
+		await Cloud.addEvent(Event(
 			name: name,
 			subject: subject,
 			date: date,

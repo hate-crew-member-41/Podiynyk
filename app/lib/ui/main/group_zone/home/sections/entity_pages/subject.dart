@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:provider/provider.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
@@ -9,7 +10,7 @@ import 'package:podiynyk/storage/entities/subject.dart';
 import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
 
 import '../agenda.dart' show EventTile;
-import '../section.dart' show EntityTile, NewEntityButton;
+import '../section.dart';
 import '../new_entity_pages/event.dart';
 import '../new_entity_pages/subject.dart' show NewSubjectInfoPage;
 import 'entity.dart';
@@ -77,7 +78,7 @@ class SubjectPage extends HookWidget {
 				pageBuilder: () => SubjectInfoPage(item),
 			)
 		],
-		(_) => NewSubjectInfoPage(subject: subject)
+		() => NewSubjectInfoPage(subject: subject)
 	);
 
 	void _showEvents(BuildContext context) => _showEntities(
@@ -85,24 +86,27 @@ class SubjectPage extends HookWidget {
 		[
 			for (final event in subject.events!) EventTile(event, showSubject: false)
 		],
-		(_) => NewEventPage.subjectEvent(subject)
+		() => NewEventPage.subjectEvent(subject)
 	);
 
 	void _showEntities(
 		BuildContext context,
 		List<Widget> entities,
-		Widget Function(BuildContext) newEntityPageBuilder
+		Widget Function() newEntityPageBuilder
 	) {
 		Navigator.of(context).push(MaterialPageRoute(
-			builder: (context) => Scaffold(
-				body: Center(
-					child: ListView(
-						shrinkWrap: true,
-						children: entities
+			builder: (_) => ChangeNotifierProvider.value(
+				value: context.read<CloudEntitiesSectionData>(),
+				child: Scaffold(
+					body: Center(
+						child: ListView(
+							shrinkWrap: true,
+							children: entities
+						)
+					),
+					floatingActionButton: Cloud.userRole == Role.ordinary ? null : NewEntityButton(
+						pageBuilder: newEntityPageBuilder
 					)
-				),
-				floatingActionButton: Cloud.userRole == Role.ordinary ? null : NewEntityButton(
-					pageBuilder: newEntityPageBuilder
 				)
 			)
 		));
@@ -135,7 +139,7 @@ class SubjectPage extends HookWidget {
 	}
 
 	void _delete(BuildContext context) {
-		Cloud.deleteSubject(subject);
+		subject.delete();
 		Navigator.of(context).pop();
 	}
 }

@@ -30,7 +30,7 @@ class SubjectsSection extends CloudEntitiesSection<SubjectsSectionData, Subject>
 	@override
 	
 	Widget? get actionButton => Cloud.userRole != Role.leader ? null : NewEntityButton(
-		pageBuilder: (_) => NewSubjectPage()
+		pageBuilder: () => NewSubjectPage()
 	);
 
 	@override
