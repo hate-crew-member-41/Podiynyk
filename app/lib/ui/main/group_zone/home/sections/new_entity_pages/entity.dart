@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../agenda.dart';
+import '../../home.dart';
+import '../section.dart';
 
 
 class NewEntityPage extends ConsumerWidget {
@@ -11,14 +12,19 @@ class NewEntityPage extends ConsumerWidget {
 	});
 
 	final List<Widget> children;
-	final Future<bool> Function() handleForm;
+	final Future<void>? Function() handleForm;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
 		return GestureDetector(
 			onDoubleTap: () async {
-				final added = await handleForm();
-				if (added) Navigator.of(context).pop();
+				final adding = handleForm();
+				if (adding != null) {
+					Navigator.of(context).pop();
+
+					final section = ref.read(sectionProvider) as EntitiesSection;
+					ref.read(section.provider.notifier).update();
+				}
 			},
 			child: Scaffold(
 				body: Center(child: ListView(
