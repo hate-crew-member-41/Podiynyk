@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:provider/provider.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
@@ -95,18 +94,15 @@ class SubjectPage extends HookWidget {
 		Widget Function() newEntityPageBuilder
 	) {
 		Navigator.of(context).push(MaterialPageRoute(
-			builder: (_) => ChangeNotifierProvider.value(
-				value: context.read<CloudEntitiesSectionData>(),
-				child: Scaffold(
-					body: Center(
-						child: ListView(
-							shrinkWrap: true,
-							children: entities
-						)
-					),
-					floatingActionButton: Cloud.userRole == Role.ordinary ? null : NewEntityButton(
-						pageBuilder: newEntityPageBuilder
+			builder: (_) => Scaffold(
+				body: Center(
+					child: ListView(
+						shrinkWrap: true,
+						children: entities
 					)
+				),
+				floatingActionButton: Cloud.userRole == Role.ordinary ? null : NewEntityButton(
+					pageBuilder: newEntityPageBuilder
 				)
 			)
 		));

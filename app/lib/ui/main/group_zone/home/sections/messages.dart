@@ -10,13 +10,13 @@ import 'entity_pages/message.dart';
 import 'new_entity_pages/message.dart';
 
 
-class MessagesSectionData extends CloudEntitiesSectionData<Message> {
-	@override
-	Future<List<Message>> get entitiesFuture => Cloud.messages;
-}
+// class MessagesSectionData extends CloudEntitiesSectionData<Message> {
+// 	@override
+// 	Future<List<Message>> get entitiesFuture => Cloud.messages;
+// }
 
 
-class MessagesSection extends CloudEntitiesSection<MessagesSectionData, Message> {
+class MessagesSection extends EntitiesSection<Message> {
 	static const name = "messages";
 	static const icon = Icons.messenger;
 
@@ -26,15 +26,10 @@ class MessagesSection extends CloudEntitiesSection<MessagesSectionData, Message>
 	IconData get sectionIcon => icon;
 
 	@override
-	Widget? get actionButton => Cloud.userRole == Role.ordinary ? null : NewEntityButton(
-		pageBuilder: () => NewMessagePage()
-	);
+	Future<Iterable<Message>> get entities => Cloud.messages;
 
 	@override
-	MessagesSectionData get data => MessagesSectionData();
-
-	@override
-	List<Widget> tiles(BuildContext context, List<Message> messages) => [
+	List<Widget> tiles(BuildContext context, Iterable<Message> messages) => [
 		for (final message in messages) EntityTile(
 			title: message.name,
 			subtitle: message.author.nameRepr,
@@ -43,4 +38,9 @@ class MessagesSection extends CloudEntitiesSection<MessagesSectionData, Message>
 		),
 		if (Cloud.userRole != Role.ordinary) const ListTile()
 	];
+
+	@override
+	Widget? get actionButton => Cloud.userRole == Role.ordinary ? null : NewEntityButton(
+		pageBuilder: () => NewMessagePage()
+	);
 }

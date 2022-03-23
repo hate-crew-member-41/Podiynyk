@@ -10,16 +10,16 @@ import 'entity_pages/subject.dart';
 import 'new_entity_pages/subject.dart';
 
 
-class SubjectsSectionData extends CloudEntitiesSectionData<Subject> {
-	@override
-	Future<List<Subject>> get entitiesFuture => Cloud.subjectsWithEvents;
+// class SubjectsSectionData extends CloudEntitiesSectionData<Subject> {
+// 	@override
+// 	Future<List<Subject>> get entitiesFuture => Cloud.subjectsWithEvents;
 
-	@override
-	Iterable<Subject>? get countedEntities => entities?.where((subject) => subject.isFollowed);
-}
+// 	@override
+// 	Iterable<Subject>? get countedEntities => entities?.where((subject) => subject.isFollowed);
+// }
 
 
-class SubjectsSection extends CloudEntitiesSection<SubjectsSectionData, Subject> {
+class SubjectsSection extends EntitiesSection<Subject> {
 	static const name = "subjects";
 	static const icon = Icons.school;
 
@@ -27,31 +27,26 @@ class SubjectsSection extends CloudEntitiesSection<SubjectsSectionData, Subject>
 	String get sectionName => name;
 	@override
 	IconData get sectionIcon => icon;
-	@override
-	
-	Widget? get actionButton => Cloud.userRole != Role.leader ? null : NewEntityButton(
-		pageBuilder: () => NewSubjectPage()
-	);
 
 	@override
-	SubjectsSectionData get data => SubjectsSectionData();
+	Future<Iterable<Subject>> get entities => Cloud.subjectsWithEvents;
 
 	@override
-	List<Widget> tiles(BuildContext context, List<Subject> subjects) {
+	List<Widget> tiles(BuildContext context, Iterable<Subject> subjects) {
 		final followed = subjects.where((subject) => subject.isFollowed);
 		final unfollowed = subjects.where((subject) => !subject.isFollowed);
 
 		return [
-			for (final subject in followed) tile(context, subject),
+			for (final subject in followed) _tile(context, subject),
 			for (final subject in unfollowed) Opacity(
 				opacity: 0.5,
-				child: tile(context, subject)
+				child: _tile(context, subject)
 			),
 			if (Cloud.userRole == Role.leader) const ListTile()
 		];
 	}
 
-	Widget tile(BuildContext context, Subject subject) {
+	Widget _tile(BuildContext context, Subject subject) {
 		final hasEvents = subject.events!.isNotEmpty;
 
 		return EntityTile(
@@ -61,4 +56,9 @@ class SubjectsSection extends CloudEntitiesSection<SubjectsSectionData, Subject>
 			pageBuilder: () => SubjectPage(subject)
 		);
 	}
+
+	@override
+	Widget? get actionButton => Cloud.userRole != Role.leader ? null : NewEntityButton(
+		pageBuilder: () => NewSubjectPage()
+	);
 }

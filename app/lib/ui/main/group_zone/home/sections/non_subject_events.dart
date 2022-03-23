@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:podiynyk/storage/cloud.dart';
-import 'package:podiynyk/storage/entities/date.dart';
 import 'package:podiynyk/storage/entities/event.dart';
 import 'package:podiynyk/storage/entities/student.dart' show Role;
 
@@ -10,16 +9,16 @@ import 'agenda.dart';
 import 'new_entity_pages/event.dart';
 
 
-class NonSubjectEventsSectionData extends CloudEntitiesSectionData<Event> {
-	@override
-	Future<List<Event>> get entitiesFuture => Cloud.nonSubjectEvents;
+// class NonSubjectEventsSectionData extends CloudEntitiesSectionData<Event> {
+// 	@override
+// 	Future<List<Event>> get entitiesFuture => Cloud.nonSubjectEvents;
 
-	@override
-	Iterable<Event>? get countedEntities => entities?.where((event) => !event.date.isPast);
-}
+// 	@override
+// 	Iterable<Event>? get countedEntities => entities?.where((event) => !event.date.isPast);
+// }
 
 
-class NonSubjectEventsSection extends CloudEntitiesSection<NonSubjectEventsSectionData, Event> {
+class NonSubjectEventsSection extends EntitiesSection<Event> {
 	static const name = "events";
 	static const icon = Icons.event_note;
 
@@ -29,16 +28,16 @@ class NonSubjectEventsSection extends CloudEntitiesSection<NonSubjectEventsSecti
 	IconData get sectionIcon => icon;
 
 	@override
-	Widget? get actionButton => Cloud.userRole == Role.ordinary ? null : NewEntityButton(
-		pageBuilder: () => const NewEventPage.nonSubjectEvent()
-	);
+	Future<Iterable<Event>> get entities => Cloud.nonSubjectEvents;
 
 	@override
-	NonSubjectEventsSectionData get data => NonSubjectEventsSectionData();
-
-	@override
-	List<Widget> tiles(BuildContext context, List<Event> events) => [
+	List<Widget> tiles(BuildContext context, Iterable<Event> events) => [
 		for (final event in events) EventTile(event),
 		if (Cloud.userRole != Role.ordinary) const ListTile()
 	];
+
+	@override
+	Widget? get actionButton => Cloud.userRole == Role.ordinary ? null : NewEntityButton(
+		pageBuilder: () => const NewEventPage.nonSubjectEvent()
+	);
 }

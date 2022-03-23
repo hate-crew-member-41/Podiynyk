@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'storage/appearance.dart';
 import 'storage/cloud.dart';
@@ -10,7 +11,9 @@ import 'ui/main/app_main.dart';
 
 
 void main() {
-	runApp(App());
+	runApp(ProviderScope(
+		child: App()
+	));
 }
 
 

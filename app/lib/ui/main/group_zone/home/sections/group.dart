@@ -7,13 +7,13 @@ import 'section.dart';
 import 'entity_pages/student.dart';
 
 
-class GroupSectionData extends CloudEntitiesSectionData<Student> {
-	@override
-	Future<List<Student>> get entitiesFuture => Cloud.students;
-}
+// class GroupSectionData extends CloudEntitiesSectionData<Student> {
+// 	@override
+// 	Future<List<Student>> get entitiesFuture => Cloud.students;
+// }
 
 
-class GroupSection extends CloudEntitiesSection<GroupSectionData, Student> {
+class GroupSection extends EntitiesSection<Student> {
 	static const name = "group";
 	static const icon = Icons.people;
 
@@ -23,10 +23,10 @@ class GroupSection extends CloudEntitiesSection<GroupSectionData, Student> {
 	IconData get sectionIcon => icon;
 
 	@override
-	GroupSectionData get data => GroupSectionData();
+	Future<Iterable<Student>> get entities => Cloud.students;
 
 	@override
-	List<Widget> tiles(BuildContext context, List<Student> students) => [
+	List<Widget> tiles(BuildContext context, Iterable<Student> students) => [
 		for (final student in students) EntityTile(
 			title: student.nameRepr,
 			subtitle: student.role == Role.ordinary ? null : student.role.name,

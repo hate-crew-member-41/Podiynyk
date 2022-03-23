@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:provider/provider.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
 
@@ -8,49 +7,53 @@ import 'package:podiynyk/storage/appearance.dart';
 abstract class Section extends HookWidget {
 	const Section();
 
-	/// The static [nameRepr].
+	/// The static name.
 	String get sectionName;
-	/// The static [icon].
+	/// The static icon.
 	IconData get sectionIcon;
 
 	Widget? get actionButton => null;
 }
 
 
-abstract class CloudEntitiesSectionData<E> with ChangeNotifier {
-	CloudEntitiesSectionData() {
-		update();
-	}
+// abstract class CloudEntitiesSectionData<E> with ChangeNotifier {
+// 	CloudEntitiesSectionData() {
+// 		update();
+// 	}
 
-	List<E>? _entities;
-	List<E>? get entities => _entities;
+// 	List<E>? _entities;
+// 	List<E>? get entities => _entities;
 
-	Iterable<E>? get countedEntities => _entities;
+// 	Iterable<E>? get countedEntities => _entities;
 
-	Future<List<E>> get entitiesFuture;
+// 	Future<List<E>> get entitiesFuture;
 
-	void rebuild() => notifyListeners();
+// 	void rebuild() => notifyListeners();
 
-	Future<void> update() async {
-		_entities = await entitiesFuture;
-		notifyListeners();
-	}
-}
+// 	Future<void> update() async {
+// 		_entities = await entitiesFuture;
+// 		notifyListeners();
+// 	}
+// }
 
-abstract class CloudEntitiesSection<D extends CloudEntitiesSectionData<E>, E> extends Section {
-	const CloudEntitiesSection();
+abstract class EntitiesSection<E> extends Section {
+	const EntitiesSection();
 
-	D get data;
+	Future<Iterable<E>> get entities;
 
 	@override
 	Widget build(BuildContext context) {
-		final data = context.watch<CloudEntitiesSectionData>() as D;
-		if (data.entities == null) return Center(child: Icon(sectionIcon));
+		final snapshot = useFuture(useMemoized(() => entities));
 
-		return ListView(children: tiles(context, data.entities!));
+		if (snapshot.connectionState == ConnectionState.waiting) {
+			return Center(child: Icon(sectionIcon));
+		}
+		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+
+		return ListView(children: tiles(context, snapshot.data!));
 	}
 
-	List<Widget> tiles(BuildContext context, List<E> entities);
+	List<Widget> tiles(BuildContext context, Iterable<E> entities);
 }
 
 
@@ -91,10 +94,7 @@ class NewEntityButton extends StatelessWidget {
 		return FloatingActionButton(
 			child: const Icon(Icons.add),
 			onPressed: () => Navigator.of(context).push<bool>(MaterialPageRoute(
-				builder: (_) => ChangeNotifierProvider.value(
-					value: context.read<CloudEntitiesSectionData>(),
-					child: pageBuilder()
-				) 
+				builder: (_) => pageBuilder()
 			))
 		);
 	}
