@@ -11,7 +11,6 @@ Make sure that too much of the widget tree is not rebuilt. Check:
 Make the UI react to the following changes.
 
 All entities:
-- deleting ➔ the list
 - adding a label ➔ the tile
 - hiding/showing ➔ the actions
 
@@ -20,10 +19,13 @@ Events:
 - gets/loses the note ➔ the actions
 
 Subjects:
-- new event ➔ the list, the page, the tile
+- adding/deleting an event ➔ the list, the tile
+- adding/deleting an info item ➔ the list
 
 Students:
 - new role ➔ the page, the tile
+
+Consider adding an `update` method to the EntitiesSection class as a shortcut.
 
 ## Before Home
 
@@ -41,9 +43,7 @@ The same question is relevant when the user changes their name later.
 
 ## Appearance
 
-What is shown instead of entity tiles:
-- when they are being fetched
-- if there are none
+What is shown if there are no entities.
 
 What is shown instead of the entity's details while they are being fetched.
 How they enter the page.

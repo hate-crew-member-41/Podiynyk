@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
@@ -8,16 +9,18 @@ import 'package:podiynyk/storage/entities/student.dart' show Role;
 
 import 'package:podiynyk/ui/main/common/fields.dart';
 
+import '../../home.dart' show sectionProvider;
+import '../section.dart' show EntitiesSection;
 import 'entity.dart';
 
 
-class EventPage extends HookWidget {
+class EventPage extends HookConsumerWidget {
 	const EventPage(this.event);
 
 	final Event event;
 
 	@override
-	Widget build(BuildContext context) {
+	Widget build(BuildContext context, WidgetRef ref) {
 		final nameField = useTextEditingController(text: event.nameRepr);
 		final date = useRef(event.date);
 		final noteField = useTextEditingController();
@@ -83,14 +86,17 @@ class EventPage extends HookWidget {
 				),
 				if (Cloud.userRole != Role.ordinary) EntityActionButton(
 					text: "delete",
-					action: () => _delete(context)
+					action: () => _delete(context, ref)
 				)
 			]
 		);
 	}
 
-	void _delete(BuildContext context) {
+	void _delete(BuildContext context, WidgetRef ref) {
 		event.delete();
 		Navigator.of(context).pop();
+
+		final section = ref.read(sectionProvider) as EntitiesSection;
+		ref.read(section.provider.notifier).update();
 	}
 }

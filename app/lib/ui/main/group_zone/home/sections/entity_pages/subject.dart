@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
@@ -8,6 +9,7 @@ import 'package:podiynyk/storage/entities/subject.dart';
 
 import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
 
+import '../../home.dart' show sectionProvider;
 import '../agenda.dart' show EventTile;
 import '../section.dart';
 import '../new_entity_pages/event.dart';
@@ -15,13 +17,13 @@ import '../new_entity_pages/subject.dart' show NewSubjectInfoPage;
 import 'entity.dart';
 
 
-class SubjectPage extends HookWidget {
+class SubjectPage extends HookConsumerWidget {
 	const SubjectPage(this.subject);
 
 	final Subject subject;
 
 	@override
-	Widget build(BuildContext context) {
+	Widget build(BuildContext context, WidgetRef ref) {
 		final nameField = useTextEditingController(text: subject.nameRepr);
 
 		final hasDetails = useState(subject.hasDetails);
@@ -62,7 +64,7 @@ class SubjectPage extends HookWidget {
 					),
 					if (Cloud.userRole == Role.leader) EntityActionButton(
 						text: "delete",
-						action: () => _askDelete(context)
+						action: () => _askDelete(context, ref)
 					)
 				]
 			),
@@ -108,9 +110,9 @@ class SubjectPage extends HookWidget {
 		));
 	}
 
-	void _askDelete(BuildContext context) {
+	void _askDelete(BuildContext context, WidgetRef ref) {
 		if (subject.events!.isEmpty) {
-			_delete(context);
+			_delete(context, ref);
 			return;
 		}
 
@@ -125,18 +127,21 @@ class SubjectPage extends HookWidget {
 					ElevatedButton(
 						child: const Text("continue"),
 						onPressed: () {
+							_delete(context, ref);
 							messenger.hideCurrentSnackBar();
-							_delete(context);
 						}
-					)
+					).withPadding(horizontal: false)
 				]
 			)
 		));
 	}
 
-	void _delete(BuildContext context) {
+	void _delete(BuildContext context, WidgetRef ref) {
 		subject.delete();
 		Navigator.of(context).pop();
+
+		final section = ref.read(sectionProvider) as EntitiesSection;
+		ref.read(section.provider.notifier).update();
 	}
 }
 

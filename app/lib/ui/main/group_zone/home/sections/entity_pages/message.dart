@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/local.dart';
@@ -7,16 +8,19 @@ import 'package:podiynyk/storage/entities/date.dart';
 import 'package:podiynyk/storage/entities/message.dart';
 
 import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
+
+import '../../home.dart' show sectionProvider;
+import '../section.dart' show EntitiesSection;
 import 'entity.dart';
 
 
-class MessagePage extends HookWidget {
+class MessagePage extends HookConsumerWidget {
 	const MessagePage(this.message);
 
 	final Message message;
 
 	@override
-	Widget build(BuildContext context) {
+	Widget build(BuildContext context, WidgetRef ref) {
 		final nameField = useTextEditingController(text: message.name);
 		final contentField = useTextEditingController();
 
@@ -64,14 +68,17 @@ class MessagePage extends HookWidget {
 			actions: [
 				if (isAuthor) EntityActionButton(
 					text: "delete",
-					action: () => _delete(context)
+					action: () => _delete(context, ref)
 				)
 			]
 		);
 	}
 
-	Future<void> _delete(BuildContext context) async {
+	Future<void> _delete(BuildContext context, WidgetRef ref) async {
 		message.delete();
 		Navigator.of(context).pop();
+
+		final section = ref.read(sectionProvider) as EntitiesSection;
+		ref.read(section.provider.notifier).update();
 	}
 }
