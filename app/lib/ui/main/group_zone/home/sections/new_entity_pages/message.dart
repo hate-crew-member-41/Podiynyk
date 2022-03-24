@@ -34,12 +34,13 @@ class NewMessagePage extends HookWidget {
 		);
 	}
 
-	Future<void>? _handleForm(String name, String content) {
-		if (name.isEmpty || content.isEmpty) return null;
+	bool _handleForm(String name, String content) {
+		if (name.isEmpty || content.isEmpty) return false;
 
-		return Cloud.addMessage(Message(
+		Cloud.addMessage(Message(
 			name: name,
 			content: content
 		));
+		return true;
 	}
 }

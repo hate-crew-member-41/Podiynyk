@@ -8,13 +8,13 @@ import 'section.dart';
 import 'entity_pages/student.dart';
 
 
-class GroupNotifier extends EntitiesNotifier<Student> {
+class StudentsNotifier extends EntitiesNotifier<Student> {
 	@override
 	Future<Iterable<Student>> get entities => Cloud.students;
 }
 
-final groupNotifierProvider = StateNotifierProvider<GroupNotifier, Iterable<Student>?>((ref) {
-	return GroupNotifier();
+final studentsNotifierProvider = StateNotifierProvider<StudentsNotifier, Iterable<Student>?>((ref) {
+	return StudentsNotifier();
 });
 
 
@@ -28,7 +28,7 @@ class GroupSection extends EntitiesSection<Student> {
 	IconData get sectionIcon => icon;
 
 	@override
-	StateNotifierProvider<EntitiesNotifier<Student>, Iterable<Student>?> get provider => groupNotifierProvider;
+	StateNotifierProvider<StudentsNotifier, Iterable<Student>?> get provider => studentsNotifierProvider;
 
 	@override
 	List<Widget> tiles(BuildContext context, Iterable<Student> students) => [

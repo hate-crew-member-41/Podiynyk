@@ -25,9 +25,6 @@ Subjects:
 Students:
 - new role ➔ the page, the tile
 
-Updating the section seemed easy: provide the CloudEntitiesSectionData to the entity page and call the rebuild/update method if needed.
-However, calling the rebuild method in the callback returned to the useEffect hook causes an unclear error.
-
 ## Before Home
 
 Make sure that it is safe for the user to do something wrong.
@@ -91,13 +88,17 @@ Come up with a way to display them. They are possible here:
 - ui\main\group_zone\home\sections\section.dart
 - ui\main\group_zone\home\sections\new_entity_pages\event.dart
 
-# Firestore cloud functions
+# Firebase Firestore
 
-## Leader election
+Entity ids rely on the entity's key fields. Come up with a better idea.
+
+## Cloud Functions
+
+### Leader election
 
 As soon as it is clear who is the leader, assign roles to the students (confirmationCount ➔ role).
 
-## Maintaining
+### Maintaining
 
 Clean the past events every midnight.
 

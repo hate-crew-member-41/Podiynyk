@@ -27,9 +27,11 @@ class NewSubjectPage extends HookWidget {
 		);
 	}
 
-	Future<void>? _handleForm(String name) {
-		if (name.isEmpty) return null;
-		return Cloud.addSubject(Subject(name: name));
+	bool _handleForm(String name) {
+		if (name.isEmpty) return false;
+
+		Cloud.addSubject(Subject(name: name));
+		return true;
 	}
 }
 
@@ -62,10 +64,10 @@ class NewSubjectInfoPage extends HookWidget {
 		);
 	}
 
-	Future<bool> _handleForm(String name, String content) async {
+	bool _handleForm(String name, String content) {
 		if (name.isEmpty || content.isEmpty) return false;
 
-		await subject.addInfo(SubjectInfo(
+		subject.addInfo(SubjectInfo(
 			subject: subject,
 			name: name,
 			content: content

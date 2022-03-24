@@ -31,7 +31,7 @@ class MessagesSection extends EntitiesSection<Message> {
 	IconData get sectionIcon => icon;
 
 	@override
-	StateNotifierProvider<EntitiesNotifier<Message>, Iterable<Message>?> get provider => messagesNotifierProvider;
+	StateNotifierProvider<MessagesNotifier, Iterable<Message>?> get provider => messagesNotifierProvider;
 
 	@override
 	List<Widget> tiles(BuildContext context, Iterable<Message> messages) => [

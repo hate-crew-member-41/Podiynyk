@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import 'package:podiynyk/storage/appearance.dart';
+
 import 'sections/agenda.dart';
 import 'sections/non_subject_events.dart';
 import 'sections/group.dart';
@@ -20,6 +22,7 @@ class Home extends ConsumerWidget {
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
 		final section = ref.watch(sectionProvider);
+		final count = section is EntitiesSection ? ref.watch(section.provider)?.length : null;
 
 		return Scaffold(
 			appBar: AppBar(
@@ -32,10 +35,10 @@ class Home extends ConsumerWidget {
 							onTap: () => Scaffold.of(context).openDrawer()
 						)),
 						Row(children: [
-							// if (section.value is CloudEntitiesSection) Visibility(
-							// 	visible: entityCount != null,
-							// 	child: Text(entityCount.toString()).withPadding(),
-							// ),
+							Visibility(
+								visible: count != null,
+								child: Text(count.toString()).withPadding(),
+							),
 							Icon(section.sectionIcon)
 						])
 					]
@@ -96,14 +99,19 @@ class _SectionTile<S extends Section> extends ConsumerWidget {
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
 		return ListTile(
-			title: Text(name),
 			leading: Icon(icon),
+			title: Text(name),
 			onTap: () {
-				final section = ref.read(sectionProvider.notifier);
+				final sectionController = ref.read(sectionProvider.notifier);
 
-				if (section.state is! S) section.state = sectionBuilder();
-				Navigator.of(context).pop();
-			},	
+				if (sectionController.state is! S) {
+					sectionController.state = sectionBuilder();
+					Navigator.of(context).pop();
+
+					final section = sectionController.state;
+					if (section is EntitiesSection) ref.read(section.provider.notifier).update();
+				}
+			},
 			style: ListTileStyle.list
 		);
 	}

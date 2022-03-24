@@ -125,14 +125,15 @@ class NewEventPage extends HookWidget {
 		Navigator.of(context).pop();
 	}
 
-	Future<void>? _handleForm(String name, Subject? subject, DateTime? date, String note) {
-		if (name.isEmpty || date == null) return null;
+	bool _handleForm(String name, Subject? subject, DateTime? date, String note) {
+		if (name.isEmpty || date == null) return false;
 
-		return Cloud.addEvent(Event(
+		Cloud.addEvent(Event(
 			name: name,
 			subject: subject,
 			date: date,
 			note: note.isNotEmpty ? note : null
 		));
+		return true;
 	}
 }

@@ -24,6 +24,8 @@ abstract class EntitiesNotifier<E extends Entity> extends StateNotifier<Iterable
 
 	Future<Iterable<E>> get entities;
 
+	Iterable<E>? get counted => state;
+
 	Future<void> update() async {
 		state = await entities;
 	}

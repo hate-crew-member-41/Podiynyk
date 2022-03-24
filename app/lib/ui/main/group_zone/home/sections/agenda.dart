@@ -11,7 +11,7 @@ import 'entity_pages/event.dart';
 import 'new_entity_pages/event.dart';
 
 
-class AgendaNotifier extends EntitiesNotifier<Event> {
+class EventsNotifier extends EntitiesNotifier<Event> {
 	@override
 	Future<Iterable<Event>> get entities async {
 		final events = await Cloud.events;
@@ -22,10 +22,13 @@ class AgendaNotifier extends EntitiesNotifier<Event> {
 			return !event.isHidden && (subjectIsFollowed || !hasSubject);
 		});
 	}
+
+	@override
+	Iterable<Event>? get counted => state?.where((event) => !event.date.isPast);
 }
 
-final agendaNotifierProvider = StateNotifierProvider<AgendaNotifier, Iterable<Event>?>((ref) {
-	return AgendaNotifier();
+final eventsNotifierProvider = StateNotifierProvider<EventsNotifier, Iterable<Event>?>((ref) {
+	return EventsNotifier();
 });
 
 
@@ -39,7 +42,7 @@ class AgendaSection extends EntitiesSection<Event> {
 	IconData get sectionIcon => icon;
 
 	@override
-	StateNotifierProvider<EntitiesNotifier<Event>, Iterable<Event>?> get provider => agendaNotifierProvider;
+	StateNotifierProvider<EventsNotifier, Iterable<Event>?> get provider => eventsNotifierProvider;
 
 	@override
 	List<Widget> tiles(BuildContext context, Iterable<Event> events) => [

@@ -14,6 +14,9 @@ import 'new_entity_pages/subject.dart';
 class SubjectsNotifier extends EntitiesNotifier<Subject> {
 	@override
 	Future<Iterable<Subject>> get entities => Cloud.subjectsWithEvents;
+
+	@override
+	Iterable<Subject>? get counted => state?.where((subject) => subject.isFollowed);
 }
 
 final subjectsNotifierProvider = StateNotifierProvider<SubjectsNotifier, Iterable<Subject>?>((ref) {
