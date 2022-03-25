@@ -61,10 +61,14 @@ class App extends StatelessWidget {
 					contentPadding: Appearance.padding,
 					hintStyle: TextStyle(color: Appearance.primaryColor.withOpacity(.5))
 				),
+				textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(
+					padding: Appearance.padding,
+					textStyle: Appearance.titleText
+				)),
 				elevatedButtonTheme: ElevatedButtonThemeData(style: ElevatedButton.styleFrom(
 					minimumSize: const Size.fromHeight(0),
 					padding: Appearance.padding,
-					textStyle: Appearance.bodyText
+					textStyle: Appearance.titleText
 				)),
 				dialogTheme: DialogTheme(
 					backgroundColor: Appearance.backgroundColor,

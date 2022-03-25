@@ -66,7 +66,15 @@ class SubjectPage extends HookConsumerWidget {
 						text: "delete",
 						action: () => _askDelete(context, ref)
 					)
-				]
+				],
+				sectionShouldRebuild: () {
+					if (nameField.text != subject.nameRepr) {
+						subject.nameRepr = nameField.text;
+						return true;
+					}
+
+					return false;
+				}
 			),
 		));
 	}
@@ -130,7 +138,7 @@ class SubjectPage extends HookConsumerWidget {
 							_delete(context, ref);
 							messenger.hideCurrentSnackBar();
 						}
-					).withPadding(horizontal: false)
+					)
 				]
 			)
 		));
@@ -139,9 +147,7 @@ class SubjectPage extends HookConsumerWidget {
 	void _delete(BuildContext context, WidgetRef ref) {
 		subject.delete();
 		Navigator.of(context).pop();
-
-		final section = ref.read(sectionProvider) as EntitiesSection;
-		ref.read(section.provider.notifier).update();
+		(ref.read(sectionProvider) as EntitiesSection).update(ref);
 	}
 }
 

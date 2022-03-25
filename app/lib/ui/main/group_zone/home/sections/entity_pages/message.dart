@@ -32,10 +32,7 @@ class MessagePage extends HookConsumerWidget {
 				contentField.text = message.content;
 			});
 
-			return () {
-				if (nameField.text != message.name) message.name = nameField.text;
-				if (contentField.text != message.content) message.content = contentField.text;
-			};
+			return null;
 		}, const []);
 
 		final isAuthor = message.author.name == Local.userName;
@@ -70,15 +67,25 @@ class MessagePage extends HookConsumerWidget {
 					text: "delete",
 					action: () => _delete(context, ref)
 				)
-			]
+			],
+			sectionShouldRebuild: () {
+				bool changed = false;
+
+				if (nameField.text != message.name) {
+					message.name = nameField.text;
+					changed = true;
+				}
+
+				if (contentField.text != message.content) message.content = contentField.text;
+
+				return changed;
+			},
 		);
 	}
 
 	Future<void> _delete(BuildContext context, WidgetRef ref) async {
 		message.delete();
 		Navigator.of(context).pop();
-
-		final section = ref.read(sectionProvider) as EntitiesSection;
-		ref.read(section.provider.notifier).update();
+		(ref.read(sectionProvider) as EntitiesSection).update(ref);
 	}
 }

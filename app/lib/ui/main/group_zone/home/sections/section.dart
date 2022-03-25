@@ -26,6 +26,10 @@ abstract class EntitiesNotifier<E extends Entity> extends StateNotifier<Iterable
 
 	Iterable<E>? get counted => state;
 
+	void rebuild() {
+		state = [...state!];
+	}
+
 	Future<void> update() async {
 		state = await entities;
 	}
@@ -36,6 +40,8 @@ abstract class EntitiesSection<E extends Entity> extends Section {
 	const EntitiesSection();
 
 	StateNotifierProvider<EntitiesNotifier<E>, Iterable<E>?> get provider;
+
+	Future<void> update(WidgetRef ref) => ref.read(provider.notifier).update();
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {

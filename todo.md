@@ -1,6 +1,6 @@
 # App
 
-Make sure that no widgets have initializations in the constructor.
+Consider making the entity class immutable.
 
 Make sure that too much of the widget tree is not rebuilt. Check:
 - hooks: useState, useListenable
@@ -11,11 +11,9 @@ Make sure that too much of the widget tree is not rebuilt. Check:
 Make the UI react to the following changes.
 
 All entities:
-- adding a label ➔ the tile
 - hiding/showing ➔ the actions
 
 Events:
-- new date ➔ the tile
 - gets/loses the note ➔ the actions
 
 Subjects:
@@ -23,7 +21,7 @@ Subjects:
 - adding/deleting an info item ➔ the list
 
 Students:
-- new role ➔ the page, the tile
+- new role ➔ the page, the actions
 
 Consider adding an `update` method to the EntitiesSection class as a shortcut.
 
@@ -43,16 +41,20 @@ The same question is relevant when the user changes their name later.
 
 ## Appearance
 
-What is shown if there are no entities.
+Highlight the tile of the current section.
+
+What is shown when the entities are being fetched and if there are none.
 
 What is shown instead of the entity's details while they are being fetched.
 How they enter the page.
 
 The loading screen.
 
-Why is the current typed word underlined?
+The current typed word underlined. Words are not auto-capitalized.
 
 Consider adding some automatic focus changes to new-entity forms.
+
+The color of the selected-text toolbar.
 
 ### Ideas
 
@@ -90,7 +92,7 @@ Come up with a way to display them. They are possible here:
 
 # Firebase Firestore
 
-Entity ids rely on the entity's key fields. Come up with a better idea.
+Entity ids rely on the entity's key fields. Come up with a better idea. Consider just using Firestore's auto ids.
 
 ## Cloud Functions
 

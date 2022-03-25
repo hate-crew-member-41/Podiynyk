@@ -21,11 +21,6 @@ class StudentPage extends HookWidget {
 		final nameField = useTextEditingController(text: student.nameRepr);
 		final role = useRef(student.role);
 
-		useEffect(() => () {
-			if (nameField.text != student.nameRepr) student.nameRepr = nameField.text;
-			if (role.value != student.role) student.role = role.value;
-		});
-
 		return EntityPage(
 			children: [
 				InputField(
@@ -50,7 +45,22 @@ class StudentPage extends HookWidget {
 					text: "make the leader",
 					action: () => Cloud.makeLeader(student)
 				)
-			]
+			],
+			sectionShouldRebuild: () {
+				bool changed = false;
+
+				if (nameField.text != student.nameRepr) {
+					student.nameRepr = nameField.text;
+					changed = true;
+				}
+
+				if (role.value != student.role) {
+					student.role = role.value;
+					changed = true;
+				}
+
+				return changed;
+			}
 		);
 	}
 }

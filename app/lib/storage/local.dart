@@ -5,7 +5,7 @@ import 'fields.dart';
 import 'entities/entity.dart';
 
 
-class Local {
+abstract class Local {
 	static late final Box<dynamic> _misc;
 	static late final Box<Map> _labels;
 	static late final Box<List<String>> _entities;

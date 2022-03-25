@@ -37,13 +37,7 @@ class EventPage extends HookConsumerWidget {
 
 			if (showNote.value) noteField.text = event.note!;
 
-			return () {
-				if (nameField.text != event.nameRepr) event.nameRepr = nameField.text;
-				if (date.value != event.date) event.date = date.value;
-
-				final note = noteField.text.isNotEmpty ? noteField.text : null;
-				if (note != event.note) event.note = note;
-			};
+			return null;
 		}, const []);
 
 		return EntityPage(
@@ -88,15 +82,30 @@ class EventPage extends HookConsumerWidget {
 					text: "delete",
 					action: () => _delete(context, ref)
 				)
-			]
+			],
+			sectionShouldRebuild: () {
+				bool changed = false;
+
+				if (nameField.text != event.nameRepr) {
+					event.nameRepr = nameField.text;
+					changed = true;
+				}
+				if (date.value != event.date) {
+					event.date = date.value;
+					changed = true;
+				}
+
+				final note = noteField.text.isNotEmpty ? noteField.text : null;
+				if (note != event.note) event.note = note;
+
+				return changed;
+			},
 		);
 	}
 
 	void _delete(BuildContext context, WidgetRef ref) {
 		event.delete();
 		Navigator.of(context).pop();
-
-		final section = ref.read(sectionProvider) as EntitiesSection;
-		ref.read(section.provider.notifier).update();
+		(ref.read(sectionProvider) as EntitiesSection).update(ref);
 	}
 }

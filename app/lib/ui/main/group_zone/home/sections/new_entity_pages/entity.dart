@@ -20,9 +20,7 @@ class NewEntityPage extends ConsumerWidget {
 			onDoubleTap: () async {
 				if (handleForm()) {
 					Navigator.of(context).pop();
-
-					final section = ref.read(sectionProvider) as EntitiesSection;
-					ref.read(section.provider.notifier).update();
+					(ref.read(sectionProvider) as EntitiesSection).update(ref);
 				}
 			},
 			child: Scaffold(

@@ -106,11 +106,12 @@ class _SectionTile<S extends Section> extends ConsumerWidget {
 
 				if (sectionController.state is! S) {
 					sectionController.state = sectionBuilder();
-					Navigator.of(context).pop();
 
 					final section = sectionController.state;
-					if (section is EntitiesSection) ref.read(section.provider.notifier).update();
+					if (section is EntitiesSection) section.update(ref);
 				}
+				
+				Navigator.of(context).pop();
 			},
 			style: ListTileStyle.list
 		);

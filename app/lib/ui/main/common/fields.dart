@@ -105,7 +105,7 @@ class DateField extends HookWidget {
 			firstDate: now,
 			lastDate: now.add(const Duration(days: 365)),
 			helpText: '',
-			confirmText: "pick the time",
+			confirmText: "time",
 			cancelText: "cancel"
 		);
 

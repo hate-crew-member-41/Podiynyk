@@ -41,7 +41,7 @@ extension CloudId on String {
 }
 
 
-class Cloud {
+abstract class Cloud {
 	static final _cloud = FirebaseFirestore.instance;
 
 	/// Initializes [Firebase] and synchronizes the user's [Role] in the group.
