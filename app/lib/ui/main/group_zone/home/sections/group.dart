@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/student.dart';
 
+import 'providers.dart' show EntitiesNotifierProvider, studentsNotifierProvider;
 import 'section.dart';
 import 'entity_pages/student.dart';
-
-
-final studentsNotifierProvider = EntitiesNotifierProvider<Student>((ref) {
-	return EntitiesNotifier(() => Cloud.students);
-});
 
 
 class GroupSection extends EntitiesSection<Student> {

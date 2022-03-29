@@ -6,14 +6,10 @@ import 'package:podiynyk/storage/entities/date.dart';
 import 'package:podiynyk/storage/entities/event.dart';
 import 'package:podiynyk/storage/entities/student.dart';
 
+import 'providers.dart' show EntitiesNotifierProvider, eventsNotifierProvider;
 import 'section.dart';
 import 'entity_pages/event.dart';
 import 'new_entity_pages/event.dart';
-
-
-final eventsNotifierProvider = EntitiesNotifierProvider((ref) {
-	return EntitiesNotifier(() => Cloud.events);
-});
 
 
 class AgendaSection extends EntitiesSection<Event> {

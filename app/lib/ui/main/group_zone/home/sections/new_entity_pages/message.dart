@@ -7,7 +7,7 @@ import 'package:podiynyk/storage/entities/message.dart';
 
 import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
 
-import '../messages.dart' show messagesNotifierProvider;
+import '../providers.dart' show messagesNotifierProvider;
 import 'entity.dart';
 
 

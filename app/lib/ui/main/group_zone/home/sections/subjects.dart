@@ -7,15 +7,10 @@ import 'package:podiynyk/storage/entities/event.dart';
 import 'package:podiynyk/storage/entities/student.dart' show Role;
 import 'package:podiynyk/storage/entities/subject.dart';
 
+import 'providers.dart' show EntitiesNotifierProvider, eventsNotifierProvider, subjectsNotifierProvider;
 import 'section.dart';
-import 'agenda.dart';
 import 'entity_pages/subject.dart';
 import 'new_entity_pages/subject.dart';
-
-
-final subjectsNotifierProvider = EntitiesNotifierProvider<Subject>((ref) {
-	return EntitiesNotifier(() => Cloud.subjects);
-});
 
 
 class SubjectsSection extends EntitiesSection<Subject> {

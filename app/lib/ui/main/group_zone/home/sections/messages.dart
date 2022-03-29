@@ -6,14 +6,10 @@ import 'package:podiynyk/storage/entities/date.dart';
 import 'package:podiynyk/storage/entities/message.dart';
 import 'package:podiynyk/storage/entities/student.dart' show Role;
 
+import 'providers.dart' show EntitiesNotifierProvider, messagesNotifierProvider;
 import 'section.dart';
 import 'entity_pages/message.dart';
 import 'new_entity_pages/message.dart';
-
-
-final messagesNotifierProvider = EntitiesNotifierProvider<Message>((ref) {
-	return EntitiesNotifier(() => Cloud.messages);
-});
 
 
 class MessagesSection extends EntitiesSection<Message> {

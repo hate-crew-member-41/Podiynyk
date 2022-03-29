@@ -9,7 +9,7 @@ import 'package:podiynyk/storage/entities/subject.dart';
 
 import 'package:podiynyk/ui/main/common/fields.dart';
 
-import '../agenda.dart' show eventsNotifierProvider;
+import '../providers.dart' show eventsNotifierProvider;
 import 'entity.dart';
 
 

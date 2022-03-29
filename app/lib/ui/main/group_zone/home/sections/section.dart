@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
-import 'package:podiynyk/storage/cloud.dart' show EntityCollectionRefs;
 import 'package:podiynyk/storage/entities/entity.dart';
 
-
-typedef EntitiesNotifierProvider<E extends Entity> = StateNotifierProvider<EntitiesNotifier<E>, Iterable<E>?>;
+import 'providers.dart' show EntitiesNotifier;
 
 
 abstract class Section extends ConsumerWidget {
@@ -16,30 +14,6 @@ abstract class Section extends ConsumerWidget {
 	IconData get icon;
 
 	Widget? get actionButton => null;
-}
-
-
-class EntitiesNotifier<E extends Entity> extends StateNotifier<Iterable<E>?> {
-	EntitiesNotifier(this.entities): super(null) {
-		update();
-	}
-
-	final Future<Iterable<E>> Function() entities;
-
-	void rebuild() {
-		state = [...state!];
-	}
-
-	Future<void> update() async => state = await entities();
-
-	Future<void> add(E entity) {
-		final collection = entity.cloudCollection!, details = entity.detailsInCloudFormat;
-
-		collection.ref.update({entity.id: entity.inCloudFormat});
-		if (details != null) collection.detailsRef(entity).set(details);
-
-		return update();
-	}
 }
 
 

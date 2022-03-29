@@ -6,8 +6,9 @@ import 'package:podiynyk/storage/entities/date.dart';
 import 'package:podiynyk/storage/entities/event.dart';
 import 'package:podiynyk/storage/entities/student.dart' show Role;
 
-import 'section.dart';
 import 'agenda.dart';
+import 'providers.dart' show EntitiesNotifierProvider, eventsNotifierProvider;
+import 'section.dart';
 import 'new_entity_pages/event.dart';
 
 

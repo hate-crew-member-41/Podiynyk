@@ -10,13 +10,14 @@ import 'package:podiynyk/storage/entities/subject_info.dart';
 
 import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
 
-import '../agenda.dart';
+import '../agenda.dart' show EventTile;
+import '../providers.dart' show eventsNotifierProvider;
 import '../section.dart';
 import '../new_entity_pages/event.dart';
 import '../new_entity_pages/subject_info.dart';
 
-import 'subject_info.dart';
 import 'entity.dart';
+import 'subject_info.dart';
 
 
 final subjectInfoProvider = StateProvider<List<SubjectInfo>?>((ref) {
