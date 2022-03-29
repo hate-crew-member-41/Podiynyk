@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../home.dart';
-import '../section.dart';
+import 'package:podiynyk/storage/entities/entity.dart';
 
 
-class NewEntityPage extends ConsumerWidget {
+class NewEntityPage<E extends Entity> extends ConsumerWidget {
 	const NewEntityPage({
 		required this.children,
-		required this.handleForm
+		required this.entityOnAdd,
+		required this.add
 	});
 
 	final List<Widget> children;
-	final bool Function() handleForm;
+	final E? Function() entityOnAdd;
+	final void Function(E) add;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
 		return GestureDetector(
 			onDoubleTap: () async {
-				if (handleForm()) {
+				final entity = entityOnAdd();
+				if (entity != null) {
+					add(entity);
 					Navigator.of(context).pop();
-					(ref.read(sectionProvider) as EntitiesSection).update(ref);
 				}
 			},
 			child: Scaffold(

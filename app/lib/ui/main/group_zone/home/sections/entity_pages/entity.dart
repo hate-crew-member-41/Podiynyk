@@ -40,10 +40,7 @@ class EntityPage extends ConsumerWidget {
 			child: _builder(),
 			onWillPop: () async {
 				final changed = sectionShouldRebuild!();
-				if (changed) {
-					final section = ref.read(sectionProvider) as EntitiesSection;
-					ref.read(section.provider.notifier).rebuild();
-				}
+				if (changed) (ref.read(sectionProvider) as EntitiesSection).notifier(ref).rebuild();
 
 				return true;
 			},

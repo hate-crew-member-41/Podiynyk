@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/event.dart';
-import 'package:podiynyk/storage/entities/subject.dart' show Subject;
+import 'package:podiynyk/storage/entities/subject.dart';
 
 import 'package:podiynyk/ui/main/common/fields.dart';
 
+import '../agenda.dart' show eventsNotifierProvider;
 import 'entity.dart';
 
 
-class NewEventPage extends HookWidget {
+class NewEventPage extends HookConsumerWidget {
 	const NewEventPage() :
 		_doAskSubject = true,
 		_subjectIsDefined = false,
@@ -32,7 +34,7 @@ class NewEventPage extends HookWidget {
 	final Subject? _initialSubject;
 
 	@override
-	Widget build(BuildContext context) {
+	Widget build(BuildContext context, WidgetRef ref) {
 		final nameField = useTextEditingController();
 		final subjectField = useTextEditingController(text: _initialSubject?.nameRepr);
 		final noteField = useTextEditingController();
@@ -43,7 +45,8 @@ class NewEventPage extends HookWidget {
 		final subjectsFuture = useMemoized(() => _doAskSubject ? Cloud.subjects : null);
 
 		return NewEntityPage(
-			handleForm: () => _handleForm(nameField.text, subject.value, date.value, noteField.text),
+			entityOnAdd: () => _eventOnAdd(nameField.text, subject.value, date.value, noteField.text),
+			add: ref.read(eventsNotifierProvider.notifier).add,
 			children: [
 				InputField(
 					controller: nameField,
@@ -125,15 +128,14 @@ class NewEventPage extends HookWidget {
 		Navigator.of(context).pop();
 	}
 
-	bool _handleForm(String name, Subject? subject, DateTime? date, String note) {
-		if (name.isEmpty || date == null) return false;
-
-		Cloud.addEvent(Event(
+	Event? _eventOnAdd(String name, Subject? subject, DateTime? date, String note) {
+		if (name.isNotEmpty && date != null) return Event(
 			name: name,
 			subject: subject,
 			date: date,
 			note: note.isNotEmpty ? note : null
-		));
-		return true;
+		);
+
+		return null;
 	}
 }

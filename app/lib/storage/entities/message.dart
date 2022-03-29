@@ -2,75 +2,75 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../cloud.dart';
 import '../fields.dart';
-import '../local.dart';
 
-import 'creatable.dart';
 import 'entity.dart';
 import 'student.dart';
 
 
-class Message extends Entity implements CreatableEntity, Comparable {
+class Message extends Entity {
 	Message({
 		required String name,
-		required String content
+		required this.content
 	}) :
-		_name = name,
-		_content = content,
-		author = Student(name: Local.userName),
+		author = Student.user(),
 		date = DateTime.now(),
-		_hasDetails = true,
-		super(idComponents: [Local.userId, name]);
+		super.created(name: name);
 
-	Message.fromCloudFormat(MapEntry<String, dynamic> entry) :
-		_name = entry.value[Field.name.name] as String,
-		date = (entry.value[Field.date.name] as Timestamp).toDate(),
-		author = Student(name: entry.value[Field.author.name] as String),
-		_hasDetails = false,
-		super.fromCloud(id: entry.key);
+	/// ```
+	/// $id: {
+	/// 	name: String,
+	/// 	author: {
+	/// 		id: String,
+	/// 		name: String
+	/// 	},
+	/// 	date: Timestamp
+	/// }
+	/// ```
+	Message.fromCloud({required String id, required CloudMap object}) :
+		author = Student.author(object[Identifier.author.name]),
+		date = (object[Identifier.date.name] as Timestamp).toDate(),
+		content = null,
+		super.fromCloud(id: id, object: object);
 
-	final DateTime date;
+	/// ```
+	/// content: String
+	/// ```
+	Message._withDetails({
+		required Message message,
+		required CloudMap details
+	}) :
+		author = message.author,
+		date = message.date,
+		content = details[Identifier.content.name] as String,
+		super.withDetails(entity: message);
+
 	final Student author;
+	final DateTime date;
 
-	String _name;
-	String get name => _name;
-	set name(String name) {
-		if (name.isEmpty) return;
-		_name = name;
-		Cloud.updateMessageName(this);
-	}
-
-	late String _content;
-	String get content => _content;
-	set content(String content) {
-		if (content.isEmpty) return;
-		_content = content;
-		Cloud.updateMessageContent(this);
-	}
-
-	bool _hasDetails;
-	bool get hasDetails => _hasDetails;
-
-	Future<void> addDetails() async {
-		if (_hasDetails) return;
-
-		final details = await Cloud.entityDetails(Collection.messages, id);
-		content = details[Field.content.name];
-		_hasDetails = true;
-	}
-
-	Future<void> delete() => Cloud.deleteMessage(this);
+	final String? content;
 
 	@override
 	CloudMap get inCloudFormat => {
-		Field.name.name: name,
-		Field.date.name: date,
-		Field.author.name: author.name
+		Identifier.name.name: name,
+		Identifier.author.name: {
+			Identifier.id.name: author.id,
+			Identifier.name.name: author.name
+		},
+		Identifier.date.name: date
+	};
+	@override
+	CloudMap get detailsInCloudFormat => {
+		Identifier.content.name: content!
 	};
 
 	@override
-	CloudMap get detailsInCloudFormat => {
-		Field.content.name: content
-	};
+	Future<Message> get withDetails async => Message._withDetails(
+		message: this,
+		details: await Cloud.entityDetails(this)
+	);
+
+	@override
+	EntityCollection get cloudCollection => EntityCollection.messages;
 
 	@override
 	int compareTo(covariant Message other) => other.date.compareTo(date);

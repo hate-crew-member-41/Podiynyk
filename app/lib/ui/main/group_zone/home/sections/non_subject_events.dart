@@ -11,36 +11,39 @@ import 'agenda.dart';
 import 'new_entity_pages/event.dart';
 
 
-class NonSubjectEventsNotifier extends EntitiesNotifier<Event> {
-	@override
-	Future<Iterable<Event>> get entities => Cloud.nonSubjectEvents;
-
-	@override
-	Iterable<Event>? get counted => state?.where((event) => !event.date.isPast);
-}
-
-final nonSubjectEventsNotifierProvider = StateNotifierProvider<NonSubjectEventsNotifier, Iterable<Event>?>((ref) {
-	return NonSubjectEventsNotifier();
-});
-
-
 class NonSubjectEventsSection extends EntitiesSection<Event> {
-	static const name = "events";
-	static const icon = Icons.event_note;
+	const NonSubjectEventsSection();
 
 	@override
-	String get sectionName => name;
+	String get name => "events";
 	@override
-	IconData get sectionIcon => icon;
+	IconData get icon => Icons.event_note;
 
 	@override
-	StateNotifierProvider<NonSubjectEventsNotifier, Iterable<Event>?> get provider => nonSubjectEventsNotifierProvider;
+	EntitiesNotifierProvider<Event> get provider => eventsNotifierProvider;
 
 	@override
-	List<Widget> tiles(BuildContext context, Iterable<Event> events) => [
-		for (final event in events) EventTile(event),
-		if (Cloud.userRole != Role.ordinary) const ListTile()
-	];
+	Iterable<Event>? shownEntities(Iterable<Event>? entities) =>
+		entities?.where((event) => event.subject == null);
+	
+	@override
+	Iterable<Event>? countedEntities(WidgetRef ref) {
+		final shown = shownEntities(ref.watch(eventsNotifierProvider));
+		return shown?.where((event) => !event.date.isPast);
+	}
+
+	@override
+	Widget build(BuildContext context, WidgetRef ref) {
+		final events = shownEntities(ref.watch(eventsNotifierProvider));
+
+		if (events == null) return Center(child: Icon(icon));
+		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+
+		return ListView(children: [
+			for (final event in events) EventTile(event),
+			if (Cloud.userRole != Role.ordinary) const ListTile()
+		]);
+	}
 
 	@override
 	Widget? get actionButton => Cloud.userRole == Role.ordinary ? null : NewEntityButton(

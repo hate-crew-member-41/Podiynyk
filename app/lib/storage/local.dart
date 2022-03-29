@@ -1,8 +1,16 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'cloud.dart' show CloudId;
+import 'cloud.dart';
 import 'fields.dart';
 import 'entities/entity.dart';
+
+
+/// The [Hive] [Box]es that the local data is stored in.
+enum DataBox {
+	misc,
+	labels,
+	entities
+}
 
 
 abstract class Local {
@@ -26,106 +34,95 @@ abstract class Local {
 	static bool get userIsIdentified => groupId != null;
 
 	/// The id of the user's group.
-	static String? get groupId => _misc.get(Field.groupId.name);
-	/// Sets the user's [groupId] to the non-null [id] and initializes the data.
+	// static String? get groupId => _misc.get(Identifier.groupId.name);
+	static String? get groupId => 'zc1hMAjhkRSJ7l6lsjCU';
+	/// Sets the user's [groupId] and initializes the data.
 	static set groupId(String? id) {
-		_misc.put(Field.groupId.name, id!);
+		_misc.put(Identifier.groupId.name, id!);
 
 		_labels.putAll({
-			Field.students.name: <String, String>{},
-			Field.subjects.name: <String, String>{},
-			Field.subjectInfo.name: <String, String>{},
-			Field.events.name: <String, String>{}
+			Identifier.students.name: <String, String>{},
+			Identifier.subjects.name: <String, String>{},
+			Identifier.subjectInfo.name: <String, String>{},
+			Identifier.events.name: <String, String>{}
 		});
 		_entities.putAll({
-			Field.unfollowedSubjects.name: <String>[],
-			Field.hiddenEvents.name: <String>[]
+			Identifier.unfollowedSubjects.name: <String>[],
+			Identifier.hiddenEvents.name: <String>[]
 		});
 	}
 
-	/// Whether it is known who is the leader. Either `true` ot `null`.
-	static bool? get leaderIsElected => _misc.get(Field.leaderIsElected.name);
-	/// Sets [leaderIsElected] to the non-`false` value, because `false` can never be guaranteed.
-	static set leaderIsElected(bool? isElected) => _misc.put(Field.leaderIsElected.name, true);
+	// /// Whether it is known who is the leader. Either `true` ot `null`.
+	// static bool? get leaderIsElected => _misc.get(Identifier.leaderIsElected.name);
+	// /// Sets [leaderIsElected] to the non-`false` value, because `false` can never be guaranteed.
+	// static set leaderIsElected(bool? isElected) => _misc.put(Identifier.leaderIsElected.name, true);
 
 	/// Sets [userId].
-	static set userId(String id) => _misc.put(Field.userId.name, id);
+	static set userId(String id) => _misc.put(Identifier.userId.name, id);
 	/// The user's id in the group.
-	static String get userId => _misc.get(Field.userId.name)!;
+	// static String get userId => _misc.get(Identifier.userId.name)!;
+	static String get userId => 'dev';
 
 	/// Sets [userName] and initializes [userId] if needed.
 	static set userName(String name) {
-		_misc.put(Field.userName.name, name);
-		if (_misc.get(Field.userId.name) == null) _misc.put(Field.userId.name, name.safeId);
+		_misc.put(Identifier.userName.name, name);
+		if (_misc.get(Identifier.userId.name) == null) _misc.put(Identifier.userId.name, name.safeId);
 	}
 	/// The user's name.
-	static String get userName => _misc.get(Field.userName.name)!;
+	// static String get userName => _misc.get(Identifier.userName.name)!;
+	static String get userName => '🕵️';
 
-	/// The [collection] entity's label.
-	static String? entityLabel(Field collection, String essence) {
-		return _labels.get(collection.name)![essence];
+	/// The [entity]'s label.
+	static String? entityLabel(Entity entity) {
+		return _labels.get(entity.labelCollection!.name)![entity.id];
 	}
 
-	/// Sets the [collection] entity's [label].
-	static Future<void> setEntityLabel(Field collection, String essence, String label) async {
-		await _labels.put(
-			collection.name,
-			_labels.get(collection.name)!..[essence] = label
-		);
+	/// Stores the [entity]'s label.
+	static Future<void> storeEntityLabel(Entity entity) async {
+		final collection = entity.labelCollection!.name;
+		final modified = _labels.get(collection)!..[entity.id] = entity.label;
+		await _labels.put(collection, modified);
 	}
 
-	/// Deletes the [collection] entity's label.
-	static Future<void> deleteEntityLabel(Field collection, String essence) async {
-		await _labels.put(
-			collection.name,
-			_labels.get(collection.name)!..remove(essence)
-		);
+	/// Deletes the [entity]'s label.
+	static Future<void> deleteEntityLabel(Entity entity) async {
+		final collection = entity.labelCollection!.name;
+		final modified = _labels.get(collection)!..remove(entity.id);
+		await _labels.put(collection, modified);
 	}
 
-	/// Deletes the [collection] entities that do not exist anymore.
-	static Future<void> clearEntityLabels(Field collection, List<Entity> existing) async {
-		final existingEssences = {for (final entity in existing) entity.id};
-		final cleared  = _labels.get(collection.name)!..removeWhere(
-			(essence, _) => !existingEssences.contains(essence)
-		);
-		await _labels.put(collection.name, cleared);
+	/// Deletes the [collection]'s entities that do not exist anymore.
+	static Future<void> clearEntityLabels(Iterable<Entity> existing) async {
+		if (existing.isEmpty) return;
+
+		final collection = existing.first.labelCollection!.name;
+		final existingIds = {for (final entity in existing) entity.id};
+
+		final cleared = _labels.get(collection)!..removeWhere((id, _) => !existingIds.contains(id));
+		await _labels.put(collection, cleared);
 	}
 
-	/// Whether the [collection] entity has not been stored.
-	static bool entityIsStored(Field collection, String essence) {
-		return _entities.get(collection.name)!.contains(essence);
+	/// Whether the [entity] has been stored in the [collection].
+	static bool entityIsStored(Identifier collection, Entity entity) {
+		return _entities.get(collection.name)!.contains(entity.id);
 	}
 
-	/// Stores the [collection] entity.
-	static Future<void> storeEntity(Field collection, String essence) async {
-		await _entities.put(
-			collection.name,
-			_entities.get(collection.name)!..add(essence)
-		);
+	/// Stores the [entity] in the [collection].
+	static Future<void> storeEntity(Identifier collection, Entity entity) async {
+		final modified = _entities.get(collection.name)!..add(entity.id);
+		await _entities.put(collection.name, modified);
 	}
 
-	/// Deletes the [collection] entity.
-	static Future<void> deleteEntity(Field collection, String essence) async {
-		await _entities.put(
-			collection.name,
-			_entities.get(collection.name)!..remove(essence)
-		);
+	/// Deletes the [entity] from the [collection].
+	static Future<void> deleteEntity(Identifier collection, Entity entity) async {
+		final modified = _entities.get(collection.name)!..remove(entity.id);
+		await _entities.put(collection.name, modified);
 	}
 
-	/// Deletes the [collection] entities that do not exist anymore.
-	static Future<void> clearStoredEntities(Field collection, List<Entity> existing) async {
-		final existingEssences = {for (final entity in existing) entity.id};
-		final cleared = _entities.get(collection.name)!..removeWhere(
-			(essence) => !existingEssences.contains(essence)
-		);
+	/// Deletes the [collection]'s outdated entities.
+	static Future<void> deleteOutdatedEntities(Identifier collection, Iterable<Entity> existing) async {
+		final existingIds = {for (final entity in existing) entity.id};
+		final cleared = _entities.get(collection.name)!..removeWhere((id) => !existingIds.contains(id));
 		await _entities.put(collection.name, cleared);
 	}
-}
-
-
-/// The [Hive] [Box]es that the local data is stored in.
-enum DataBox {
-	misc,
-	labels,
-	entities
 }

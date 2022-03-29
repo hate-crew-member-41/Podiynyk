@@ -11,44 +11,47 @@ import 'entity_pages/event.dart';
 import 'new_entity_pages/event.dart';
 
 
-class EventsNotifier extends EntitiesNotifier<Event> {
-	@override
-	Future<Iterable<Event>> get entities async {
-		final events = await Cloud.events;
-
-		return events.where((event) {
-			final hasSubject = event.subject != null;
-			final subjectIsFollowed = hasSubject && event.subject!.isFollowed;
-			return !event.isHidden && (subjectIsFollowed || !hasSubject);
-		});
-	}
-
-	@override
-	Iterable<Event>? get counted => state?.where((event) => !event.date.isPast);
-}
-
-final eventsNotifierProvider = StateNotifierProvider<EventsNotifier, Iterable<Event>?>((ref) {
-	return EventsNotifier();
+final eventsNotifierProvider = EntitiesNotifierProvider((ref) {
+	return EntitiesNotifier(() => Cloud.events);
 });
 
 
 class AgendaSection extends EntitiesSection<Event> {
-	static const name = "agenda";
-	static const icon = Icons.import_contacts;
+	const AgendaSection();
 
 	@override
-	String get sectionName => name;
+	String get name => "agenda";
 	@override
-	IconData get sectionIcon => icon;
+	IconData get icon => Icons.import_contacts;
 
 	@override
-	StateNotifierProvider<EventsNotifier, Iterable<Event>?> get provider => eventsNotifierProvider;
+	EntitiesNotifierProvider<Event> get provider => eventsNotifierProvider;
 
 	@override
-	List<Widget> tiles(BuildContext context, Iterable<Event> events) => [
-		for (final entity in events) EventTile(entity),
-		if (Cloud.userRole != Role.ordinary) const ListTile()
-	];
+	Iterable<Event>? shownEntities(Iterable<Event>? entities) => entities?.where((event) {
+		if (event.isHidden) return false;
+		if (event.subject == null) return true;
+		return event.subject!.isFollowed;
+	});
+
+	@override
+	Iterable<Event>? countedEntities(WidgetRef ref) {
+		final shown = shownEntities(ref.watch(eventsNotifierProvider));
+		return shown?.where((event) => !event.date.isPast);
+	}
+
+	@override
+	Widget build(BuildContext context, WidgetRef ref) {
+		final events = shownEntities(ref.watch(eventsNotifierProvider));
+
+		if (events == null) return Center(child: Icon(icon));
+		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+
+		return ListView(children: [
+			for (final entity in events) EventTile(entity),
+			if (Cloud.userRole != Role.ordinary) const ListTile()
+		]);
+	}
 
 	@override
 	Widget? get actionButton => Cloud.userRole == Role.ordinary ? null : NewEntityButton(

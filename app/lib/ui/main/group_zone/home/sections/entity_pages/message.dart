@@ -9,8 +9,6 @@ import 'package:podiynyk/storage/entities/message.dart';
 
 import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
 
-import '../../home.dart' show sectionProvider;
-import '../section.dart' show EntitiesSection;
 import 'entity.dart';
 
 
@@ -24,16 +22,16 @@ class MessagePage extends HookConsumerWidget {
 		final nameField = useTextEditingController(text: message.name);
 		final contentField = useTextEditingController();
 
-		final hasDetails = useState(message.hasDetails);
+		// final hasDetails = useState(message.hasDetails);
 
-		useEffect(() {
-			message.addDetails().whenComplete(() {
-				hasDetails.value = message.hasDetails;
-				contentField.text = message.content;
-			});
+		// useEffect(() {
+		// 	message.addDetails().whenComplete(() {
+		// 		hasDetails.value = message.hasDetails;
+		// 		contentField.text = message.content;
+		// 	});
 
-			return null;
-		}, const []);
+		// 	return null;
+		// }, const []);
 
 		final isAuthor = message.author.name == Local.userName;
 
@@ -62,30 +60,30 @@ class MessagePage extends HookConsumerWidget {
 					style: Appearance.titleText
 				).withPadding()
 			],
-			actions: [
-				if (isAuthor) EntityActionButton(
-					text: "delete",
-					action: () => _delete(context, ref)
-				)
-			],
-			sectionShouldRebuild: () {
-				bool changed = false;
+			// actions: [
+			// 	if (isAuthor) EntityActionButton(
+			// 		text: "delete",
+			// 		action: () => _delete(context, ref)
+			// 	)
+			// ],
+			// sectionShouldRebuild: () {
+			// 	bool changed = false;
 
-				if (nameField.text != message.name) {
-					message.name = nameField.text;
-					changed = true;
-				}
+			// 	if (nameField.text != message.name) {
+			// 		message.name = nameField.text;
+			// 		changed = true;
+			// 	}
 
-				if (contentField.text != message.content) message.content = contentField.text;
+			// 	if (contentField.text != message.content) message.content = contentField.text;
 
-				return changed;
-			},
+			// 	return changed;
+			// },
 		);
 	}
 
-	Future<void> _delete(BuildContext context, WidgetRef ref) async {
-		message.delete();
-		Navigator.of(context).pop();
-		(ref.read(sectionProvider) as EntitiesSection).update(ref);
-	}
+	// Future<void> _delete(BuildContext context, WidgetRef ref) async {
+	// 	message.delete();
+	// 	Navigator.of(context).pop();
+	// 	(ref.read(sectionProvider) as EntitiesSection).update(ref);
+	// }
 }

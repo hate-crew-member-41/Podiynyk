@@ -19,6 +19,7 @@ dependencies:
 
   # state management
   flutter_hooks: ^0.18.2+1
+  hooks_riverpod: ^1.0.3
   provider: ^6.0.2
 
   # storage
@@ -28,7 +29,6 @@ dependencies:
 
   # appearance
   google_fonts: ^2.2.0
-  hooks_riverpod: ^1.0.3
 
 dev_dependencies:
   flutter_test:

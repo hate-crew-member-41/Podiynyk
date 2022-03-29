@@ -5,6 +5,9 @@ app/ios/
 # Working with Firebase with Admin SDK
 firebase/key.json
 
+# Design sketches
+design/
+
 # A script for code statistics
 app/code_stats.py
 
@@ -26,14 +29,14 @@ app/analysis_options.yaml
 .history
 .svn/
 
+# VS Code related
+.vscode/
+
 # IntelliJ related
 *.iml
 *.ipr
 *.iws
 .idea/
-
-# VS Code related
-.vscode/
 
 # Flutter/Dart/Pub related
 **/doc/api/

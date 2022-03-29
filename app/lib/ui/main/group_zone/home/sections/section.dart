@@ -2,36 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
+import 'package:podiynyk/storage/cloud.dart' show EntityCollectionRefs;
 import 'package:podiynyk/storage/entities/entity.dart';
+
+
+typedef EntitiesNotifierProvider<E extends Entity> = StateNotifierProvider<EntitiesNotifier<E>, Iterable<E>?>;
 
 
 abstract class Section extends ConsumerWidget {
 	const Section();
 
-	/// The static name.
-	String get sectionName;
-	/// The static icon.
-	IconData get sectionIcon;
+	String get name;
+	IconData get icon;
 
 	Widget? get actionButton => null;
 }
 
 
-abstract class EntitiesNotifier<E extends Entity> extends StateNotifier<Iterable<E>?> {
-	EntitiesNotifier(): super(null) {
+class EntitiesNotifier<E extends Entity> extends StateNotifier<Iterable<E>?> {
+	EntitiesNotifier(this.entities): super(null) {
 		update();
 	}
 
-	Future<Iterable<E>> get entities;
-
-	Iterable<E>? get counted => state;
+	final Future<Iterable<E>> Function() entities;
 
 	void rebuild() {
 		state = [...state!];
 	}
 
-	Future<void> update() async {
-		state = await entities;
+	Future<void> update() async => state = await entities();
+
+	Future<void> add(E entity) {
+		final collection = entity.cloudCollection!, details = entity.detailsInCloudFormat;
+
+		collection.ref.update({entity.id: entity.inCloudFormat});
+		if (details != null) collection.detailsRef(entity).set(details);
+
+		return update();
 	}
 }
 
@@ -41,19 +48,11 @@ abstract class EntitiesSection<E extends Entity> extends Section {
 
 	StateNotifierProvider<EntitiesNotifier<E>, Iterable<E>?> get provider;
 
-	Future<void> update(WidgetRef ref) => ref.read(provider.notifier).update();
+	EntitiesNotifier<E> notifier(WidgetRef ref) => ref.read(provider.notifier);
 
-	@override
-	Widget build(BuildContext context, WidgetRef ref) {
-		final entities = ref.watch(provider);
+	Iterable<E>? shownEntities(Iterable<E>? entities) => entities;
 
-		if (entities == null) return Center(child: Icon(sectionIcon));
-		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
-
-		return ListView(children: tiles(context, entities));
-	}
-
-	List<Widget> tiles(BuildContext context, Iterable<E> entities);
+	Iterable<E>? countedEntities(WidgetRef ref) => shownEntities(ref.watch(provider));
 }
 
 

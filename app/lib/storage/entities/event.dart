@@ -4,85 +4,85 @@ import '../cloud.dart';
 import '../fields.dart';
 import '../local.dart';
 
-import 'creatable.dart';
-import 'labelable.dart';
+import 'entity.dart';
 import 'subject.dart';
 
 
-class Event extends LabelableEntity implements CreatableEntity, Comparable {
+class Event extends Entity {
 	Event({
 		required String name,
 		required this.subject,
-		required DateTime date,
-		String? note
+		required this.date,
+		this.note
 	}) :
-		_date = date,
-		_note = note,
-		_hasDetails = true,
-		super(
-			idComponents: [subject?.name, name],
-			name: name
-		);
+		isHidden = false,
+		super.created(name: name);
 
-	Event.fromCloudFormat(MapEntry<String, dynamic> entry) :
-		subject = entry.value[Field.subject.name] != null ?
-			Subject.name(name: entry.value[Field.subject.name] as String) :
-			null,
-		_date = (entry.value[Field.date.name] as Timestamp).toDate(),
-		_hasDetails = false,
-		super.fromCloud(
-			id: entry.key,
-			name: entry.value[Field.name.name] as String
-		);
-	
+	/// ```
+	/// $id: {
+	/// 	name: String,
+	/// 	subject: {
+	/// 		id: String,
+	/// 		name: String
+	/// 	},
+	/// 	date: Timestamp
+	/// }
+	/// ```
+	Event.fromCloud({required String id, required CloudMap object}) :
+		subject = object.containsKey(Identifier.subject.name) ? Subject.ofEvent(object[Identifier.subject.name]) : null,
+		date = (object[Identifier.date.name] as Timestamp).toDate(),
+		note = null,
+		super.fromCloud(id: id, object: object)
+	{
+		isHidden = Local.entityIsStored(Identifier.hiddenEvents, this);
+	}
+
+	/// ```
+	/// note?: String
+	/// ```
+	Event._withDetails({required Event event, required CloudMap details}) :
+		subject = event.subject,
+		date = event.date,
+		isHidden = event.isHidden,
+		note = details[Identifier.note.name],
+		super.withDetails(entity: event);
+
 	final Subject? subject;
+	final DateTime date;
+	late final bool isHidden;
 
-	DateTime _date;
-	DateTime get date => _date;
-	set date(DateTime date) {
-		_date = date;
-		Cloud.updateEventDate(this);
-	}
-
-	late String? _note;
-	String? get note => _note;
-	set note(String? note) {
-		_note = note!.isNotEmpty ? note : null;
-		Cloud.updateEventNote(this);
-	}
-
-	bool _hasDetails;
-	bool get hasDetails => _hasDetails;
-
-	bool get isHidden => Local.entityIsStored(Field.hiddenEvents, id);
-	set isHidden(bool isHidden) {
-		isHidden ? Local.storeEntity(Field.hiddenEvents, id) : Local.deleteEntity(Field.hiddenEvents, id);
-	}
-
-	Future<void> addDetails() async {
-		if (_hasDetails) return;
-
-		final details = await Cloud.entityDetails(Collection.events, id);
-		_note = details[Field.note.name];
-		_hasDetails = true;
-	}
-
-	Future<void> delete() => Cloud.deleteEvent(this);
+	final String? note;
 
 	@override
 	CloudMap get inCloudFormat => {
-		Field.name.name: name,
-		Field.subject.name: subject?.name,
-		Field.date.name: _date,
+		Identifier.name.name: name,
+		if (subject != null) Identifier.subject.name: {
+			Identifier.id.name: subject!.id,
+			Identifier.name.name: subject!.name
+		},
+		Identifier.date.name: date
 	};
-
 	@override
 	CloudMap get detailsInCloudFormat => {
-		if (note != null) Field.note.name: note
+		if (note != null) Identifier.note.name: note
 	};
 
 	@override
-	Field get labelCollection => Field.events;
+	Future<Event> get withDetails async => Event._withDetails(
+		event: this,
+		details: await Cloud.entityDetails(this)
+	);
+
+	@override
+	EntityCollection get cloudCollection => EntityCollection.events;
+	@override
+	Identifier get labelCollection => Identifier.events;
+
+	static String countRepr(int count) {
+		if (count > 1) return "$count events";
+		if (count == 1) return "1 event";
+		return "no events";
+	}
 
 	@override
 	int compareTo(covariant Event other) => date.compareTo(other.date);

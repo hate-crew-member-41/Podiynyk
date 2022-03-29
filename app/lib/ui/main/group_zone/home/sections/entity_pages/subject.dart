@@ -9,12 +9,18 @@ import 'package:podiynyk/storage/entities/subject.dart';
 
 import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
 
-import '../../home.dart' show sectionProvider;
-import '../agenda.dart' show EventTile;
+import '../agenda.dart';
 import '../section.dart';
 import '../new_entity_pages/event.dart';
-import '../new_entity_pages/subject.dart' show NewSubjectInfoPage;
+import '../new_entity_pages/subject_info.dart';
+
+import 'subject_info.dart';
 import 'entity.dart';
+
+
+final subjectProvider = StateProvider<Subject?>((ref) {
+	return null;
+});
 
 
 class SubjectPage extends HookConsumerWidget {
@@ -26,15 +32,15 @@ class SubjectPage extends HookConsumerWidget {
 	Widget build(BuildContext context, WidgetRef ref) {
 		final nameField = useTextEditingController(text: subject.nameRepr);
 
-		final hasDetails = useState(subject.hasDetails);
+		// final hasDetails = useState(subject.hasDetails);
 
-		useEffect(() {
-			subject.addDetails().whenComplete(() => hasDetails.value = subject.hasDetails);
+		// useEffect(() {
+		// 	subject.addDetails().whenComplete(() => hasDetails.value = subject.hasDetails);
 
-			return () {
-				if (nameField.text != subject.nameRepr) subject.nameRepr = nameField.text;
-			};
-		}, const []);
+		// 	return () {
+		// 		if (nameField.text != subject.nameRepr) subject.nameRepr = nameField.text;
+		// 	};
+		// }, const []);
 
 		return ScaffoldMessenger(child: Builder(
 			builder: (context) => EntityPage(
@@ -54,139 +60,116 @@ class SubjectPage extends HookConsumerWidget {
 						onTap: () => _showEvents(context)
 					)
 				],
-				actions: [
-					subject.isFollowed ? EntityActionButton(
-						text: "unfollow",
-						action: () => subject.isFollowed = false
-					) : EntityActionButton(
-						text: "follow",
-						action: () => subject.isFollowed = true
-					),
-					if (Cloud.userRole == Role.leader) EntityActionButton(
-						text: "delete",
-						action: () => _askDelete(context, ref)
-					)
-				],
-				sectionShouldRebuild: () {
-					if (nameField.text != subject.nameRepr) {
-						subject.nameRepr = nameField.text;
-						return true;
-					}
+				// actions: [
+				// 	subject.isFollowed ? EntityActionButton(
+				// 		text: "unfollow",
+				// 		action: () => subject.isFollowed = false
+				// 	) : EntityActionButton(
+				// 		text: "follow",
+				// 		action: () => subject.isFollowed = true
+				// 	),
+				// 	if (Cloud.userRole == Role.leader) EntityActionButton(
+				// 		text: "delete",
+				// 		action: () => _askDelete(context, ref)
+				// 	)
+				// ],
+				// sectionShouldRebuild: () {
+				// 	if (nameField.text != subject.nameRepr) {
+				// 		subject.nameRepr = nameField.text;
+				// 		return true;
+				// 	}
 
-					return false;
-				}
+				// 	return false;
+				// }
 			),
 		));
 	}
 
-	void _showInfo(BuildContext context) => _showEntities(
+	void _showInfo(BuildContext context) => _showEntitiesPage(
 		context,
-		[
-			for (final item in subject.info!) EntityTile(
-				title: item.nameRepr,
-				pageBuilder: () => SubjectInfoPage(item),
-			)
-		],
-		() => NewSubjectInfoPage(subject: subject)
-	);
-
-	void _showEvents(BuildContext context) => _showEntities(
-		context,
-		[
-			for (final event in subject.events!) EventTile(event, showSubject: false)
-		],
-		() => NewEventPage.subjectEvent(subject)
-	);
-
-	void _showEntities(
-		BuildContext context,
-		List<Widget> entities,
-		Widget Function() newEntityPageBuilder
-	) {
-		Navigator.of(context).push(MaterialPageRoute(
-			builder: (_) => Scaffold(
-				body: Center(
-					child: ListView(
-						shrinkWrap: true,
-						children: entities
-					)
-				),
-				floatingActionButton: Cloud.userRole == Role.ordinary ? null : NewEntityButton(
-					pageBuilder: newEntityPageBuilder
+		(_) => _EntitiesPage(
+			tiles: (ref) => [
+				for (final item in ref.watch(subjectProvider)!.info!) EntityTile(
+					title: item.nameRepr,
+					pageBuilder: () => SubjectInfoPage(item),
 				)
-			)
-		));
+			],
+			newEntityPageBuilder: () => const NewSubjectInfoPage()
+		)
+	);
+
+	void _showEvents(BuildContext context) => _showEntitiesPage(
+		context,
+		(_) => _EntitiesPage(
+			tiles: (ref) {
+				final events = ref.watch(eventsNotifierProvider)!.where((event) => event.subject == subject);
+				return [
+					for (final event in events) EventTile(event, showSubject: false)
+				];
+			},
+			newEntityPageBuilder: () => NewEventPage.subjectEvent(subject)
+		)
+	);
+
+	void _showEntitiesPage(BuildContext context, Widget Function(BuildContext) pageBuilder) {
+		Navigator.of(context).push(MaterialPageRoute(builder: pageBuilder));
 	}
 
-	void _askDelete(BuildContext context, WidgetRef ref) {
-		if (subject.events!.isEmpty) {
-			_delete(context, ref);
-			return;
-		}
+	// void _askDelete(BuildContext context, WidgetRef ref) {
+	// 	if (subject.events!.isEmpty) {
+	// 		_delete(context, ref);
+	// 		return;
+	// 	}
 
-		final messenger = ScaffoldMessenger.of(context);
-		messenger.showSnackBar(SnackBar(
-			padding: Appearance.padding,
-			content: Column(
-				mainAxisSize: MainAxisSize.min,
-				crossAxisAlignment: CrossAxisAlignment.start,
-				children: [
-					const Text("The events will also be deleted.").withPadding(horizontal: false),
-					ElevatedButton(
-						child: const Text("continue"),
-						onPressed: () {
-							_delete(context, ref);
-							messenger.hideCurrentSnackBar();
-						}
-					)
-				]
-			)
-		));
-	}
+	// 	final messenger = ScaffoldMessenger.of(context);
+	// 	messenger.showSnackBar(SnackBar(
+	// 		padding: Appearance.padding,
+	// 		content: Column(
+	// 			mainAxisSize: MainAxisSize.min,
+	// 			crossAxisAlignment: CrossAxisAlignment.start,
+	// 			children: [
+	// 				const Text("The events will also be deleted.").withPadding(horizontal: false),
+	// 				ElevatedButton(
+	// 					child: const Text("continue"),
+	// 					onPressed: () {
+	// 						_delete(context, ref);
+	// 						messenger.hideCurrentSnackBar();
+	// 					}
+	// 				)
+	// 			]
+	// 		)
+	// 	));
+	// }
 
-	void _delete(BuildContext context, WidgetRef ref) {
-		subject.delete();
-		Navigator.of(context).pop();
-		(ref.read(sectionProvider) as EntitiesSection).update(ref);
-	}
+	// void _delete(BuildContext context, WidgetRef ref) {
+	// 	subject.delete();
+	// 	Navigator.of(context).pop();
+	// 	(ref.read(sectionProvider) as EntitiesSection).update(ref);
+	// }
 }
 
 
-class SubjectInfoPage extends HookWidget {
-	final SubjectInfo info;
+class _EntitiesPage extends ConsumerWidget {
+	const _EntitiesPage({
+		required this.tiles,
+		required this.newEntityPageBuilder
+	});
 
-	const SubjectInfoPage(this.info);
+	final List<Widget> Function(WidgetRef) tiles;
+	final Widget Function() newEntityPageBuilder;
 
 	@override
-	Widget build(BuildContext context) {
-		final nameField = useTextEditingController(text: info.nameRepr);
-		final contentField = useTextEditingController(text: info.content);
-
-		useEffect(() => () {
-			if (nameField.text != info.nameRepr) info.nameRepr = nameField.text;
-			if (contentField.text != info.content) info.content = contentField.text;
-		}, const []);
-
-		return EntityPage(
-			children: [
-				InputField(
-					controller: nameField,
-					name: "topic",
-					style: Appearance.headlineText
-				),
-				InputField(
-					controller: contentField,
-					name: "content",
-					multiline: true,
-					style: Appearance.bodyText,
+	Widget build(BuildContext context, WidgetRef ref) {
+		return Scaffold(
+			body: Center(
+				child: ListView(
+					shrinkWrap: true,
+					children: tiles(ref)
 				)
-			],
-			actions: [
-				if (Cloud.userRole != Role.ordinary) EntityActionButton(
-					text: "delete",
-					action: info.delete
-				)
-			]
+			),
+			floatingActionButton: Cloud.userRole == Role.ordinary ? null : NewEntityButton(
+				pageBuilder: newEntityPageBuilder
+			)
 		);
 	}
 }

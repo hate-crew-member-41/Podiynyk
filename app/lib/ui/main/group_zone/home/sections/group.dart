@@ -8,34 +8,35 @@ import 'section.dart';
 import 'entity_pages/student.dart';
 
 
-class StudentsNotifier extends EntitiesNotifier<Student> {
-	@override
-	Future<Iterable<Student>> get entities => Cloud.students;
-}
-
-final studentsNotifierProvider = StateNotifierProvider<StudentsNotifier, Iterable<Student>?>((ref) {
-	return StudentsNotifier();
+final studentsNotifierProvider = EntitiesNotifierProvider<Student>((ref) {
+	return EntitiesNotifier(() => Cloud.students);
 });
 
 
 class GroupSection extends EntitiesSection<Student> {
-	static const name = "group";
-	static const icon = Icons.people;
+	const GroupSection();
 
 	@override
-	String get sectionName => name;
+	String get name => "group";
 	@override
-	IconData get sectionIcon => icon;
+	IconData get icon => Icons.people;
 
 	@override
-	StateNotifierProvider<StudentsNotifier, Iterable<Student>?> get provider => studentsNotifierProvider;
+	EntitiesNotifierProvider<Student> get provider => studentsNotifierProvider;
 
 	@override
-	List<Widget> tiles(BuildContext context, Iterable<Student> students) => [
-		for (final student in students) EntityTile(
-			title: student.nameRepr,
-			subtitle: student.role == Role.ordinary ? null : student.role.name,
-			pageBuilder: () => StudentPage(student)
-		)
-	];
+	Widget build(BuildContext context, WidgetRef ref) {
+		final students = ref.watch(studentsNotifierProvider);
+
+		if (students == null) return Center(child: Icon(icon));
+		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+
+		return ListView(children: [
+			for (final student in students) EntityTile(
+				title: student.nameRepr,
+				subtitle: student.role == Role.ordinary ? null : student.role!.name,
+				pageBuilder: () => StudentPage(student)
+			)
+		]);
+	}
 }

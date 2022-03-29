@@ -2,72 +2,44 @@ import '../cloud.dart';
 import '../fields.dart';
 import '../local.dart';
 
-import 'labelable.dart';
+import 'entity.dart';
 
 
-class Student extends LabelableEntity implements Comparable {
-	Student({required String name}) :
-		confirmationCount = null,
-		super(
-			idComponents: [name],
-			name: name
-		);
+class Student extends Entity {
+	Student.user() :
+		role = Cloud.userRole,
+		super(id: Local.userId, name: Local.userName);
 
-	Student.candidateFromCloudFormat(MapEntry<String, dynamic> entry) :
-		_role = null,
-		confirmationCount = entry.value[Field.confirmationCount.name] as int,
-		super.fromCloud(
-			id: entry.key,
-			name: entry.value[Field.name.name] as String
-		);
+	/// ```
+	/// $id: {
+	/// 	name: String,
+	/// 	role: int
+	/// }
+	/// ```
+	Student.fromCloud({required String id, required CloudMap object}) :
+		role = Role.values[object[Identifier.role.name] as int],
+		super.fromCloud(id: id, object: object);
 
-	Student.fromCloudFormat(MapEntry<String, dynamic> entry) :
-		_role = Role.values[entry.value[Field.role.name] as int],
-		confirmationCount = null,
-		super.fromCloud(
-			id: entry.key,
-			name: entry.value[Field.name.name] as String
-		);
+	Student.author(CloudMap object) :
+		role = null,
+		super.fromObject(object);
 
-	final int? confirmationCount;
-
-	Role? _role;
-	Role get role => _role!;
-	set role(Role role) {
-		_role = role;
-
-		if (_role != Role.leader) {
-			Cloud.updateRole(this);
-		}
-		else {
-			Cloud.makeLeader(this);
-			_role = Role.trusted;
-		}
-	}
+	final Role? role;
 
 	@override
-	set nameRepr(String repr) {
-		if (name != Local.userName) {
-			super.nameRepr = repr;
-		}
-		else if (repr != name && repr.isNotEmpty) {
-			name = repr;
-			Local.userName = repr;
-			Cloud.updateName();
-		}
-	}
-
-	Future<void> voteFor({String? previousId}) => Cloud.changeLeaderVote(toId: id, fromId: previousId);
+	CloudMap get inCloudFormat => {
+		Identifier.name.name: name,
+		Identifier.role.name: role!.index
+	};
 
 	@override
-	Field get labelCollection => Field.students;
-
+	EntityCollection get cloudCollection => EntityCollection.students;
 	@override
-	int compareTo(covariant Student other) => nameRepr.compareTo(other.nameRepr);
+	Identifier get labelCollection => Identifier.students;
 }
 
 
-/// The [Role] of a [Student] in their group.
+/// The [Role] of a [Student] in the group.
 enum Role {
 	/// Views the group's content. Multiple [Student]s in the group can have this [Role].
 	ordinary,

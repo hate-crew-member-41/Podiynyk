@@ -4,18 +4,15 @@ import 'section.dart';
 
 
 class SettingsSection extends Section {
-	static const name = "settings";
-	static const icon = Icons.settings;
-
 	const SettingsSection();
 
 	@override
-	String get sectionName => name;
+	String get name => "settings";
 	@override
-	IconData get sectionIcon => icon;
+	IconData get icon => Icons.settings;
 
 	@override
 	Widget build(BuildContext context, _) {
-		return const Center(child: Icon(icon));
+		return Center(child: Icon(icon));
 	}
 }

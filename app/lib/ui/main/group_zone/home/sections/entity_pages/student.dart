@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
-import 'package:podiynyk/storage/cloud.dart';
-import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/student.dart';
 
 import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
@@ -19,7 +17,7 @@ class StudentPage extends HookWidget {
 	@override
 	Widget build(BuildContext context) {
 		final nameField = useTextEditingController(text: student.nameRepr);
-		final role = useRef(student.role);
+		// final role = useRef(student.role);
 
 		return EntityPage(
 			children: [
@@ -29,38 +27,38 @@ class StudentPage extends HookWidget {
 					style: Appearance.headlineText
 				),
 				if (student.role != Role.ordinary) Text(
-					student.role.name,
+					student.role!.name,
 					style: Appearance.largeTitleText
 				).withPadding()
 			],
-			actions: Cloud.userRole != Role.leader || student.name == Local.userName ? [] : [
-				student.role == Role.ordinary ? EntityActionButton(
-					text: "trust",
-					action: () => role.value = Role.trusted
-				) : EntityActionButton(
-					text: "untrust",
-					action: () => role.value = Role.ordinary
-				),
-				EntityActionButton(
-					text: "make the leader",
-					action: () => Cloud.makeLeader(student)
-				)
-			],
-			sectionShouldRebuild: () {
-				bool changed = false;
+			// actions: Cloud.userRole != Role.leader || student.name == Local.userName ? [] : [
+			// 	student.role == Role.ordinary ? EntityActionButton(
+			// 		text: "trust",
+			// 		action: () => role.value = Role.trusted
+			// 	) : EntityActionButton(
+			// 		text: "untrust",
+			// 		action: () => role.value = Role.ordinary
+			// 	),
+			// 	EntityActionButton(
+			// 		text: "make the leader",
+			// 		action: () => Cloud.makeLeader(student)
+			// 	)
+			// ],
+			// sectionShouldRebuild: () {
+			// 	bool changed = false;
 
-				if (nameField.text != student.nameRepr) {
-					student.nameRepr = nameField.text;
-					changed = true;
-				}
+			// 	if (nameField.text != student.nameRepr) {
+			// 		student.nameRepr = nameField.text;
+			// 		changed = true;
+			// 	}
 
-				if (role.value != student.role) {
-					student.role = role.value;
-					changed = true;
-				}
+			// 	if (role.value != student.role) {
+			// 		student.role = role.value;
+			// 		changed = true;
+			// 	}
 
-				return changed;
-			}
+			// 	return changed;
+			// }
 		);
 	}
 }

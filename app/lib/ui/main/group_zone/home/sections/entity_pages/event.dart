@@ -9,8 +9,6 @@ import 'package:podiynyk/storage/entities/student.dart' show Role;
 
 import 'package:podiynyk/ui/main/common/fields.dart';
 
-import '../../home.dart' show sectionProvider;
-import '../section.dart' show EntitiesSection;
 import 'entity.dart';
 
 
@@ -25,20 +23,20 @@ class EventPage extends HookConsumerWidget {
 		final date = useRef(event.date);
 		final noteField = useTextEditingController();
 
-		final hasDetails = useState(event.hasDetails);
+		// final hasDetails = useState(event.hasDetails);
 		final showNote = useState(event.hasDetails && event.note != null);
 
-		useEffect(() {
-			event.addDetails().whenComplete(() {
-				hasDetails.value = event.hasDetails;
-				showNote.value = event.note != null;
-				if (showNote.value) noteField.text = event.note!;
-			});
+		// useEffect(() {
+		// 	event.addDetails().whenComplete(() {
+		// 		hasDetails.value = event.hasDetails;
+		// 		showNote.value = event.note != null;
+		// 		if (showNote.value) noteField.text = event.note!;
+		// 	});
 
-			if (showNote.value) noteField.text = event.note!;
+		// 	if (showNote.value) noteField.text = event.note!;
 
-			return null;
-		}, const []);
+		// 	return null;
+		// }, const []);
 
 		return EntityPage(
 			children: [
@@ -66,46 +64,46 @@ class EventPage extends HookConsumerWidget {
 					)
 				]
 			],
-			actions: [
-				if (event.hasDetails && event.note == null) EntityActionButton(
-					text: "add a note",
-					action: () => showNote.value = true
-				),
-				!event.isHidden ? EntityActionButton(
-					text: "hide",
-					action: () => event.isHidden = true
-				) : EntityActionButton(
-					text: "show",
-					action: () => event.isHidden = false
-				),
-				if (Cloud.userRole != Role.ordinary) EntityActionButton(
-					text: "delete",
-					action: () => _delete(context, ref)
-				)
-			],
-			sectionShouldRebuild: () {
-				bool changed = false;
+			// actions: [
+			// 	if (event.hasDetails && event.note == null) EntityActionButton(
+			// 		text: "add a note",
+			// 		action: () => showNote.value = true
+			// 	),
+			// 	!event.isHidden ? EntityActionButton(
+			// 		text: "hide",
+			// 		action: () => event.isHidden = true
+			// 	) : EntityActionButton(
+			// 		text: "show",
+			// 		action: () => event.isHidden = false
+			// 	),
+			// 	if (Cloud.userRole != Role.ordinary) EntityActionButton(
+			// 		text: "delete",
+			// 		action: () => _delete(context, ref)
+			// 	)
+			// ],
+			// sectionShouldRebuild: () {
+			// 	bool changed = false;
 
-				if (nameField.text != event.nameRepr) {
-					event.nameRepr = nameField.text;
-					changed = true;
-				}
-				if (date.value != event.date) {
-					event.date = date.value;
-					changed = true;
-				}
+			// 	if (nameField.text != event.nameRepr) {
+			// 		event.nameRepr = nameField.text;
+			// 		changed = true;
+			// 	}
+			// 	if (date.value != event.date) {
+			// 		event.date = date.value;
+			// 		changed = true;
+			// 	}
 
-				final note = noteField.text.isNotEmpty ? noteField.text : null;
-				if (note != event.note) event.note = note;
+			// 	final note = noteField.text.isNotEmpty ? noteField.text : null;
+			// 	if (note != event.note) event.note = note;
 
-				return changed;
-			},
+			// 	return changed;
+			// },
 		);
 	}
 
-	void _delete(BuildContext context, WidgetRef ref) {
-		event.delete();
-		Navigator.of(context).pop();
-		(ref.read(sectionProvider) as EntitiesSection).update(ref);
-	}
+	// void _delete(BuildContext context, WidgetRef ref) {
+	// 	event.delete();
+	// 	Navigator.of(context).pop();
+	// 	(ref.read(sectionProvider) as EntitiesSection).update(ref);
+	// }
 }

@@ -1,6 +1,6 @@
 # App
 
-Consider making the entity class immutable.
+Allow widgets to be present if they have no actual effect (GestureDetector, WillPopScope).
 
 Make sure that too much of the widget tree is not rebuilt. Check:
 - hooks: useState, useListenable
@@ -90,9 +90,13 @@ Come up with a way to display them. They are possible here:
 - ui\main\group_zone\home\sections\section.dart
 - ui\main\group_zone\home\sections\new_entity_pages\event.dart
 
-# Firebase Firestore
+# Firebase
 
-Entity ids rely on the entity's key fields. Come up with a better idea. Consider just using Firestore's auto ids.
+## Cloud Firestore
+
+Consider indicating that an event does not belong to a subject bu not including the `subject` field at all.
+
+Does EntityCollection need `detailsRef`?
 
 ## Cloud Functions
 

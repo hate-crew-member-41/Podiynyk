@@ -3,61 +3,61 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/date.dart';
+import 'package:podiynyk/storage/entities/event.dart';
 import 'package:podiynyk/storage/entities/student.dart' show Role;
 import 'package:podiynyk/storage/entities/subject.dart';
 
 import 'section.dart';
+import 'agenda.dart';
 import 'entity_pages/subject.dart';
 import 'new_entity_pages/subject.dart';
 
 
-class SubjectsNotifier extends EntitiesNotifier<Subject> {
-	@override
-	Future<Iterable<Subject>> get entities => Cloud.subjectsWithEvents;
-
-	@override
-	Iterable<Subject>? get counted => state?.where((subject) => subject.isFollowed);
-}
-
-final subjectsNotifierProvider = StateNotifierProvider<SubjectsNotifier, Iterable<Subject>?>((ref) {
-	return SubjectsNotifier();
+final subjectsNotifierProvider = EntitiesNotifierProvider<Subject>((ref) {
+	return EntitiesNotifier(() => Cloud.subjects);
 });
 
 
 class SubjectsSection extends EntitiesSection<Subject> {
-	static const name = "subjects";
-	static const icon = Icons.school;
+	const SubjectsSection();
 
 	@override
-	String get sectionName => name;
+	String get name => "subjects";
 	@override
-	IconData get sectionIcon => icon;
+	IconData get icon => Icons.school;
 
 	@override
-	StateNotifierProvider<EntitiesNotifier<Subject>, Iterable<Subject>?> get provider => subjectsNotifierProvider;
+	EntitiesNotifierProvider<Subject> get provider => subjectsNotifierProvider;
 
 	@override
-	List<Widget> tiles(BuildContext context, Iterable<Subject> subjects) {
+	Widget build(BuildContext context, WidgetRef ref) {
+		final subjects = ref.watch(subjectsNotifierProvider);
+		final events = ref.watch(eventsNotifierProvider);
+
+		if (subjects == null || events == null) return Center(child: Icon(icon));
+		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+
 		final followed = subjects.where((subject) => subject.isFollowed);
 		final unfollowed = subjects.where((subject) => !subject.isFollowed);
 
-		return [
-			for (final subject in followed) _tile(context, subject),
+		return ListView(children: [
+			for (final subject in followed) _tile(subject, events),
 			for (final subject in unfollowed) Opacity(
 				opacity: 0.5,
-				child: _tile(context, subject)
+				child: _tile(subject, events)
 			),
 			if (Cloud.userRole == Role.leader) const ListTile()
-		];
+		]);
 	}
 
-	Widget _tile(BuildContext context, Subject subject) {
-		final hasEvents = subject.events!.isNotEmpty;
+	Widget _tile(Subject subject, Iterable<Event> allEvents) {
+		final events = allEvents.where((event) => event.subject == subject);
+		final hasEvents = events.isNotEmpty;
 
 		return EntityTile(
 			title: subject.nameRepr,
-			subtitle: hasEvents ? subject.eventCountRepr : null,
-			trailing: hasEvents ? subject.events!.first.date.dateRepr : null,
+			subtitle: hasEvents ? Event.countRepr(events.length) : null,
+			trailing: hasEvents ? events.first.date.dateRepr : null,
 			pageBuilder: () => SubjectPage(subject)
 		);
 	}

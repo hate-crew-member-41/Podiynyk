@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
-import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/subject.dart';
 
 import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
 
+import '../subjects.dart' show subjectsNotifierProvider;
 import 'entity.dart';
 
 
-class NewSubjectPage extends HookWidget {
+class NewSubjectPage extends HookConsumerWidget {
 	@override
-	Widget build(BuildContext context) {
+	Widget build(BuildContext context, WidgetRef ref) {
 		final nameField = useTextEditingController();
 
 		return NewEntityPage(
-			handleForm: () => _handleForm(nameField.text),
+			entityOnAdd: () => _subjectOnAdd(ref, nameField.text),
+			add: ref.read(subjectsNotifierProvider.notifier).add,
 			children: [
 				InputField(
 					controller: nameField,
@@ -27,51 +29,8 @@ class NewSubjectPage extends HookWidget {
 		);
 	}
 
-	bool _handleForm(String name) {
-		if (name.isEmpty) return false;
-
-		Cloud.addSubject(Subject(name: name));
-		return true;
-	}
-}
-
-
-class NewSubjectInfoPage extends HookWidget {
-	const NewSubjectInfoPage({required this.subject});
-
-	final Subject subject;
-
-	@override
-	Widget build(BuildContext context) {
-		final nameField = useTextEditingController();
-		final contentField = useTextEditingController();
-
-		return NewEntityPage(
-			handleForm: () => _handleForm(nameField.text, contentField.text),
-			children: [
-				InputField(
-					controller: nameField,
-					name: "topic",
-					style: Appearance.headlineText
-				),
-				InputField(
-					controller: contentField,
-					name: "content",
-					multiline: true,
-					style: Appearance.bodyText,
-				)
-			]
-		);
-	}
-
-	bool _handleForm(String name, String content) {
-		if (name.isEmpty || content.isEmpty) return false;
-
-		subject.addInfo(SubjectInfo(
-			subject: subject,
-			name: name,
-			content: content
-		));
-		return true;
+	Subject? _subjectOnAdd(WidgetRef ref, String name) {
+		if (name.isNotEmpty) return Subject(name: name);
+		return null;
 	}
 }
