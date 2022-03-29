@@ -13,30 +13,25 @@ import 'entity.dart';
 
 
 class EventPage extends HookConsumerWidget {
-	const EventPage(this.event);
+	const EventPage(this.initialEvent);
 
-	final Event event;
+	final Event initialEvent;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
-		final nameField = useTextEditingController(text: event.nameRepr);
-		final date = useRef(event.date);
-		final noteField = useTextEditingController();
+		final event = useState(initialEvent);
+		final nameField = useTextEditingController(text: initialEvent.nameRepr);
+		final date = useRef(initialEvent.date);
+		final noteField = useTextEditingController(text: initialEvent.note);
 
-		// final hasDetails = useState(event.hasDetails);
-		final showNote = useState(event.hasDetails && event.note != null);
+		useEffect(() {
+			if (!initialEvent.hasDetails) initialEvent.withDetails.then((withDetails) {
+				event.value = withDetails;
+				if (withDetails.note != null) noteField.text = withDetails.note!;
+			});
 
-		// useEffect(() {
-		// 	event.addDetails().whenComplete(() {
-		// 		hasDetails.value = event.hasDetails;
-		// 		showNote.value = event.note != null;
-		// 		if (showNote.value) noteField.text = event.note!;
-		// 	});
-
-		// 	if (showNote.value) noteField.text = event.note!;
-
-		// 	return null;
-		// }, const []);
+			return null;
+		}, const []);
 
 		return EntityPage(
 			children: [
@@ -45,16 +40,16 @@ class EventPage extends HookConsumerWidget {
 					name: "name",
 					style: Appearance.headlineText
 				),
-				if (event.subject != null) Text(
-					event.subject!.nameRepr,
+				if (initialEvent.subject != null) Text(
+					initialEvent.subject!.nameRepr,
 					style: Appearance.largeTitleText
 				).withPadding(),
 				DateField(
-					initialDate: event.date,
+					initialDate: event.value.date,
 					onPicked: (picked) => date.value = picked,
 					enabled: Cloud.userRole != Role.ordinary
 				),
-				if (showNote.value) ...[
+				if (event.value.note != null) ...[
 					const ListTile(),
 					InputField(
 						controller: noteField,

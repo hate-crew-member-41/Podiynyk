@@ -13,50 +13,49 @@ import 'entity.dart';
 
 
 class MessagePage extends HookConsumerWidget {
-	const MessagePage(this.message);
+	MessagePage(this.initialMessage) :
+		isByUser = initialMessage.author.id == Local.userId;
 
-	final Message message;
+	final Message initialMessage;
+	final bool isByUser;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
-		final nameField = useTextEditingController(text: message.name);
-		final contentField = useTextEditingController();
+		final message = useState(initialMessage);
+		final nameField = useTextEditingController(text: initialMessage.nameRepr);
+		final contentField = useTextEditingController(text: initialMessage.content);
 
-		// final hasDetails = useState(message.hasDetails);
+		useEffect(() {
+			initialMessage.withDetails.then((withDetails) {
+				message.value = withDetails;
+				contentField.text = withDetails.content!;
+			});
 
-		// useEffect(() {
-		// 	message.addDetails().whenComplete(() {
-		// 		hasDetails.value = message.hasDetails;
-		// 		contentField.text = message.content;
-		// 	});
-
-		// 	return null;
-		// }, const []);
-
-		final isAuthor = message.author.name == Local.userName;
+			return null;
+		}, const []);
 
 		return EntityPage(
 			children: [
 				InputField(
 					controller: nameField,
 					name: "topic",
-					enabled: isAuthor,
+					enabled: isByUser,
 					style: Appearance.headlineText
 				),
-				if (message.hasDetails) InputField(
+				if (message.value.hasDetails) InputField(
 					controller: contentField,
 					name: "content",
-					enabled: isAuthor,
+					enabled: isByUser,
 					multiline: true,
 					style: Appearance.bodyText
 				),
 				const ListTile(),
 				Text(
-					message.author.nameRepr,
+					initialMessage.author.nameRepr,
 					style: Appearance.titleText
 				).withPadding(),
 				Text(
-					message.date.fullRepr,
+					initialMessage.date.fullRepr,
 					style: Appearance.titleText
 				).withPadding()
 			],

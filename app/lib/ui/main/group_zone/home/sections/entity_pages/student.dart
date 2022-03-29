@@ -17,7 +17,7 @@ class StudentPage extends HookWidget {
 	@override
 	Widget build(BuildContext context) {
 		final nameField = useTextEditingController(text: student.nameRepr);
-		// final role = useRef(student.role);
+		final role = useRef(student.role);
 
 		return EntityPage(
 			children: [

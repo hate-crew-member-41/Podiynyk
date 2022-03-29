@@ -16,25 +16,12 @@ class Message extends Entity {
 		date = DateTime.now(),
 		super.created(name: name);
 
-	/// ```
-	/// $id: {
-	/// 	name: String,
-	/// 	author: {
-	/// 		id: String,
-	/// 		name: String
-	/// 	},
-	/// 	date: Timestamp
-	/// }
-	/// ```
 	Message.fromCloud({required String id, required CloudMap object}) :
 		author = Student.author(object[Identifier.author.name]),
 		date = (object[Identifier.date.name] as Timestamp).toDate(),
 		content = null,
 		super.fromCloud(id: id, object: object);
 
-	/// ```
-	/// content: String
-	/// ```
 	Message._withDetails({
 		required Message message,
 		required CloudMap details

@@ -6,6 +6,7 @@ import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/student.dart';
 import 'package:podiynyk/storage/entities/subject.dart';
+import 'package:podiynyk/storage/entities/subject_info.dart';
 
 import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
 
@@ -18,29 +19,27 @@ import 'subject_info.dart';
 import 'entity.dart';
 
 
-final subjectProvider = StateProvider<Subject?>((ref) {
+final subjectInfoProvider = StateProvider<List<SubjectInfo>?>((ref) {
 	return null;
 });
 
 
 class SubjectPage extends HookConsumerWidget {
-	const SubjectPage(this.subject);
+	const SubjectPage(this.initialSubject);
 
-	final Subject subject;
+	final Subject initialSubject;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
-		final nameField = useTextEditingController(text: subject.nameRepr);
+		final nameField = useTextEditingController(text: initialSubject.nameRepr);
 
-		// final hasDetails = useState(subject.hasDetails);
+		useEffect(() {
+			initialSubject.withDetails.then((withDetails) =>
+				ref.read(subjectInfoProvider.notifier).state = withDetails.info
+			);
 
-		// useEffect(() {
-		// 	subject.addDetails().whenComplete(() => hasDetails.value = subject.hasDetails);
-
-		// 	return () {
-		// 		if (nameField.text != subject.nameRepr) subject.nameRepr = nameField.text;
-		// 	};
-		// }, const []);
+			return null;
+		}, const []);
 
 		return ScaffoldMessenger(child: Builder(
 			builder: (context) => EntityPage(
@@ -51,7 +50,7 @@ class SubjectPage extends HookConsumerWidget {
 						style: Appearance.headlineText
 					),
 					const ListTile(),
-					if (subject.info != null) ListTile(
+					ListTile(
 						title: const Text("information"),
 						onTap: () => _showInfo(context)
 					),
@@ -88,12 +87,18 @@ class SubjectPage extends HookConsumerWidget {
 	void _showInfo(BuildContext context) => _showEntitiesPage(
 		context,
 		(_) => _EntitiesPage(
-			tiles: (ref) => [
-				for (final item in ref.watch(subjectProvider)!.info!) EntityTile(
-					title: item.nameRepr,
-					pageBuilder: () => SubjectInfoPage(item),
-				)
-			],
+			tilesBuilder: (ref) {
+				final info = ref.watch(subjectInfoProvider);
+
+				if (info != null) return [
+					for (final item in info) EntityTile(
+						title: item.nameRepr,
+						pageBuilder: () => SubjectInfoPage(item),
+					)
+				];
+
+				return null;
+			},
 			newEntityPageBuilder: () => const NewSubjectInfoPage()
 		)
 	);
@@ -101,13 +106,15 @@ class SubjectPage extends HookConsumerWidget {
 	void _showEvents(BuildContext context) => _showEntitiesPage(
 		context,
 		(_) => _EntitiesPage(
-			tiles: (ref) {
-				final events = ref.watch(eventsNotifierProvider)!.where((event) => event.subject == subject);
+			tilesBuilder: (ref) {
+				final events = ref.watch(eventsNotifierProvider)!.where((event) =>
+					event.subject?.id == initialSubject.id
+				);
 				return [
 					for (final event in events) EventTile(event, showSubject: false)
 				];
 			},
-			newEntityPageBuilder: () => NewEventPage.subjectEvent(subject)
+			newEntityPageBuilder: () => NewEventPage.subjectEvent(initialSubject)
 		)
 	);
 
@@ -149,24 +156,28 @@ class SubjectPage extends HookConsumerWidget {
 }
 
 
-class _EntitiesPage extends ConsumerWidget {
+class _EntitiesPage extends StatelessWidget {
 	const _EntitiesPage({
-		required this.tiles,
+		required this.tilesBuilder,
 		required this.newEntityPageBuilder
 	});
 
-	final List<Widget> Function(WidgetRef) tiles;
+	final List<Widget>? Function(WidgetRef) tilesBuilder;
 	final Widget Function() newEntityPageBuilder;
 
 	@override
-	Widget build(BuildContext context, WidgetRef ref) {
+	Widget build(BuildContext context) {
 		return Scaffold(
-			body: Center(
-				child: ListView(
+			body: Center(child: Consumer(builder: (_, ref, __) {
+				final tiles = tilesBuilder(ref);
+
+				if (tiles != null) return ListView(
 					shrinkWrap: true,
-					children: tiles(ref)
-				)
-			),
+					children: tiles
+				);
+
+				return const Text("awaiting");
+			})),
 			floatingActionButton: Cloud.userRole == Role.ordinary ? null : NewEntityButton(
 				pageBuilder: newEntityPageBuilder
 			)

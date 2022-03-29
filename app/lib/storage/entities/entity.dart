@@ -66,15 +66,8 @@ abstract class Entity implements Comparable {
 	Future<Entity>? get withDetails => null;
 
 	EntityCollection? get cloudCollection => null;
-
 	Identifier? get labelCollection => null;
 
 	@override
-	int compareTo(covariant Entity other) => name.compareTo(other.name);
-
-	@override
-	bool operator ==(dynamic other) => other is Entity && id == other.id;
-
-	@override
-	int get hashCode => id.hashCode;
+	int compareTo(covariant Entity other) => nameRepr.compareTo(other.nameRepr);
 }

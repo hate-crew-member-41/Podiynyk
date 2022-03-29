@@ -18,16 +18,6 @@ class Event extends Entity {
 		isHidden = false,
 		super.created(name: name);
 
-	/// ```
-	/// $id: {
-	/// 	name: String,
-	/// 	subject: {
-	/// 		id: String,
-	/// 		name: String
-	/// 	},
-	/// 	date: Timestamp
-	/// }
-	/// ```
 	Event.fromCloud({required String id, required CloudMap object}) :
 		subject = object.containsKey(Identifier.subject.name) ? Subject.ofEvent(object[Identifier.subject.name]) : null,
 		date = (object[Identifier.date.name] as Timestamp).toDate(),
@@ -37,9 +27,6 @@ class Event extends Entity {
 		isHidden = Local.entityIsStored(Identifier.hiddenEvents, this);
 	}
 
-	/// ```
-	/// note?: String
-	/// ```
 	Event._withDetails({required Event event, required CloudMap details}) :
 		subject = event.subject,
 		date = event.date,

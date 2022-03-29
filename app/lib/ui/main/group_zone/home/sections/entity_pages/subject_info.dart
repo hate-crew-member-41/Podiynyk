@@ -19,11 +19,6 @@ class SubjectInfoPage extends HookWidget {
 		final nameField = useTextEditingController(text: info.nameRepr);
 		final contentField = useTextEditingController(text: info.content);
 
-		// useEffect(() => () {
-		// 	if (nameField.text != info.nameRepr) info.nameRepr = nameField.text;
-		// 	if (contentField.text != info.content) info.content = contentField.text;
-		// }, const []);
-
 		return EntityPage(
 			children: [
 				InputField(
@@ -43,7 +38,19 @@ class SubjectInfoPage extends HookWidget {
 			// 		text: "delete",
 			// 		action: info.delete
 			// 	)
-			// ]
+			// ],
+			// sectionShouldRebuild: () {
+			// 	bool changed = false;
+
+			// 	if (nameField.text != info.nameRepr) {
+			// 		info.nameRepr = nameField.text;
+			// 		changed = true;
+			// 	}
+
+			// 	if (contentField.text != info.content) info.content = contentField.text;
+
+			// 	return changed;
+			// }
 		);
 	}
 }

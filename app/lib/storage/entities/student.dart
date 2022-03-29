@@ -10,12 +10,6 @@ class Student extends Entity {
 		role = Cloud.userRole,
 		super(id: Local.userId, name: Local.userName);
 
-	/// ```
-	/// $id: {
-	/// 	name: String,
-	/// 	role: int
-	/// }
-	/// ```
 	Student.fromCloud({required String id, required CloudMap object}) :
 		role = Role.values[object[Identifier.role.name] as int],
 		super.fromCloud(id: id, object: object);

@@ -14,11 +14,6 @@ class Subject extends Entity {
 		isFollowed = true,
 		super.created(name: name);
 
-	/// ```
-	/// $id: {
-	/// 	name: String
-	/// }
-	/// ```
 	Subject.fromCloud({required String id, required CloudMap object}) :
 		info = null,
 		super.fromCloud(id: id, object: object)
@@ -33,25 +28,17 @@ class Subject extends Entity {
 		isFollowed = !Local.entityIsStored(Identifier.unfollowedSubjects, this);
 	}
 
-	/// ```
-	/// info: {
-	/// 	$id: {
-	/// 		name: String,
-	/// 		content: String
-	/// 	}
-	/// }
-	/// ```
 	Subject._withDetails({
 		required Subject subject,
 		required CloudMap details
 	}) :
 		isFollowed = subject.isFollowed,
 		info = [
-			for (final entry in details[Identifier.info.name]) SubjectInfo.fromCloud(
+			for (final entry in details[Identifier.info.name].entries) SubjectInfo.fromCloud(
 				id: entry.key,
 				object: entry.value
 			)
-		],
+		]..sort(),
 		super.withDetails(entity: subject);
 
 	late final bool isFollowed;
@@ -64,7 +51,9 @@ class Subject extends Entity {
 	};
 	@override
 	CloudMap get detailsInCloudFormat => {
-		Identifier.info.name: [for (final item in info!) item.inCloudFormat]
+		Identifier.info.name: {
+			for (final item in info!) item.id: item.inCloudFormat
+		}
 	};
 
 	@override
