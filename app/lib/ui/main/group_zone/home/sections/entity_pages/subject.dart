@@ -4,19 +4,21 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/entities/date.dart';
 import 'package:podiynyk/storage/entities/student.dart';
 import 'package:podiynyk/storage/entities/subject.dart';
 import 'package:podiynyk/storage/entities/subject_info.dart';
 
-import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
+import 'package:podiynyk/ui/main/widgets/input_field.dart';
 
-import '../agenda.dart' show EventTile;
 import '../providers.dart' show eventsNotifierProvider;
-import '../section.dart';
 import '../new_entity_pages/event.dart';
 import '../new_entity_pages/subject_info.dart';
+import '../widgets/entity_tile.dart';
+import '../widgets/new_entity_button.dart';
 
 import 'entity.dart';
+import 'event.dart';
 import 'subject_info.dart';
 
 
@@ -112,7 +114,11 @@ class SubjectPage extends HookConsumerWidget {
 					event.subject?.id == initialSubject.id
 				);
 				return [
-					for (final event in events) EventTile(event, showSubject: false)
+					for (final event in events) EntityTile(
+						title: event.nameRepr,
+						trailing: event.date.dateRepr,
+						pageBuilder: () => EventPage(event)
+					)
 				];
 			},
 			newEntityPageBuilder: () => NewEventPage.subjectEvent(initialSubject)

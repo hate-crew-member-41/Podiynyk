@@ -7,7 +7,7 @@ import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/date.dart';
 import 'package:podiynyk/storage/entities/message.dart';
 
-import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
+import 'package:podiynyk/ui/main/widgets/input_field.dart';
 
 import 'entity.dart';
 

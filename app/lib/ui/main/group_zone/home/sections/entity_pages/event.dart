@@ -7,7 +7,8 @@ import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/event.dart';
 import 'package:podiynyk/storage/entities/student.dart' show Role;
 
-import 'package:podiynyk/ui/main/common/fields.dart';
+import 'package:podiynyk/ui/main/widgets/input_field.dart';
+import 'package:podiynyk/ui/main/widgets/date_field.dart';
 
 import 'entity.dart';
 

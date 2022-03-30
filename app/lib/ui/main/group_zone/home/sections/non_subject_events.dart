@@ -6,10 +6,13 @@ import 'package:podiynyk/storage/entities/date.dart';
 import 'package:podiynyk/storage/entities/event.dart';
 import 'package:podiynyk/storage/entities/student.dart' show Role;
 
-import 'agenda.dart';
 import 'providers.dart' show EntitiesNotifierProvider, eventsNotifierProvider;
 import 'section.dart';
+
+import 'entity_pages/event.dart';
 import 'new_entity_pages/event.dart';
+import 'widgets/entity_tile.dart';
+import 'widgets/new_entity_button.dart';
 
 
 class NonSubjectEventsSection extends EntitiesSection<Event> {
@@ -41,7 +44,11 @@ class NonSubjectEventsSection extends EntitiesSection<Event> {
 		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
 		return ListView(children: [
-			for (final event in events) EventTile(event),
+			for (final event in events) EntityTile(
+				title: event.nameRepr,
+				trailing: event.date.dateRepr,
+				pageBuilder: () => EventPage(event)
+			),
 			if (Cloud.userRole != Role.ordinary) const ListTile()
 		]);
 	}

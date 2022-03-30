@@ -4,7 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/entities/subject_info.dart';
 
-import 'package:podiynyk/ui/main/common/fields.dart' show InputField;
+import 'package:podiynyk/ui/main/widgets/input_field.dart';
 
 import 'entity.dart';
 

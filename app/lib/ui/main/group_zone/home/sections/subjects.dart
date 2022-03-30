@@ -9,8 +9,11 @@ import 'package:podiynyk/storage/entities/subject.dart';
 
 import 'providers.dart' show EntitiesNotifierProvider, eventsNotifierProvider, subjectsNotifierProvider;
 import 'section.dart';
+
 import 'entity_pages/subject.dart';
 import 'new_entity_pages/subject.dart';
+import 'widgets/entity_tile.dart';
+import 'widgets/new_entity_button.dart';
 
 
 class SubjectsSection extends EntitiesSection<Subject> {

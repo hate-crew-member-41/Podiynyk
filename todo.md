@@ -23,8 +23,6 @@ Subjects:
 Students:
 - new role ➔ the page, the actions
 
-Consider adding an `update` method to the EntitiesSection class as a shortcut.
-
 ## Before Home
 
 Make sure that it is safe for the user to do something wrong.
@@ -64,8 +62,8 @@ or color the fields and made the color fade out.
 When the user uses the go-forward gesture and what comes next depends on the result of a future,
 show a SnackBar to show that something is being done. As it is now, it looks as if nothing happens for some time.
 
-New-entity pages appear as a page to the right of the section.
-Remember to remove the empty tiles.
+New-entity pages appear as a page to the right of the section. Remember to remove the empty tiles,
+and to only update the subject after the field has been pressed.
 
 Once the entities are fetched, each tile fades in with a different delay.
 

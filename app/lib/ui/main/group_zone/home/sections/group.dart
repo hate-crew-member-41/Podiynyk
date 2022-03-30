@@ -5,7 +5,9 @@ import 'package:podiynyk/storage/entities/student.dart';
 
 import 'providers.dart' show EntitiesNotifierProvider, studentsNotifierProvider;
 import 'section.dart';
+
 import 'entity_pages/student.dart';
+import 'widgets/entity_tile.dart';
 
 
 class GroupSection extends EntitiesSection<Student> {

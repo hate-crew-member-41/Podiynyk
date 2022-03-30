@@ -7,7 +7,9 @@ import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/event.dart';
 import 'package:podiynyk/storage/entities/subject.dart';
 
-import 'package:podiynyk/ui/main/common/fields.dart';
+import 'package:podiynyk/ui/main/widgets/date_field.dart';
+import 'package:podiynyk/ui/main/widgets/input_field.dart';
+import 'package:podiynyk/ui/main/widgets/option_field.dart';
 
 import '../providers.dart' show eventsNotifierProvider;
 import 'entity.dart';

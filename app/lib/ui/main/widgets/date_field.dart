@@ -3,71 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 
 import 'package:podiynyk/storage/entities/date.dart';
 
-
-class InputField extends HookWidget {
-	const InputField({
-		required this.controller,
-		required this.name,
-		this.enabled = true,
-		this.multiline = false,
-		this.style
-	});
-
-	final TextEditingController controller;
-	final String name;
-	final bool enabled;
-	final bool multiline;
-	final TextStyle? style;
-
-	@override
-	Widget build(BuildContext context) {
-		final focusNode = useFocusNode();
-		useListenable(focusNode);
-
-		return TextField(
-			controller: controller,
-			focusNode: focusNode,
-			enabled: enabled,
-			maxLines: multiline ? null : 1,
-			showCursor: false,
-			style: style,
-			decoration: InputDecoration(
-				filled: focusNode.hasFocus,
-				hintText: name,
-			)
-		);
-	}
-}
-
-
-class OptionField extends StatelessWidget {
-	const OptionField({
-		required this.controller,
-		required this.name,
-		required this.showOptions,
-		this.style
-	});
-
-	final TextEditingController controller;
-	final String name;
-	final void Function(BuildContext)? showOptions;
-	final TextStyle? style;
-
-	@override
-	Widget build(BuildContext context) {
-		return showOptions != null ? GestureDetector(
-			onTap: () => showOptions!(context),
-			child: _builder(context),
-		) : _builder(context);
-	}
-
-	Widget _builder(context) => TextField(
-		controller: controller,
-		enabled: false,
-		style: style,
-		decoration: InputDecoration(hintText: name)
-	);
-}
+import 'option_field.dart';
 
 
 class DateField extends HookWidget {

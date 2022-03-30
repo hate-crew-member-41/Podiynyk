@@ -2,20 +2,20 @@ app/build/
 app/android/
 app/ios/
 
+# Design sketches
+design/
+
 # Working with Firebase with Admin SDK
 firebase/key.json
 
-# Design sketches
-design/
+# Lints
+app/analysis_options.yaml
 
 # A script for code statistics
 app/code_stats.py
 
 # The previous version of the project
 old/
-
-# Lints
-app/analysis_options.yaml
 
 # Miscellaneous
 *.drawio

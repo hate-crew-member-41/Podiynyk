@@ -8,8 +8,11 @@ import 'package:podiynyk/storage/entities/student.dart' show Role;
 
 import 'providers.dart' show EntitiesNotifierProvider, messagesNotifierProvider;
 import 'section.dart';
+
 import 'entity_pages/message.dart';
 import 'new_entity_pages/message.dart';
+import 'widgets/entity_tile.dart';
+import 'widgets/new_entity_button.dart';
 
 
 class MessagesSection extends EntitiesSection<Message> {

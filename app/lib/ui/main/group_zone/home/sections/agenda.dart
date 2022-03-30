@@ -8,8 +8,11 @@ import 'package:podiynyk/storage/entities/student.dart';
 
 import 'providers.dart' show EntitiesNotifierProvider, eventsNotifierProvider;
 import 'section.dart';
+
 import 'entity_pages/event.dart';
 import 'new_entity_pages/event.dart';
+import 'widgets/entity_tile.dart';
+import 'widgets/new_entity_button.dart';
 
 
 class AgendaSection extends EntitiesSection<Event> {
@@ -44,7 +47,12 @@ class AgendaSection extends EntitiesSection<Event> {
 		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
 		return ListView(children: [
-			for (final entity in events) EventTile(entity),
+			for (final event in events) EntityTile(
+				title: event.nameRepr,
+				subtitle: event.subject?.nameRepr,
+				trailing: event.date.dateRepr,
+				pageBuilder: () => EventPage(event)
+			),
 			if (Cloud.userRole != Role.ordinary) const ListTile()
 		]);
 	}
@@ -52,28 +60,5 @@ class AgendaSection extends EntitiesSection<Event> {
 	@override
 	Widget? get actionButton => Cloud.userRole == Role.ordinary ? null : NewEntityButton(
 		pageBuilder: () => const NewEventPage()
-	);
-}
-
-
-class EventTile extends StatelessWidget {
-	final Event event;
-	final bool showSubject;
-
-	const EventTile(this.event, {this.showSubject = true});
-
-	@override
-	Widget build(BuildContext context) {
-		return !event.date.isPast ? _builder(context) : Opacity(
-			opacity: 0.5,
-			child: _builder(context)
-		);
-	}
-
-	Widget _builder(BuildContext context) => EntityTile(
-		title: event.nameRepr,
-		subtitle: showSubject ? event.subject?.nameRepr : null,
-		trailing: event.date.dateRepr,
-		pageBuilder: () => EventPage(event)
 	);
 }

@@ -41,8 +41,6 @@ extension CloudId on String {
 
 
 abstract class Cloud {
-	static final _cloud = FirebaseFirestore.instance;
-
 	/// Initializes [Firebase] and synchronizes the user's [Role] in the group.
 	static Future<void> init() async {
 		await Firebase.initializeApp();
