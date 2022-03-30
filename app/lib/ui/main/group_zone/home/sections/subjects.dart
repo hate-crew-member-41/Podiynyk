@@ -39,29 +39,36 @@ class SubjectsSection extends EntitiesSection<Subject> {
 		final unfollowed = subjects.where((subject) => !subject.isFollowed);
 
 		return ListView(children: [
-			for (final subject in followed) _tile(subject, events),
-			for (final subject in unfollowed) Opacity(
-				opacity: 0.5,
-				child: _tile(subject, events)
-			),
+			for (final subject in followed) _Tile(subject),
+			for (final subject in unfollowed) _Tile(subject, opaque: false),
 			if (Cloud.userRole == Role.leader) const ListTile()
 		]);
-	}
-
-	Widget _tile(Subject subject, Iterable<Event> allEvents) {
-		final events = allEvents.where((event) => event.subject == subject);
-		final hasEvents = events.isNotEmpty;
-
-		return EntityTile(
-			title: subject.nameRepr,
-			subtitle: hasEvents ? Event.countRepr(events.length) : null,
-			trailing: hasEvents ? events.first.date.dateRepr : null,
-			pageBuilder: () => SubjectPage(subject)
-		);
 	}
 
 	@override
 	Widget? get actionButton => Cloud.userRole != Role.leader ? null : NewEntityButton(
 		pageBuilder: () => NewSubjectPage()
 	);
+}
+
+
+class _Tile extends ConsumerWidget {
+	const _Tile(this.subject, {this.opaque = true});
+
+	final Subject subject;
+	final bool opaque;
+
+	@override
+	Widget build(BuildContext context, WidgetRef ref) {
+		final index = ref.watch(subjectsNotifierProvider)!.indexOf(subject);
+		final events = ref.watch(eventsNotifierProvider)!.where((event) => event.subject == subject).toList();
+		final hasEvents = events.isNotEmpty;
+
+		return EntityTile(
+			title: subject.nameRepr,
+			subtitle: hasEvents ? Event.countRepr(events.length) : null,
+			trailing: hasEvents ? events.first.date.dateRepr : null,
+			pageBuilder: () => SubjectPage(ref.read(subjectsNotifierProvider)![index])
+		);
+	}
 }

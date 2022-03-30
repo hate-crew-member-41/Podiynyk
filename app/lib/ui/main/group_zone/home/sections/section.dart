@@ -19,11 +19,11 @@ abstract class Section extends ConsumerWidget {
 abstract class EntitiesSection<E extends Entity> extends Section {
 	const EntitiesSection();
 
-	StateNotifierProvider<EntitiesNotifier<E>, Iterable<E>?> get provider;
+	StateNotifierProvider<EntitiesNotifier<E>, List<E>?> get provider;
 
 	EntitiesNotifier<E> notifier(WidgetRef ref) => ref.read(provider.notifier);
 
-	Iterable<E>? shownEntities(Iterable<E>? entities) => entities;
+	Iterable<E>? shownEntities(List<E>? entities) => entities;
 
 	Iterable<E>? countedEntities(WidgetRef ref) => shownEntities(ref.watch(provider));
 }

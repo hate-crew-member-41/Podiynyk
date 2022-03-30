@@ -4,18 +4,19 @@ import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/entity.dart';
 
 
-typedef EntitiesNotifierProvider<E extends Entity> = StateNotifierProvider<EntitiesNotifier<E>, Iterable<E>?>;
+typedef EntitiesNotifierProvider<E extends Entity> = StateNotifierProvider<EntitiesNotifier<E>, List<E>?>;
 
 
-class EntitiesNotifier<E extends Entity> extends StateNotifier<Iterable<E>?> {
+class EntitiesNotifier<E extends Entity> extends StateNotifier<List<E>?> {
 	EntitiesNotifier(this.entities): super(null) {
 		update();
 	}
 
-	final Future<Iterable<E>> Function() entities;
+	final Future<List<E>> Function() entities;
 
-	void rebuild() {
-		state = [...state!];
+	void replace(E entity, E modified, {bool preserveState = false}) {
+		final entities = preserveState ? state! : List<E>.from(state!);
+		state = entities..[entities.indexOf(entity)] = modified;
 	}
 
 	Future<void> update() async => state = await entities();

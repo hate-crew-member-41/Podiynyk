@@ -11,7 +11,7 @@ import 'package:podiynyk/storage/entities/subject_info.dart';
 
 import 'package:podiynyk/ui/main/widgets/input_field.dart';
 
-import '../providers.dart' show eventsNotifierProvider;
+import '../providers.dart' show subjectsNotifierProvider, eventsNotifierProvider;
 import '../new_entity_pages/event.dart';
 import '../new_entity_pages/subject_info.dart';
 import '../widgets/entity_tile.dart';
@@ -37,9 +37,10 @@ class SubjectPage extends HookConsumerWidget {
 		final nameField = useTextEditingController(text: initialSubject.nameRepr);
 
 		useEffect(() {
-			initialSubject.withDetails.then((withDetails) =>
-				ref.read(subjectInfoProvider.notifier).state = withDetails.info
-			);
+			initialSubject.withDetails.then((withDetails) {
+				ref.read(subjectsNotifierProvider.notifier).replace(initialSubject, withDetails, preserveState: true);
+				ref.read(subjectInfoProvider.notifier).state = withDetails.info;
+			});
 
 			return null;
 		}, const []);

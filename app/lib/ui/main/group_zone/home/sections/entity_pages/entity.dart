@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../home.dart' show sectionProvider;
-import '../section.dart' show EntitiesSection;
-
 
 class EntityPage extends ConsumerWidget {
 	const EntityPage({
@@ -39,9 +36,8 @@ class EntityPage extends ConsumerWidget {
 		if (sectionShouldRebuild != null) return WillPopScope(
 			child: _builder(),
 			onWillPop: () async {
-				final changed = sectionShouldRebuild!();
-				if (changed) (ref.read(sectionProvider) as EntitiesSection).notifier(ref).rebuild();
-
+				// final changed = sectionShouldRebuild!();
+				// if (changed) (ref.read(sectionProvider) as EntitiesSection).notifier(ref).replace();
 				return true;
 			},
 		);

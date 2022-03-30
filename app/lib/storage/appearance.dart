@@ -11,7 +11,7 @@ class Appearance {
 	static TextStyle get titleText => GoogleFonts.montserrat(fontSize: 17);
 	static TextStyle get largeTitleText => GoogleFonts.montserrat(fontSize: 20);
 	static TextStyle get headlineText => GoogleFonts.montserrat(fontSize: 28);
-	static TextStyle get displayText => GoogleFonts.montserrat(fontSize: 40);
+	static TextStyle get displayText => GoogleFonts.montserrat(fontSize: 36);
 	static TextStyle get labelText => GoogleFonts.montserrat(fontSize: 14);
 
 	static EdgeInsets get padding => const EdgeInsets.symmetric(horizontal: 16, vertical: 8);

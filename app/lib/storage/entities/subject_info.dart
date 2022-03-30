@@ -1,5 +1,5 @@
 import '../cloud.dart' show CloudMap;
-import '../fields.dart';
+import '../identifiers.dart';
 
 import 'entity.dart';
 

@@ -9,6 +9,7 @@ import 'package:podiynyk/storage/entities/message.dart';
 
 import 'package:podiynyk/ui/main/widgets/input_field.dart';
 
+import '../providers.dart' show messagesNotifierProvider;
 import 'entity.dart';
 
 
@@ -27,6 +28,7 @@ class MessagePage extends HookConsumerWidget {
 
 		useEffect(() {
 			initialMessage.withDetails.then((withDetails) {
+				ref.read(messagesNotifierProvider.notifier).replace(message.value, withDetails, preserveState: true);
 				message.value = withDetails;
 				contentField.text = withDetails.content!;
 			});

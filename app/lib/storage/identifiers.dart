@@ -1,7 +1,6 @@
 /// An identifier used as a field or a collection id in the [Local] or [Cloud] storage.
 enum Identifier {
 	author,
-	confirmationCount,
 	content,
 	date,
 	details,
@@ -10,11 +9,7 @@ enum Identifier {
 	hiddenEvents,
 	id,
 	info,
-	joined,
-	leaderIsElected,
-	message,
 	name,
-	names,
 	note,
 	role,
 	students,

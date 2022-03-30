@@ -10,6 +10,7 @@ import 'package:podiynyk/storage/entities/student.dart' show Role;
 import 'package:podiynyk/ui/main/widgets/input_field.dart';
 import 'package:podiynyk/ui/main/widgets/date_field.dart';
 
+import '../providers.dart' show eventsNotifierProvider;
 import 'entity.dart';
 
 
@@ -27,6 +28,7 @@ class EventPage extends HookConsumerWidget {
 
 		useEffect(() {
 			if (!initialEvent.hasDetails) initialEvent.withDetails.then((withDetails) {
+				ref.read(eventsNotifierProvider.notifier).replace(event.value, withDetails, preserveState: true);
 				event.value = withDetails;
 				if (withDetails.note != null) noteField.text = withDetails.note!;
 			});

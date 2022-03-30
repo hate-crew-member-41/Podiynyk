@@ -41,17 +41,17 @@ class AgendaSection extends EntitiesSection<Event> {
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
-		final events = shownEntities(ref.watch(eventsNotifierProvider));
+		final events = shownEntities(ref.watch(eventsNotifierProvider))?.toList();
 
 		if (events == null) return Center(child: Icon(icon));
 		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
 		return ListView(children: [
-			for (final event in events) EntityTile(
-				title: event.nameRepr,
-				subtitle: event.subject?.nameRepr,
-				trailing: event.date.dateRepr,
-				pageBuilder: () => EventPage(event)
+			for (final index in Iterable<int>.generate(events.length)) EntityTile(
+				title: events[index].nameRepr,
+				subtitle: events[index].subject?.nameRepr,
+				trailing: events[index].date.dateRepr,
+				pageBuilder: () => EventPage(ref.read(eventsNotifierProvider)![index])
 			),
 			if (Cloud.userRole != Role.ordinary) const ListTile()
 		]);

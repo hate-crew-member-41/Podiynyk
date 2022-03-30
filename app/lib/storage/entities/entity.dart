@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../cloud.dart';
 import '../local.dart';
-import '../fields.dart';
+import '../identifiers.dart';
 
 
 typedef EntityEntry = MapEntry<String, CloudMap>;

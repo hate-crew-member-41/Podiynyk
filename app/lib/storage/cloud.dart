@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import 'fields.dart';
+import 'identifiers.dart';
 import 'local.dart';
 
 import 'entities/entity.dart';

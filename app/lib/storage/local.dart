@@ -1,7 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'cloud.dart';
-import 'fields.dart';
+import 'identifiers.dart';
 import 'entities/entity.dart';
 
 
@@ -70,7 +70,7 @@ abstract class Local {
 	}
 	/// The user's name.
 	// static String get userName => _misc.get(Identifier.userName.name)!;
-	static String get userName => '🕵️';
+	static String get userName => "💻";
 
 	/// The [entity]'s label.
 	static String? entityLabel(Entity entity) {
