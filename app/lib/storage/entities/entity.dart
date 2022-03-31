@@ -43,11 +43,11 @@ abstract class Entity implements Comparable {
 		label = entity.label,
 		hasDetails = true;
 
-	// Entity.modified({required Entity entity, String? label}) :
-	// 	id = entity.id,
-	// 	name = entity.name,
-	// 	label = label ?? entity.label,
-	// 	hasDetails = entity.hasDetails;
+	Entity.modified({required Entity entity, String? nameRepr, String? name}) :
+		id = entity.id,
+		name = name ?? entity.name,
+		label = nameRepr ?? entity.label,  // todo
+		hasDetails = entity.hasDetails;
 
 	void _initLabel() {
 		label = labelCollection != null ? Local.entityLabel(this) : null;

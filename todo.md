@@ -23,6 +23,10 @@ Subjects:
 Students:
 - new role ➔ the page, the actions
 
+## Subject info
+
+When a subject page is opened, the info provider is not initialized with the subject's info, allowing whatever is there to stay until the provider is initialized. Even worse if the subject already has the info, because the provider is never updated at all. Each time a subject page is opened it must initialize the info provider.
+
 ## Before Home
 
 Make sure that it is safe for the user to do something wrong.

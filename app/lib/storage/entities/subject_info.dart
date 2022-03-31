@@ -14,6 +14,14 @@ class SubjectInfo extends Entity {
 	SubjectInfo.fromCloud({required String id, required CloudMap object}) :
 		content = object[Identifier.content.name] as String,
 		super.fromCloud(id: id, object: object);
+	
+	SubjectInfo.modified({
+		required SubjectInfo info,
+		String? nameRepr,
+		String? content
+	}) :
+		content = content ?? info.content,
+		super.modified(entity: info, nameRepr: nameRepr);
 
 	final String content;
 

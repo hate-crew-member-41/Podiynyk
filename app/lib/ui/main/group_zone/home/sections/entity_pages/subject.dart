@@ -7,11 +7,10 @@ import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/entities/date.dart';
 import 'package:podiynyk/storage/entities/student.dart';
 import 'package:podiynyk/storage/entities/subject.dart';
-import 'package:podiynyk/storage/entities/subject_info.dart';
 
 import 'package:podiynyk/ui/main/widgets/input_field.dart';
 
-import '../providers.dart' show subjectsNotifierProvider, eventsNotifierProvider;
+import '../providers.dart' show eventsNotifierProvider, subjectInfoProvider, subjectsNotifierProvider;
 import '../new_entity_pages/event.dart';
 import '../new_entity_pages/subject_info.dart';
 import '../widgets/entity_tile.dart';
@@ -22,24 +21,20 @@ import 'event.dart';
 import 'subject_info.dart';
 
 
-final subjectInfoProvider = StateProvider<List<SubjectInfo>?>((ref) {
-	return null;
-});
-
-
 class SubjectPage extends HookConsumerWidget {
-	const SubjectPage(this.initialSubject);
+	const SubjectPage(this.initial);
 
-	final Subject initialSubject;
+	final Subject initial;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
-		final nameField = useTextEditingController(text: initialSubject.nameRepr);
+		final subject = useRef(initial);
+		final nameField = useTextEditingController(text: initial.nameRepr);
 
 		useEffect(() {
-			initialSubject.withDetails.then((withDetails) {
-				ref.read(subjectsNotifierProvider.notifier).replace(initialSubject, withDetails, preserveState: true);
-				ref.read(subjectInfoProvider.notifier).state = withDetails.info;
+			if (!initial.hasDetails) initial.withDetails.then((withDetails) {
+				subject.value = withDetails;
+				ref.read(subjectInfoProvider.notifier).init(withDetails);
 			});
 
 			return null;
@@ -60,7 +55,7 @@ class SubjectPage extends HookConsumerWidget {
 					),
 					ListTile(
 						title: const Text("events"),
-						onTap: () => _showEvents(context)
+						onTap: () => _showEvents(context, subject.value)
 					)
 				],
 				// actions: [
@@ -76,14 +71,22 @@ class SubjectPage extends HookConsumerWidget {
 				// 		action: () => _askDelete(context, ref)
 				// 	)
 				// ],
-				// sectionShouldRebuild: () {
-				// 	if (nameField.text != subject.nameRepr) {
-				// 		subject.nameRepr = nameField.text;
-				// 		return true;
-				// 	}
+				onClose: () {
+					final current = Subject.modified(
+						subject: subject.value,
+						nameRepr: nameField.text,
+						info: ref.read(subjectInfoProvider)
+					);
 
-				// 	return false;
-				// }
+					if (current.nameRepr != initial.nameRepr) {
+						ref.read(subjectsNotifierProvider.notifier).replace(initial, current);
+					}
+					else if (current.hasDetails && (
+						!initial.hasDetails || ref.read(subjectInfoProvider.notifier).changed
+					)) {
+						ref.read(subjectsNotifierProvider.notifier).replace(initial, current, preserveState: true);
+					}
+				}
 			),
 		));
 	}
@@ -95,9 +98,9 @@ class SubjectPage extends HookConsumerWidget {
 				final info = ref.watch(subjectInfoProvider);
 
 				if (info != null) return [
-					for (final item in info) EntityTile(
-						title: item.nameRepr,
-						pageBuilder: () => SubjectInfoPage(item),
+					for (final index in Iterable<int>.generate(info.length)) EntityTile(
+						title: info[index].nameRepr,
+						pageBuilder: () => SubjectInfoPage(ref.read(subjectInfoProvider)![index]),
 					)
 				];
 
@@ -107,12 +110,12 @@ class SubjectPage extends HookConsumerWidget {
 		)
 	);
 
-	void _showEvents(BuildContext context) => _showEntitiesPage(
+	void _showEvents(BuildContext context, Subject subject) => _showEntitiesPage(
 		context,
 		(_) => _EntitiesPage(
 			tilesBuilder: (ref) {
 				final events = ref.watch(eventsNotifierProvider)!.where((event) =>
-					event.subject?.id == initialSubject.id
+					event.subject?.id == initial.id
 				);
 				return [
 					for (final event in events) EntityTile(
@@ -122,7 +125,7 @@ class SubjectPage extends HookConsumerWidget {
 					)
 				];
 			},
-			newEntityPageBuilder: () => NewEventPage.subjectEvent(initialSubject)
+			newEntityPageBuilder: () => NewEventPage.subjectEvent(subject)
 		)
 	);
 

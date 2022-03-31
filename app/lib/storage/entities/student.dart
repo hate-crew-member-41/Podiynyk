@@ -17,6 +17,14 @@ class Student extends Entity {
 	Student.author(CloudMap object) :
 		role = null,
 		super.fromObject(object);
+	
+	Student.modified({
+		required Student student,
+		String? nameRepr,
+		Role? role
+	}) :
+		role = role ?? student.role,
+		super.modified(entity: student, nameRepr: nameRepr);
 
 	final Role? role;
 

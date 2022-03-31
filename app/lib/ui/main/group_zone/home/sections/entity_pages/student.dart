@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/entities/student.dart';
 
 import 'package:podiynyk/ui/main/widgets/input_field.dart';
 
+import '../providers.dart' show studentsNotifierProvider;
 import 'entity.dart';
 
 
-class StudentPage extends HookWidget {
+class StudentPage extends HookConsumerWidget {
 	const StudentPage(this.student);
 
 	final Student student;
 
 	@override
-	Widget build(BuildContext context) {
+	Widget build(BuildContext context, WidgetRef ref) {
 		final nameField = useTextEditingController(text: student.nameRepr);
-		// final role = useRef(student.role);
+		final role = useRef(student.role);
 
 		return EntityPage(
 			children: [
@@ -44,21 +46,17 @@ class StudentPage extends HookWidget {
 			// 		action: () => Cloud.makeLeader(student)
 			// 	)
 			// ],
-			// sectionShouldRebuild: () {
-			// 	bool changed = false;
+			onClose: () {
+				final current = Student.modified(
+					student: student,
+					nameRepr: nameField.text,
+					role: role.value
+				);
 
-			// 	if (nameField.text != student.nameRepr) {
-			// 		student.nameRepr = nameField.text;
-			// 		changed = true;
-			// 	}
-
-			// 	if (role.value != student.role) {
-			// 		student.role = role.value;
-			// 		changed = true;
-			// 	}
-
-			// 	return changed;
-			// }
+				if (current.nameRepr != student.nameRepr || current.role != student.role) {
+					ref.read(studentsNotifierProvider.notifier).replace(student, current);
+				}
+			}
 		);
 	}
 }

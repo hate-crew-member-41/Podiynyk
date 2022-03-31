@@ -6,12 +6,12 @@ class EntityPage extends ConsumerWidget {
 	const EntityPage({
 		required this.children,
 		this.actions = const <Widget>[],
-		this.sectionShouldRebuild
+		this.onClose
 	});
 
 	final List<Widget> children;
 	final List<Widget> actions;
-	final bool Function()? sectionShouldRebuild;
+	final void Function()? onClose;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
@@ -33,11 +33,10 @@ class EntityPage extends ConsumerWidget {
 	}
 
 	Widget _popScopeBuilder(WidgetRef ref) {
-		if (sectionShouldRebuild != null) return WillPopScope(
+		if (onClose != null) return WillPopScope(
 			child: _builder(),
 			onWillPop: () async {
-				// final changed = sectionShouldRebuild!();
-				// if (changed) (ref.read(sectionProvider) as EntitiesSection).notifier(ref).replace();
+				onClose!();
 				return true;
 			},
 		);

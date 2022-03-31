@@ -15,20 +15,19 @@ import 'entity.dart';
 
 
 class EventPage extends HookConsumerWidget {
-	const EventPage(this.initialEvent);
+	const EventPage(this.initial);
 
-	final Event initialEvent;
+	final Event initial;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
-		final event = useState(initialEvent);
-		final nameField = useTextEditingController(text: initialEvent.nameRepr);
-		final date = useRef(initialEvent.date);
-		final noteField = useTextEditingController(text: initialEvent.note);
+		final event = useState(initial);
+		final nameField = useTextEditingController(text: initial.nameRepr);
+		final date = useRef(initial.date);
+		final noteField = useTextEditingController(text: initial.note);
 
 		useEffect(() {
-			if (!initialEvent.hasDetails) initialEvent.withDetails.then((withDetails) {
-				ref.read(eventsNotifierProvider.notifier).replace(event.value, withDetails, preserveState: true);
+			if (!initial.hasDetails) initial.withDetails.then((withDetails) {
 				event.value = withDetails;
 				if (withDetails.note != null) noteField.text = withDetails.note!;
 			});
@@ -43,8 +42,8 @@ class EventPage extends HookConsumerWidget {
 					name: "name",
 					style: Appearance.headlineText
 				),
-				if (initialEvent.subject != null) Text(
-					initialEvent.subject!.nameRepr,
+				if (initial.subject != null) Text(
+					initial.subject!.nameRepr,
 					style: Appearance.largeTitleText
 				).withPadding(),
 				DateField(
@@ -79,23 +78,21 @@ class EventPage extends HookConsumerWidget {
 			// 		action: () => _delete(context, ref)
 			// 	)
 			// ],
-			// sectionShouldRebuild: () {
-			// 	bool changed = false;
+			onClose: () {
+				final current = Event.modified(
+					event: event.value,
+					nameRepr: nameField.text,
+					date: date.value,
+					note: noteField.text
+				);
 
-			// 	if (nameField.text != event.nameRepr) {
-			// 		event.nameRepr = nameField.text;
-			// 		changed = true;
-			// 	}
-			// 	if (date.value != event.date) {
-			// 		event.date = date.value;
-			// 		changed = true;
-			// 	}
-
-			// 	final note = noteField.text.isNotEmpty ? noteField.text : null;
-			// 	if (note != event.note) event.note = note;
-
-			// 	return changed;
-			// },
+				if (current.nameRepr != initial.nameRepr || current.date != initial.date) {
+					ref.read(eventsNotifierProvider.notifier).replace(initial, current);
+				}
+				else if (current.hasDetails && (!initial.hasDetails || current.note != initial.note)) {
+					ref.read(eventsNotifierProvider.notifier).replace(initial, current, preserveState: true);
+				}
+			}
 		);
 	}
 

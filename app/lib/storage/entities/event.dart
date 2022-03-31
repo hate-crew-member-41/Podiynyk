@@ -33,6 +33,18 @@ class Event extends Entity {
 		isHidden = event.isHidden,
 		note = details[Identifier.note.name],
 		super.withDetails(entity: event);
+	
+	Event.modified({
+		required Event event,
+		String? nameRepr,
+		DateTime? date,
+		String? note
+	}) :
+		subject = event.subject,
+		date = date ?? event.date,
+		isHidden = event.isHidden,
+		note = note != null ? (note.isNotEmpty ? note : null) : event.note,
+		super.modified(entity: event, nameRepr: nameRepr);
 
 	final Subject? subject;
 	final DateTime date;

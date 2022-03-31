@@ -61,7 +61,7 @@ class _Tile extends ConsumerWidget {
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
 		final index = ref.watch(subjectsNotifierProvider)!.indexOf(subject);
-		final events = ref.watch(eventsNotifierProvider)!.where((event) => event.subject == subject).toList();
+		final events = ref.watch(eventsNotifierProvider)!.where((event) => event.subject?.id == subject.id).toList();
 		final hasEvents = events.isNotEmpty;
 
 		return EntityTile(

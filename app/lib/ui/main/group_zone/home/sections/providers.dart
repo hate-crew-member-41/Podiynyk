@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/identifiers.dart';
 import 'package:podiynyk/storage/entities/entity.dart';
+import 'package:podiynyk/storage/entities/subject.dart';
+import 'package:podiynyk/storage/entities/subject_info.dart';
 
 
 typedef EntitiesNotifierProvider<E extends Entity> = StateNotifierProvider<EntitiesNotifier<E>, List<E>?>;
@@ -15,34 +19,71 @@ class EntitiesNotifier<E extends Entity> extends StateNotifier<List<E>?> {
 	final Future<List<E>> Function() entities;
 
 	void replace(E entity, E modified, {bool preserveState = false}) {
-		final entities = preserveState ? state! : List<E>.from(state!);
-		state = entities..[entities.indexOf(entity)] = modified;
+		state![state!.indexOf(entity)] = modified;
+		if (!preserveState) state = List<E>.from(state!)..sort();
 	}
 
 	Future<void> update() async => state = await entities();
 
-	Future<void> add(E entity) {
+	Future<void> add(E entity) async {
 		final collection = entity.cloudCollection!, details = entity.detailsInCloudFormat;
 
 		collection.ref.update({entity.id: entity.inCloudFormat});
 		if (details != null) collection.detailsRef(entity).set(details);
 
-		return update();
+		await update();
 	}
 }
 
-final eventsNotifierProvider = EntitiesNotifierProvider((ref) {
-	return EntitiesNotifier(() => Cloud.events);
-});
 
-final subjectsNotifierProvider = EntitiesNotifierProvider((ref) {
-	return EntitiesNotifier(() => Cloud.subjects);
-});
+class SubjectInfoNotifier extends StateNotifier<List<SubjectInfo>?> {
+	SubjectInfoNotifier() : super(null);
 
-final messagesNotifierProvider = EntitiesNotifierProvider((ref) {
-	return EntitiesNotifier(() => Cloud.messages);
-});
+	late bool changed;
+	late DocumentReference<CloudMap> detailsRef;
 
-final studentsNotifierProvider = EntitiesNotifierProvider((ref) {
-	return EntitiesNotifier(() => Cloud.students);
-});
+	void init(Subject subject) {
+		state = subject.info;
+		changed = false;
+		detailsRef = subject.cloudCollection.detailsRef(subject);
+	}
+
+	Future<void> add(SubjectInfo info) async {
+		detailsRef.update({
+			'${Identifier.info.name}.${info.id}': info.inCloudFormat
+		});
+
+		final snapshot = await detailsRef.get();
+		state = [
+			for (final entry in snapshot.data()![Identifier.info.name].entries) SubjectInfo.fromCloud(
+				id: entry.key,
+				object: entry.value
+			)
+		]..sort();
+		changed = true;
+	}
+
+	void replace(SubjectInfo info, SubjectInfo modified, {bool preserveState = false}) {
+		state![state!.indexOf(info)] = modified;
+		if (!preserveState) state = List<SubjectInfo>.from(state!)..sort();
+		changed = true;
+	}
+}
+
+
+final eventsNotifierProvider = EntitiesNotifierProvider(
+	(ref) => EntitiesNotifier(() => Cloud.events)
+);
+final subjectsNotifierProvider = EntitiesNotifierProvider(
+	(ref) => EntitiesNotifier(() => Cloud.subjects)
+);
+final messagesNotifierProvider = EntitiesNotifierProvider(
+	(ref) => EntitiesNotifier(() => Cloud.messages)
+);
+final studentsNotifierProvider = EntitiesNotifierProvider(
+	(ref) => EntitiesNotifier(() => Cloud.students)
+);
+
+final subjectInfoProvider = StateNotifierProvider<SubjectInfoNotifier, List<SubjectInfo>?>(
+	(ref) => SubjectInfoNotifier()
+);

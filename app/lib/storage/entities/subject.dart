@@ -41,6 +41,15 @@ class Subject extends Entity {
 		]..sort(),
 		super.withDetails(entity: subject);
 
+	Subject.modified({
+		required Subject subject,
+		String? nameRepr,
+		List<SubjectInfo>? info
+	}) :
+		isFollowed = subject.isFollowed,
+		info = subject.info,
+		super.modified(entity: subject, nameRepr: nameRepr);
+
 	late final bool isFollowed;
 
 	final List<SubjectInfo>? info;

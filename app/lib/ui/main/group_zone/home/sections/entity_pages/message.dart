@@ -14,21 +14,20 @@ import 'entity.dart';
 
 
 class MessagePage extends HookConsumerWidget {
-	MessagePage(this.initialMessage) :
-		isByUser = initialMessage.author.id == Local.userId;
+	MessagePage(this.initial) :
+		isByUser = initial.author.id == Local.userId;
 
-	final Message initialMessage;
+	final Message initial;
 	final bool isByUser;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
-		final message = useState(initialMessage);
-		final nameField = useTextEditingController(text: initialMessage.nameRepr);
-		final contentField = useTextEditingController(text: initialMessage.content);
+		final message = useState(initial);
+		final nameField = useTextEditingController(text: initial.nameRepr);
+		final contentField = useTextEditingController(text: initial.content);
 
 		useEffect(() {
-			initialMessage.withDetails.then((withDetails) {
-				ref.read(messagesNotifierProvider.notifier).replace(message.value, withDetails, preserveState: true);
+			if (!initial.hasDetails) initial.withDetails.then((withDetails) {
 				message.value = withDetails;
 				contentField.text = withDetails.content!;
 			});
@@ -53,11 +52,11 @@ class MessagePage extends HookConsumerWidget {
 				),
 				const ListTile(),
 				Text(
-					initialMessage.author.nameRepr,
+					initial.author.nameRepr,
 					style: Appearance.titleText
 				).withPadding(),
 				Text(
-					initialMessage.date.fullRepr,
+					initial.date.fullRepr,
 					style: Appearance.titleText
 				).withPadding()
 			],
@@ -67,18 +66,20 @@ class MessagePage extends HookConsumerWidget {
 			// 		action: () => _delete(context, ref)
 			// 	)
 			// ],
-			// sectionShouldRebuild: () {
-			// 	bool changed = false;
+			onClose: () {
+				final current = Message.modified(
+					message: message.value,
+					name: nameField.text,
+					content: contentField.text
+				);
 
-			// 	if (nameField.text != message.name) {
-			// 		message.name = nameField.text;
-			// 		changed = true;
-			// 	}
-
-			// 	if (contentField.text != message.content) message.content = contentField.text;
-
-			// 	return changed;
-			// },
+				if (current.name != initial.name) {
+					ref.read(messagesNotifierProvider.notifier).replace(initial, current);
+				}
+				else if (current.hasDetails && (!initial.hasDetails || current.content != initial.content)) {
+					ref.read(messagesNotifierProvider.notifier).replace(initial, current, preserveState: true);
+				}
+			},
 		);
 	}
 
