@@ -5,9 +5,6 @@ import '../local.dart';
 import '../identifiers.dart';
 
 
-typedef EntityEntry = MapEntry<String, CloudMap>;
-
-
 @immutable
 abstract class Entity implements Comparable {
 	Entity({

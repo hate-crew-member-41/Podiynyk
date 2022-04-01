@@ -54,7 +54,7 @@ class StudentPage extends HookConsumerWidget {
 				);
 
 				if (current.nameRepr != student.nameRepr || current.role != student.role) {
-					ref.read(studentsNotifierProvider.notifier).replace(student, current);
+					ref.read(studentsNotifierProvider.notifier).replace(student, current, preserveState: false);
 				}
 			}
 		);

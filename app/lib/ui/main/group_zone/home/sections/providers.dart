@@ -18,7 +18,7 @@ class EntitiesNotifier<E extends Entity> extends StateNotifier<List<E>?> {
 
 	final Future<List<E>> Function() entities;
 
-	void replace(E entity, E modified, {bool preserveState = false}) {
+	void replace(E entity, E modified, {bool preserveState = true}) {
 		state![state!.indexOf(entity)] = modified;
 		if (!preserveState) state = List<E>.from(state!)..sort();
 	}
@@ -48,6 +48,8 @@ class SubjectInfoNotifier extends StateNotifier<List<SubjectInfo>?> {
 		detailsRef = subject.cloudCollection.detailsRef(subject);
 	}
 
+	void update(List<SubjectInfo> info) => state = info;
+
 	Future<void> add(SubjectInfo info) async {
 		detailsRef.update({
 			'${Identifier.info.name}.${info.id}': info.inCloudFormat
@@ -63,7 +65,7 @@ class SubjectInfoNotifier extends StateNotifier<List<SubjectInfo>?> {
 		changed = true;
 	}
 
-	void replace(SubjectInfo info, SubjectInfo modified, {bool preserveState = false}) {
+	void replace(SubjectInfo info, SubjectInfo modified, {bool preserveState = true}) {
 		state![state!.indexOf(info)] = modified;
 		if (!preserveState) state = List<SubjectInfo>.from(state!)..sort();
 		changed = true;

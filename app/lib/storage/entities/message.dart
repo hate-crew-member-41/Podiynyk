@@ -39,7 +39,7 @@ class Message extends Entity {
 		author = message.author,
 		date = message.date,
 		content = content ?? message.content,
-		super.modified(entity: message, name: name);  // todo
+		super.modified(entity: message, name: name);
 
 	final Student author;
 	final DateTime date;

@@ -34,8 +34,10 @@ class SubjectPage extends HookConsumerWidget {
 		useEffect(() {
 			if (!initial.hasDetails) initial.withDetails.then((withDetails) {
 				subject.value = withDetails;
-				ref.read(subjectInfoProvider.notifier).init(withDetails);
+				ref.read(subjectInfoProvider.notifier).update(withDetails.info!);
 			});
+
+			Future.delayed(Duration.zero, () => ref.read(subjectInfoProvider.notifier).init(initial));
 
 			return null;
 		}, const []);
@@ -79,12 +81,12 @@ class SubjectPage extends HookConsumerWidget {
 					);
 
 					if (current.nameRepr != initial.nameRepr) {
-						ref.read(subjectsNotifierProvider.notifier).replace(initial, current);
+						ref.read(subjectsNotifierProvider.notifier).replace(initial, current, preserveState: false);
 					}
 					else if (current.hasDetails && (
 						!initial.hasDetails || ref.read(subjectInfoProvider.notifier).changed
 					)) {
-						ref.read(subjectsNotifierProvider.notifier).replace(initial, current, preserveState: true);
+						ref.read(subjectsNotifierProvider.notifier).replace(initial, current);
 					}
 				}
 			),

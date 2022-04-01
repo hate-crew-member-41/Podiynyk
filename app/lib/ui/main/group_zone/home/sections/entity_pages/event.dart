@@ -87,10 +87,10 @@ class EventPage extends HookConsumerWidget {
 				);
 
 				if (current.nameRepr != initial.nameRepr || current.date != initial.date) {
-					ref.read(eventsNotifierProvider.notifier).replace(initial, current);
+					ref.read(eventsNotifierProvider.notifier).replace(initial, current, preserveState: false);
 				}
 				else if (current.hasDetails && (!initial.hasDetails || current.note != initial.note)) {
-					ref.read(eventsNotifierProvider.notifier).replace(initial, current, preserveState: true);
+					ref.read(eventsNotifierProvider.notifier).replace(initial, current);
 				}
 			}
 		);

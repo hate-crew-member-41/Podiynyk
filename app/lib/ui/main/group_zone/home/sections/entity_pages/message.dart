@@ -74,10 +74,10 @@ class MessagePage extends HookConsumerWidget {
 				);
 
 				if (current.name != initial.name) {
-					ref.read(messagesNotifierProvider.notifier).replace(initial, current);
+					ref.read(messagesNotifierProvider.notifier).replace(initial, current, preserveState: false);
 				}
 				else if (current.hasDetails && (!initial.hasDetails || current.content != initial.content)) {
-					ref.read(messagesNotifierProvider.notifier).replace(initial, current, preserveState: true);
+					ref.read(messagesNotifierProvider.notifier).replace(initial, current);
 				}
 			},
 		);

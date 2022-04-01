@@ -6,26 +6,11 @@ Make sure that too much of the widget tree is not rebuilt. Check:
 - hooks: useState, useListenable
 - context.watch
 
-## Reacting
+## Entity pages
 
-Make the UI react to the following changes.
+Bring back the actions.
 
-All entities:
-- hiding/showing ➔ the actions
-
-Events:
-- gets/loses the note ➔ the actions
-
-Subjects:
-- adding/deleting an event ➔ the list, the tile
-- adding/deleting an info item ➔ the list
-
-Students:
-- new role ➔ the page, the actions
-
-## Subject info
-
-When a subject page is opened, the info provider is not initialized with the subject's info, allowing whatever is there to stay until the provider is initialized. Even worse if the subject already has the info, because the provider is never updated at all. Each time a subject page is opened it must initialize the info provider.
+Write the changes to the cloud.
 
 ## Before Home
 

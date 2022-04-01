@@ -49,10 +49,10 @@ class SubjectInfoPage extends HookConsumerWidget {
 				);
 
 				if (current.nameRepr != info.nameRepr) {
-					ref.read(subjectInfoProvider.notifier).replace(info, current);
+					ref.read(subjectInfoProvider.notifier).replace(info, current, preserveState: false);
 				}
 				else if (current.content != info.content) {
-					ref.read(subjectInfoProvider.notifier).replace(info, current, preserveState: true);
+					ref.read(subjectInfoProvider.notifier).replace(info, current);
 				}
 			}
 		);
