@@ -7,7 +7,7 @@ import 'storage/cloud.dart';
 import 'storage/local.dart';
 
 import 'ui/loading.dart';
-import 'ui/main/group_zone/home/home.dart';
+import 'ui/home/home.dart';
 
 
 void main() {

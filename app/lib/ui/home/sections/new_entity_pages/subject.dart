@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/entities/subject.dart';
 
-import 'package:podiynyk/ui/main/widgets/input_field.dart';
+import 'package:podiynyk/ui/widgets/input_field.dart';
 
 import '../providers.dart' show subjectsNotifierProvider;
 import 'entity.dart';

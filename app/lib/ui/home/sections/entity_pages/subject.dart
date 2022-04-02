@@ -8,7 +8,7 @@ import 'package:podiynyk/storage/entities/date.dart';
 import 'package:podiynyk/storage/entities/student.dart';
 import 'package:podiynyk/storage/entities/subject.dart';
 
-import 'package:podiynyk/ui/main/widgets/input_field.dart';
+import 'package:podiynyk/ui/widgets/input_field.dart';
 
 import '../providers.dart' show eventsNotifierProvider, subjectInfoProvider, subjectsNotifierProvider;
 import '../new_entity_pages/event.dart';
