@@ -18,5 +18,6 @@ enum Identifier {
 	subjects,
 	unfollowedSubjects,
 	userId,
-	userName
+	userName,
+	userRole
 }

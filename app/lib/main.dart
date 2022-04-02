@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:podiynyk/ui/leader_election.dart';
 
 import 'storage/appearance.dart';
 import 'storage/cloud.dart';
 import 'storage/local.dart';
 
-import 'ui/loading.dart';
 import 'ui/home/home.dart';
+import 'ui/identification.dart';
+import 'ui/loading.dart';
 
 
 void main() {
@@ -17,19 +20,22 @@ void main() {
 }
 
 
+final stateProvider = StateProvider<Widget>((ref) => const Loading());
+
+
 class App extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return MaterialApp(
-			title: 'Podiynyk',
-			home: FutureBuilder(
-				future: Future.wait([Local.init(), Cloud.init()]),
-				builder: (context, snapshot) {
-					if (snapshot.connectionState == ConnectionState.waiting) return const Loading();
-					// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
-					return const Home();
-				}
-			),
+			title: "Podiynyk",
+			home: HookConsumer(builder: (_, ref, __) {
+				useEffect(() {
+					_init(ref);
+					return null;
+				}, const []);
+
+				return ref.watch(stateProvider);
+			}),
 			themeMode: ThemeMode.dark,
 			darkTheme: ThemeData(
 				colorScheme: const ColorScheme.dark().copyWith(
@@ -88,5 +94,18 @@ class App extends StatelessWidget {
 				)
 			)
 		);
+	}
+
+	Future<void> _init(WidgetRef ref) async {
+		await Future.wait([Local.init(), Cloud.init()]);
+		final notifier = ref.read(stateProvider.notifier);
+
+		if (Identification.isInProcess) {
+			notifier.state = const Identification();
+			return;
+		}
+
+		Local.userRole = await Cloud.userRole();
+		notifier.state = Local.userRole == null ? const LeaderElection() : const Home();
 	}
 }

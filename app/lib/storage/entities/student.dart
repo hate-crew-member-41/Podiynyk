@@ -7,8 +7,8 @@ import 'entity.dart';
 
 class Student extends Entity {
 	Student.user() :
-		role = Cloud.userRole,
-		super(id: Local.userId, name: Local.userName);
+		role = Local.userRole!,
+		super(id: Local.userId!, name: Local.userName!);
 
 	Student.fromCloud({required String id, required CloudMap object}) :
 		role = Role.values[object[Identifier.role.name] as int],

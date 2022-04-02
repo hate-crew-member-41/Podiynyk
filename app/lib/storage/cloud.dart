@@ -34,16 +34,22 @@ extension EntityCollectionRefs on EntityCollection {
 }
 
 
-extension CloudId on String {
-	/// The string converted to be usable as a document id or a field name in [FirebaseFirestore].
-	String get safeId => replaceAll('.', '').replaceAll('/', '');
-}
+// extension CloudId on String {
+// 	/// The string converted to be usable as a document id or a field name in [FirebaseFirestore].
+// 	String get safeId => replaceAll('.', '').replaceAll('/', '');
+// }
 
 
 abstract class Cloud {
 	/// Initializes [Firebase] and synchronizes the user's [Role] in the group.
 	static Future<void> init() async {
 		await Firebase.initializeApp();
+	}
+
+	static Future<Role?> userRole() async {
+		final snapshot = await EntityCollection.students.ref.get();
+		final index = snapshot.data()![Local.userId][Identifier.role.name];
+		return index != null ? Role.values[index] : null;
 	}
 
 	// /// Initializes a new group and returns its id.
@@ -81,10 +87,10 @@ abstract class Cloud {
 	// 	});
 	// }
 
-	// /// Whether the group is past the [LeaderElection] step. Initializes [userRole].
-	// static Future<bool> leaderIsElected({bool initUserRole = true}) async {
-	// 	final snapshot = await EntityCollection.groups.ref.get();
-	// 	final students = snapshot[Identifier.students.name];
+	// /// Whether the group's leader has been determined. Initializes [userRole].
+	//	static Future<bool> leaderIsElected() async {
+	// 	final snapshot = await EntityCollection.students.ref.get();
+	// 	final students = snapshot.data()!;
 
 	// 	final isElected = _leaderIsElected(students);
 	// 	if (isElected) {
@@ -125,21 +131,6 @@ abstract class Cloud {
 	// 		if (fromId != null) '$studentsField.$fromId.$confirmationCountField': FieldValue.increment(-1)
 	// 	});
 	// }
-
-	static late Role _userRole;
-	/// The user's [Role].
-	// static Role get userRole => _userRole;
-	static Role get userRole => Role.leader;
-
-	static Future<void> initRole() async {
-		final snapshot = await EntityCollection.groups.ref.get();
-		_updateUserRole(snapshot[Identifier.students.name]);
-	}
-
-	static void _updateUserRole(CloudMap students) {
-		final index = students[Local.userId][Identifier.role.name] as int;
-		_userRole = Role.values[index];
-	}
 
 	/// The group's sorted [Event]s without the details.
 	static Future<List<Event>> get events async {
@@ -184,7 +175,7 @@ abstract class Cloud {
 		]..sort();
 		Local.clearEntityLabels(students);
 
-		_userRole = students.firstWhere((student) => student.id == Local.userId).role!;
+		// _userRole = students.firstWhere((student) => student.id == Local.userId).role!;
 		return students;
 	}
 

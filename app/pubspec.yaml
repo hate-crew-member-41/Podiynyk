@@ -14,13 +14,10 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # flutter
+  # flutter and state management
   cupertino_icons: ^1.0.2
-
-  # state management
   flutter_hooks: ^0.18.2+1
   hooks_riverpod: ^1.0.3
-  provider: ^6.0.2
 
   # storage
   cloud_firestore: ^3.1.5

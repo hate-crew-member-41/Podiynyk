@@ -1,11 +1,11 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'cloud.dart';
 import 'identifiers.dart';
 import 'entities/entity.dart';
+import 'entities/student.dart' show Role;
 
 
-/// The [Hive] [Box]es that the local data is stored in.
+/// The [Box]es that the local data is stored in.
 enum DataBox {
 	misc,
 	labels,
@@ -14,8 +14,32 @@ enum DataBox {
 
 
 abstract class Local {
+	/// ```
+	/// {
+	/// 	groupId?: String,
+	/// 	userId?: String,
+	/// 	userName?: String,
+	/// 	userRole?: int
+	/// }
+	/// ```
 	static late final Box<dynamic> _misc;
+
+	/// ```
+	/// {
+	/// 	events: { $id: $label, ... },
+	/// 	subjects: ...,
+	/// 	subjectInfo: ...,
+	/// 	students: ...
+	/// }
+	/// ```
 	static late final Box<Map> _labels;
+
+	/// ```
+	/// {
+	/// 	hiddenEvents: [ $id, ... ],
+	/// 	unfollowedSubjects: ...
+	/// }
+	/// ```
 	static late final Box<List<String>> _entities;
 
 	/// Initializes the storage and makes the data accessible.
@@ -30,47 +54,46 @@ abstract class Local {
 		]);
 	}
 
-	/// Whether the user has completed the identification step.
-	static bool get userIsIdentified => groupId != null;
-
 	/// The id of the user's group.
 	// static String? get groupId => _misc.get(Identifier.groupId.name);
+	// static String? get groupId => null;
 	static String? get groupId => 'zc1hMAjhkRSJ7l6lsjCU';
-	/// Sets the user's [groupId] and initializes the data.
-	static set groupId(String? id) {
-		_misc.put(Identifier.groupId.name, id!);
+	// /// Sets the user's [groupId] and initializes the data.
+	// static set groupId(String? id) {
+	// 	_misc.put(Identifier.groupId.name, id!);
 
-		_labels.putAll({
-			Identifier.students.name: <String, String>{},
-			Identifier.subjects.name: <String, String>{},
-			Identifier.subjectInfo.name: <String, String>{},
-			Identifier.events.name: <String, String>{}
-		});
-		_entities.putAll({
-			Identifier.unfollowedSubjects.name: <String>[],
-			Identifier.hiddenEvents.name: <String>[]
-		});
-	}
+	// 	_labels.putAll({
+	// 		Identifier.events.name: <String, String>{}
+	// 		Identifier.subjects.name: <String, String>{},
+	// 		Identifier.subjectInfo.name: <String, String>{},
+	// 		Identifier.students.name: <String, String>{},
+	// 	});
+	// 	_entities.putAll({
+	// 		Identifier.unfollowedSubjects.name: <String>[],
+	// 		Identifier.hiddenEvents.name: <String>[]
+	// 	});
+	// }
 
-	// /// Whether it is known who is the leader. Either `true` ot `null`.
-	// static bool? get leaderIsElected => _misc.get(Identifier.leaderIsElected.name);
-	// /// Sets [leaderIsElected] to the non-`false` value, because `false` can never be guaranteed.
-	// static set leaderIsElected(bool? isElected) => _misc.put(Identifier.leaderIsElected.name, true);
+	/// The user's id.
+	static String? get userId => 'dev';
+	// static String? get userId => _misc.get(Identifier.userId.name);
+	// /// Sets [userId].
+	// static set userId(String? id) => _misc.put(Identifier.userId.name, id);
 
-	/// Sets [userId].
-	static set userId(String id) => _misc.put(Identifier.userId.name, id);
-	/// The user's id in the group.
-	// static String get userId => _misc.get(Identifier.userId.name)!;
-	static String get userId => 'dev';
-
-	/// Sets [userName] and initializes [userId] if needed.
-	static set userName(String name) {
-		_misc.put(Identifier.userName.name, name);
-		if (_misc.get(Identifier.userId.name) == null) _misc.put(Identifier.userId.name, name.safeId);
-	}
 	/// The user's name.
-	// static String get userName => _misc.get(Identifier.userName.name)!;
-	static String get userName => "💻";
+	static String? get userName => "💻";
+	// static String? get userName => _misc.get(Identifier.userName.name);
+	// /// Sets [userName] and initializes [userId] if needed.
+	// static set userName(String? name) {
+	// 	_misc.put(Identifier.userName.name, name);
+	// 	if (_misc.get(Identifier.userId.name) == null) _misc.put(Identifier.userId.name, name!.safeId);
+	// }
+
+	/// The user's [Role].
+	// static Role? get userRole => null;
+	static Role? get userRole => Role.values[_misc.get(Identifier.userRole.name)];
+	/// Sets [userRole].
+	static set userRole(Role? role) => _misc.put(Identifier.userRole.name, role?.index);
 
 	/// The [entity]'s label.
 	static String? entityLabel(Entity entity) {
