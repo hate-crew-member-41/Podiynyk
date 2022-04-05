@@ -31,7 +31,7 @@ class StudentPage extends HookConsumerWidget {
 				if (student.role != Role.ordinary) Text(
 					student.role!.name,
 					style: Appearance.largeTitleText
-				).withPadding()
+				).withPadding
 			],
 			// actions: Cloud.userRole != Role.leader || student.name == Local.userName ? [] : [
 			// 	student.role == Role.ordinary ? EntityActionButton(

@@ -15,7 +15,7 @@ typedef CloudMap = Map<String, dynamic>;
 
 
 /// An [Entity] collection of the group, stored in [FirebaseFirestore].
-enum EntityCollection {
+enum Collection {
 	events,
 	groups,
 	messages,
@@ -23,7 +23,7 @@ enum EntityCollection {
 	subjects
 }
 
-extension EntityCollectionRefs on EntityCollection {
+extension EntityCollectionRefs on Collection {
 	/// A reference to the document with [this].
 	DocumentReference<CloudMap> get ref =>	
 		FirebaseFirestore.instance.collection(name).doc(Local.groupId);
@@ -34,72 +34,69 @@ extension EntityCollectionRefs on EntityCollection {
 }
 
 
-// extension CloudId on String {
-// 	/// The string converted to be usable as a document id or a field name in [FirebaseFirestore].
-// 	String get safeId => replaceAll('.', '').replaceAll('/', '');
-// }
-
-
 abstract class Cloud {
-	/// Initializes [Firebase] and synchronizes the user's [Role] in the group.
+	/// Initializes [Firebase].
 	static Future<void> init() async {
 		await Firebase.initializeApp();
 	}
 
-	static Future<Role?> userRole() async {
-		final snapshot = await EntityCollection.students.ref.get();
-		final index = snapshot.data()![Local.userId][Identifier.role.name];
-		return index != null ? Role.values[index] : null;
+	/// Creates a new group, initializes [Local.groupId] and returns it.
+	static Future<String> initGroup() async {
+		final document = await FirebaseFirestore.instance.collection(Collection.groups.name).add({
+			Identifier.joined.name: DateTime.now()
+		});
+		Local.groupId = document.id;
+		await Collection.students.ref.set({});
+
+		return document.id;
 	}
 
-	// /// Initializes a new group and returns its id.
-	// static Future<String> initGroup() async {
-	// 	final document = await _cloud.collection(EntityCollection.groups.name).add({
-	// 		Identifier.students.name: <String, CloudMap>{},
-	// 		Identifier.joined.name: DateTime.now()
-	// 	});
-	// 	Local.groupId = document.id;
+	/// Whether the [name] is unique in the user's group.
+	static Future<bool> nameIsUnique(String name) async {
+		final snapshot = await Collection.students.ref.get();
+		return _nameIsUnique(snapshot.data()!, name);
+	}
 
-	// 	await Future.wait([
-	// 		EntityCollection.events.ref.set(<String, CloudMap>{}),
-	// 		EntityCollection.subjects.ref.set(<String, CloudMap>{}),
-	// 		EntityCollection.messages.ref.set(<String, CloudMap>{})
-	// 	]);
+	/// Whether the [name] is unique in the group with the [groupId].
+	/// Returns `null` if the [groupId] does not exist.
+	static Future<bool?> nameIsUniqueInGroup(String groupId, String name) async {
+		final snapshot = await FirebaseFirestore.instance.collection(Collection.students.name).doc(groupId).get();
+		return snapshot.exists ? _nameIsUnique(snapshot.data()!, name) : null;
+	}
 
-	// 	return Local.groupId!;
-	// }
+	static bool _nameIsUnique(CloudMap students, String name) {
+		final ownerObject = students.values.firstWhere(
+			(object) => object[Identifier.name.name] == name,
+			orElse: () => null
+		);
+		return ownerObject == null;
+	}
 
-	// /// Whether aa group with the [id] exists.
-	// static Future<bool> groupExists(String id) async {
-	// 	final snapshot = await _cloud.collection(EntityCollection.groups.name).doc(id).get();
-	// 	return snapshot.exists;
-	// }
+	/// Adds the user to the group.
+	/// Initializes the [Identifier.role] / [Identifier.confirmationCount], [Local.userRole].
+	static Future<void> enterGroup() async {
+		final snapshot = await Collection.students.ref.get();
+		final students = snapshot.data()!;
+		final leaderIsElected = students.isNotEmpty &&	
+			(students.values.first as CloudMap).containsKey(Identifier.role.name);
 
-	// static Future<void> enterGroup() async {
-	// 	final userField = '${Identifier.students.name}.${Local.userId}';
+		await Collection.students.ref.update({
+			'${Local.userId}.${Identifier.name.name}': Local.userName,
+			if (leaderIsElected)
+				'${Local.userId}.${Identifier.role.name}': Role.ordinary.index
+			else 
+				'${Local.userId}.${Identifier.confirmationCount.name}': 0
+		});
 
-	// 	await EntityCollection.groups.ref.update({
-	// 		'$userField.${Identifier.name.name}': Local.userName,
-	// 		if (await leaderIsElected(initUserRole: false))
-	// 			'$userField.${Identifier.role.name}': Role.ordinary.index
-	// 		else 
-	// 			'$userField.${Identifier.confirmationCount.name}': 0
-	// 	});
-	// }
+		if (leaderIsElected) Local.userRole = Role.ordinary;
+	}
 
-	// /// Whether the group's leader has been determined. Initializes [userRole].
-	//	static Future<bool> leaderIsElected() async {
-	// 	final snapshot = await EntityCollection.students.ref.get();
-	// 	final students = snapshot.data()!;
-
-	// 	final isElected = _leaderIsElected(students);
-	// 	if (isElected) {
-	// 		Local.leaderIsElected = true;
-	// 		 if (initUserRole) _updateUserRole(students);
-	// 	}
-
-	// 	return isElected;
-	// }
+	/// Updates [Local.userRole].
+	static Future<void> updateUserRole() async {
+		final snapshot = await Collection.students.ref.get();
+		final index = snapshot.data()![Local.userId][Identifier.role.name];
+		Local.userRole = index != null ? Role.values[index] : null;
+	}
 
 	// /// A [Stream] of updates of the group's [Student]s and confirmations for them to be the group's leader.
 	// /// Initializes [userRole] and returns `null` as soon as the leader is determined.
@@ -134,7 +131,7 @@ abstract class Cloud {
 
 	/// The group's sorted [Event]s without the details.
 	static Future<List<Event>> get events async {
-		final snapshot = await EntityCollection.events.ref.get();
+		final snapshot = await Collection.events.ref.get();
 
 		final events = [
 			for (final entry in snapshot.data()!.entries) Event.fromCloud(id: entry.key, object: entry.value as CloudMap)
@@ -147,7 +144,7 @@ abstract class Cloud {
 
 	/// The group's sorted [Subject]s without the details.
 	static Future<List<Subject>> get subjects async {
-		final snapshot = await EntityCollection.subjects.ref.get();
+		final snapshot = await Collection.subjects.ref.get();
 
 		final subjects = [
 			for (final entry in snapshot.data()!.entries) Subject.fromCloud(id: entry.key, object: entry.value as CloudMap)
@@ -160,7 +157,7 @@ abstract class Cloud {
 
 	/// The group's sorted [Message]s without the details.
 	static Future<List<Message>> get messages async {
-		final snapshot = await EntityCollection.messages.ref.get();
+		final snapshot = await Collection.messages.ref.get();
 		return [
 			for (final entry in snapshot.data()!.entries) Message.fromCloud(id: entry.key, object: entry.value as CloudMap)
 		]..sort();
@@ -168,7 +165,7 @@ abstract class Cloud {
 
 	/// The group's sorted [Student]s. Updates [userRole].
 	static Future<List<Student>> get students async {
-		final snapshot = await EntityCollection.students.ref.get();
+		final snapshot = await Collection.students.ref.get();
 
 		final students = [
 			for (final entry in snapshot.data()!.entries) Student.fromCloud(id: entry.key, object: entry.value as CloudMap)

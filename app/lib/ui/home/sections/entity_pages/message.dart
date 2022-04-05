@@ -54,11 +54,11 @@ class MessagePage extends HookConsumerWidget {
 				Text(
 					initial.author.nameRepr,
 					style: Appearance.titleText
-				).withPadding(),
+				).withPadding,
 				Text(
 					initial.date.fullRepr,
 					style: Appearance.titleText
-				).withPadding()
+				).withPadding
 			],
 			// actions: [
 			// 	if (isAuthor) EntityActionButton(

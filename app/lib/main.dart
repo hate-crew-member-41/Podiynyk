@@ -9,7 +9,7 @@ import 'storage/cloud.dart';
 import 'storage/local.dart';
 
 import 'ui/home/home.dart';
-import 'ui/identification.dart';
+import 'ui/identification/identification.dart';
 import 'ui/loading.dart';
 
 
@@ -102,10 +102,10 @@ class App extends StatelessWidget {
 
 		if (Identification.isInProcess) {
 			notifier.state = const Identification();
-			return;
 		}
-
-		Local.userRole = await Cloud.userRole();
-		notifier.state = Local.userRole == null ? const LeaderElection() : const Home();
+		else {
+			await Cloud.updateUserRole();
+			notifier.state = Local.userRole != null ? const Home() : const LeaderElection();
+		}
 	}
 }

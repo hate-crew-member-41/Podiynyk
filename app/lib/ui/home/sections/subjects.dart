@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/date.dart';
 import 'package:podiynyk/storage/entities/event.dart';
 import 'package:podiynyk/storage/entities/student.dart' show Role;
@@ -41,12 +41,12 @@ class SubjectsSection extends EntitiesSection<Subject> {
 		return ListView(children: [
 			for (final subject in followed) _Tile(subject),
 			for (final subject in unfollowed) _Tile(subject, opaque: false),
-			if (Cloud.userRole == Role.leader) const ListTile()
+			if (Local.userRole == Role.leader) const ListTile()
 		]);
 	}
 
 	@override
-	Widget? get actionButton => Cloud.userRole != Role.leader ? null : NewEntityButton(
+	Widget? get actionButton => Local.userRole != Role.leader ? null : NewEntityButton(
 		pageBuilder: () => NewSubjectPage()
 	);
 }

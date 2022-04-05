@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
-import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/event.dart';
 import 'package:podiynyk/storage/entities/student.dart' show Role;
 
@@ -45,11 +45,11 @@ class EventPage extends HookConsumerWidget {
 				if (initial.subject != null) Text(
 					initial.subject!.nameRepr,
 					style: Appearance.largeTitleText
-				).withPadding(),
+				).withPadding,
 				DateField(
 					initialDate: event.value.date,
 					onPicked: (picked) => date.value = picked,
-					enabled: Cloud.userRole != Role.ordinary
+					enabled: Local.userRole != Role.ordinary
 				),
 				if (event.value.note != null) ...[
 					const ListTile(),

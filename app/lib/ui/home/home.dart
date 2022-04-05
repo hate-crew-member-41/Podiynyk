@@ -37,7 +37,7 @@ class Home extends ConsumerWidget {
 								final count = section is EntitiesSection ? section.countedEntities(ref)?.length : null;
 								return Visibility(
 									visible: count != null,
-									child: Text(count.toString()).withPadding(),
+									child: Text(count.toString()).withPadding,
 								);
 							}),
 							Icon(section.icon)

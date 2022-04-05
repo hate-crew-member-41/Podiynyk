@@ -72,7 +72,7 @@ class Subject extends Entity {
 	);
 
 	@override
-	EntityCollection get cloudCollection => EntityCollection.subjects;
+	Collection get cloudCollection => Collection.subjects;
 	@override
 	Identifier get labelCollection => Identifier.subjects;
 }

@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
-import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/date.dart';
 import 'package:podiynyk/storage/entities/student.dart';
 import 'package:podiynyk/storage/entities/subject.dart';
@@ -143,19 +143,19 @@ class SubjectPage extends HookConsumerWidget {
 
 	// 	final messenger = ScaffoldMessenger.of(context);
 	// 	messenger.showSnackBar(SnackBar(
-	// 		padding: Appearance.padding,
+	// 		padding: EdgeInsets.zero,
 	// 		content: Column(
 	// 			mainAxisSize: MainAxisSize.min,
 	// 			crossAxisAlignment: CrossAxisAlignment.start,
 	// 			children: [
-	// 				const Text("The events will also be deleted.").withPadding(horizontal: false),
+	// 				const Text("The events will also be deleted.").withPadding,
 	// 				ElevatedButton(
 	// 					child: const Text("continue"),
 	// 					onPressed: () {
 	// 						_delete(context, ref);
 	// 						messenger.hideCurrentSnackBar();
 	// 					}
-	// 				)
+	// 				).withPadding
 	// 			]
 	// 		)
 	// 	));
@@ -191,7 +191,7 @@ class _EntitiesPage extends StatelessWidget {
 
 				return const Text("awaiting");
 			})),
-			floatingActionButton: Cloud.userRole == Role.ordinary ? null : NewEntityButton(
+			floatingActionButton: Local.userRole == Role.ordinary ? null : NewEntityButton(
 				pageBuilder: newEntityPageBuilder
 			)
 		);

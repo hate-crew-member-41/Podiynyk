@@ -73,7 +73,7 @@ class Event extends Entity {
 	);
 
 	@override
-	EntityCollection get cloudCollection => EntityCollection.events;
+	Collection get cloudCollection => Collection.events;
 	@override
 	Identifier get labelCollection => Identifier.events;
 

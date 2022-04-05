@@ -19,8 +19,8 @@ class Appearance {
 
 
 extension StyledWidget on Widget {
-	Widget withPadding({bool horizontal = true}) => Padding(
-		padding: horizontal ? Appearance.padding : Appearance.padding.copyWith(left: 0, right: 0),
+	Widget get withPadding => Padding(
+		padding: Appearance.padding,
 		child: this
 	);
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/date.dart';
 import 'package:podiynyk/storage/entities/message.dart';
 import 'package:podiynyk/storage/entities/student.dart' show Role;
@@ -40,12 +40,12 @@ class MessagesSection extends EntitiesSection<Message> {
 				trailing: messages[index].date.dateRepr,
 				pageBuilder: () => MessagePage(ref.read(messagesNotifierProvider)![index])
 			),
-			if (Cloud.userRole != Role.ordinary) const ListTile()
+			if (Local.userRole != Role.ordinary) const ListTile()
 		]);
 	}
 
 	@override
-	Widget? get actionButton => Cloud.userRole == Role.ordinary ? null : NewEntityButton(
+	Widget? get actionButton => Local.userRole == Role.ordinary ? null : NewEntityButton(
 		pageBuilder: () => NewMessagePage()
 	);
 }

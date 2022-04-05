@@ -3,8 +3,8 @@
 Allow widgets to be present if they have no actual effect (GestureDetector, WillPopScope).
 
 Make sure that too much of the widget tree is not rebuilt. Check:
-- hooks: useState, useListenable
-- context.watch
+* hooks: useState, useListenable
+* context.watch
 
 ## Entity pages
 
@@ -12,21 +12,17 @@ Bring back the actions.
 
 Write the changes to the cloud.
 
-## Before Home
+## Identification
 
 Make sure that it is safe for the user to do something wrong.
 
 Make sure that if the app is closed, the right page is displayed when it is opened.
 
-Try to also hide all required fetches behind the loading screen, not just the storage initializations.
-Consider animating into the user's style as soon as the local storage has been initialized.
-
-## Student names
-
-When the user is at the identification step, they can enter any name. What if the name has already been entered?
-The same question is relevant when the user changes their name later.
+Attempt to avoid fetching the students twice. It always happens in the nameIsUnique + enterGroup pair.
 
 ## Appearance
+
+The LinearProgressIndicator in Identification.
 
 Highlight the tile of the current section.
 
@@ -68,14 +64,14 @@ Before or after the identification?
 ## Uncaught errors
 
 Come up with a way to display them. They are possible here:
-- main.dart
-- ui\main\main.dart
-- ui\main\identification.dart
-- ui\main\group_zone\group_zone.dart
-- ui\main\group_zone\leader_election.dart
-- ui\main\group_zone\home\home.dart
-- ui\main\group_zone\home\sections\section.dart
-- ui\main\group_zone\home\sections\new_entity_pages\event.dart
+* main.dart
+* ui\main\main.dart
+* ui\main\identification.dart
+* ui\main\group_zone\group_zone.dart
+* ui\main\group_zone\leader_election.dart
+* ui\main\group_zone\home\home.dart
+* ui\main\group_zone\home\sections\section.dart
+* ui\main\group_zone\home\sections\new_entity_pages\event.dart
 
 # Firebase
 
@@ -89,7 +85,12 @@ Does EntityCollection need `detailsRef`?
 
 ### Leader election
 
-As soon as it is clear who is the leader, assign roles to the students (confirmationCount ➔ role).
+As soon as it is clear who is the leader:
+* assign roles to the students confirmationCount ➔ role
+* initialize the group's documents:
+	* events
+	* subjects
+	* messages
 
 ### Maintaining
 

@@ -15,7 +15,7 @@ abstract class Entity implements Comparable {
 	});
 
 	Entity.created({required this.name}) :
-		id = DateTime.now().microsecondsSinceEpoch.toString().substring(2),
+		id = newId,
 		label = null,
 		hasDetails = true;
 
@@ -62,9 +62,11 @@ abstract class Entity implements Comparable {
 
 	Future<Entity>? get withDetails => null;
 
-	EntityCollection? get cloudCollection => null;
+	Collection? get cloudCollection => null;
 	Identifier? get labelCollection => null;
 
 	@override
 	int compareTo(covariant Entity other) => nameRepr.compareTo(other.nameRepr);
+
+	static String get newId => DateTime.now().microsecondsSinceEpoch.toString().substring(2);
 }

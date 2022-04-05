@@ -45,7 +45,7 @@ abstract class Local {
 	/// Initializes the storage and makes the data accessible.
 	static Future<void> init() async {
 		await Hive.initFlutter();
-		// | uncomment, hot restart, comment | to make the user unidentified
+		// uncomment, hot restart, comment | to make the user unidentified
 		// await Hive.deleteBoxFromDisk(DataBox.misc.name);
 		await Future.wait([
 			Hive.openBox<dynamic>(DataBox.misc.name).then((box) => _misc = box),
@@ -55,43 +55,41 @@ abstract class Local {
 	}
 
 	/// The id of the user's group.
-	// static String? get groupId => _misc.get(Identifier.groupId.name);
-	// static String? get groupId => null;
-	static String? get groupId => 'zc1hMAjhkRSJ7l6lsjCU';
-	// /// Sets the user's [groupId] and initializes the data.
-	// static set groupId(String? id) {
-	// 	_misc.put(Identifier.groupId.name, id!);
+	static String? get groupId => _misc.get(Identifier.groupId.name);
+	/// Sets [groupId].
+	static set groupId(String? id) => _misc.put(Identifier.groupId.name, id);
 
-	// 	_labels.putAll({
-	// 		Identifier.events.name: <String, String>{}
-	// 		Identifier.subjects.name: <String, String>{},
-	// 		Identifier.subjectInfo.name: <String, String>{},
-	// 		Identifier.students.name: <String, String>{},
-	// 	});
-	// 	_entities.putAll({
-	// 		Identifier.unfollowedSubjects.name: <String>[],
-	// 		Identifier.hiddenEvents.name: <String>[]
-	// 	});
-	// }
+	/// Initializes [userName], [userId], the storage for entities.
+	static Future<void> initUser({required String name}) async {
+		await Future.wait([
+			_misc.putAll({
+				Identifier.userId.name: Entity.newId,
+				Identifier.userName.name: name
+			}),
+			_labels.putAll({
+				Identifier.events.name: <String, String>{},
+				Identifier.subjects.name: <String, String>{},
+				Identifier.subjectInfo.name: <String, String>{},
+				Identifier.students.name: <String, String>{}
+			}),
+			_entities.putAll({
+				Identifier.unfollowedSubjects.name: <String>[],
+				Identifier.hiddenEvents.name: <String>[]
+			})
+		]);
+	}
 
 	/// The user's id.
-	static String? get userId => 'dev';
-	// static String? get userId => _misc.get(Identifier.userId.name);
-	// /// Sets [userId].
-	// static set userId(String? id) => _misc.put(Identifier.userId.name, id);
+	static String? get userId => _misc.get(Identifier.userId.name);
 
 	/// The user's name.
-	static String? get userName => "💻";
-	// static String? get userName => _misc.get(Identifier.userName.name);
-	// /// Sets [userName] and initializes [userId] if needed.
-	// static set userName(String? name) {
-	// 	_misc.put(Identifier.userName.name, name);
-	// 	if (_misc.get(Identifier.userId.name) == null) _misc.put(Identifier.userId.name, name!.safeId);
-	// }
+	static String? get userName => _misc.get(Identifier.userName.name);
 
 	/// The user's [Role].
-	// static Role? get userRole => null;
-	static Role? get userRole => Role.values[_misc.get(Identifier.userRole.name)];
+	static Role? get userRole {
+		final index = _misc.get(Identifier.userRole.name);
+		return index != null ? Role.values[index] : null;
+	}
 	/// Sets [userRole].
 	static set userRole(Role? role) => _misc.put(Identifier.userRole.name, role?.index);
 

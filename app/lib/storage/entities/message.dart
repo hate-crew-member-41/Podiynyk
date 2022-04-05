@@ -67,7 +67,7 @@ class Message extends Entity {
 	);
 
 	@override
-	EntityCollection get cloudCollection => EntityCollection.messages;
+	Collection get cloudCollection => Collection.messages;
 
 	@override
 	int compareTo(covariant Message other) => other.date.compareTo(date);

@@ -35,7 +35,7 @@ class Student extends Entity {
 	};
 
 	@override
-	EntityCollection get cloudCollection => EntityCollection.students;
+	Collection get cloudCollection => Collection.students;
 	@override
 	Identifier get labelCollection => Identifier.students;
 }
