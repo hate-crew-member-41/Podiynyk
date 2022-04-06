@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:podiynyk/storage/appearance.dart';
 
 
-class IdentificationPage extends StatelessWidget {
-	const IdentificationPage({
+class FollowedPage extends StatelessWidget {
+	const FollowedPage({
 		required this.title,
 		required this.children,
 		required this.onGoForward,

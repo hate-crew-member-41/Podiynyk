@@ -5,13 +5,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
 
+import '../widgets/followed_page.dart';
 import 'entering_page.dart';
 import 'identification.dart';
-import 'page.dart';
 
 
-class IdentificationSharingPage extends HookConsumerWidget {
-	const IdentificationSharingPage({required this.id});
+class SharingPage extends HookConsumerWidget {
+	const SharingPage({required this.id});
 
 	final String id;
 
@@ -22,7 +22,7 @@ class IdentificationSharingPage extends HookConsumerWidget {
 			return null;
 		}, const []);
 
-		return IdentificationPage(
+		return FollowedPage(
 			title: "Запрошення на вечорниці",
 			children: [
 				const Text(
@@ -30,7 +30,7 @@ class IdentificationSharingPage extends HookConsumerWidget {
 					"Якщо ти його загубиш, доторкнися та потримай знову."
 				).withPadding
 			],
-			onGoForward: () => ref.read(pageProvider.notifier).state = const IdentificationEnteringPage(),
+			onGoForward: () => ref.read(pageProvider.notifier).state = const EnteringPage(),
 			onLongPress: () => _copyId(context)
 		);
 	}

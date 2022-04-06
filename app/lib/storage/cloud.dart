@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import 'identifiers.dart';
+import 'identifier.dart';
 import 'local.dart';
 
+import 'entities/candidate.dart';
 import 'entities/entity.dart';
 import 'entities/event.dart';
 import 'entities/message.dart';
@@ -43,7 +44,7 @@ abstract class Cloud {
 	/// Creates a new group, initializes [Local.groupId] and returns it.
 	static Future<String> initGroup() async {
 		final document = await FirebaseFirestore.instance.collection(Collection.groups.name).add({
-			Identifier.joined.name: DateTime.now()
+			Identifier.joinedTime.name: DateTime.now()
 		});
 		Local.groupId = document.id;
 		await Collection.students.ref.set({});
@@ -85,7 +86,10 @@ abstract class Cloud {
 			if (leaderIsElected)
 				'${Local.userId}.${Identifier.role.name}': Role.ordinary.index
 			else 
-				'${Local.userId}.${Identifier.confirmationCount.name}': 0
+				...{
+					'${Local.userId}.${Identifier.confirmationCount.name}': 0,
+					'${Local.userId}.${Identifier.joinedTime.name}': DateTime.now()
+				}
 		});
 
 		if (leaderIsElected) Local.userRole = Role.ordinary;
@@ -100,34 +104,30 @@ abstract class Cloud {
 
 	// /// A [Stream] of updates of the group's [Student]s and confirmations for them to be the group's leader.
 	// /// Initializes [userRole] and returns `null` as soon as the leader is determined.
-	// static Stream<List<Student>?> get leaderElectionUpdates {
-	// 	return EntityCollection.groups.ref.snapshots().map((snapshot) {
-	// 		final students = snapshot[Identifier.students.name];
+	static Stream<List<Candidate>?> get leaderElectionUpdates {
+		return Collection.students.ref.snapshots().map((snapshot) {
+			final entries = snapshot.data()!.entries;
+			final leaderIsElected = (entries.first.value as CloudMap).containsKey(Identifier.role.name);
 
-	// 		if (!_leaderIsElected(students)) return [
-	// 			for (final entry in students.entries) Student.candidateFromCloudFormat(entry)
-	// 		]..sort();
+			if (!leaderIsElected) return [
+				for (final entry in entries) Candidate.fromCloud(
+					id: entry.key,
+					object: entry.value
+				)
+			]..sort();
 
-	// 		_updateUserRole(students);
-	// 		return null;
-	// 	});
-	// }
+			return null;
+		});
+	}
 
-	// static bool _leaderIsElected(CloudMap students) => 
-	// 	students.isNotEmpty && students.values.first.containsKey(Identifier.role.name);
-
-	// /// Adds a confirmation for the student with the id [toId].
-	// /// Takes one from the student with the id [fromId] if it is not `null`.
-	// static Future<void> changeLeaderVote({
-	// 	required String toId,
-	// 	String? fromId
-	// }) async {
-	// 	final studentsField = Identifier.students.name, confirmationCountField = Identifier.confirmationCount.name;
-	// 	await EntityCollection.groups.ref.update({
-	// 		'$studentsField.$toId.$confirmationCountField': FieldValue.increment(1),
-	// 		if (fromId != null) '$studentsField.$fromId.$confirmationCountField': FieldValue.increment(-1)
-	// 	});
-	// }
+	/// Adds a confirmation for the [candidate] and removes one for the [previous] voted-for [Candidate].
+	static Future<void> confirmCandidate(Candidate candidate, {Candidate? previous}) async {
+		await Collection.students.ref.update({
+			'${candidate.id}.confirmationCount': FieldValue.increment(1),
+			if (previous != null)
+				'${previous.id}.confirmationCount': FieldValue.increment(-1)
+		});
+	}
 
 	/// The group's sorted [Event]s without the details.
 	static Future<List<Event>> get events async {

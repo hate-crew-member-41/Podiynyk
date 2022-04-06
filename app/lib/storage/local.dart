@@ -1,6 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'identifiers.dart';
+import 'identifier.dart';
 import 'entities/entity.dart';
 import 'entities/student.dart' show Role;
 

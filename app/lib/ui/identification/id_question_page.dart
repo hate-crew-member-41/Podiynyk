@@ -4,18 +4,18 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
 
+import '../widgets/followed_page.dart';
 import 'identification.dart';
 import 'joining_page.dart';
-import 'page.dart';
 import 'sharing_page.dart';
 
 
-class IdentificationIdQuestionPage extends ConsumerWidget {
-	const IdentificationIdQuestionPage();
+class IdQuestionPage extends ConsumerWidget {
+	const IdQuestionPage();
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
-		return IdentificationPage(
+		return FollowedPage(
 			title: "У кожного свій шлях широкий",
 			children: [
 				const Text(
@@ -23,7 +23,7 @@ class IdentificationIdQuestionPage extends ConsumerWidget {
 					"Якщо ти перший зі своєї групи, доторкнися та потримай."
 				).withPadding
 			],
-			onGoForward: () => ref.read(pageProvider.notifier).state = const IdentificationJoiningPage(),
+			onGoForward: () => ref.read(pageProvider.notifier).state = const JoiningPage(),
 			onLongPress: () => _handleUserIsFirst(context, ref)
 		);
 	}
@@ -38,6 +38,6 @@ class IdentificationIdQuestionPage extends ConsumerWidget {
 
 		final id = await Cloud.initGroup();
 		messenger.hideCurrentSnackBar();
-		ref.read(pageProvider.notifier).state = IdentificationSharingPage(id: id);
+		ref.read(pageProvider.notifier).state = SharingPage(id: id);
 	}
 }

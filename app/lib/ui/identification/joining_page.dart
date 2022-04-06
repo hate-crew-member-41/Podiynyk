@@ -7,21 +7,21 @@ import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/local.dart';
 
-import '../leader_election.dart';
+import '../leader_election/leader_election.dart';
 import '../home/home.dart';
 import '../widgets/input_field.dart';
-import 'page.dart';
+import '../widgets/followed_page.dart';
 
 
-class IdentificationJoiningPage extends HookConsumerWidget {
-	const IdentificationJoiningPage();
+class JoiningPage extends HookConsumerWidget {
+	const JoiningPage();
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
 		final idField = useTextEditingController();
 		final nameField = useTextEditingController();
 
-		return IdentificationPage(
+		return FollowedPage(
 			title: "Приєднання",
 			children: [
 				InputField(controller: idField, name: "код"),

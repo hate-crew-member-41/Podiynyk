@@ -86,7 +86,8 @@ Does EntityCollection need `detailsRef`?
 ### Leader election
 
 As soon as it is clear who is the leader:
-* assign roles to the students confirmationCount ➔ role
+* assign the roles
+* remove the `confirmationCount` and `joinedTime` fields
 * initialize the group's documents:
 	* events
 	* subjects

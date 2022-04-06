@@ -10,7 +10,7 @@ enum Identifier {
 	hiddenEvents,
 	id,
 	info,
-	joined,
+	joinedTime,
 	name,
 	note,
 	role,

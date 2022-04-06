@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:podiynyk/ui/leader_election.dart';
+import 'package:podiynyk/ui/leader_election/leader_election.dart';
 
 import 'storage/appearance.dart';
 import 'storage/cloud.dart';
@@ -46,7 +46,7 @@ class App extends StatelessWidget {
 					onSecondary: Appearance.primaryColor
 				),
 				canvasColor: Appearance.backgroundColor,
-				textTheme: GoogleFonts.montserratTextTheme().copyWith(
+				textTheme: GoogleFonts.nunitoTextTheme().copyWith(
 					bodySmall: Appearance.labelText,  // date picker dates
 					bodyMedium: Appearance.bodyText,
 					bodyLarge: Appearance.labelText,  // time picker hours/minutes

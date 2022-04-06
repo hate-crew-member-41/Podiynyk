@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/cloud.dart';
-import 'package:podiynyk/storage/identifiers.dart';
+import 'package:podiynyk/storage/identifier.dart';
 import 'package:podiynyk/storage/entities/entity.dart';
 import 'package:podiynyk/storage/entities/subject.dart';
 import 'package:podiynyk/storage/entities/subject_info.dart';

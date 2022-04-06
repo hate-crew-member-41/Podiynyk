@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../cloud.dart';
 import '../local.dart';
-import '../identifiers.dart';
+import '../identifier.dart';
 
 
 @immutable
