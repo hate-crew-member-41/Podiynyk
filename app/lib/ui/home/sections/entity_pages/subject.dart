@@ -87,7 +87,7 @@ class SubjectPage extends HookConsumerWidget {
 
 	void _showInfo(BuildContext context, ObjectRef<Subject> subject) => _showEntitiesPage(
 		context,
-		(_) => _EntitiesPage(
+		(context) => _EntitiesPage(
 			tilesBuilder: (ref) {
 				final info = ref.watch(subjectInfoNotifierProvider);
 
@@ -106,7 +106,7 @@ class SubjectPage extends HookConsumerWidget {
 
 	void _showEvents(BuildContext context, Subject subject) => _showEntitiesPage(
 		context,
-		(_) => _EntitiesPage(
+		(context) => _EntitiesPage(
 			tilesBuilder: (ref) {
 				final events = ref.watch(eventsNotifierProvider)!.where((event) =>
 					event.subject?.id == initial.id

@@ -15,45 +15,39 @@ class EntityPage extends ConsumerWidget {
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
-		if (actions.isNotEmpty) return GestureDetector(
-			child: _popScopeBuilder(ref),
-			onLongPress: () {
-				Navigator.of(context).push(MaterialPageRoute(
-					builder: (context) => Scaffold(
-						body: Center(child: ListView(
-							shrinkWrap: true,
-							children: actions
-						))
-					)
-				));
-			}
+		return GestureDetector(
+			onLongPress: actions.isNotEmpty ?
+				() {
+					Navigator.of(context).push(MaterialPageRoute(
+						builder: (context) => Scaffold(
+							body: Center(child: ListView(
+								shrinkWrap: true,
+								children: actions
+							))
+						)
+					));
+				} :
+				null,
+			child: WillPopScope(
+				onWillPop: onClose != null ?
+					() async {
+						onClose!();
+						return true;
+					} :
+					null,
+				child: Scaffold(
+					body: Center(child: ListView(
+						shrinkWrap: true,
+						children: [
+							const ListTile(),
+							...children,
+							const ListTile()
+						]
+					))
+				),
+			)
 		);
-
-		return _popScopeBuilder(ref);
 	}
-
-	Widget _popScopeBuilder(WidgetRef ref) {
-		if (onClose != null) return WillPopScope(
-			child: _builder(),
-			onWillPop: () async {
-				onClose!();
-				return true;
-			},
-		);
-
-		return _builder();
-	}
-
-	Widget _builder() => Scaffold(
-		body: Center(child: ListView(
-			shrinkWrap: true,
-			children: [
-				const ListTile(),
-				...children,
-				const ListTile()
-			]
-		))
-	);
 }
 
 

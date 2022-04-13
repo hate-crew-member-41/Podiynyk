@@ -33,7 +33,7 @@ class Home extends ConsumerWidget {
 							onTap: () => Scaffold.of(context).openDrawer()
 						)),
 						Row(children: [
-							Consumer(builder: (_, ref, __) {
+							Consumer(builder: (context, ref, _) {
 								final count = section is EntitiesSection ? section.countedEntities(ref)?.length : null;
 								return Visibility(
 									visible: count != null,
