@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
+import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/date.dart';
 import 'package:podiynyk/storage/entities/message.dart';
@@ -60,32 +61,42 @@ class MessagePage extends HookConsumerWidget {
 					style: Appearance.titleText
 				).withPadding
 			],
-			// actions: [
-			// 	if (isAuthor) EntityActionButton(
-			// 		text: "delete",
-			// 		action: () => _delete(context, ref)
-			// 	)
-			// ],
-			onClose: () {
-				final current = Message.modified(
-					message: message.value,
-					name: nameField.text,
-					content: contentField.text
-				);
-
-				if (current.name != initial.name) {
-					ref.read(messagesNotifierProvider.notifier).replace(initial, current, preserveState: false);
-				}
-				else if (current.hasDetails && (!initial.hasDetails || current.content != initial.content)) {
-					ref.read(messagesNotifierProvider.notifier).replace(initial, current);
-				}
-			},
+			actions: [
+				if (isByUser) EntityActionButton(
+					text: "delete",
+					action: () => _delete(context, ref, message.value)
+				)
+			],
+			onClose: () => _onClose(ref, message.value, nameField.text, contentField.text)
 		);
 	}
 
-	// Future<void> _delete(BuildContext context, WidgetRef ref) async {
-	// 	message.delete();
-	// 	Navigator.of(context).pop();
-	// 	(ref.read(sectionProvider) as EntitiesSection).update(ref);
-	// }
+	Future<void> _delete(BuildContext context, WidgetRef ref, Message message) async {
+		Cloud.deleteEntity(message);
+		Navigator.of(context).pop();
+		ref.read(messagesNotifierProvider.notifier).update();
+	}
+
+	void _onClose(WidgetRef ref, Message current, String nameRepr, String content) {
+		final updated = Message.modified(
+			message: current,
+			name: nameRepr,
+			content: content
+		);
+
+		bool changed = false;
+
+		if (updated.hasDetails) {
+			if (!initial.hasDetails) changed = true;
+
+			if (updated.content != current.content) {
+				Cloud.updateEntityDetails(updated);
+				changed = true;
+			}
+		}
+
+		if (changed) {
+			ref.read(messagesNotifierProvider.notifier).updateEntity(updated);
+		}
+	}
 }

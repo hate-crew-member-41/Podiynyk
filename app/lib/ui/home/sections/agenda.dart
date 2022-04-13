@@ -47,11 +47,12 @@ class AgendaSection extends EntitiesSection<Event> {
 		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
 		return ListView(children: [
-			for (final index in Iterable<int>.generate(events.length)) EntityTile(
-				title: events[index].nameRepr,
-				subtitle: events[index].subject?.nameRepr,
-				trailing: events[index].date.dateRepr,
-				pageBuilder: () => EventPage(ref.read(eventsNotifierProvider)![index])
+			for (final event in events) EntityTile(
+				title: event.nameRepr,
+				subtitle: event.subject?.nameRepr,
+				trailing: event.date.dateRepr,
+				opaque: !event.date.isPast,
+				pageBuilder: () => EventPage(event)
 			),
 			if (Local.userRole != Role.ordinary) const ListTile()
 		]);

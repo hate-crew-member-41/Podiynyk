@@ -3,6 +3,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
+import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/student.dart';
 
 import 'package:podiynyk/ui/widgets/input_field.dart';
@@ -19,7 +21,7 @@ class StudentPage extends HookConsumerWidget {
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
 		final nameField = useTextEditingController(text: student.nameRepr);
-		final role = useRef(student.role);
+		final role = useRef(student.role!);
 
 		return EntityPage(
 			children: [
@@ -33,30 +35,39 @@ class StudentPage extends HookConsumerWidget {
 					style: Appearance.largeTitleText
 				).withPadding
 			],
-			// actions: Cloud.userRole != Role.leader || student.name == Local.userName ? [] : [
-			// 	student.role == Role.ordinary ? EntityActionButton(
-			// 		text: "trust",
-			// 		action: () => role.value = Role.trusted
-			// 	) : EntityActionButton(
-			// 		text: "untrust",
-			// 		action: () => role.value = Role.ordinary
-			// 	),
-			// 	EntityActionButton(
-			// 		text: "make the leader",
-			// 		action: () => Cloud.makeLeader(student)
-			// 	)
-			// ],
-			onClose: () {
-				final current = Student.modified(
-					student: student,
-					nameRepr: nameField.text,
-					role: role.value
-				);
-
-				if (current.nameRepr != student.nameRepr || current.role != student.role) {
-					ref.read(studentsNotifierProvider.notifier).replace(student, current, preserveState: false);
-				}
-			}
+			actions: Local.userRole != Role.leader || student.name == Local.userName ? [] : [
+				student.role == Role.ordinary ? EntityActionButton(
+					text: "trust",
+					action: () => role.value = Role.trusted
+				) : EntityActionButton(
+					text: "untrust",
+					action: () => role.value = Role.ordinary
+				),
+				EntityActionButton(
+					text: "make the leader",
+					action: () => Cloud.makeLeader(student)
+				)
+			],
+			onClose: () => _onClose(ref, nameField.text, role.value)
 		);
+	}
+
+	void _onClose(WidgetRef ref, String nameRepr, Role role) {
+		final updated = Student.modified(
+			student: student,
+			nameRepr: nameRepr,
+			role: role
+		);
+
+		bool changed = false;
+
+		if (updated.role != student.role) {
+			Cloud.updateEntity(updated);
+			changed = true;
+		}
+
+		if (changed) {
+			ref.read(studentsNotifierProvider.notifier).updateEntity(updated);
+		}
 	}
 }

@@ -40,7 +40,7 @@ class SubjectsSection extends EntitiesSection<Subject> {
 
 		return ListView(children: [
 			for (final subject in followed) _Tile(subject),
-			for (final subject in unfollowed) _Tile(subject, opaque: false),
+			for (final subject in unfollowed) _Tile(subject),
 			if (Local.userRole == Role.leader) const ListTile()
 		]);
 	}
@@ -53,10 +53,9 @@ class SubjectsSection extends EntitiesSection<Subject> {
 
 
 class _Tile extends ConsumerWidget {
-	const _Tile(this.subject, {this.opaque = true});
+	const _Tile(this.subject);
 
 	final Subject subject;
-	final bool opaque;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
@@ -68,6 +67,7 @@ class _Tile extends ConsumerWidget {
 			title: subject.nameRepr,
 			subtitle: hasEvents ? Event.countRepr(events.length) : null,
 			trailing: hasEvents ? events.first.date.dateRepr : null,
+			opaque: subject.isFollowed,
 			pageBuilder: () => SubjectPage(ref.read(subjectsNotifierProvider)![index])
 		);
 	}

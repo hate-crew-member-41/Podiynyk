@@ -34,11 +34,11 @@ class MessagesSection extends EntitiesSection<Message> {
 		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
 		return ListView(children: [
-			for (final index in Iterable<int>.generate(messages.length)) EntityTile(
-				title: messages[index].name,
-				subtitle: messages[index].author.nameRepr,
-				trailing: messages[index].date.dateRepr,
-				pageBuilder: () => MessagePage(ref.read(messagesNotifierProvider)![index])
+			for (final message in messages) EntityTile(
+				title: message.name,
+				subtitle: message.author.nameRepr,
+				trailing: message.date.dateRepr,
+				pageBuilder: () => MessagePage(message)
 			),
 			if (Local.userRole != Role.ordinary) const ListTile()
 		]);

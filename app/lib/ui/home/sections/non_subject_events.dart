@@ -29,7 +29,7 @@ class NonSubjectEventsSection extends EntitiesSection<Event> {
 	@override
 	Iterable<Event>? shownEntities(Iterable<Event>? entities) =>
 		entities?.where((event) => event.subject == null);
-	
+
 	@override
 	Iterable<Event>? countedEntities(WidgetRef ref) {
 		final shown = shownEntities(ref.watch(eventsNotifierProvider));
@@ -44,10 +44,11 @@ class NonSubjectEventsSection extends EntitiesSection<Event> {
 		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
 
 		return ListView(children: [
-			for (final index in Iterable<int>.generate(events.length)) EntityTile(
-				title: events[index].nameRepr,
-				trailing: events[index].date.dateRepr,
-				pageBuilder: () => EventPage(ref.read(eventsNotifierProvider)![index])
+			for (final event in events) EntityTile(
+				title: event.nameRepr,
+				trailing: event.date.dateRepr,
+				opaque: !event.date.isPast,
+				pageBuilder: () => EventPage(event)
 			),
 			if (Local.userRole != Role.ordinary) const ListTile()
 		]);

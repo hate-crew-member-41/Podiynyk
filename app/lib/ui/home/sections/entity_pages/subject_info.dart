@@ -3,6 +3,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
+import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/local.dart';
+import 'package:podiynyk/storage/entities/student.dart' show Role;
+import 'package:podiynyk/storage/entities/subject.dart';
 import 'package:podiynyk/storage/entities/subject_info.dart';
 
 import 'package:podiynyk/ui/widgets/input_field.dart';
@@ -13,8 +17,9 @@ import 'entity.dart';
 
 class SubjectInfoPage extends HookConsumerWidget {
 	final SubjectInfo info;
+	final ObjectRef<Subject> subject;
 
-	const SubjectInfoPage(this.info);
+	const SubjectInfoPage(this.info, {required this.subject});
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
@@ -35,26 +40,42 @@ class SubjectInfoPage extends HookConsumerWidget {
 					style: Appearance.bodyText,
 				)
 			],
-			// actions: [
-			// 	if (Cloud.userRole != Role.ordinary) EntityActionButton(
-			// 		text: "delete",
-			// 		action: info.delete
-			// 	)
-			// ],
+			actions: [
+				if (Local.userRole != Role.ordinary) EntityActionButton(
+					text: "delete",
+					action: () => _delete(context, ref)
+				)
+			],
 			onClose: () {
-				final current = SubjectInfo.modified(
+				final updated = SubjectInfo.modified(
 					info: info,
 					nameRepr: nameField.text,
 					content: contentField.text
 				);
 
-				if (current.nameRepr != info.nameRepr) {
-					ref.read(subjectInfoProvider.notifier).replace(info, current, preserveState: false);
-				}
-				else if (current.content != info.content) {
-					ref.read(subjectInfoProvider.notifier).replace(info, current);
+				bool notifyList = false;
+
+				final contentChanged = updated.content != info.content;
+				if (contentChanged) notifyList = true;
+
+				if (notifyList) {
+					ref.read(subjectInfoNotifierProvider.notifier).updateItem(updated);
+
+					if (contentChanged) {
+						subject.value = Subject.modified(
+							subject: subject.value,
+							info: ref.read(subjectInfoNotifierProvider)
+						);
+
+						Cloud.updateEntityDetails(subject.value);
+					}
 				}
 			}
 		);
+	}
+
+	void _delete(BuildContext context, WidgetRef ref) {
+		ref.read(subjectInfoNotifierProvider.notifier).delete(info);
+		Navigator.of(context).pop();
 	}
 }

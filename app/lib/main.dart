@@ -28,7 +28,7 @@ class App extends StatelessWidget {
 	Widget build(BuildContext context) {
 		return MaterialApp(
 			title: "Podiynyk",
-			home: HookConsumer(builder: (_, ref, __) {
+			home: HookConsumer(builder: (context, ref, _) {
 				useEffect(() {
 					_init(ref);
 					return null;
@@ -46,7 +46,7 @@ class App extends StatelessWidget {
 					onSecondary: Appearance.primaryColor
 				),
 				canvasColor: Appearance.backgroundColor,
-				textTheme: GoogleFonts.nunitoTextTheme().copyWith(
+				textTheme: GoogleFonts.nunitoSansTextTheme().copyWith(
 					bodySmall: Appearance.labelText,  // date picker dates
 					bodyMedium: Appearance.bodyText,
 					bodyLarge: Appearance.labelText,  // time picker hours/minutes
@@ -74,7 +74,7 @@ class App extends StatelessWidget {
 				elevatedButtonTheme: ElevatedButtonThemeData(style: ElevatedButton.styleFrom(
 					minimumSize: const Size.fromHeight(0),
 					padding: Appearance.padding,
-					textStyle: Appearance.titleText
+					textStyle: Appearance.bodyText
 				)),
 				dialogTheme: DialogTheme(
 					backgroundColor: Appearance.backgroundColor,

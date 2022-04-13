@@ -3,6 +3,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
+import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/identifier.dart';
 import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/event.dart';
 import 'package:podiynyk/storage/entities/student.dart' show Role;
@@ -24,12 +26,19 @@ class EventPage extends HookConsumerWidget {
 		final event = useState(initial);
 		final nameField = useTextEditingController(text: initial.nameRepr);
 		final date = useRef(initial.date);
+		final hidden = useRef(initial.isHidden);
 		final noteField = useTextEditingController(text: initial.note);
+
+		final showNote = useState(initial.note != null);
 
 		useEffect(() {
 			if (!initial.hasDetails) initial.withDetails.then((withDetails) {
 				event.value = withDetails;
-				if (withDetails.note != null) noteField.text = withDetails.note!;
+
+				if (withDetails.note != null) {
+					noteField.text = withDetails.note!;
+					showNote.value = true;
+				}
 			});
 
 			return null;
@@ -51,7 +60,7 @@ class EventPage extends HookConsumerWidget {
 					onPicked: (picked) => date.value = picked,
 					enabled: Local.userRole != Role.ordinary
 				),
-				if (event.value.note != null) ...[
+				if (showNote.value) ...[
 					const ListTile(),
 					InputField(
 						controller: noteField,
@@ -61,44 +70,71 @@ class EventPage extends HookConsumerWidget {
 					)
 				]
 			],
-			// actions: [
-			// 	if (event.hasDetails && event.note == null) EntityActionButton(
-			// 		text: "add a note",
-			// 		action: () => showNote.value = true
-			// 	),
-			// 	!event.isHidden ? EntityActionButton(
-			// 		text: "hide",
-			// 		action: () => event.isHidden = true
-			// 	) : EntityActionButton(
-			// 		text: "show",
-			// 		action: () => event.isHidden = false
-			// 	),
-			// 	if (Cloud.userRole != Role.ordinary) EntityActionButton(
-			// 		text: "delete",
-			// 		action: () => _delete(context, ref)
-			// 	)
-			// ],
-			onClose: () {
-				final current = Event.modified(
-					event: event.value,
-					nameRepr: nameField.text,
-					date: date.value,
-					note: noteField.text
-				);
-
-				if (current.nameRepr != initial.nameRepr || current.date != initial.date) {
-					ref.read(eventsNotifierProvider.notifier).replace(initial, current, preserveState: false);
-				}
-				else if (current.hasDetails && (!initial.hasDetails || current.note != initial.note)) {
-					ref.read(eventsNotifierProvider.notifier).replace(initial, current);
-				}
-			}
+			actions: [
+				if (event.value.hasDetails && event.value.note == null) EntityActionButton(
+					text: "add a note",
+					action: () => showNote.value = true
+				),
+				!hidden.value ? EntityActionButton(
+					text: "hide",
+					action: () => hidden.value = true
+				) : EntityActionButton(
+					text: "show",
+					action: () => hidden.value = false
+				),
+				if (Local.userRole != Role.ordinary) EntityActionButton(
+					text: "delete",
+					action: () => _delete(context, ref, event.value)
+				)
+			],
+			onClose: () => _onClose(ref, event.value, nameField.text, date.value, hidden.value, noteField.text)
 		);
 	}
 
-	// void _delete(BuildContext context, WidgetRef ref) {
-	// 	event.delete();
-	// 	Navigator.of(context).pop();
-	// 	(ref.read(sectionProvider) as EntitiesSection).update(ref);
-	// }
+	void _delete(BuildContext context, WidgetRef ref, Event event) {
+		Cloud.deleteEntity(event);
+		Navigator.of(context).pop();
+		ref.read(eventsNotifierProvider.notifier).update();
+	}
+
+	void _onClose(WidgetRef ref, Event current, String nameRepr, DateTime date, bool hidden, String note) {
+		final updated = Event.modified(
+			event: current,
+			nameRepr: nameRepr,
+			date: date,
+			hidden: hidden,
+			note: note
+		);
+
+		bool changed = false;
+
+		if (updated.date != current.date) {
+			Cloud.updateEntity(updated);
+			changed = true;
+		}
+
+		if (updated.isHidden != current.isHidden) {
+			if (updated.isHidden) {
+				Local.storeEntity(Identifier.hiddenEvents, updated);
+			}
+			else {
+				Local.deleteEntity(Identifier.hiddenEvents, updated);
+			}
+
+			changed = true;
+		}
+
+		if (updated.hasDetails) {
+			if (!initial.hasDetails) changed = true;
+
+			if (updated.note != current.note) {
+				Cloud.updateEntityDetails(updated);
+				changed = true;
+			}
+		}
+
+		if (changed) {
+			ref.read(eventsNotifierProvider.notifier).updateEntity(updated);
+		}
+	}
 }

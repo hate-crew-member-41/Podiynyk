@@ -3,14 +3,17 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiynyk/storage/appearance.dart';
+import 'package:podiynyk/storage/cloud.dart';
+import 'package:podiynyk/storage/identifier.dart';
 import 'package:podiynyk/storage/local.dart';
 import 'package:podiynyk/storage/entities/date.dart';
+import 'package:podiynyk/storage/entities/event.dart';
 import 'package:podiynyk/storage/entities/student.dart';
 import 'package:podiynyk/storage/entities/subject.dart';
 
 import 'package:podiynyk/ui/widgets/input_field.dart';
 
-import '../providers.dart' show eventsNotifierProvider, subjectInfoProvider, subjectsNotifierProvider;
+import '../providers.dart' show eventsNotifierProvider, subjectInfoNotifierProvider, subjectsNotifierProvider;
 import '../new_entity_pages/event.dart';
 import '../new_entity_pages/subject_info.dart';
 import '../widgets/entity_tile.dart';
@@ -30,14 +33,15 @@ class SubjectPage extends HookConsumerWidget {
 	Widget build(BuildContext context, WidgetRef ref) {
 		final subject = useRef(initial);
 		final nameField = useTextEditingController(text: initial.nameRepr);
+		final followed = useRef(initial.isFollowed);
 
 		useEffect(() {
 			if (!initial.hasDetails) initial.withDetails.then((withDetails) {
 				subject.value = withDetails;
-				ref.read(subjectInfoProvider.notifier).update(withDetails.info!);
+				ref.read(subjectInfoNotifierProvider.notifier).update(withDetails.info!);
 			});
 
-			Future.delayed(Duration.zero, () => ref.read(subjectInfoProvider.notifier).init(initial));
+			Future.delayed(Duration.zero, () => ref.read(subjectInfoNotifierProvider.notifier).init(initial));
 
 			return null;
 		}, const []);
@@ -53,56 +57,41 @@ class SubjectPage extends HookConsumerWidget {
 					const ListTile(),
 					ListTile(
 						title: const Text("information"),
-						onTap: () => _showInfo(context)
+						onTap: () => _showInfo(context, subject)
 					),
 					ListTile(
 						title: const Text("events"),
 						onTap: () => _showEvents(context, subject.value)
 					)
 				],
-				// actions: [
-				// 	subject.isFollowed ? EntityActionButton(
-				// 		text: "unfollow",
-				// 		action: () => subject.isFollowed = false
-				// 	) : EntityActionButton(
-				// 		text: "follow",
-				// 		action: () => subject.isFollowed = true
-				// 	),
-				// 	if (Cloud.userRole == Role.leader) EntityActionButton(
-				// 		text: "delete",
-				// 		action: () => _askDelete(context, ref)
-				// 	)
-				// ],
-				onClose: () {
-					final current = Subject.modified(
-						subject: subject.value,
-						nameRepr: nameField.text,
-						info: ref.read(subjectInfoProvider)
-					);
-
-					if (current.nameRepr != initial.nameRepr) {
-						ref.read(subjectsNotifierProvider.notifier).replace(initial, current, preserveState: false);
-					}
-					else if (current.hasDetails && (
-						!initial.hasDetails || ref.read(subjectInfoProvider.notifier).changed
-					)) {
-						ref.read(subjectsNotifierProvider.notifier).replace(initial, current);
-					}
-				}
+				actions: [
+					followed.value ? EntityActionButton(
+						text: "unfollow",
+						action: () => followed.value = false
+					) : EntityActionButton(
+						text: "follow",
+						action: () => followed.value = true
+					),
+					if (Local.userRole == Role.leader) EntityActionButton(
+						text: "delete",
+						action: () => _handleDelete(context, ref, subject.value)
+					)
+				],
+				onClose: () => _onClose(ref, subject.value, nameField.text, followed.value)
 			),
 		));
 	}
 
-	void _showInfo(BuildContext context) => _showEntitiesPage(
+	void _showInfo(BuildContext context, ObjectRef<Subject> subject) => _showEntitiesPage(
 		context,
 		(_) => _EntitiesPage(
 			tilesBuilder: (ref) {
-				final info = ref.watch(subjectInfoProvider);
+				final info = ref.watch(subjectInfoNotifierProvider);
 
 				if (info != null) return [
-					for (final index in Iterable<int>.generate(info.length)) EntityTile(
-						title: info[index].nameRepr,
-						pageBuilder: () => SubjectInfoPage(ref.read(subjectInfoProvider)![index]),
+					for (final item in info) EntityTile(
+						title: item.nameRepr,
+						pageBuilder: () => SubjectInfoPage(item, subject: subject),
 					)
 				];
 
@@ -135,37 +124,73 @@ class SubjectPage extends HookConsumerWidget {
 		Navigator.of(context).push(MaterialPageRoute(builder: pageBuilder));
 	}
 
-	// void _askDelete(BuildContext context, WidgetRef ref) {
-	// 	if (subject.events!.isEmpty) {
-	// 		_delete(context, ref);
-	// 		return;
-	// 	}
+	void _handleDelete(BuildContext context, WidgetRef ref, Subject subject) {
+		final events = ref.read(eventsNotifierProvider)!.where((event) =>
+			event.subject?.id == initial.id
+		).toList();
+		if (events.isEmpty) {
+			_delete(context, ref, subject, events);
+			return;
+		}
 
-	// 	final messenger = ScaffoldMessenger.of(context);
-	// 	messenger.showSnackBar(SnackBar(
-	// 		padding: EdgeInsets.zero,
-	// 		content: Column(
-	// 			mainAxisSize: MainAxisSize.min,
-	// 			crossAxisAlignment: CrossAxisAlignment.start,
-	// 			children: [
-	// 				const Text("The events will also be deleted.").withPadding,
-	// 				ElevatedButton(
-	// 					child: const Text("continue"),
-	// 					onPressed: () {
-	// 						_delete(context, ref);
-	// 						messenger.hideCurrentSnackBar();
-	// 					}
-	// 				).withPadding
-	// 			]
-	// 		)
-	// 	));
-	// }
+		final messenger = ScaffoldMessenger.of(context);
+		messenger.showSnackBar(SnackBar(
+			padding: EdgeInsets.zero,
+			content: Column(
+				mainAxisSize: MainAxisSize.min,
+				crossAxisAlignment: CrossAxisAlignment.start,
+				children: [
+					const Text("The events will also be deleted.").withPadding,
+					ElevatedButton(
+						child: const Text("continue"),
+						onPressed: () {
+							_delete(context, ref, subject, events);
+							messenger.hideCurrentSnackBar();
+						}
+					).withPadding
+				]
+			)
+		));
+	}
 
-	// void _delete(BuildContext context, WidgetRef ref) {
-	// 	subject.delete();
-	// 	Navigator.of(context).pop();
-	// 	(ref.read(sectionProvider) as EntitiesSection).update(ref);
-	// }
+	void _delete(BuildContext context, WidgetRef ref, Subject subject, List<Event> events) {
+		Cloud.deleteEntity(subject);
+		Cloud.deleteEvents(events);
+		Navigator.of(context).pop();
+		ref.read(subjectsNotifierProvider.notifier).update();
+	}
+
+	void _onClose(WidgetRef ref, Subject current, String nameRepr, bool followed) {
+		final updated = Subject.modified(
+			subject: current,
+			nameRepr: nameRepr,
+			followed: followed,
+			info: ref.read(subjectInfoNotifierProvider)
+		);
+
+		bool notifySection = false;
+
+		if (updated.isFollowed != current.isFollowed) {
+			if (!updated.isFollowed) {
+				Local.storeEntity(Identifier.unfollowedSubjects, updated);
+			}
+			else {
+				Local.deleteEntity(Identifier.unfollowedSubjects, updated);
+			}
+
+			notifySection = true;
+		}
+
+		if (updated.hasDetails) {
+			if (!initial.hasDetails || ref.read(subjectInfoNotifierProvider.notifier).changed) {
+				notifySection = true;
+			}
+		}
+
+		if (notifySection) {
+			ref.read(subjectsNotifierProvider.notifier).updateEntity(updated);
+		}
+	}
 }
 
 
@@ -181,7 +206,7 @@ class _EntitiesPage extends StatelessWidget {
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(
-			body: Center(child: Consumer(builder: (_, ref, __) {
+			body: Center(child: Consumer(builder: (context, ref, _) {
 				final tiles = tilesBuilder(ref);
 
 				if (tiles != null) return ListView(

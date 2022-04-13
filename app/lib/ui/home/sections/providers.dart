@@ -18,9 +18,9 @@ class EntitiesNotifier<E extends Entity> extends StateNotifier<List<E>?> {
 
 	final Future<List<E>> Function() entities;
 
-	void replace(E entity, E modified, {bool preserveState = true}) {
-		state![state!.indexOf(entity)] = modified;
-		if (!preserveState) state = List<E>.from(state!)..sort();
+	void updateEntity(E updated) {
+		final index = state!.indexWhere((entity) => entity.id == updated.id);
+		state = List<E>.from(state!..[index] = updated)..sort();
 	}
 
 	Future<void> update() async => state = await entities();
@@ -39,13 +39,13 @@ class EntitiesNotifier<E extends Entity> extends StateNotifier<List<E>?> {
 class SubjectInfoNotifier extends StateNotifier<List<SubjectInfo>?> {
 	SubjectInfoNotifier() : super(null);
 
-	late bool changed;
 	late DocumentReference<CloudMap> detailsRef;
+	late bool changed;
 
 	void init(Subject subject) {
 		state = subject.info;
-		changed = false;
 		detailsRef = subject.cloudCollection.detailsRef(subject);
+		changed = false;
 	}
 
 	void update(List<SubjectInfo> info) => state = info;
@@ -54,7 +54,17 @@ class SubjectInfoNotifier extends StateNotifier<List<SubjectInfo>?> {
 		detailsRef.update({
 			'${Identifier.info.name}.${info.id}': info.inCloudFormat
 		});
+		await _update();
+	}
 
+	Future<void> delete(SubjectInfo info) async {
+		detailsRef.update({
+			'${Identifier.info.name}.${info.id}': FieldValue.delete()
+		});
+		await _update();
+	}
+
+	Future<void> _update() async {
 		final snapshot = await detailsRef.get();
 		state = [
 			for (final entry in snapshot.data()![Identifier.info.name].entries) SubjectInfo.fromCloud(
@@ -62,12 +72,13 @@ class SubjectInfoNotifier extends StateNotifier<List<SubjectInfo>?> {
 				object: entry.value
 			)
 		]..sort();
+
 		changed = true;
 	}
 
-	void replace(SubjectInfo info, SubjectInfo modified, {bool preserveState = true}) {
-		state![state!.indexOf(info)] = modified;
-		if (!preserveState) state = List<SubjectInfo>.from(state!)..sort();
+	void updateItem(SubjectInfo updated) {
+		final index = state!.indexWhere((info) => info.id == updated.id);
+		state = List<SubjectInfo>.from(state!..[index] = updated)..sort();
 		changed = true;
 	}
 }
@@ -86,6 +97,6 @@ final studentsNotifierProvider = EntitiesNotifierProvider(
 	(ref) => EntitiesNotifier(() => Cloud.students)
 );
 
-final subjectInfoProvider = StateNotifierProvider<SubjectInfoNotifier, List<SubjectInfo>?>(
+final subjectInfoNotifierProvider = StateNotifierProvider<SubjectInfoNotifier, List<SubjectInfo>?>(
 	(ref) => SubjectInfoNotifier()
 );

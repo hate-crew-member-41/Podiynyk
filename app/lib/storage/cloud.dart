@@ -15,7 +15,7 @@ import 'entities/subject.dart';
 typedef CloudMap = Map<String, dynamic>;
 
 
-/// An [Entity] collection of the group, stored in [FirebaseFirestore].
+/// A collection of the group, stored in [FirebaseFirestore].
 enum Collection {
 	events,
 	groups,
@@ -24,7 +24,7 @@ enum Collection {
 	subjects
 }
 
-extension EntityCollectionRefs on Collection {
+extension CollectionRefs on Collection {
 	/// A reference to the document with [this].
 	DocumentReference<CloudMap> get ref =>	
 		FirebaseFirestore.instance.collection(name).doc(Local.groupId);
@@ -163,7 +163,7 @@ abstract class Cloud {
 		]..sort();
 	}
 
-	/// The group's sorted [Student]s. Updates [userRole].
+	/// The group's sorted [Student]s. Updates [Local.userRole].
 	static Future<List<Student>> get students async {
 		final snapshot = await Collection.students.ref.get();
 
@@ -172,7 +172,7 @@ abstract class Cloud {
 		]..sort();
 		Local.clearEntityLabels(students);
 
-		// _userRole = students.firstWhere((student) => student.id == Local.userId).role!;
+		Local.userRole = students.firstWhere((student) => student.id == Local.userId).role!;
 		return students;
 	}
 
@@ -182,96 +182,45 @@ abstract class Cloud {
 		return snapshot.data()!;
 	}
 
-	// /// Updates the [event]'s date.
-	// static Future<void> updateEventDate(Event event) async {
-	// 	await EntityCollection.events.ref.update({
-	// 		'${event.id}.${Identifier.date.name}': event.date
-	// 	});
-	// }
+	/// Updates the [entity].
+	static Future<void> updateEntity(Entity entity) async {
+		await entity.cloudCollection!.ref.update({
+			entity.id: entity.inCloudFormat
+		});
+	}
 
-	// /// Updates the [event]'s note.
-	// static Future<void> updateEventNote(Event event) async {
-	// 	await EntityCollection.events.detailsRef(event.id).update({
-	// 		Identifier.note.name: event.note ?? FieldValue.delete()
-	// 	});
-	// }
+	/// Updates the [entity]'s details.
+	static Future<void> updateEntityDetails(Entity entity) async {
+		await entity.cloudCollection!.detailsRef(entity).update(entity.detailsInCloudFormat!);
+	}
 
-	// /// Adds the [subject]'s [info].
-	// static Future<void> updateSubjectInfo(Subject subject, SubjectInfo info) async {
-	// 	EntityCollection.subjects.detailsRef(subject.id).update({
-	// 		'${Identifier.info.name}.${info.id}': info.inCloudFormat
-	// 	});
-	// }
+	/// Sets the [student]'s [Role] to [Role.leader] and the user's [Role] to [Role.ordinary].
+	/// Updates [Local.userRole].
+	static Future<void> makeLeader(Student student) async {
+		await Collection.students.ref.update({
+			'${student.id}.${Identifier.role.name}': Role.leader.index,
+			'${Local.userId}.${Identifier.role.name}': Role.trusted.index
+		});
+		Local.userRole = Role.trusted;
+	}
 
-	// /// Deletes the [subject]'s [info].
-	// static Future<void> deleteSubjectInfo(Subject subject, SubjectInfo info) async {
-	// 	EntityCollection.subjects.detailsRef(subject.id).update({
-	// 		'${Identifier.info.name}.${info.id}': FieldValue.delete()
-	// 	});
-	// }
+	/// Deletes the [entity].
+	static Future<void> deleteEntity(Entity entity) async {
+		await Future.wait([
+			entity.cloudCollection!.ref.update({entity.id: FieldValue.delete()}),
+			entity.cloudCollection!.detailsRef(entity).delete()
+		]);
+	}
 
-	// /// Updates the [message]'s name (topic).
-	// static Future<void> updateMessageName(Message message) async {
-	// 	await EntityCollection.messages.ref.update({
-	// 		'${message.id}.${Identifier.name.name}': message.name
-	// 	});
-	// }
-
-	// /// Updates the [message]'s content.
-	// static Future<void> updateMessageContent(Message message) async {
-	// 	await EntityCollection.messages.detailsRef(message.id).update({
-	// 		Identifier.content.name: message.content
-	// 	});
-	// }
-
-	// /// Sets the [student]'s [Role] to [userRole].
-	// static Future<void> updateRole(Student student) async {
-	// 	await EntityCollection.groups.ref.update({
-	// 		'${Identifier.students.name}.${student.id}.${Identifier.role.name}': student.role.index
-	// 	});
-	// }
-
-	// /// Sets the the [student]'s [Role] to [Role.leader], and the user's role to [Role.trusted].
-	// static Future<void> makeLeader(Student student) async {
-	// 	final studentsField = Identifier.students.name, roleField = Identifier.role.name;
-	// 	await EntityCollection.groups.ref.update({
-	// 		'$studentsField.${Local.userId}.$roleField': Role.trusted.index,
-	// 		'$studentsField.${student.id}.$roleField': Role.leader.index
-	// 	});
-	// 	_userRole = Role.trusted;
-	// }
-
-	// /// Updates the user's name.
-	// static Future<void> updateName() async {
-	// 	await EntityCollection.groups.ref.update({
-	// 		'${Identifier.students.name}.${Local.userId}.${Identifier.name.name}': Local.userName
-	// 	});
-	// }
-
-	// /// Deletes the [event].
-	// static Future<void> deleteEvent(Event event) async {
-	// 	await Future.wait([
-	// 		EntityCollection.events.ref.update({event.id: FieldValue.delete()}),
-	// 		EntityCollection.events.detailsRef(event.id).delete()
-	// 	]);
-	// }
-
-	// /// Deletes the [subject] and its [Event]s.
-	// static Future<void> deleteSubject(Subject subject) async {
-	// 	await Future.wait([
-	// 		EntityCollection.subjects.ref.update({subject.id: FieldValue.delete()}),
-	// 		EntityCollection.subjects.detailsRef(subject.id).delete(),
-	// 		EntityCollection.events.ref.update({
-	// 			for (final event in subject.events!) event.id: FieldValue.delete()
-	// 		})
-	// 	]);
-	// }
-
-	// /// Deletes the [message].
-	// static Future<void> deleteMessage(Message message) async {
-	// 	await Future.wait([
-	// 		EntityCollection.messages.ref.update({message.id: FieldValue.delete()}),
-	// 		EntityCollection.messages.detailsRef(message.id).delete()
-	// 	]);
-	// }
+	/// Deletes the [events].
+	static Future<void> deleteEvents(List<Event> events) async {
+		await Future.wait([
+			Collection.events.ref.update({
+				for (final event in events)
+					event.id: FieldValue.delete()
+			}),
+			for (final event in events)
+				Collection.events.detailsRef(event).delete()
+		]);
+	}
 }

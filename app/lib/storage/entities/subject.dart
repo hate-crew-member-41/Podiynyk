@@ -44,11 +44,20 @@ class Subject extends Entity {
 	Subject.modified({
 		required Subject subject,
 		String? nameRepr,
+		bool? followed,
 		List<SubjectInfo>? info
 	}) :
-		isFollowed = subject.isFollowed,
-		info = subject.info,
-		super.modified(entity: subject, nameRepr: nameRepr);
+		isFollowed = followed ?? subject.isFollowed,
+		info = info ?? subject.info,
+		super.modified(entity: subject, nameRepr: nameRepr)
+	{
+		if (followed == false) {
+			Local.storeEntity(Identifier.unfollowedSubjects, this);
+		}
+		else if (followed == true) {
+			Local.deleteEntity(Identifier.unfollowedSubjects, this);
+		}
+	}
 
 	late final bool isFollowed;
 

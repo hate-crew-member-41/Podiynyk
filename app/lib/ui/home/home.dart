@@ -81,7 +81,10 @@ class _SectionTile extends ConsumerWidget {
 
 				if (sectionController.state != section) {
 					sectionController.state = section;
-					if (section is EntitiesSection) (section as EntitiesSection).notifier(ref).update();
+
+					if (section is EntitiesSection) {
+						(section as EntitiesSection).notifier(ref).update();
+					}
 				}
 
 				Navigator.of(context).pop();

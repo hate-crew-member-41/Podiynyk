@@ -7,7 +7,7 @@ import 'package:podiynyk/storage/entities/subject_info.dart';
 
 import 'package:podiynyk/ui/widgets/input_field.dart';
 
-import '../providers.dart' show subjectInfoProvider;
+import '../providers.dart' show subjectInfoNotifierProvider;
 import 'entity.dart';
 
 
@@ -21,7 +21,7 @@ class NewSubjectInfoPage extends HookConsumerWidget {
 
 		return NewEntityPage(
 			entityOnAdd: () => _infoOnAdd(nameField.text, contentField.text),
-			add: ref.read(subjectInfoProvider.notifier).add,
+			add: ref.read(subjectInfoNotifierProvider.notifier).add,
 			children: [
 				InputField(
 					controller: nameField,

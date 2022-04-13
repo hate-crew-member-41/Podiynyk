@@ -11,7 +11,7 @@ import 'subject.dart';
 class Event extends Entity {
 	Event({
 		required String name,
-		required this.subject,
+		this.subject,
 		required this.date,
 		this.note
 	}) :
@@ -38,13 +38,22 @@ class Event extends Entity {
 		required Event event,
 		String? nameRepr,
 		DateTime? date,
+		bool? hidden,
 		String? note
 	}) :
 		subject = event.subject,
 		date = date ?? event.date,
-		isHidden = event.isHidden,
+		isHidden = hidden ?? event.isHidden,
 		note = note != null ? (note.isNotEmpty ? note : null) : event.note,
-		super.modified(entity: event, nameRepr: nameRepr);
+		super.modified(entity: event, nameRepr: nameRepr)
+	{
+		if (hidden == true) {
+			Local.storeEntity(Identifier.hiddenEvents, this);
+		}
+		else if (hidden == false) {
+			Local.deleteEntity(Identifier.hiddenEvents, this);
+		}
+	}
 
 	final Subject? subject;
 	final DateTime date;

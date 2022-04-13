@@ -28,7 +28,7 @@ class EntityPage extends ConsumerWidget {
 				));
 			}
 		);
-		
+
 		return _popScopeBuilder(ref);
 	}
 
