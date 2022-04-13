@@ -65,17 +65,20 @@ class SubjectPage extends HookConsumerWidget {
 					)
 				],
 				actions: [
-					followed.value ? EntityActionButton(
-						text: "unfollow",
-						action: () => followed.value = false
-					) : EntityActionButton(
-						text: "follow",
-						action: () => followed.value = true
-					),
-					if (Local.userRole == Role.leader) EntityActionButton(
-						text: "delete",
-						action: () => _handleDelete(context, ref, subject.value)
-					)
+					followed.value ?
+						EntityActionButton(
+							text: "unfollow",
+							action: () => followed.value = false
+						) :
+						EntityActionButton(
+							text: "follow",
+							action: () => followed.value = true
+						),
+					if (Local.userRole == Role.leader)
+						EntityActionButton(
+							text: "delete",
+							action: () => _handleDelete(context, ref, subject.value)
+						)
 				],
 				onClose: () => _onClose(ref, subject.value, nameField.text, followed.value)
 			),

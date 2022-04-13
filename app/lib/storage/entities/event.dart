@@ -64,15 +64,17 @@ class Event extends Entity {
 	@override
 	CloudMap get inCloudFormat => {
 		Identifier.name.name: name,
-		if (subject != null) Identifier.subject.name: {
-			Identifier.id.name: subject!.id,
-			Identifier.name.name: subject!.name
-		},
+		if (subject != null)
+			Identifier.subject.name: {
+				Identifier.id.name: subject!.id,
+				Identifier.name.name: subject!.name
+			},
 		Identifier.date.name: date
 	};
 	@override
 	CloudMap get detailsInCloudFormat => {
-		if (note != null) Identifier.note.name: note
+		if (note != null)
+			Identifier.note.name: note
 	};
 
 	@override

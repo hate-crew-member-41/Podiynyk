@@ -51,41 +51,47 @@ class EventPage extends HookConsumerWidget {
 					name: "name",
 					style: Appearance.headlineText
 				),
-				if (initial.subject != null) Text(
-					initial.subject!.nameRepr,
-					style: Appearance.largeTitleText
-				).withPadding,
+				if (initial.subject != null)
+					Text(
+						initial.subject!.nameRepr,
+						style: Appearance.largeTitleText
+					).withPadding,
 				DateField(
 					initialDate: event.value.date,
 					onPicked: (picked) => date.value = picked,
 					enabled: Local.userRole != Role.ordinary
 				),
-				if (showNote.value) ...[
-					const ListTile(),
-					InputField(
-						controller: noteField,
-						name: "note",
-						multiline: true,
-						style: Appearance.bodyText
-					)
-				]
+				if (showNote.value)
+					...[
+						const ListTile(),
+						InputField(
+							controller: noteField,
+							name: "note",
+							multiline: true,
+							style: Appearance.bodyText
+						)
+					]
 			],
 			actions: [
-				if (event.value.hasDetails && event.value.note == null) EntityActionButton(
-					text: "add a note",
-					action: () => showNote.value = true
-				),
-				!hidden.value ? EntityActionButton(
-					text: "hide",
-					action: () => hidden.value = true
-				) : EntityActionButton(
-					text: "show",
-					action: () => hidden.value = false
-				),
-				if (Local.userRole != Role.ordinary) EntityActionButton(
-					text: "delete",
-					action: () => _delete(context, ref, event.value)
-				)
+				if (event.value.hasDetails && event.value.note == null)
+					EntityActionButton(
+						text: "add a note",
+						action: () => showNote.value = true
+					),
+				!hidden.value ?
+					EntityActionButton(
+						text: "hide",
+						action: () => hidden.value = true
+					) :
+					EntityActionButton(
+						text: "show",
+						action: () => hidden.value = false
+					),
+				if (Local.userRole != Role.ordinary)
+					EntityActionButton(
+						text: "delete",
+						action: () => _delete(context, ref, event.value)
+					)
 			],
 			onClose: () => _onClose(ref, event.value, nameField.text, date.value, hidden.value, noteField.text)
 		);

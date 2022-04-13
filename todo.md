@@ -8,9 +8,11 @@ Make sure that too much of the widget tree is not rebuilt. Check:
 
 ## Entity pages
 
-Make it impossible to modify past events.
+Labels.
 
-Hide the actions unavailable if the details have not been fetched yet.
+Build actions every time to make them relevant to the current entity state.
+
+Make it impossible to modify past events.
 
 The padding in the `SnackBar` shown before deleting subjects.
 

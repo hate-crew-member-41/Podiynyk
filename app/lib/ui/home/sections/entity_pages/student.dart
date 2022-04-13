@@ -30,24 +30,29 @@ class StudentPage extends HookConsumerWidget {
 					name: "name",
 					style: Appearance.headlineText
 				),
-				if (student.role != Role.ordinary) Text(
-					student.role!.name,
-					style: Appearance.largeTitleText
-				).withPadding
+				if (student.role != Role.ordinary)
+					Text(
+						student.role!.name,
+						style: Appearance.largeTitleText
+					).withPadding
 			],
-			actions: Local.userRole != Role.leader || student.name == Local.userName ? [] : [
-				student.role == Role.ordinary ? EntityActionButton(
-					text: "trust",
-					action: () => role.value = Role.trusted
-				) : EntityActionButton(
-					text: "untrust",
-					action: () => role.value = Role.ordinary
-				),
-				EntityActionButton(
-					text: "make the leader",
-					action: () => Cloud.makeLeader(student)
-				)
-			],
+			actions: Local.userRole != Role.leader || student.name == Local.userName ?
+				[] :
+				[
+					student.role == Role.ordinary ?
+						EntityActionButton(
+							text: "trust",
+							action: () => role.value = Role.trusted
+						) :
+						EntityActionButton(
+							text: "untrust",
+							action: () => role.value = Role.ordinary
+						),
+					EntityActionButton(
+						text: "make the leader",
+						action: () => Cloud.makeLeader(student)
+					)
+				],
 			onClose: () => _onClose(ref, nameField.text, role.value)
 		);
 	}

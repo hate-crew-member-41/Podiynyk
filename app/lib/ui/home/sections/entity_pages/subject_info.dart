@@ -41,10 +41,11 @@ class SubjectInfoPage extends HookConsumerWidget {
 				)
 			],
 			actions: [
-				if (Local.userRole != Role.ordinary) EntityActionButton(
-					text: "delete",
-					action: () => _delete(context, ref)
-				)
+				if (Local.userRole != Role.ordinary)
+					EntityActionButton(
+						text: "delete",
+						action: () => _delete(context, ref)
+					)
 			],
 			onClose: () {
 				final updated = SubjectInfo.modified(

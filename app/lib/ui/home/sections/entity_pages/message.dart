@@ -44,13 +44,14 @@ class MessagePage extends HookConsumerWidget {
 					enabled: isByUser,
 					style: Appearance.headlineText
 				),
-				if (message.value.hasDetails) InputField(
-					controller: contentField,
-					name: "content",
-					enabled: isByUser,
-					multiline: true,
-					style: Appearance.bodyText
-				),
+				if (message.value.hasDetails)
+					InputField(
+						controller: contentField,
+						name: "content",
+						enabled: isByUser,
+						multiline: true,
+						style: Appearance.bodyText
+					),
 				const ListTile(),
 				Text(
 					initial.author.nameRepr,
@@ -62,10 +63,11 @@ class MessagePage extends HookConsumerWidget {
 				).withPadding
 			],
 			actions: [
-				if (isByUser) EntityActionButton(
-					text: "delete",
-					action: () => _delete(context, ref, message.value)
-				)
+				if (isByUser)
+					EntityActionButton(
+						text: "delete",
+						action: () => _delete(context, ref, message.value)
+					)
 			],
 			onClose: () => _onClose(ref, message.value, nameField.text, contentField.text)
 		);

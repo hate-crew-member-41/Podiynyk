@@ -70,7 +70,8 @@ class Subject extends Entity {
 	@override
 	CloudMap get detailsInCloudFormat => {
 		Identifier.info.name: {
-			for (final item in info!) item.id: item.inCloudFormat
+			for (final item in info!)
+				item.id: item.inCloudFormat
 		}
 	};
 

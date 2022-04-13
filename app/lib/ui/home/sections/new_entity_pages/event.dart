@@ -82,41 +82,39 @@ class NewEventPage extends HookConsumerWidget {
 		TextEditingController field
 	) {
 		Navigator.of(context).push(MaterialPageRoute(
-			builder: (context) => Scaffold(
-				body: Center(child: FutureBuilder<List<Subject>>(
+			builder: (context) => Scaffold(body: Center(
+				child: FutureBuilder<List<Subject>>(
 					future: future,
-					builder: (context, snapshot) => _subjectsBuilder(context, snapshot, current, field)
-				))
-			)
+					builder: (context, snapshot) {
+						if (snapshot.connectionState == ConnectionState.waiting) return const Text("awaiting the subjects");
+						// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
+
+						final subjects = snapshot.data!;
+
+						if (subjects.isNotEmpty) return ListView(
+							shrinkWrap: true,
+							children: [
+								for (final subject in List<Subject>.from(subjects)..remove(current.value))
+									ListTile(
+										title: Text(subject.nameRepr),
+										onTap: () => _handleSubject(context, subject, current, field)
+									),
+								if (current.value != null)
+									...[
+										if (subjects.length != 1) const ListTile(),
+										ListTile(
+											title: const Text("none"),
+											onTap: () => _handleSubject(context, null, current, field)
+										)
+									]
+							]
+						);
+	
+						return const Text("no subjects");
+					}
+				)
+			))
 		));
-	}
-
-	Widget _subjectsBuilder(
-		BuildContext context,
-		AsyncSnapshot<List<Subject>> snapshot,
-		ObjectRef<Subject?> current,
-		TextEditingController field
-	) {
-		if (snapshot.connectionState == ConnectionState.waiting) return const Text("awaiting the subjects");
-		// if (snapshot.hasError) print(snapshot.error);  // todo: consider handling
-
-		final subjects = snapshot.data!;
-		return subjects.isNotEmpty ? ListView(
-			shrinkWrap: true,
-			children: [
-				for (final subject in subjects..remove(current.value)) ListTile(
-					title: Text(subject.nameRepr),
-					onTap: () => _handleSubject(context, subject, current, field)
-				),
-				if (current.value != null) ...[
-					if (subjects.length != 1) const ListTile(),
-					ListTile(
-						title: const Text("none"),
-						onTap: () => _handleSubject(context, null, current, field)
-					)
-				]
-			]
-		) : const Text("no subjects");
 	}
 
 	void _handleSubject(
