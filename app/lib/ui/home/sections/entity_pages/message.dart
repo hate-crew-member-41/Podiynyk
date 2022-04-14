@@ -16,10 +16,10 @@ import 'entity.dart';
 
 class MessagePage extends HookConsumerWidget {
 	MessagePage(this.initial) :
-		isByUser = initial.author.id == Local.userId;
+		messageIsByUser = initial.author.id == Local.userId;
 
 	final Message initial;
-	final bool isByUser;
+	final bool messageIsByUser;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
@@ -41,14 +41,14 @@ class MessagePage extends HookConsumerWidget {
 				InputField(
 					controller: nameField,
 					name: "topic",
-					enabled: isByUser,
+					enabled: messageIsByUser,
 					style: Appearance.headlineText
 				),
 				if (message.value.hasDetails)
 					InputField(
 						controller: contentField,
 						name: "content",
-						enabled: isByUser,
+						enabled: messageIsByUser,
 						multiline: true,
 						style: Appearance.bodyText
 					),
@@ -62,8 +62,8 @@ class MessagePage extends HookConsumerWidget {
 					style: Appearance.titleText
 				).withPadding
 			],
-			actions: [
-				if (isByUser)
+			actions: () => [
+				if (messageIsByUser)
 					EntityActionButton(
 						text: "delete",
 						action: () => _delete(context, ref, message.value)

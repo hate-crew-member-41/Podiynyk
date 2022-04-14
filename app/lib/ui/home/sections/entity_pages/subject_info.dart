@@ -16,10 +16,12 @@ import 'entity.dart';
 
 
 class SubjectInfoPage extends HookConsumerWidget {
+	SubjectInfoPage(this.info, {required this.subject}) :
+		userIsOrdinary = Local.userRole == Role.ordinary;
+
 	final SubjectInfo info;
 	final ObjectRef<Subject> subject;
-
-	const SubjectInfoPage(this.info, {required this.subject});
+	final bool userIsOrdinary;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
@@ -40,8 +42,8 @@ class SubjectInfoPage extends HookConsumerWidget {
 					style: Appearance.bodyText,
 				)
 			],
-			actions: [
-				if (Local.userRole != Role.ordinary)
+			actions: () => [
+				if (!userIsOrdinary)
 					EntityActionButton(
 						text: "delete",
 						action: () => _delete(context, ref)

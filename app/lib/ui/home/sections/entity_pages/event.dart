@@ -17,9 +17,11 @@ import 'entity.dart';
 
 
 class EventPage extends HookConsumerWidget {
-	const EventPage(this.initial);
+	EventPage(this.initial) :
+		userIsOrdinary = Local.userRole == Role.ordinary;
 
 	final Event initial;
+	final bool userIsOrdinary;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
@@ -72,8 +74,8 @@ class EventPage extends HookConsumerWidget {
 						)
 					]
 			],
-			actions: [
-				if (event.value.hasDetails && event.value.note == null)
+			actions: () => [
+				if (event.value.hasDetails && !showNote.value)
 					EntityActionButton(
 						text: "add a note",
 						action: () => showNote.value = true
@@ -87,7 +89,7 @@ class EventPage extends HookConsumerWidget {
 						text: "show",
 						action: () => hidden.value = false
 					),
-				if (Local.userRole != Role.ordinary)
+				if (!userIsOrdinary)
 					EntityActionButton(
 						text: "delete",
 						action: () => _delete(context, ref, event.value)

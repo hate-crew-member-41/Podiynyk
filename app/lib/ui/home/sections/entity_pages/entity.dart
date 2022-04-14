@@ -5,28 +5,19 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class EntityPage extends ConsumerWidget {
 	const EntityPage({
 		required this.children,
-		this.actions = const <Widget>[],
+		this.actions,
 		this.onClose
 	});
 
 	final List<Widget> children;
-	final List<Widget> actions;
+	final List<Widget> Function()? actions;
 	final void Function()? onClose;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
 		return GestureDetector(
-			onLongPress: actions.isNotEmpty ?
-				() {
-					Navigator.of(context).push(MaterialPageRoute(
-						builder: (context) => Scaffold(
-							body: Center(child: ListView(
-								shrinkWrap: true,
-								children: actions
-							))
-						)
-					));
-				} :
+			onLongPress: actions != null ?
+				() => _handleShowActions(context) :
 				null,
 			child: WillPopScope(
 				onWillPop: onClose != null ?
@@ -47,6 +38,19 @@ class EntityPage extends ConsumerWidget {
 				),
 			)
 		);
+	}
+
+	void _handleShowActions(BuildContext context) {
+		final currentActions = actions!();
+
+		if (currentActions.isNotEmpty) Navigator.of(context).push(MaterialPageRoute(
+			builder: (context) => Scaffold(
+				body: Center(child: ListView(
+					shrinkWrap: true,
+					children: currentActions
+				))
+			)
+		));
 	}
 }
 

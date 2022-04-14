@@ -14,9 +14,11 @@ import 'entity.dart';
 
 
 class StudentPage extends HookConsumerWidget {
-	const StudentPage(this.student);
+	StudentPage(this.student) :
+		studentIsOrdinary = student.role == Role.ordinary;
 
 	final Student student;
+	final bool studentIsOrdinary;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
@@ -37,9 +39,9 @@ class StudentPage extends HookConsumerWidget {
 					).withPadding
 			],
 			actions: Local.userRole != Role.leader || student.name == Local.userName ?
-				[] :
-				[
-					student.role == Role.ordinary ?
+				() => const [] :
+				() => [
+					studentIsOrdinary ?
 						EntityActionButton(
 							text: "trust",
 							action: () => role.value = Role.trusted

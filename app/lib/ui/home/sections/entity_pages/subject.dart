@@ -25,9 +25,11 @@ import 'subject_info.dart';
 
 
 class SubjectPage extends HookConsumerWidget {
-	const SubjectPage(this.initial);
+	SubjectPage(this.initial) :
+		userIsLeader = Local.userRole == Role.leader;
 
 	final Subject initial;
+	final bool userIsLeader;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
@@ -64,7 +66,7 @@ class SubjectPage extends HookConsumerWidget {
 						onTap: () => _showEvents(context, subject.value)
 					)
 				],
-				actions: [
+				actions: () => [
 					followed.value ?
 						EntityActionButton(
 							text: "unfollow",
@@ -74,7 +76,7 @@ class SubjectPage extends HookConsumerWidget {
 							text: "follow",
 							action: () => followed.value = true
 						),
-					if (Local.userRole == Role.leader)
+					if (userIsLeader)
 						EntityActionButton(
 							text: "delete",
 							action: () => _handleDelete(context, ref, subject.value)
