@@ -49,36 +49,34 @@ class SubjectInfoPage extends HookConsumerWidget {
 						action: () => _delete(context, ref)
 					)
 			],
-			onClose: () {
-				final updated = SubjectInfo.modified(
-					info: info,
-					nameRepr: nameField.text,
-					content: contentField.text
-				);
-
-				bool notifyList = false;
-
-				final contentChanged = updated.content != info.content;
-				if (contentChanged) notifyList = true;
-
-				if (notifyList) {
-					ref.read(subjectInfoNotifierProvider.notifier).updateItem(updated);
-
-					if (contentChanged) {
-						subject.value = Subject.modified(
-							subject: subject.value,
-							info: ref.read(subjectInfoNotifierProvider)
-						);
-
-						Cloud.updateEntityDetails(subject.value);
-					}
-				}
-			}
+			onClose: () => _onClose(ref, nameField.text, contentField.text)
 		);
 	}
 
 	void _delete(BuildContext context, WidgetRef ref) {
 		ref.read(subjectInfoNotifierProvider.notifier).delete(info);
 		Navigator.of(context).pop();
+	}
+
+	void _onClose(WidgetRef ref, String nameRepr, String content) {
+		final updated = SubjectInfo.modified(
+			info,
+			nameRepr: nameRepr,
+			content: content
+		);
+
+		final contentChanged = updated.content != info.content;
+		if (updated.nameRepr != info.nameRepr || contentChanged) {
+			ref.read(subjectInfoNotifierProvider.notifier).updateItem(updated);
+
+			if (contentChanged) {
+				subject.value = Subject.modified(
+					subject.value,
+					info: ref.read(subjectInfoNotifierProvider)
+				);
+
+				Cloud.updateEntityDetails(subject.value);
+			}
+		}
 	}
 }

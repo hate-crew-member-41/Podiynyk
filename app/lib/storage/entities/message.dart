@@ -31,15 +31,14 @@ class Message extends Entity {
 		content = details[Identifier.content.name] as String,
 		super.withDetails(entity: message);
 
-	Message.modified({
-		required Message message,
+	Message.modified(Message message, {
 		String? name,
 		String? content
 	}) :
 		author = message.author,
 		date = message.date,
 		content = content ?? message.content,
-		super.modified(entity: message, name: name);
+		super.modified(message, name: name);
 
 	final Student author;
 	final DateTime date;

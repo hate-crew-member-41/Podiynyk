@@ -14,9 +14,7 @@ import 'ui/loading.dart';
 
 
 void main() {
-	runApp(ProviderScope(
-		child: App()
-	));
+	runApp(ProviderScope(child: App()));
 }
 
 
@@ -46,7 +44,7 @@ class App extends StatelessWidget {
 					onSecondary: Appearance.primaryColor
 				),
 				canvasColor: Appearance.backgroundColor,
-				textTheme: GoogleFonts.nunitoSansTextTheme().copyWith(
+				textTheme: GoogleFonts.montserratTextTheme().copyWith(
 					bodySmall: Appearance.labelText,  // date picker dates
 					bodyMedium: Appearance.bodyText,
 					bodyLarge: Appearance.labelText,  // time picker hours/minutes

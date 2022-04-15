@@ -41,15 +41,14 @@ class Subject extends Entity {
 		]..sort(),
 		super.withDetails(entity: subject);
 
-	Subject.modified({
-		required Subject subject,
+	Subject.modified(Subject subject, {
 		String? nameRepr,
 		bool? followed,
 		List<SubjectInfo>? info
 	}) :
 		isFollowed = followed ?? subject.isFollowed,
 		info = info ?? subject.info,
-		super.modified(entity: subject, nameRepr: nameRepr)
+		super.modified(subject, nameRepr: nameRepr)
 	{
 		if (followed == false) {
 			Local.storeEntity(Identifier.unfollowedSubjects, this);

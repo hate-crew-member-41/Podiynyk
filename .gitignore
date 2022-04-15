@@ -1,6 +1,7 @@
 app/build/
 app/android/
 app/ios/
+app/assets/
 
 # Design sketches
 design/

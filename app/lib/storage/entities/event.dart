@@ -34,8 +34,7 @@ class Event extends Entity {
 		note = details[Identifier.note.name],
 		super.withDetails(entity: event);
 	
-	Event.modified({
-		required Event event,
+	Event.modified(Event event, {
 		String? nameRepr,
 		DateTime? date,
 		bool? hidden,
@@ -45,7 +44,7 @@ class Event extends Entity {
 		date = date ?? event.date,
 		isHidden = hidden ?? event.isHidden,
 		note = note != null ? (note.isNotEmpty ? note : null) : event.note,
-		super.modified(entity: event, nameRepr: nameRepr)
+		super.modified(event, nameRepr: nameRepr)
 	{
 		if (hidden == true) {
 			Local.storeEntity(Identifier.hiddenEvents, this);

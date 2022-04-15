@@ -107,14 +107,15 @@ class EventPage extends HookConsumerWidget {
 
 	void _onClose(WidgetRef ref, Event current, String nameRepr, DateTime date, bool hidden, String note) {
 		final updated = Event.modified(
-			event: current,
+			current,
 			nameRepr: nameRepr,
 			date: date,
 			hidden: hidden,
 			note: note
 		);
-
 		bool changed = false;
+
+		if (updated.nameRepr != current.nameRepr) changed = true;
 
 		if (updated.date != current.date) {
 			Cloud.updateEntity(updated);

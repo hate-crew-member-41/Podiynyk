@@ -79,14 +79,15 @@ class MessagePage extends HookConsumerWidget {
 		ref.read(messagesNotifierProvider.notifier).update();
 	}
 
-	void _onClose(WidgetRef ref, Message current, String nameRepr, String content) {
+	void _onClose(WidgetRef ref, Message current, String name, String content) {
 		final updated = Message.modified(
-			message: current,
-			name: nameRepr,
+			current,
+			name: name,
 			content: content
 		);
-
 		bool changed = false;
+
+		if (updated.nameRepr != current.nameRepr) changed = true;
 
 		if (updated.hasDetails) {
 			if (!initial.hasDetails) changed = true;

@@ -1,18 +1,14 @@
 # App
 
-Allow widgets to be present if they have no actual effect (GestureDetector, WillPopScope).
-
 Make sure that too much of the widget tree is not rebuilt. Check:
 * hooks: useState, useListenable
-* context.watch
+* ref.watch
 
 ## Entity pages
 
-Labels.
-
 Make it impossible to modify past events.
 
-The padding in the `SnackBar` shown before deleting subjects.
+Make events half-transparent on subject pages.
 
 ## Identification
 
@@ -24,6 +20,8 @@ Attempt to avoid fetching the students twice. It always happens in the nameIsUni
 
 ## Appearance
 
+Some Ukrainian letters are displayed as rectangles. The font has become unchangeable.
+
 The LinearProgressIndicator in Identification.
 
 Highlight the tile of the current section.
@@ -33,9 +31,11 @@ What is shown when the entities are being fetched and if there are none.
 What is shown instead of the entity's details while they are being fetched.
 How they enter the page.
 
+The padding in the `SnackBar` shown before deleting subjects.
+
 The loading screen.
 
-The current typed word underlined. Words are not auto-capitalized.
+The current typed word is underlined. Words are not auto-capitalized after dots.
 
 Consider adding some automatic focus changes to new-entity forms.
 
@@ -78,8 +78,6 @@ Come up with a way to display them. They are possible here:
 # Firebase
 
 ## Cloud Firestore
-
-Consider indicating that an event does not belong to a subject bu not including the `subject` field at all.
 
 Does EntityCollection need `detailsRef`?
 
@@ -144,5 +142,3 @@ Unused data is fetched.
 ### Notes
 
 Subject info labels are deleted in the Cloud with the subject labels.
-
-Entities get [_wasModified] field and [sync] method that will update the entity instead of the setters.

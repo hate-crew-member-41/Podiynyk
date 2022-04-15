@@ -61,12 +61,13 @@ class StudentPage extends HookConsumerWidget {
 
 	void _onClose(WidgetRef ref, String nameRepr, Role role) {
 		final updated = Student.modified(
-			student: student,
+			student,
 			nameRepr: nameRepr,
 			role: role
 		);
-
 		bool changed = false;
+
+		if (updated.nameRepr != student.nameRepr) changed = true;
 
 		if (updated.role != student.role) {
 			Cloud.updateEntity(updated);

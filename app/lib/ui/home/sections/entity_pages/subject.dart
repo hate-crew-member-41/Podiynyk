@@ -167,13 +167,14 @@ class SubjectPage extends HookConsumerWidget {
 
 	void _onClose(WidgetRef ref, Subject current, String nameRepr, bool followed) {
 		final updated = Subject.modified(
-			subject: current,
+			current,
 			nameRepr: nameRepr,
 			followed: followed,
 			info: ref.read(subjectInfoNotifierProvider)
 		);
+		bool changed = false;
 
-		bool notifySection = false;
+		if (updated.nameRepr != current.nameRepr) changed = true;
 
 		if (updated.isFollowed != current.isFollowed) {
 			if (!updated.isFollowed) {
@@ -183,16 +184,16 @@ class SubjectPage extends HookConsumerWidget {
 				Local.deleteEntity(Identifier.unfollowedSubjects, updated);
 			}
 
-			notifySection = true;
+			changed = true;
 		}
 
 		if (updated.hasDetails) {
 			if (!initial.hasDetails || ref.read(subjectInfoNotifierProvider.notifier).changed) {
-				notifySection = true;
+				changed = true;
 			}
 		}
 
-		if (notifySection) {
+		if (changed) {
 			ref.read(subjectsNotifierProvider.notifier).updateEntity(updated);
 		}
 	}

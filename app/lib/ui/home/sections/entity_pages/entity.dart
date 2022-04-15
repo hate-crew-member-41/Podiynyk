@@ -20,12 +20,10 @@ class EntityPage extends ConsumerWidget {
 				() => _handleShowActions(context) :
 				null,
 			child: WillPopScope(
-				onWillPop: onClose != null ?
-					() async {
-						onClose!();
-						return true;
-					} :
-					null,
+				onWillPop: () async {
+					if (onClose != null) onClose!();
+					return true;
+				},
 				child: Scaffold(
 					body: Center(child: ListView(
 						shrinkWrap: true,

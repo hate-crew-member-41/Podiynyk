@@ -18,13 +18,12 @@ class Student extends Entity {
 		role = null,
 		super.fromObject(object);
 	
-	Student.modified({
-		required Student student,
+	Student.modified(Student student, {
 		String? nameRepr,
 		Role? role
 	}) :
 		role = role ?? student.role,
-		super.modified(entity: student, nameRepr: nameRepr);
+		super.modified(student, nameRepr: nameRepr);
 
 	final Role? role;
 
