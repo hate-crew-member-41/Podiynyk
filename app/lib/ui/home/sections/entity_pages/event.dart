@@ -6,6 +6,7 @@ import 'package:podiynyk/storage/appearance.dart';
 import 'package:podiynyk/storage/cloud.dart';
 import 'package:podiynyk/storage/identifier.dart';
 import 'package:podiynyk/storage/local.dart';
+import 'package:podiynyk/storage/entities/date.dart';
 import 'package:podiynyk/storage/entities/event.dart';
 import 'package:podiynyk/storage/entities/student.dart' show Role;
 
@@ -18,9 +19,11 @@ import 'entity.dart';
 
 class EventPage extends HookConsumerWidget {
 	EventPage(this.initial) :
+		eventIsModifiable = !initial.date.isPast,
 		userIsOrdinary = Local.userRole == Role.ordinary;
 
 	final Event initial;
+	final bool eventIsModifiable;
 	final bool userIsOrdinary;
 
 	@override
@@ -61,7 +64,7 @@ class EventPage extends HookConsumerWidget {
 				DateField(
 					initialDate: event.value.date,
 					onPicked: (picked) => date.value = picked,
-					enabled: Local.userRole != Role.ordinary
+					enabled: Local.userRole != Role.ordinary && eventIsModifiable
 				),
 				if (showNote.value)
 					...[
@@ -69,13 +72,14 @@ class EventPage extends HookConsumerWidget {
 						InputField(
 							controller: noteField,
 							name: "note",
+							enabled: eventIsModifiable,
 							multiline: true,
 							style: Appearance.bodyText
 						)
 					]
 			],
 			actions: () => [
-				if (event.value.hasDetails && !showNote.value)
+				if (event.value.hasDetails && !showNote.value && eventIsModifiable)
 					EntityActionButton(
 						text: "add a note",
 						action: () => showNote.value = true

@@ -29,13 +29,13 @@ extension EntityDate on DateTime {
 		return repr;
 	}
 
-	/// The [EntityDate] with [time]'s time parameters.
+	/// The date with [time]'s time parameters.
 	DateTime withTime(TimeOfDay time) => DateTime(year, month, day, time.hour, time.minute);
 
-	/// The last moment of the [EntityDate].
+	/// The last moment of the date.
 	DateTime get withDefaultTime => DateTime(year, month, day).add(const Duration(hours: 24) - const Duration(seconds: 1));
 
-	/// Whether the [EntityDate] is before now.
+	/// Whether the date is before now.
 	bool get isPast => isBefore(DateTime.now());
 }
 

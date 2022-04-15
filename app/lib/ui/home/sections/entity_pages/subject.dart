@@ -117,6 +117,7 @@ class SubjectPage extends HookConsumerWidget {
 					for (final event in events) EntityTile(
 						title: event.nameRepr,
 						trailing: event.date.dateRepr,
+						opaque: !event.date.isPast,
 						pageBuilder: () => EventPage(event)
 					)
 				];

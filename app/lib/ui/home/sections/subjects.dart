@@ -59,7 +59,6 @@ class _Tile extends ConsumerWidget {
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
-		final index = ref.watch(subjectsNotifierProvider)!.indexOf(subject);
 		final events = ref.watch(eventsNotifierProvider)!.where((event) => event.subject?.id == subject.id).toList();
 		final hasEvents = events.isNotEmpty;
 
@@ -68,7 +67,7 @@ class _Tile extends ConsumerWidget {
 			subtitle: hasEvents ? Event.countRepr(events.length) : null,
 			trailing: hasEvents ? events.first.date.dateRepr : null,
 			opaque: subject.isFollowed,
-			pageBuilder: () => SubjectPage(ref.read(subjectsNotifierProvider)![index])
+			pageBuilder: () => SubjectPage(subject)
 		);
 	}
 }

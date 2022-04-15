@@ -1,14 +1,6 @@
 # App
 
-Make sure that too much of the widget tree is not rebuilt. Check:
-* hooks: useState, useListenable
-* ref.watch
-
-## Entity pages
-
-Make it impossible to modify past events.
-
-Make events half-transparent on subject pages.
+Translate it to Ukrainian.
 
 ## Identification
 
@@ -21,8 +13,6 @@ Attempt to avoid fetching the students twice. It always happens in the nameIsUni
 ## Appearance
 
 Some Ukrainian letters are displayed as rectangles. The font has become unchangeable.
-
-The LinearProgressIndicator in Identification.
 
 Highlight the tile of the current section.
 
