@@ -1,22 +1,9 @@
-app/build/
-app/android/
-app/ios/
-app/assets/
-
-# Design sketches
-design/
-
-# Working with Firebase with Admin SDK
-firebase/key.json
-
-# Lints
-app/analysis_options.yaml
-
-# A script for code statistics
-app/code_stats.py
-
-# The previous version of the project
 old/
+
+app/android
+app/ios
+
+app/analysis_options.yaml
 
 # Miscellaneous
 *.drawio
@@ -29,9 +16,7 @@ old/
 .buildlog/
 .history
 .svn/
-
-# VS Code related
-.vscode/
+migrate_working_dir/
 
 # IntelliJ related
 *.iml
@@ -50,8 +35,16 @@ old/
 .pub/
 /build/
 
+# Web related
+lib/generated_plugin_registrant.dart
+
 # Symbolication related
 app.*.symbols
 
 # Obfuscation related
 app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release

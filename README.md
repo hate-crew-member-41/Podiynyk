@@ -1,3 +1,3 @@
 # Подійни́к
 
-Be better students. Stay tuned...
+A cross-platform mobile app for Ukrainian students.
