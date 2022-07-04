@@ -7,6 +7,9 @@ app/build
 app/analysis_options.yaml
 app/lib/firebase_options.dart
 
+# VS Code
+.vscode/
+
 # Miscellaneous
 *.drawio
 *.class

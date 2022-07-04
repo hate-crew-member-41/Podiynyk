@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
 
 void main() async {
 	runApp(const MyApp());
@@ -12,12 +14,9 @@ class MyApp extends StatelessWidget {
 	Widget build(BuildContext context) {
 		return MaterialApp(
 			title: 'Подійник',
-		themeMode: ThemeMode.dark,
+			themeMode: ThemeMode.dark,
 			darkTheme: ThemeData(
 				colorScheme: const ColorScheme.dark()
-			),
-			home: const Scaffold(
-				body: Center(child: Text("podiinyk"))
 			),
 		);
 	}
