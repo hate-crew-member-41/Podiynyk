@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:podiinyk/data/types.dart';
+import 'package:podiinyk/core/data/types.dart';
 
 import 'subject.dart';
 

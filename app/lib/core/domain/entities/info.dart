@@ -1,4 +1,4 @@
-import 'package:podiinyk/data/types.dart';
+import 'package:podiinyk/core/data/types.dart';
 
 
 class Info {
