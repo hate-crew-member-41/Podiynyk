@@ -1,13 +1,14 @@
-import 'package:podiinyk/core/data/types.dart';
+import '../../types/field.dart';
+import '../../types/object_map.dart';
 
 
 class Student {
-	const Student({
-		required this.id,
-		required this.name,
-		required this.surname,
-		this.info
-	});
+	// do: redefine
+	const Student.user() :
+		id = 'id',
+		name = 'Name',
+		surname = 'Surname',
+		info = null;
 
 	Student.fromCloud({
 		required this.id,

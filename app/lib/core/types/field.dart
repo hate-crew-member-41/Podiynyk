@@ -1,17 +1,13 @@
-typedef ObjectMap = Map<String, dynamic>;
-
-
 enum Field {
 	author,
 	content,
 	date,
-	datetime,
+	hasTime,
 	id,
 	info,
 	isCommon,
 	name,
 	note,
 	subject,
-	surname,
-	time
+	surname
 }

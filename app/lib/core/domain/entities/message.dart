@@ -1,16 +1,20 @@
-import 'package:podiinyk/core/data/types.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'
+;
+import '../../types/entity_date.dart';
+import '../../types/field.dart';
+import '../../types/object_map.dart';
 
 import 'student.dart';
 
 
 class Message {
-	const Message({
+	Message({
 		required this.id,
 		required this.name,
 		required this.content,
-		required this.author,
-		required this.datetime
-	});
+	}) :
+		author = const Student.user(),
+		date = EntityDate.now();
 
 	Message.fromCloud({
 		required this.id,
@@ -20,18 +24,21 @@ class Message {
 		name = object[Field.name.name],
 		content = object[Field.content.name],
 		author = students[object[Field.author.name]]!,
-		datetime = object[Field.datetime.name];
+		date = EntityDate(
+			(object[Field.date.name] as Timestamp).toDate(),
+			hasTime: true
+		);
 
 	final String id;
 	final String name;
 	final String content;
 	final Student author;
-	final DateTime datetime;
+	final EntityDate date;
 
 	ObjectMap get cloudObject => {
 		Field.name.name: name,
 		Field.content.name: content,
-		Field.author.name: author,
-		Field.datetime.name: datetime
+		Field.author.name: author.id,
+		Field.date.name: date
 	};
 }

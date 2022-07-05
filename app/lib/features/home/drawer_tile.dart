@@ -16,6 +16,7 @@ class DrawerTile extends ConsumerWidget {
 		return ListTile(
 			onTap: () => _onTap(context, ref),
 			title: Text(section.name),
+			// think: always show filled icons
 			leading: Consumer(
 				builder: (context, ref, _) {
 					final isActive = ref.watch(homeStateProvider) == section;

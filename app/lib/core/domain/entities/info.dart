@@ -1,4 +1,5 @@
-import 'package:podiinyk/core/data/types.dart';
+import '../../types/field.dart';
+import '../../types/object_map.dart';
 
 
 class Info {

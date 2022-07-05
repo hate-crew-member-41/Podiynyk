@@ -39,6 +39,7 @@ class Home extends ConsumerWidget {
 				shrinkWrap: true,
 				// do: arrange
 				children: const [
+					// think: show today's date instead
 					Icon(Icons.all_inclusive),
 					ListTile(),
 					DrawerTile(EventsSection()),
