@@ -1,13 +1,12 @@
-old/
-
 app/android
 app/ios
 app/build
 
 app/analysis_options.yaml
-app/lib/core/data/firebase_options.dart
 
-# VS Code
+firebase_options.dart
+
+# VS Code related
 .vscode/
 
 # Miscellaneous

@@ -7,7 +7,6 @@ enum AppState {
 	home
 }
 
-
 class AppStateNotifier extends StateNotifier<AppState?> {
 	AppStateNotifier() : super(null);
 
