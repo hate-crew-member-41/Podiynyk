@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:podiinyk/app_state.dart';
-import 'package:podiinyk/core/data/firebase_options.dart';
+import 'package:podiinyk/state.dart';
+import 'package:podiinyk/data/core/firebase_options.dart';
 
 
 class Loading extends ConsumerWidget {

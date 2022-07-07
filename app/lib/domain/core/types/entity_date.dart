@@ -15,7 +15,7 @@ class EntityDate {
 
 	String get repr {
 		final dayRepr = _dayRepr(includeWeekday: true);
-		return '$dayRepr, $timeRepr';
+		return hasTime ? '$dayRepr, $timeRepr' : dayRepr;
 	}
 
 	String _dayRepr({bool includeWeekday = false, bool implyToday = false}) {
@@ -31,7 +31,7 @@ class EntityDate {
 		if (object == tomorrow) return 'tomorrow';
 
 		if (object == today) {
-			return !implyToday ? 'today' : timeRepr;
+			return !implyToday | !hasTime ? 'today' : timeRepr;
 		}
 
 		return 'yesterday';

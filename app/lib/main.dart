@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'app_state.dart';
-import 'features/entering_account/entering_account.dart';
-import 'features/entering_group/entering_group.dart';
-import 'features/home/home.dart';
-import 'features/loading/loading.dart';
+import 'state.dart';
+
+import 'presentation/entering_account/entering_account.dart';
+import 'presentation/entering_group/entering_group.dart';
+import 'presentation/home/home.dart';
+import 'presentation/loading/loading.dart';
 
 
 void main() async {
