@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'state.dart';
 
-import 'presentation/entering_account/entering_account.dart';
+import 'presentation/authentication/authentication.dart';
 import 'presentation/entering_group/entering_group.dart';
 import 'presentation/home/home.dart';
 import 'presentation/loading/loading.dart';
@@ -30,7 +30,7 @@ class App extends StatelessWidget {
 					case null:
 						return const Loading();
 					case AppState.enteringAccount:
-						return const EnteringAccount();
+						return const Authentication();
 					case AppState.enteringGroup:
 						return const EnteringGroup();
 					case AppState.home:

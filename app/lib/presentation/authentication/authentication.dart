@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 
-class EnteringAccount extends StatelessWidget {
-	const EnteringAccount();
+class Authentication extends StatelessWidget {
+	const Authentication();
 
 	@override
 	Widget build(BuildContext context) {

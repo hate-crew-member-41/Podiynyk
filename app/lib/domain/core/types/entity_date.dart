@@ -1,4 +1,4 @@
-import 'formatted_integer.dart';
+import 'formatted_int.dart';
 
 
 class EntityDate {

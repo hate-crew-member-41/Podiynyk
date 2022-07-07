@@ -16,6 +16,7 @@ class AppStateNotifier extends StateNotifier<AppState?> {
 	}
 }
 
+// think: would Provider + ref.refresh be enough?
 final appStateProvider = StateNotifierProvider<AppStateNotifier, AppState?>(
 	(ref) => AppStateNotifier()
 );

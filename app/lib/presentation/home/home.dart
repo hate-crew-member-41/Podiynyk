@@ -21,6 +21,7 @@ class Home extends ConsumerWidget {
 		final section = ref.watch(homeStateProvider);
 
 		return Scaffold(
+			// do: add the count
 			// think: make the whole AppBar available to tap on
 			appBar: AppBar(
 				automaticallyImplyLeading: false,
