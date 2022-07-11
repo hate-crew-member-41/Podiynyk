@@ -17,22 +17,28 @@ class Home extends ConsumerWidget {
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
 		final section = ref.watch(homeStateProvider);
+		final count = section.count(ref);
 
 		return Scaffold(
-			// do: add the count
 			// think: make the whole AppBar available to tap on
 			appBar: AppBar(
 				automaticallyImplyLeading: false,
 				title: Builder(builder: (context) => GestureDetector(
 					onTap: () => Scaffold.of(context).openDrawer(),
-					child: Row(
-						mainAxisAlignment: MainAxisAlignment.spaceBetween,
-						children: [
-							Text(section.name),
-							Icon(section.icon)
-						]
+					child: Text(section.name)
+				)),
+				actions: [
+					if (count != null) Padding(
+						// do: take from the theme
+						padding: const EdgeInsets.only(right: 16),
+						child: Center(child: Text(count.toString()))
+					),
+					Padding(
+						// do: take from the theme
+						padding: const EdgeInsets.only(right: 16),
+						child: Icon(section.icon)
 					)
-				))
+				],
 			),
 			body: section,
 			drawer: Drawer(child: Center(child: ListView(

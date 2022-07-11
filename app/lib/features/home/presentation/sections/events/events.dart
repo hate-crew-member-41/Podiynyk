@@ -14,6 +14,9 @@ class EventsSection extends HomeSection {
 	final IconData icon = Icons.event;
 
 	@override
+	int? count(WidgetRef ref) => ref.watch(eventsProvider)?.length;
+
+	@override
 	Widget build(BuildContext context, WidgetRef ref) {
 		final events = ref.watch(eventsProvider);
 	
