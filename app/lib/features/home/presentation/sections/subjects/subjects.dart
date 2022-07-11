@@ -10,6 +10,4 @@ class SubjectsSection extends HomeSection {
 	final String name = "subjects";
 	@override
 	final IconData icon = Icons.school;
-	@override
-	final IconData inactiveIcon = Icons.school_outlined;
 }

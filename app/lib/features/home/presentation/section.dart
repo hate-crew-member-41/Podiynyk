@@ -7,7 +7,6 @@ abstract class HomeSection extends ConsumerWidget {
 
 	abstract final String name;
 	abstract final IconData icon;
-	abstract final IconData inactiveIcon;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {

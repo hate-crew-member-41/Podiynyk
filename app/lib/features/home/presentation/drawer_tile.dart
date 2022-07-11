@@ -13,16 +13,10 @@ class DrawerTile extends ConsumerWidget {
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
 		return ListTile(
+			selected: ref.watch(homeStateProvider) == section,
 			onTap: () => _onTap(context, ref),
 			title: Text(section.name),
-			// think: always show filled icons
-			leading: Consumer(
-				builder: (context, ref, _) {
-					final isActive = ref.watch(homeStateProvider) == section;
-					final icon = isActive ? section.icon : section.inactiveIcon;
-					return Icon(icon);
-				}
-			)
+			leading: Icon(section.icon),
 		);
 	}
 

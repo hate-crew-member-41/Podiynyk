@@ -10,6 +10,4 @@ class GroupSection extends HomeSection {
 	final String name = "group";
 	@override
 	final IconData icon = Icons.people;
-	@override
-	final IconData inactiveIcon = Icons.people_outlined;
 }

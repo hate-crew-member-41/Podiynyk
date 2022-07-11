@@ -12,8 +12,6 @@ class EventsSection extends HomeSection {
 	final String name = "events";
 	@override
 	final IconData icon = Icons.event;
-	@override
-	final IconData inactiveIcon = Icons.event_outlined;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {

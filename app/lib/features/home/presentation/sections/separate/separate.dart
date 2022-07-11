@@ -10,6 +10,4 @@ class SeparateSection extends HomeSection {
 	final String name = "separate";
 	@override
 	final IconData icon = Icons.bubble_chart;
-	@override
-	final IconData inactiveIcon = Icons.bubble_chart_outlined;
 }
