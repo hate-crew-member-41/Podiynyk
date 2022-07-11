@@ -17,7 +17,6 @@ class Home extends ConsumerWidget {
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
 		final section = ref.watch(homeStateProvider);
-		// final count = section.count(ref);
 
 		return Scaffold(
 			body: section,
@@ -36,7 +35,7 @@ class Home extends ConsumerWidget {
 					DrawerTile(GroupSection())
 				]
 			))),
-			drawerEdgeDragWidth: 150
+			drawerEdgeDragWidth: 80
 		);
 	}
 }
