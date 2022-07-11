@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:podiinyk/domain/core/user.dart';
+import 'package:podiinyk/core/domain/user.dart';
 
 import 'object_map.dart';
 

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:podiinyk/domain/home/providers/events.dart';
-
+import '../../../domain/providers/events.dart';
 import '../../section.dart';
 
 

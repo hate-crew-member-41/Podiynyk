@@ -1,10 +1,10 @@
 import 'formatted_int.dart';
 
 
-class EntityDate {
-	const EntityDate(this.value, {this.hasTime = true});
+class Date {
+	const Date(this.value, {this.hasTime = true});
 
-	EntityDate.now() :
+	Date.now() :
 		value = DateTime.now(),
 		hasTime = true;
 

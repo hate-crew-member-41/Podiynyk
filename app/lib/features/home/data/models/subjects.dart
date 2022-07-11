@@ -1,6 +1,6 @@
-import 'package:podiinyk/domain/home/entities/subject.dart';
+import 'package:podiinyk/core/data/types/field.dart';
 
-import '../../core/types/field.dart';
+import '../../domain/entities/subject.dart';
 
 
 class SubjectModel extends Subject {

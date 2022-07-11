@@ -1,5 +1,6 @@
-import 'package:podiinyk/domain/core/types/entity_date.dart';
-import 'package:podiinyk/domain/home/entities/subject.dart';
+import 'package:podiinyk/core/domain/types/date.dart';
+
+import 'subject.dart';
 
 
 class Event {
@@ -14,6 +15,6 @@ class Event {
 	final String id;
 	final String name;
 	final Subject? subject;
-	final EntityDate date;
+	final Date date;
 	final String? note;
 }

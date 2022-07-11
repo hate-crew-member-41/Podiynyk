@@ -3,8 +3,7 @@ app/ios
 app/build
 
 app/analysis_options.yaml
-
-firebase_options.dart
+app/lib/**/firebase_options.dart
 
 # VS Code related
 .vscode/

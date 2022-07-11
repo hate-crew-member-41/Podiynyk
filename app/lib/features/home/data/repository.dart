@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:podiinyk/domain/home/entities/event.dart';
-import 'package:podiinyk/domain/home/entities/subject.dart';
+import 'package:podiinyk/core/data/types/document.dart';
+import 'package:podiinyk/core/data/types/object_map.dart';
 
-import '../core/types/document.dart';
-import '../core/types/object_map.dart';
+import '../domain/entities/event.dart';
+import '../domain/entities/subject.dart';
+
 import 'models/event.dart';
 import 'models/subjects.dart';
 

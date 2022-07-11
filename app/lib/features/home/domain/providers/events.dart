@@ -1,7 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:podiinyk/data/home/repository.dart';
-
+import '../../data/repository.dart';
 import '../entities/event.dart';
 
 

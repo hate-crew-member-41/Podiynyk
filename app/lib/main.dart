@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'state.dart';
 
-import 'presentation/authentication/authentication.dart';
-import 'presentation/entering_group/entering_group.dart';
-import 'presentation/home/home.dart';
-import 'presentation/loading/loading.dart';
+import 'features/authentication/authentication.dart';
+import 'features/entering_group/entering_group.dart';
+import 'features/home/presentation/home.dart';
+import 'features/loading/loading.dart';
 
 
 void main() async {
