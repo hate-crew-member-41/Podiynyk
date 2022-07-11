@@ -7,6 +7,7 @@ import 'object_map.dart';
 
 enum Document {
 	events,
+	info,
 	subjects
 }
 

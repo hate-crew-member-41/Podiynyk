@@ -5,9 +5,11 @@ import 'package:podiinyk/core/data/types/document.dart';
 import 'package:podiinyk/core/data/types/object_map.dart';
 
 import '../domain/entities/event.dart';
+import '../domain/entities/info.dart';
 import '../domain/entities/subject.dart';
 
 import 'models/event.dart';
+import 'models/info.dart';
 import 'models/subjects.dart';
 
 
@@ -24,15 +26,17 @@ class HomeRepository {
 			this.subjects().then((s) => subjects = s)
 		]);
 
-		return snapshot.data()!.entries.map((entry) => EventModel(
-			entry,
-			subjects: subjects
-		));
+		return snapshot.data()!.entries.map((entry) => EventModel(entry, subjects: subjects));
 	}
 
 	Future<Iterable<Subject>> subjects() async {
 		final snapshot = await Document.subjects.ref.get();
 		return snapshot.data()!.entries.map((entry) => SubjectModel(entry));
+	}
+
+	Future<Iterable<Info>> info() async {
+		final snapshot = await Document.info.ref.get();
+		return snapshot.data()!.entries.map((entry) => InfoModel(entry));
 	}
 }
 

@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../domain/providers/events.dart';
+import '../../../domain/providers/info.dart';
+
 import '../../widgets/counted_icon.dart';
 import '../../widgets/events_list.dart';
 import '../../widgets/home_section_bar.dart';
+import '../../widgets/info_list.dart';
 import '../../widgets/section.dart';
 
 
@@ -22,18 +25,20 @@ class SeparateSection extends HomeSection {
 			length: 2,
 			child: Consumer(builder: (context, ref, _) {
 				final events = ref.watch(eventsProvider)?.where((event) => event.subject == null);
+				final info = ref.watch(infoProvider);
 
 				return Scaffold(
 					appBar: HomeSectionBar(
 						name: name,
 						icon: icon,
 						tabs: [
-							const Tab(icon: Icon(Icons.notes)),
+							// do: define a widget
+							Tab(child: CountedIcon(icon: Icons.notes, count: info?.length)),
 							Tab(child: CountedIcon(icon: Icons.event, count: events?.length))
 						]
 					),
 					body: TabBarView(children: [
-						const Center(child: Text('info')),
+						InfoList(info),
 						EventsList(events)
 					])
 				);
