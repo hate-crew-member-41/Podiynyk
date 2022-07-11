@@ -7,7 +7,7 @@ class GroupSection extends HomeSection {
 	const GroupSection();
 
 	@override
-	final String name = "events";
+	final String name = "group";
 	@override
 	final IconData icon = Icons.people;
 	@override

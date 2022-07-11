@@ -1,8 +1,7 @@
-enum Identifier {
+enum Field {
 	author,
 	content,
 	date,
-	events,
 	hasTime,
 	id,
 	info,
@@ -10,6 +9,5 @@ enum Identifier {
 	name,
 	note,
 	subject,
-	subjects,
 	surname
 }

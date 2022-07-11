@@ -1,14 +1,9 @@
-import 'package:podiinyk/data/core/types/identifier.dart';
-import 'package:podiinyk/data/core/types/object_map.dart';
-
-
 class Subject {
-	Subject.fromCloud({
+	Subject({
 		required this.id,
-		required ObjectMap object
-	}) :
-		isCommon = object[Identifier.isCommon.name],
-		name = object[Identifier.name.name];
+		required this.name,
+		required this.isCommon
+	});
 
 	final String id;
 	final String name;

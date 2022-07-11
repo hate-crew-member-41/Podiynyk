@@ -1,7 +1,8 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiinyk/data/home/repository.dart';
-import 'package:podiinyk/domain/home/entities/event.dart';
+
+import '../entities/event.dart';
 
 
 class EventsNotifier extends StateNotifier<Iterable<Event>?> {
