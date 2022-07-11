@@ -1,6 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'section.dart';
+import 'widgets/section.dart';
 import 'sections/events/events.dart';
 
 

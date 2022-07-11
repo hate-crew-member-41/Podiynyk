@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../section.dart';
+import '../../widgets/section.dart';
 
 
 class MessagesSection extends HomeSection {

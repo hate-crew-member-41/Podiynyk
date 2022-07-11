@@ -8,8 +8,6 @@ abstract class HomeSection extends ConsumerWidget {
 	abstract final String name;
 	abstract final IconData icon;
 
-	int? count(WidgetRef ref) => null;
-
 	// think: capture common logic
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {

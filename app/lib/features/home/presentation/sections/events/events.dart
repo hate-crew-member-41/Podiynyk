@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../domain/providers/events.dart';
-import '../../section.dart';
+import '../../widgets/home_section_bar.dart';
+import '../../widgets/section.dart';
 
 
 class EventsSection extends HomeSection {
@@ -14,20 +15,25 @@ class EventsSection extends HomeSection {
 	final IconData icon = Icons.event;
 
 	@override
-	int? count(WidgetRef ref) => ref.watch(eventsProvider)?.length;
-
-	@override
 	Widget build(BuildContext context, WidgetRef ref) {
 		final events = ref.watch(eventsProvider);
-	
-		if (events == null) return Center(child: Icon(icon));
+		final eventsArePresent = events != null;
 
-		return ListView(children: [
-			for (final event in events) ListTile(
-				title: Text(event.name),
-				subtitle: event.subject != null ? Text(event.subject!.name) : null,
-				trailing: Text(event.date.shortRepr)
-			)
-		]);
+		return Scaffold(
+			appBar: HomeSectionBar(
+				name: name,
+				icon: icon,
+				count: events?.length
+			),
+			body: eventsArePresent ?
+				ListView(children: [
+					for (final event in events) ListTile(
+						title: Text(event.name),
+						subtitle: event.subject != null ? Text(event.subject!.name) : null,
+						trailing: Text(event.date.shortRepr)
+					)
+				]) :
+				Center(child: Icon(icon))
+		);
 	}
 }

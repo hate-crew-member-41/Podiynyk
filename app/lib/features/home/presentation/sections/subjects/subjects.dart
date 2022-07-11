@@ -2,9 +2,13 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../domain/entities/event.dart';
+import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
-import '../../section.dart';
+
+import '../../widgets/home_section_bar.dart';
+import '../../widgets/section.dart';
 
 
 class SubjectsSection extends HomeSection {
@@ -16,27 +20,33 @@ class SubjectsSection extends HomeSection {
 	final IconData icon = Icons.school;
 
 	@override
-	int? count(WidgetRef ref) => ref.watch(subjectsProvider)?.length;
-
-	@override
 	Widget build(BuildContext context, WidgetRef ref) {
 		final subjects = ref.watch(subjectsProvider);
 		final events = ref.watch(eventsProvider);
+		final entitiesArePresent = subjects != null && events != null;
 
-		if (subjects == null || events == null) return Center(child: Icon(icon));
+		return Scaffold(
+			appBar: HomeSectionBar(
+				name: name,
+				icon: icon,
+				count: subjects?.length
+			),
+			body: entitiesArePresent ?
+				ListView(children: _tiles(subjects, events)) :
+				Center(child: Icon(icon))
+		);
+	}
 
-		final tiles = <ListTile>[];
-		for (final subject in subjects) {
+	List<ListTile> _tiles(Iterable<Subject> subjects, Iterable<Event> events) {
+		return subjects.map((subject) {
 			final nextEvent = events.firstWhereOrNull((event) => event.subject == subject);
 			final hasEvents = nextEvent != null;
 
-			tiles.add(ListTile(
+			return ListTile(
 				title: Text(subject.name),
 				subtitle: hasEvents ? Text(nextEvent.name) : null,
 				trailing: hasEvents ? Text(nextEvent.date.shortRepr) : null
-			));
-		}
-
-		return ListView(children: tiles);
+			);
+		}).toList();
 	}
 }
