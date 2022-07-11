@@ -10,6 +10,7 @@ abstract class HomeSection extends ConsumerWidget {
 
 	int? count(WidgetRef ref) => null;
 
+	// think: capture common logic
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
 		return Center(child: Icon(icon));

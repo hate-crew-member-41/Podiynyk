@@ -8,4 +8,10 @@ class Subject {
 	final String id;
 	final String name;
 	final bool isCommon;
+
+	@override
+	bool operator ==(Object other) => other is Subject && id == other.id;
+	
+	@override
+	int get hashCode => id.hashCode;
 }
