@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../domain/entities/info.dart';
+import '../../../domain/entities/info.dart';
 
 import 'entities_list.dart';
 

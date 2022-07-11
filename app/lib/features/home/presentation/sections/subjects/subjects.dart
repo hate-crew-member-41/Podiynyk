@@ -8,7 +8,7 @@ import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
 
 import '../../widgets/home_section_bar.dart';
-import '../../widgets/section.dart';
+import '../section.dart';
 
 
 class SubjectsSection extends HomeSection {

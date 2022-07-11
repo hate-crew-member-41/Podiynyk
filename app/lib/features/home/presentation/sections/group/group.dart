@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../widgets/section.dart';
+import '../section.dart';
 
 
 class GroupSection extends HomeSection {

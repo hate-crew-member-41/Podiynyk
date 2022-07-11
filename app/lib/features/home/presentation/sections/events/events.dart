@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../domain/providers/events.dart';
-import '../../widgets/events_list.dart';
+
+import '../../widgets/lists/events_list.dart';
 import '../../widgets/home_section_bar.dart';
-import '../../widgets/section.dart';
+
+import '../section.dart';
 
 
 class EventsSection extends HomeSection {

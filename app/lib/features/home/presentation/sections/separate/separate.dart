@@ -5,10 +5,11 @@ import '../../../domain/providers/events.dart';
 import '../../../domain/providers/info.dart';
 
 import '../../widgets/counted_icon.dart';
-import '../../widgets/events_list.dart';
 import '../../widgets/home_section_bar.dart';
-import '../../widgets/info_list.dart';
-import '../../widgets/section.dart';
+import '../../widgets/lists/events_list.dart';
+import '../../widgets/lists/info_list.dart';
+
+import '../section.dart';
 
 
 class SeparateSection extends HomeSection {

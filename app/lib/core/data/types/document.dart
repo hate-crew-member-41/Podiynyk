@@ -8,10 +8,8 @@ import 'object_map.dart';
 enum Document {
 	events,
 	info,
-	subjects
-}
-
-extension ReferencedDocument on Document {
+	subjects;
+	
 	DocumentReference<ObjectMap> get ref =>
 		FirebaseFirestore.instance.collection(name).doc(User.groupId);
 }

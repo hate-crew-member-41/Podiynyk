@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'section.dart';
+import '../sections/section.dart';
 import '../state.dart';
 
 
