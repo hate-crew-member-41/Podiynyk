@@ -6,7 +6,7 @@ import '../entities/subject.dart';
 
 class SubjectsNotifier extends StateNotifier<Iterable<Subject>?> {
 	SubjectsNotifier({required this.repository}) : super(null) {
-		repository.subjects().then((subjects) => state = subjects);
+		repository.subjects().then((subjects) => state = subjects.toList()..sort());
 	}
 
 	final HomeRepository repository;

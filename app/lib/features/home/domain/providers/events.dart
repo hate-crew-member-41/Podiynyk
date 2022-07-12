@@ -7,7 +7,7 @@ import '../entities/event.dart';
 // think: capture common logic
 class EventsNotifier extends StateNotifier<Iterable<Event>?> {
 	EventsNotifier({required this.repository}) : super(null) {
-		repository.events().then((events) => state = events);
+		repository.events().then((events) => state = events.toList()..sort());
 	}
 
 	final HomeRepository repository;

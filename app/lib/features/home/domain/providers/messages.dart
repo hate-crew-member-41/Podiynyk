@@ -6,7 +6,7 @@ import '../entities/message.dart';
 
 class MessagesNotifier extends StateNotifier<Iterable<Message>?> {
 	MessagesNotifier({required this.repository}) : super(null) {
-		repository.messages().then((messages) => state = messages);
+		repository.messages().then((messages) => state = messages.toList()..sort());
 	}
 
 	final HomeRepository repository;

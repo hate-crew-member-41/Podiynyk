@@ -6,7 +6,7 @@ import '../entities/student.dart';
 
 class StudentsNotifier extends StateNotifier<Iterable<Student>?> {
 	StudentsNotifier({required this.repository}) : super(null) {
-		repository.students().then((students) => state = students);
+		repository.students().then((students) => state = students.toList()..sort());
 	}
 
 	final HomeRepository repository;

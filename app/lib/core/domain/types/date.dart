@@ -1,7 +1,7 @@
 import 'formatted_int.dart';
 
 
-class Date {
+class Date implements Comparable {
 	const Date(this.value, {this.hasTime = true});
 
 	Date.now() :
@@ -54,4 +54,7 @@ class Date {
 			default: return 'Sunday';
 		}
 	}
+
+	@override
+	int compareTo(covariant Date other) => value.compareTo(other.value);
 }

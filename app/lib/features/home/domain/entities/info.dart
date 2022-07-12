@@ -1,11 +1,17 @@
-class Info {
+import 'entity.dart';
+
+
+class Info  extends Entity {
 	const Info({
-		required this.id,
+		required String id,
 		required this.name,
 		required this.content
-	});
+	}) :
+		super(id: id);
 
-	final String id;
 	final String name;
 	final String content;
+
+	@override
+	int compareTo(covariant Info other) => name.compareTo(other.name);
 }

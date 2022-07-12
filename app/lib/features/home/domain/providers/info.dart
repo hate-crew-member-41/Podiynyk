@@ -6,7 +6,7 @@ import '../entities/info.dart';
 
 class InfoNotifier extends StateNotifier<Iterable<Info>?> {
 	InfoNotifier({required this.repository}) : super(null) {
-		repository.info().then((info) => state = info);
+		repository.info().then((info) => state = info.toList()..sort());
 	}
 
 	final HomeRepository repository;

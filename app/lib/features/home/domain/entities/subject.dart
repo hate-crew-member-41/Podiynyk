@@ -1,17 +1,17 @@
-class Subject {
-	Subject({
-		required this.id,
+import 'entity.dart';
+
+
+class Subject extends Entity {
+	const Subject({
+		required String id,
 		required this.name,
 		required this.isCommon
-	});
+	}) :
+		super(id: id);
 
-	final String id;
 	final String name;
 	final bool isCommon;
 
 	@override
-	bool operator ==(Object other) => other is Subject && id == other.id;
-	
-	@override
-	int get hashCode => id.hashCode;
+	int compareTo(covariant Subject other) => name.compareTo(other.name);
 }
