@@ -1,8 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:podiinyk/features/home/presentation/widgets/entities_list.dart';
 
-import '../../../domain/entities/event.dart';
 import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
@@ -32,21 +32,20 @@ class SubjectsSection extends HomeSection {
 				count: subjects?.length
 			),
 			body: entitiesArePresent ?
-				ListView(children: _tiles(subjects, events)) :
+				EntitiesList<Subject>(
+					subjects,
+					tile: (subject) {
+						final nextEvent = events.firstWhereOrNull((event) => event.subject == subject);
+						final hasEvents = nextEvent != null;
+
+						return ListTile(
+							title: Text(subject.name),
+							subtitle: hasEvents ? Text(nextEvent.name) : null,
+							trailing: hasEvents ? Text(nextEvent.date.shortRepr) : null
+						);
+					}
+				) :
 				Center(child: Icon(icon))
 		);
-	}
-
-	List<ListTile> _tiles(Iterable<Subject> subjects, Iterable<Event> events) {
-		return subjects.map((subject) {
-			final nextEvent = events.firstWhereOrNull((event) => event.subject == subject);
-			final hasEvents = nextEvent != null;
-
-			return ListTile(
-				title: Text(subject.name),
-				subtitle: hasEvents ? Text(nextEvent.name) : null,
-				trailing: hasEvents ? Text(nextEvent.date.shortRepr) : null
-			);
-		}).toList();
 	}
 }

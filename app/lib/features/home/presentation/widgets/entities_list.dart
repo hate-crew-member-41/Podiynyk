@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 
-abstract class EntitiesList<E> extends StatelessWidget {
-	const EntitiesList(this.entities);
+class EntitiesList<E> extends StatelessWidget {
+	const EntitiesList(this.entities, {required this.tile});
 
 	final Iterable<E>? entities;
+	final Widget Function(E) tile;
 
 	@override
 	Widget build(BuildContext context) {
@@ -14,6 +15,4 @@ abstract class EntitiesList<E> extends StatelessWidget {
 			for (final entity in entities!) tile(entity)
 		]);
 	}
-
-	Widget tile(E entity);
 }

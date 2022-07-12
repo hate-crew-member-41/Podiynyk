@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../domain/entities/event.dart';
+import '../../../domain/entities/info.dart';
 import '../../../domain/providers/events.dart';
 import '../../../domain/providers/info.dart';
 
 import '../../widgets/counted_icon.dart';
+import '../../widgets/event_tile.dart';
 import '../../widgets/home_section_bar.dart';
-import '../../widgets/lists/events_list.dart';
-import '../../widgets/lists/info_list.dart';
+import '../../widgets/entities_list.dart';
 
 import '../section.dart';
 
@@ -39,8 +41,14 @@ class SeparateSection extends HomeSection {
 						]
 					),
 					body: TabBarView(children: [
-						InfoList(info),
-						EventsList(events)
+						EntitiesList<Info>(
+							info,
+							tile: (item) => ListTile(title: Text(item.name))
+						),
+						EntitiesList<Event>(
+							events,
+							tile: (event) => EventTile(event)
+						)
 					])
 				);
 			})
