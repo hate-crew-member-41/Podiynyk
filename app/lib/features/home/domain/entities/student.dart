@@ -8,4 +8,6 @@ class Student {
 	final String id;
 	final String name;
 	final String surname;
+
+	String get fullName => '$name $surname';
 }
