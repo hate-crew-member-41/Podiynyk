@@ -6,14 +6,19 @@ import 'package:podiinyk/core/data/types/object_map.dart';
 
 import '../domain/entities/event.dart';
 import '../domain/entities/info.dart';
+import '../domain/entities/message.dart';
+import '../domain/entities/student.dart';
 import '../domain/entities/subject.dart';
 
 import 'models/event.dart';
 import 'models/info.dart';
+import 'models/message.dart';
+import 'models/student.dart';
 import 'models/subjects.dart';
 
 
 // do: failures
+// do: capture common logic
 // do: prevent unnecessary reads
 class HomeRepository {
 	const HomeRepository();
@@ -37,6 +42,22 @@ class HomeRepository {
 	Future<Iterable<Info>> info() async {
 		final snapshot = await Document.info.ref.get();
 		return snapshot.data()!.entries.map((entry) => InfoModel(entry));
+	}
+
+	Future<Iterable<Message>> messages() async {
+		late final DocumentSnapshot<ObjectMap> snapshot;
+		late final Iterable<Student> students;
+		await Future.wait([
+			Document.messages.ref.get().then((s) => snapshot = s),
+			this.students().then((s) => students = s)
+		]);
+
+		return snapshot.data()!.entries.map((entry) => MessageModel(entry, students: students));
+	}
+
+	Future<Iterable<Student>> students() async {
+		final snapshot = await Document.students.ref.get();
+		return snapshot.data()!.entries.map((entry) => StudentModel(entry));
 	}
 }
 

@@ -4,10 +4,8 @@ enum Field {
 	date,
 	hasTime,
 	id,
-	info,
 	isCommon,
 	name,
 	note,
-	subject,
-	surname
+	subject
 }

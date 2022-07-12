@@ -8,6 +8,8 @@ import 'object_map.dart';
 enum Document {
 	events,
 	info,
+	messages,
+	students,
 	subjects;
 	
 	DocumentReference<ObjectMap> get ref =>
