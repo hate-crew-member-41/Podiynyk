@@ -15,7 +15,7 @@ class EventModel extends Event {
 		id: entry.key,
 		name: entry.value[Field.name.name],
 		subject: entry.value.containsKey(Field.subject.name) ?
-			subjects.firstWhere((subject) => subject.id == entry.value[Field.subject.name]) :
+			subjects.firstWhere((s) => s.id == entry.value[Field.subject.name]) :
 			null,
 		date: Date(
 			(entry.value[Field.date.name] as Timestamp).toDate(),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../domain/entities/entity.dart';
 
-class EntitiesList<E> extends StatelessWidget {
+
+class EntitiesList<E extends Entity> extends StatelessWidget {
 	const EntitiesList(this.entities, {required this.tile});
 
 	final Iterable<E>? entities;

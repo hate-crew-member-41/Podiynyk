@@ -31,17 +31,23 @@ class HomeRepository {
 			this.subjects().then((s) => subjects = s)
 		]);
 
-		return snapshot.data()!.entries.map((entry) => EventModel(entry, subjects: subjects));
+		return snapshot.data()!.entries.map(
+			(entry) => EventModel(entry, subjects: subjects)
+		);
 	}
 
 	Future<Iterable<Subject>> subjects() async {
 		final snapshot = await Document.subjects.ref.get();
-		return snapshot.data()!.entries.map((entry) => SubjectModel(entry));
+		return snapshot.data()!.entries.map(
+			(entry) => SubjectModel(entry)
+		);
 	}
 
 	Future<Iterable<Info>> info() async {
 		final snapshot = await Document.info.ref.get();
-		return snapshot.data()!.entries.map((entry) => InfoModel(entry));
+		return snapshot.data()!.entries.map(
+			(entry) => InfoModel(entry)
+		);
 	}
 
 	Future<Iterable<Message>> messages() async {
@@ -52,13 +58,19 @@ class HomeRepository {
 			this.students().then((s) => students = s)
 		]);
 
-		return snapshot.data()!.entries.map((entry) => MessageModel(entry, students: students));
+		return snapshot.data()!.entries.map(
+			(entry) => MessageModel(entry, students: students)
+		);
 	}
 
 	Future<Iterable<Student>> students() async {
 		final snapshot = await Document.students.ref.get();
-		return snapshot.data()!.entries.map((entry) => StudentModel(entry));
+		return snapshot.data()!.entries.map(
+			(entry) => StudentModel(entry)
+		);
 	}
 }
 
-final homeRepositoryProvider = Provider<HomeRepository>((ref) => const HomeRepository());
+final homeRepositoryProvider = Provider<HomeRepository>(
+	(ref) => const HomeRepository()
+);

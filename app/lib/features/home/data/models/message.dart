@@ -15,7 +15,7 @@ class MessageModel extends Message {
 		id: entry.key,
 		name: entry.value[Field.name.name],
 		content: entry.value[Field.content.name],
-		author: students.firstWhere((student) => student.id == entry.value[Field.author.name]),
+		author: students.firstWhere((s) => s.id == entry.value[Field.author.name]),
 		date: Date((entry.value[Field.date.name] as Timestamp).toDate())
 	);
 }

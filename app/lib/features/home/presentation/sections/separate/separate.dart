@@ -27,7 +27,7 @@ class SeparateSection extends HomeSection {
 		return DefaultTabController(
 			length: 2,
 			child: Consumer(builder: (context, ref, _) {
-				final events = ref.watch(eventsProvider)?.where((event) => event.subject == null);
+				final events = ref.watch(eventsProvider)?.where((e) => e.subject == null);
 				final info = ref.watch(infoProvider);
 
 				return Scaffold(

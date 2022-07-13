@@ -35,7 +35,7 @@ class SubjectsSection extends HomeSection {
 				EntitiesList<Subject>(
 					subjects,
 					tile: (subject) {
-						final nextEvent = events.firstWhereOrNull((event) => event.subject == subject);
+						final nextEvent = events.firstWhereOrNull((e) => e.subject == subject);
 						final hasEvents = nextEvent != null;
 
 						return ListTile(

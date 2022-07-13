@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
+import 'open_page.dart';
+
 
 class OptionField<O> extends HookWidget {
 	const OptionField({
@@ -37,7 +39,7 @@ class OptionField<O> extends HookWidget {
 		TextEditingController field,
 		ObjectRef<O?> current
 	) {
-		final shown = options.where((option) => option.value != current.value).toList();
+		final shown = options.where((o) => o.value != current.value).toList();
 		final nullIsShown = current.value != null && !isRequired;
 
 		if (shown.length == 1) {
@@ -45,15 +47,15 @@ class OptionField<O> extends HookWidget {
 			return;
 		}
 
-		final navigator = Navigator.of(context);
-		navigator.push(MaterialPageRoute(builder: (context) {
-			return Scaffold(body: Center(child: ListView(
+		openPage(
+			context: context,
+			builder: (context, close) => Scaffold(body: Center(child: ListView(
 				shrinkWrap: true,
 				children: [
 					for (final option in shown) ListTile(
 						onTap: () {
 							_onPick(current, option.value, field, option.key);
-							navigator.pop();
+							close();
 						},
 						title: Text(option.key)
 					),
@@ -61,13 +63,13 @@ class OptionField<O> extends HookWidget {
 					if (nullIsShown) ListTile(
 						onTap: () {
 							_onPick(current, null, field, '');
-							navigator.pop();
+							close();
 						},
 						title: const Text('none')
 					)
 				]
-			)));
-		}));
+			)))
+		);
 	}
 
 	void _onPick(
