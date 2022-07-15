@@ -7,6 +7,7 @@ void openPage({
 }) {
 	final navigator = Navigator.of(context);
 	navigator.push(MaterialPageRoute(
+		// think: do not pass the pop method
 		builder: (context) => builder(context, navigator.pop)
 	));
 }

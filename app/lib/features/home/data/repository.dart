@@ -2,19 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiinyk/core/data/types/document.dart';
+import 'package:podiinyk/core/data/types/field.dart';
 import 'package:podiinyk/core/data/types/object_map.dart';
+import 'package:podiinyk/core/domain/types/date.dart';
 
 import '../domain/entities/event.dart';
 import '../domain/entities/info.dart';
 import '../domain/entities/message.dart';
 import '../domain/entities/student.dart';
 import '../domain/entities/subject.dart';
-
-import 'models/event.dart';
-import 'models/info.dart';
-import 'models/message.dart';
-import 'models/student.dart';
-import 'models/subjects.dart';
 
 
 // do: failures
@@ -31,23 +27,36 @@ class HomeRepository {
 			this.subjects().then((s) => subjects = s)
 		]);
 
-		return snapshot.data()!.entries.map(
-			(entry) => EventModel(entry, subjects: subjects)
-		);
+		return snapshot.data()!.entries.map((entry) => Event(
+			id: entry.key,
+			name: entry.value[Field.name.name],
+			subject: entry.value.containsKey(Field.subject.name) ?
+				subjects.firstWhere((s) => s.id == entry.value[Field.subject.name]) :
+				null,
+			date: Date(
+				(entry.value[Field.date.name] as Timestamp).toDate(),
+				hasTime: entry.value[Field.hasTime.name]
+			),
+			note: entry.value[Field.note.name]
+		));
 	}
 
 	Future<Iterable<Subject>> subjects() async {
 		final snapshot = await Document.subjects.ref.get();
-		return snapshot.data()!.entries.map(
-			(entry) => SubjectModel(entry)
-		);
+		return snapshot.data()!.entries.map((entry) => Subject(
+			id: entry.key,
+			name: entry.value[Field.name.name],
+			isCommon: entry.value[Field.isCommon.name]
+		));
 	}
 
 	Future<Iterable<Info>> info() async {
 		final snapshot = await Document.info.ref.get();
-		return snapshot.data()!.entries.map(
-			(entry) => InfoModel(entry)
-		);
+		return snapshot.data()!.entries.map((entry) => Info(
+			id: entry.key,
+			name: entry.value[Field.name.name],
+			content: entry.value[Field.content.name]
+		));
 	}
 
 	Future<Iterable<Message>> messages() async {
@@ -58,16 +67,22 @@ class HomeRepository {
 			this.students().then((s) => students = s)
 		]);
 
-		return snapshot.data()!.entries.map(
-			(entry) => MessageModel(entry, students: students)
-		);
+		return snapshot.data()!.entries.map((entry) => Message(
+			id: entry.key,
+			name: entry.value[Field.name.name],
+			content: entry.value[Field.content.name],
+			author: students.firstWhere((s) => s.id == entry.value[Field.author.name]),
+			date: Date((entry.value[Field.date.name] as Timestamp).toDate())
+		));
 	}
 
 	Future<Iterable<Student>> students() async {
 		final snapshot = await Document.students.ref.get();
-		return snapshot.data()!.entries.map(
-			(entry) => StudentModel(entry)
-		);
+		return snapshot.data()!.entries.map((entry) => Student(
+			id: entry.key,
+			name: entry.value[Field.name.name][0],
+			surname: entry.value[Field.name.name][1]
+		));
 	}
 }
 
