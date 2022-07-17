@@ -28,6 +28,17 @@ class HomeRepository {
 		});
 	}
 
+	Future<void> addMessage(Message message) async {
+		await Document.messages.ref.update({
+			message.id: {
+				Field.name.name: message.name,
+				Field.content.name: message.content,
+				Field.author.name: message.author.id,
+				Field.date.name: message.date.value
+			}
+		});
+	}
+
 	Future<Iterable<Event>> events() async {
 		late final DocumentSnapshot<ObjectMap> snapshot;
 		late final Iterable<Subject> subjects;

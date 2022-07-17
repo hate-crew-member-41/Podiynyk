@@ -10,6 +10,7 @@ import '../../../domain/providers/subjects.dart';
 
 
 // do: TextField.textInputAction
+// think: capture common logic
 class SubjectForm extends HookConsumerWidget {
 	const SubjectForm();
 

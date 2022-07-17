@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 
+// think: add a constructor for new entity objects
 @immutable
 abstract class Entity implements Comparable {
 	const Entity({required this.id});

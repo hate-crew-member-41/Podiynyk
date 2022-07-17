@@ -10,6 +10,11 @@ class MessagesNotifier extends StateNotifier<Iterable<Message>?> {
 	}
 
 	final HomeRepository repository;
+
+	Future<void> add(Message message) async {
+		await repository.addMessage(message);
+		state = [...state!, message]..sort();
+	}
 }
 
 final messagesProvider = StateNotifierProvider<MessagesNotifier, Iterable<Message>?>((ref) {
