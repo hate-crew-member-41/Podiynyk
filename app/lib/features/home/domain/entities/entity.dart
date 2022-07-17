@@ -12,4 +12,7 @@ abstract class Entity implements Comparable {
 	
 	@override
 	int get hashCode => id.hashCode;
+
+	// think: change (microseconds or a completely different approach)
+	static String newId() => DateTime.now().millisecondsSinceEpoch.toString();
 }

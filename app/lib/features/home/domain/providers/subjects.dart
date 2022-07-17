@@ -10,6 +10,11 @@ class SubjectsNotifier extends StateNotifier<Iterable<Subject>?> {
 	}
 
 	final HomeRepository repository;
+
+	Future<void> add(Subject subject) async {
+		await repository.addSubject(subject);
+		state = [...state!, subject]..sort();
+	}
 }
 
 final subjectsProvider = StateNotifierProvider<SubjectsNotifier, Iterable<Subject>?>((ref) {

@@ -19,6 +19,15 @@ import '../domain/entities/subject.dart';
 class HomeRepository {
 	const HomeRepository();
 
+	Future<void> addSubject(Subject subject) async {
+		await Document.subjects.ref.update({
+			subject.id: {
+				Field.name.name: subject.name,
+				Field.isCommon.name: subject.isCommon
+			}
+		});
+	}
+
 	Future<Iterable<Event>> events() async {
 		late final DocumentSnapshot<ObjectMap> snapshot;
 		late final Iterable<Subject> subjects;

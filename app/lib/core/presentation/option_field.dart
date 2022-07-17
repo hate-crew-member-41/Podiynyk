@@ -9,6 +9,7 @@ class OptionField<O> extends HookWidget {
 		// think: accept InputDecoration
 		required this.label,
 		required this.options,
+		// think: replace with [ObjectRef<O?> value/current]
 		required this.onPick,
 		this.isRequired = true
 	});

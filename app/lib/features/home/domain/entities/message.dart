@@ -4,7 +4,7 @@ import 'entity.dart';
 import 'student.dart';
 
 
-class Message  extends Entity {
+class Message extends Entity {
 	const Message({
 		required String id,
 		required this.name,

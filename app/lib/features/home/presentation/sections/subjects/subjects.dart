@@ -1,14 +1,18 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:podiinyk/features/home/presentation/widgets/entities_list.dart';
+
+import 'package:podiinyk/core/presentation/open_page.dart';
 
 import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
 
+import '../../widgets/entities_list.dart';
 import '../../widgets/home_section_bar.dart';
+
 import '../section.dart';
+import 'subject_form.dart';
 
 
 class SubjectsSection extends HomeSection {
@@ -45,7 +49,14 @@ class SubjectsSection extends HomeSection {
 						);
 					}
 				) :
-				Center(child: Icon(icon))
+				Center(child: Icon(icon)),
+			floatingActionButton: FloatingActionButton(
+				onPressed: () => openPage(
+					context: context,
+					builder: (context, _) => const SubjectForm()
+				),
+				child: const Icon(Icons.add)
+			)
 		);
 	}
 }

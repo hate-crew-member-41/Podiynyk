@@ -1,7 +1,7 @@
 import 'entity.dart';
 
 
-class Info  extends Entity {
+class Info extends Entity {
 	const Info({
 		required String id,
 		required this.name,
