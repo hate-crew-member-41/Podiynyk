@@ -6,16 +6,16 @@ import '../../../../core/presentation/open_page.dart';
 
 class OptionField<O> extends HookWidget {
 	const OptionField({
-		// think: accept InputDecoration
 		required this.label,
 		required this.options,
-		// think: replace with [ObjectRef<O?> value/current/option]
 		required this.onPick,
 		this.isRequired = true
 	});
 
+	// think: accept InputDecoration
 	final String label;
 	final Iterable<MapEntry<String, O>> options;
+	// think: replace with ObjectRef<O?>
 	final void Function(O?) onPick;
 	final bool isRequired;
 
