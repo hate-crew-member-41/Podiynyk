@@ -19,6 +19,18 @@ import '../domain/entities/subject.dart';
 class HomeRepository {
 	const HomeRepository();
 
+	Future<void> addEvent(Event event) async {
+		await Document.events.ref.update({
+			event.id: {
+				Field.name.name: event.name,
+				if (event.subject != null) Field.subject.name: event.subject?.id,
+				Field.date.name: event.date.value,
+				Field.hasTime.name: event.date.hasTime,
+				if (event.note != null) Field.note.name: event.note
+			}
+		});
+	}
+
 	Future<void> addSubject(Subject subject) async {
 		await Document.subjects.ref.update({
 			subject.id: {

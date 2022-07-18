@@ -11,6 +11,11 @@ class EventsNotifier extends StateNotifier<Iterable<Event>?> {
 	}
 
 	final HomeRepository repository;
+
+	Future<void> add(Event event) async {
+		await repository.addEvent(event);
+		state = [...state!, event]..sort();
+	}
 }
 
 final eventsProvider = StateNotifierProvider<EventsNotifier, Iterable<Event>?>((ref) {

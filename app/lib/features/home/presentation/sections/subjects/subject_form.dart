@@ -34,8 +34,7 @@ class SubjectForm extends HookConsumerWidget {
 							MapEntry('common', true),
 							MapEntry('chosen', false)
 						],
-						onPick: (value) => isCommon.value = value,
-						isRequired: false
+						onPick: (value) => isCommon.value = value
 					)
 				]
 			))

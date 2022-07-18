@@ -9,7 +9,7 @@ class OptionField<O> extends HookWidget {
 		// think: accept InputDecoration
 		required this.label,
 		required this.options,
-		// think: replace with [ObjectRef<O?> value/current]
+		// think: replace with [ObjectRef<O?> value/current/option]
 		required this.onPick,
 		this.isRequired = true
 	});
@@ -26,7 +26,7 @@ class OptionField<O> extends HookWidget {
 		if (isRequired) _onPick(current, options.first.value, field, options.first.key);
 
 		return GestureDetector(
-			onTap: () => _showOptions(context, field, current),
+			onTap: () => _handleTap(context, field, current),
 			child: TextField(
 				controller: field,
 				enabled: false,
@@ -35,7 +35,7 @@ class OptionField<O> extends HookWidget {
 		);
 	}
 
-	void _showOptions(
+	void _handleTap(
 		BuildContext context,
 		TextEditingController field,
 		ObjectRef<O?> current
@@ -43,13 +43,14 @@ class OptionField<O> extends HookWidget {
 		final shown = options.where((o) => o.value != current.value).toList();
 		final nullIsShown = current.value != null && !isRequired;
 
-		if (shown.length == 1) {
+		if (shown.length == 1 && !nullIsShown) {
 			_onPick(current, shown.first.value, field, shown.first.key);
 			return;
 		}
 
 		openPage(
 			context: context,
+			// think: define a widget for the page
 			builder: (context, close) => Scaffold(body: Center(child: ListView(
 				shrinkWrap: true,
 				children: [

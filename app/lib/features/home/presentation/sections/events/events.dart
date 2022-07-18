@@ -9,6 +9,7 @@ import '../../widgets/entities_list.dart';
 import '../../widgets/home_section_bar.dart';
 
 import '../section.dart';
+import 'event_form.dart';
 
 
 class EventsSection extends HomeSection {
@@ -31,7 +32,8 @@ class EventsSection extends HomeSection {
 			),
 			body: EntitiesList<Event>(
 				events,
-				tile: (event) => EventTile(event)
+				tile: (event) => EventTile(event),
+				formBuilder: (context) => const EventForm(),
 			)
 		);
 	}
