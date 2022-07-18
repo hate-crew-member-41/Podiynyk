@@ -4,7 +4,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../domain/entities/message.dart';
 import '../../../domain/providers/messages.dart';
 
-import '../../widgets/add_entity_button.dart';
 import '../../widgets/entities_list.dart';
 import '../../widgets/home_section_bar.dart';
 
@@ -37,9 +36,7 @@ class MessagesSection extends HomeSection {
 					subtitle: Text(message.author.fullName),
 					trailing: Text(message.date.shortRepr)
 				),
-				actionButton: AddEntityButton(
-					pageBuilder: (context, _) => const MessageForm()
-				)
+				formBuilder: (context) => const MessageForm()
 			)
 		);
 	}

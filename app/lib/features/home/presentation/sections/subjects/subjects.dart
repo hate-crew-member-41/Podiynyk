@@ -6,7 +6,6 @@ import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
 
-import '../../widgets/add_entity_button.dart';
 import '../../widgets/entities_list.dart';
 import '../../widgets/home_section_bar.dart';
 
@@ -47,9 +46,7 @@ class SubjectsSection extends HomeSection {
 							trailing: hasEvents ? Text(nextEvent.date.shortRepr) : null
 						);
 					},
-					actionButton: AddEntityButton(
-						pageBuilder: (context, _) => const SubjectForm()
-					)
+					formBuilder: (context) => const SubjectForm()
 				) :
 				Center(child: Icon(icon))
 		);

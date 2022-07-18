@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:podiinyk/core/presentation/open_page.dart';
+
 import '../../domain/entities/entity.dart';
 
 
@@ -7,12 +9,12 @@ class EntitiesList<E extends Entity> extends StatelessWidget {
 	const EntitiesList(
 		this.entities, {
 			required this.tile,
-			this.actionButton
+			this.formBuilder
 		});
 
 	final Iterable<E>? entities;
 	final Widget Function(E) tile;
-	final Widget? actionButton;
+	final Widget Function(BuildContext)? formBuilder;
 
 	@override
 	Widget build(BuildContext context) {
@@ -22,7 +24,15 @@ class EntitiesList<E extends Entity> extends StatelessWidget {
 			body: ListView(children: [
 				for (final entity in entities!) tile(entity)
 			]),
-			floatingActionButton: actionButton,
+			floatingActionButton: formBuilder != null ?
+				FloatingActionButton(
+					onPressed: () => openPage(
+						context: context,
+						builder: (context, _) => formBuilder!(context)
+					),
+					child: const Icon(Icons.add)
+				) :
+				null
 		);
 	}
 }
