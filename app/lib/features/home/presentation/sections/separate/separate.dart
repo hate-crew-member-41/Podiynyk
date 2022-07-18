@@ -12,6 +12,7 @@ import '../../widgets/home_section_bar.dart';
 import '../../widgets/entities_list.dart';
 
 import '../section.dart';
+import 'info_form.dart';
 
 
 class SeparateSection extends HomeSection {
@@ -43,7 +44,8 @@ class SeparateSection extends HomeSection {
 					body: TabBarView(children: [
 						EntitiesList<Info>(
 							info,
-							tile: (item) => ListTile(title: Text(item.name))
+							tile: (item) => ListTile(title: Text(item.name)),
+							formBuilder: (context) => const InfoForm(),
 						),
 						EntitiesList<Event>(
 							events,

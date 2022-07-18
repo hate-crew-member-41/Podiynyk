@@ -10,6 +10,11 @@ class InfoNotifier extends StateNotifier<Iterable<Info>?> {
 	}
 
 	final HomeRepository repository;
+
+	Future<void> add(Info item) async {
+		await repository.addInfo(item);
+		state = [...state!, item]..sort();
+	}
 }
 
 final infoProvider = StateNotifierProvider<InfoNotifier, Iterable<Info>?>((ref) {

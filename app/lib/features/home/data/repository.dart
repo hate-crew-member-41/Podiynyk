@@ -28,6 +28,15 @@ class HomeRepository {
 		});
 	}
 
+	Future<void> addInfo(Info item) async {
+		await Document.info.ref.update({
+			item.id: {
+				Field.name.name: item.name,
+				Field.content.name: item.content
+			}
+		});
+	}
+
 	Future<void> addMessage(Message message) async {
 		await Document.messages.ref.update({
 			message.id: {
