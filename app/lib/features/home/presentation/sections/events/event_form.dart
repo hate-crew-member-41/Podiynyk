@@ -3,7 +3,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiinyk/core/domain/types/date.dart';
-import 'package:podiinyk/core/presentation/option_field.dart';
 
 import '../../../domain/entities/entity.dart';
 import '../../../domain/entities/event.dart';
@@ -13,6 +12,7 @@ import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
 
 import '../../widgets/date_field.dart';
+import '../../widgets/option_field.dart';
 
 
 // do: TextField.textInputAction
