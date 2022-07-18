@@ -2,12 +2,11 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:podiinyk/core/presentation/open_page.dart';
-
 import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
 
+import '../../widgets/add_entity_button.dart';
 import '../../widgets/entities_list.dart';
 import '../../widgets/home_section_bar.dart';
 
@@ -47,16 +46,12 @@ class SubjectsSection extends HomeSection {
 							subtitle: hasEvents ? Text(nextEvent.name) : null,
 							trailing: hasEvents ? Text(nextEvent.date.shortRepr) : null
 						);
-					}
+					},
+					actionButton: AddEntityButton(
+						pageBuilder: (context, _) => const SubjectForm()
+					)
 				) :
-				Center(child: Icon(icon)),
-			floatingActionButton: FloatingActionButton(
-				onPressed: () => openPage(
-					context: context,
-					builder: (context, _) => const SubjectForm()
-				),
-				child: const Icon(Icons.add)
-			)
+				Center(child: Icon(icon))
 		);
 	}
 }
