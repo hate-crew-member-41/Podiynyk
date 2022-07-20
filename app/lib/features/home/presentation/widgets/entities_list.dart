@@ -28,7 +28,7 @@ class EntitiesList<E extends Entity> extends StatelessWidget {
 				FloatingActionButton(
 					onPressed: () => openPage(
 						context: context,
-						builder: (context, _) => formBuilder!(context)
+						builder: (context) => formBuilder!(context)
 					),
 					child: const Icon(Icons.add)
 				) :

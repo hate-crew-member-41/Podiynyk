@@ -15,6 +15,7 @@ import '../../widgets/date_field.dart';
 import '../../widgets/option_field.dart';
 
 
+// fix: an error screen appears for a moment the first time the form is opened
 // do: TextField.textInputAction
 class EventForm extends HookConsumerWidget {
 	const EventForm();

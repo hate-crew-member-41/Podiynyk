@@ -50,7 +50,7 @@ class OptionField<O> extends HookWidget {
 
 		openPage(
 			context: context,
-			builder: (context, _) => _OptionsPage<O>(
+			builder: (context) => _OptionsPage<O>(
 				options: shown,
 				nullIsShown: nullIsShown,
 				onPick: (repr, option) => _onPick(field, repr, current, option)

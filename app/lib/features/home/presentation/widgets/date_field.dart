@@ -1,9 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 import 'package:podiinyk/core/domain/types/date.dart';
 import 'package:podiinyk/core/domain/types/formatted_int.dart';
+import 'package:podiinyk/core/domain/types/date_time.dart';
 import 'package:podiinyk/core/presentation/open_page.dart';
 
 
@@ -20,7 +22,12 @@ class DateField extends HookWidget {
 		return GestureDetector(
 			onTap: () => openPage(
 				context: context,
-				builder: (context, close) => _DatePage(field: field, onPick: onPick)
+				builder: (context) => _DatePage(
+					onPick: (date) {
+						field.text = date.repr;
+						onPick(date);
+					}
+				)
 			),
 			child: TextField(
 				controller: field,
@@ -32,137 +39,184 @@ class DateField extends HookWidget {
 }
 
 
-// do: constrain the values
-// do: provide default values
+// do: scroll the wheels to correspond to the date after rebuilding
 // do: make time optional
+// do: provide initial date
 // do: show the name of the selected weekday and month when scrolling
 class _DatePage extends HookWidget {
 	const _DatePage({
-		required this.field,
 		required this.onPick
 	});
 
-	final TextEditingController field;
 	// think: replace with ObjectRef<Date>
 	final void Function(Date) onPick;
+	static const minuteStep = 5;
 
 	@override
 	Widget build(BuildContext context) {
-		final day = useRef(1);
-		final month = useRef(1);
-		final hour = useRef(0);
-		final minute = useRef(0);
+		final months = _months();
+
+		var initial = months.first;
+		final days = useRef(_days(initial));
+
+		initial = initial.copyWith(day: days.value.first);
+		final hours = useRef(_hours(initial));
+
+		initial = initial.copyWith(hour: hours.value.first);
+		final minutes = useRef(_minutes(initial));
+
+		final date = useValueNotifier(initial.copyWith(minute: minutes.value.first));
 
 		return GestureDetector(
 			onDoubleTap: () {
-				final date = Date(DateTime(2022, month.value, day.value, hour.value, minute.value));
-				field.text = date.repr;
 				Navigator.of(context).pop();
-				onPick(date);
+				onPick(Date(date.value));
 			},
-			// do: take the values from the theme
-			// think: remove the . and :
-			// do: fix the baseline
+			// think: . and :
 			child: Scaffold(body: Row(children: [
 				const Spacer(),
-				_AttributeWheel(first: 1, last: 31, onChange: (d) => day.value = d),
-				const Padding(
-					padding: EdgeInsets.symmetric(horizontal: 16),
-					child: Text('.')
-				),
-				_AttributeWheel(first: 1, last: 12, onChange: (m) => month.value = m),
+				Flexible(child: HookBuilder(builder: (context) {
+					useListenable(date);
+					return _NumberWheel<int>(
+						options: days.value,
+						optionRepr: (day) => day.twoDigitRepr,
+						onPick: (day) => date.value = _dateWithDay(date.value, day, hours, minutes)
+					);
+				})),
+				Flexible(child: _NumberWheel<DateTime>(
+					options: months,
+					optionRepr: (object) => object.month.twoDigitRepr,
+					onPick: (month) => date.value = _dateWithMonth(date.value, month, days, hours, minutes)
+				)),
 				const Spacer(),
-				_AttributeWheel(first: 0, last: 23, onChange: (h) => hour.value = h),
-				const Padding(
-					padding: EdgeInsets.symmetric(horizontal: 16),
-					child: Text(':')
-				),
-				_AttributeWheel(first: 0, last: 59, onChange: (m) => minute.value = m),
+				Flexible(child: HookBuilder(builder: (context) {
+					useListenable(date);
+					return _NumberWheel<int>(
+						options: hours.value,
+						optionRepr: (hour) => hour.twoDigitRepr,
+						onPick: (hour) => date.value = _dateWithHour(date.value, hour, minutes)
+					);
+				})),
+				Flexible(child: HookBuilder(builder: (context) {
+					useListenable(date);
+					return _NumberWheel<int>(
+						options: minutes.value,
+						optionRepr: (minute) => minute.twoDigitRepr,
+						onPick: (minute) => date.value = date.value.copyWith(minute: minute)
+					);
+				})),
 				const Spacer()
 			]))
 		);
 	}
 
-	// @override
-	// Widget build(BuildContext context) {
-	// 	final now = DateTime.now();
-	// 	final yearField = useTextEditingController(text: now.year.toString());
-	// 	final monthField = useTextEditingController(text: now.month.toString());
-	// 	final dayField = useTextEditingController(text: now.day.toString());
-	// 	final hourField = useTextEditingController(text: now.hour.toString());
-	// 	final minuteField = useTextEditingController(text: now.minute.toString());
+	DateTime _dateWithMonth(DateTime date, DateTime monthObject, ObjectRef<List<int>> days, ObjectRef<List<int>> hours, ObjectRef<List<int>> minutes) {
+		days.value = _days(monthObject);
+		final day = date.day.clamp(days.value.first, days.value.last);
+		final dateWithMonth = date.copyWith(year: monthObject.year, month: monthObject.month);
+		return _dateWithDay(dateWithMonth, day, hours, minutes);
+	}
 
-	// 	return GestureDetector(
-	// 		onDoubleTap: () {
-	// 			final date = Date(DateTime(
-	// 				int.parse(yearField.text),
-	// 				int.parse(monthField.text),
-	// 				int.parse(dayField.text),
-	// 				int.parse(hourField.text),
-	// 				int.parse(minuteField.text)
-	// 			));
+	DateTime _dateWithDay(DateTime date, int day, ObjectRef<List<int>> hours, ObjectRef<List<int>> minutes) {
+		hours.value = _hours(date.copyWith(day: day, hour: 0, minute: 0));
+		final hour = max(date.hour, hours.value[0]);
+		return _dateWithHour(date.copyWith(day: day), hour, minutes);
+	}
 
-	// 			field.text = date.repr;
-	// 			Navigator.of(context).pop();
-	// 			onPick(date);
-	// 		},
-	// 		child: Scaffold(body: Column(
-	// 			mainAxisAlignment: MainAxisAlignment.center,
-	// 			children: [
-	// 				TextField(controller: yearField),
-	// 				TextField(controller: monthField),
-	// 				TextField(controller: dayField),
-	// 				TextField(controller: hourField),
-	// 				TextField(controller: minuteField)
-	// 			]
-	// 		))
-	// 	);
-	// }
+	DateTime _dateWithHour(DateTime date, int hour, ObjectRef<List<int>> minutes) {
+		final hourObject = date.copyWith(hour: hour, minute: 0);
+		minutes.value = _minutes(hourObject);
+		final minute = max(date.minute, minutes.value[0]);
+		return hourObject.copyWith(minute: minute);
+	}
+
+	List<DateTime> _months() {
+		final now =  DateTime.now();
+
+		final currentMonthIsEmpty = now.day == now.monthDayCount && _dayIsEmpty(now.hour, now.minute);
+		final start = !currentMonthIsEmpty ? now.month : now.month + 1;
+		return [
+			for (int month = start; month <= 12; month++)
+				DateTime(now.year, month),
+			for (int month = 1; month < now.month; month++)
+				DateTime(now.year + 1, month),
+			if (now.day != 1)
+				DateTime(now.year + 1, now.month)
+		];
+	}
+
+	List<int> _days(DateTime monthObject) {
+		final now = DateTime.now();
+		final currentMonthObject = DateTime(now.year, now.month);
+		final nextCurrentMonthObject = DateTime(now.year + 1, now.month);
+
+		final start = monthObject != currentMonthObject ? 1 :
+			(!_dayIsEmpty(now.hour, now.minute) ? now.day : now.day + 1);
+		final end = monthObject != nextCurrentMonthObject ? monthObject.monthDayCount : now.day - 1;
+		return [
+			for (int day = start; day <= end; day++) day
+		];
+	}
+
+	bool _dayIsEmpty(int hour, int minute) => hour == 23 && _hourIsEmpty(minute);
+
+	List<int> _hours(DateTime dayObject) {
+		final now = DateTime.now();
+		final today = DateTime(now.year, now.month, now.day);
+
+		final start = dayObject != today ? 0 : (!_hourIsEmpty(now.minute) ? now.hour : now.hour + 1);
+		return [
+			for (int hour = start; hour < 24; hour++) hour
+		];
+	}
+
+	bool _hourIsEmpty(int minute) => minute >= 60 - minuteStep;
+
+	List<int> _minutes(DateTime hourObject) {
+		final now = DateTime.now();
+		final currentHour = DateTime(now.year, now.month, now.day, now.hour);
+
+		final start = hourObject != currentHour ? 0 : now.minute + minuteStep - now.minute % minuteStep;
+		return [
+			for (int minute = start; minute < 60; minute += minuteStep) minute
+		];
+	}
 }
 
 
-class _AttributeWheel extends HookWidget {
-	const _AttributeWheel({
-		required this.first,
-		required this.last,
-		required this.onChange
+// do: hide unselected options when the wheel is still
+class _NumberWheel<O> extends StatelessWidget {
+	const _NumberWheel({
+		required this.options,
+		required this.optionRepr,
+		required this.onPick
 	});
 
-	final int first;
-	final int last;
-	// think: replace with [ObjectRef<int> current]
-	final void Function(int) onChange;
+	final List<O> options;
+	final String Function(O) optionRepr;
+	// think: replace with ObjectRef<O>
+	final void Function(O) onPick;
 
 	@override
 	Widget build(BuildContext context) {
-		final current = useValueNotifier(first);
-		final scrolling = useValueNotifier(false);
+		// do: use a hook
+		final wheel = FixedExtentScrollController();
 
-		return NotificationListener<UserScrollNotification>(
+		return NotificationListener<ScrollEndNotification>(
 			onNotification: (notification) {
-				scrolling.value = notification.direction != ScrollDirection.idle;
+				onPick(options[wheel.selectedItem]);
 				return true;
 			},
-			// do: take the values from the theme
-			// think: use ListWheelScrollView.useDelegate (AnimatedOpacity does not work with it)
-			child: Flexible(child: ListWheelScrollView(
+			child: ListWheelScrollView(
+				controller: wheel,
 				physics: const FixedExtentScrollPhysics(),
+				// do: take from the theme
 				itemExtent: 56,
-				diameterRatio: 16,
-				onSelectedItemChanged: (index) => current.value = index + first,
+				diameterRatio: 1024,
 				children: [
-					for (int n = first; n <= last; n++) HookBuilder(builder: (context) {
-						useValueListenable(current);
-						useListenable(scrolling);
-
-						return AnimatedOpacity(
-							opacity: n == current.value ? 1 : (scrolling.value ? .5 : 0),
-							duration: const Duration(milliseconds: 200),
-							child: Text(n.twoDigitRepr)
-						);
-					})
+					for (final option in options) Text(optionRepr(option))
 				]
-			))
+			)
 		);
 	}
 }
