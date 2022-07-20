@@ -39,14 +39,11 @@ class DateField extends HookWidget {
 }
 
 
-// do: scroll the wheels to correspond to the date after rebuilding
 // do: make time optional
 // do: provide initial date
 // do: show the name of the selected weekday and month when scrolling
 class _DatePage extends HookWidget {
-	const _DatePage({
-		required this.onPick
-	});
+	const _DatePage({required this.onPick});
 
 	// think: replace with ObjectRef<Date>
 	final void Function(Date) onPick;
@@ -79,6 +76,7 @@ class _DatePage extends HookWidget {
 					useListenable(date);
 					return _NumberWheel<int>(
 						options: days.value,
+						initial: date.value.day,
 						optionRepr: (day) => day.twoDigitRepr,
 						onPick: (day) => date.value = _dateWithDay(date.value, day, hours, minutes)
 					);
@@ -93,6 +91,7 @@ class _DatePage extends HookWidget {
 					useListenable(date);
 					return _NumberWheel<int>(
 						options: hours.value,
+						initial: date.value.hour,
 						optionRepr: (hour) => hour.twoDigitRepr,
 						onPick: (hour) => date.value = _dateWithHour(date.value, hour, minutes)
 					);
@@ -101,6 +100,7 @@ class _DatePage extends HookWidget {
 					useListenable(date);
 					return _NumberWheel<int>(
 						options: minutes.value,
+						initial: date.value.minute,
 						optionRepr: (minute) => minute.twoDigitRepr,
 						onPick: (minute) => date.value = date.value.copyWith(minute: minute)
 					);
@@ -186,21 +186,24 @@ class _DatePage extends HookWidget {
 
 // do: hide unselected options when the wheel is still
 class _NumberWheel<O> extends StatelessWidget {
-	const _NumberWheel({
+	_NumberWheel({
 		required this.options,
+		O? initial,
 		required this.optionRepr,
 		required this.onPick
-	});
+	}) :
+		_initialIndex = initial != null ? options.indexOf(initial) : 0;
 
 	final List<O> options;
 	final String Function(O) optionRepr;
 	// think: replace with ObjectRef<O>
 	final void Function(O) onPick;
+	final int _initialIndex;
 
 	@override
 	Widget build(BuildContext context) {
 		// do: use a hook
-		final wheel = FixedExtentScrollController();
+		final wheel = FixedExtentScrollController(initialItem: _initialIndex);
 
 		return NotificationListener<ScrollEndNotification>(
 			onNotification: (notification) {
@@ -208,6 +211,7 @@ class _NumberWheel<O> extends StatelessWidget {
 				return true;
 			},
 			child: ListWheelScrollView(
+				key: ValueKey(options),
 				controller: wheel,
 				physics: const FixedExtentScrollPhysics(),
 				// do: take from the theme
