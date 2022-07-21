@@ -9,7 +9,7 @@ import '../../widgets/entity_tile.dart';
 import '../../widgets/home_section_bar.dart';
 
 import '../section.dart';
-import 'student_page.dart';
+import 'page.dart';
 
 
 class StudentsSection extends HomeSection {

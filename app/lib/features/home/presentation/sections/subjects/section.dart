@@ -11,8 +11,8 @@ import '../../widgets/entity_tile.dart';
 import '../../widgets/home_section_bar.dart';
 
 import '../section.dart';
-import 'subject_form.dart';
-import 'subject_page.dart';
+import 'form.dart';
+import 'page.dart';
 
 
 class SubjectsSection extends HomeSection {

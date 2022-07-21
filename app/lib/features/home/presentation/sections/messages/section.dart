@@ -9,8 +9,8 @@ import '../../widgets/entity_tile.dart';
 import '../../widgets/home_section_bar.dart';
 
 import '../section.dart';
-import 'message_form.dart';
-import 'message_page.dart';
+import 'form.dart';
+import 'page.dart';
 
 
 class MessagesSection extends HomeSection {

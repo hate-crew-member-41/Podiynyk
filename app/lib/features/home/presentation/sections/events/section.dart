@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../domain/entities/event.dart';
 import '../../../domain/providers/events.dart';
-
-import '../../widgets/event_tile.dart';
-import '../../widgets/entities_list.dart';
 import '../../widgets/home_section_bar.dart';
-
 import '../section.dart';
-import '../../widgets/event_form.dart';
+
+import 'list.dart';
 
 
 class EventsSection extends HomeSection {
@@ -30,11 +26,7 @@ class EventsSection extends HomeSection {
 				icon: icon,
 				count: events?.length
 			),
-			body: EntitiesList<Event>(
-				events,
-				tile: (event) => EventTile(event),
-				formBuilder: (context) => const EventForm(),
-			)
+			body: EventsList(events)
 		);
 	}
 }

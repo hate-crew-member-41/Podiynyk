@@ -4,15 +4,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiinyk/core/domain/types/date.dart';
 
-import '../../domain/entities/entity.dart';
-import '../../domain/entities/event.dart';
-import '../../domain/entities/subject.dart';
+import '../../../domain/entities/entity.dart';
+import '../../../domain/entities/event.dart';
+import '../../../domain/entities/subject.dart';
+import '../../../domain/providers/events.dart';
+import '../../../domain/providers/subjects.dart';
 
-import '../../domain/providers/events.dart';
-import '../../domain/providers/subjects.dart';
-
-import 'date_field.dart';
-import 'option_field.dart';
+import '../../widgets/date_field.dart';
+import '../../widgets/option_field.dart';
 
 
 // fix: an error screen appears for a moment the first time the form is opened

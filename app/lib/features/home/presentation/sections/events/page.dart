@@ -1,24 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../domain/entities/event.dart';
-import 'entity_tile.dart';
-
-
-class EventTile extends StatelessWidget {
-	const EventTile(this.event);
-
-	final Event event;
-
-	@override
-	Widget build(BuildContext context) {
-		return EntityTile(
-			title: event.name,
-			subtitle: event.subject?.name,
-			trailing: event.date.shortRepr,
-			pageBuilder: (context) => EventPage(event)
-		);
-	}
-}
+import '../../../domain/entities/event.dart';
 
 
 // think: define EntityPage

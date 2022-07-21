@@ -4,11 +4,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'widgets/drawer_tile.dart';
 import 'state.dart';
 
-import 'sections/events/events.dart';
-import 'sections/students/students.dart';
-import 'sections/messages/messages.dart';
-import 'sections/separate/separate.dart';
-import 'sections/subjects/subjects.dart';
+import 'sections/events/section.dart';
+import 'sections/students/section.dart';
+import 'sections/messages/section.dart';
+import 'sections/separate/section.dart';
+import 'sections/subjects/section.dart';
 
 
 class Home extends ConsumerWidget {
