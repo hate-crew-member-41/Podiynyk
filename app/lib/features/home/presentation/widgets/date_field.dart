@@ -9,6 +9,7 @@ import 'package:podiinyk/core/domain/types/date_time.dart';
 import 'package:podiinyk/core/presentation/open_page.dart';
 
 
+// think: use Riverpod for state management
 class DateField extends HookWidget {
 	const DateField({required this.onPick});
 
@@ -18,14 +19,17 @@ class DateField extends HookWidget {
 	@override
 	Widget build(BuildContext context) {
 		final field = useTextEditingController();
+		final date = useRef(DateTime.now());
 
 		return GestureDetector(
 			onTap: () => openPage(
 				context: context,
 				builder: (context) => _DatePage(
-					onPick: (date) {
-						field.text = date.repr;
-						onPick(date);
+					initial: date.value,
+					onPick: (d) {
+						field.text = d.repr;
+						date.value = d.value;
+						onPick(d);
 					}
 				)
 			),
@@ -43,8 +47,9 @@ class DateField extends HookWidget {
 // do: provide initial date
 // do: show the name of the selected weekday and month when scrolling
 class _DatePage extends HookWidget {
-	const _DatePage({required this.onPick});
+	const _DatePage({required this.initial, required this.onPick});
 
+	final DateTime initial;
 	// think: replace with ObjectRef<Date>
 	final void Function(Date) onPick;
 	static const minuteStep = 5;
@@ -52,17 +57,12 @@ class _DatePage extends HookWidget {
 	@override
 	Widget build(BuildContext context) {
 		final months = _months();
+		final days = useValueNotifier(<int>[]);
+		final hours = useValueNotifier(<int>[]);
+		final minutes = useValueNotifier(<int>[]);
 
-		var initial = months.first;
-		final days = useRef(_days(initial));
-
-		initial = initial.copyWith(day: days.value.first);
-		final hours = useRef(_hours(initial));
-
-		initial = initial.copyWith(hour: hours.value.first);
-		final minutes = useRef(_minutes(initial));
-
-		final date = useValueNotifier(initial.copyWith(minute: minutes.value.first));
+		var monthObject = DateTime(initial.year, initial.month).latest(months.first);
+		final date = useRef(_dateWithMonth(initial, monthObject, days, hours, minutes));
 
 		return GestureDetector(
 			onDoubleTap: () {
@@ -73,7 +73,7 @@ class _DatePage extends HookWidget {
 			child: Scaffold(body: Row(children: [
 				const Spacer(),
 				Flexible(child: HookBuilder(builder: (context) {
-					useListenable(date);
+					useListenable(days);
 					return _NumberWheel<int>(
 						options: days.value,
 						initial: date.value.day,
@@ -88,7 +88,7 @@ class _DatePage extends HookWidget {
 				)),
 				const Spacer(),
 				Flexible(child: HookBuilder(builder: (context) {
-					useListenable(date);
+					useListenable(hours);
 					return _NumberWheel<int>(
 						options: hours.value,
 						initial: date.value.hour,
@@ -97,7 +97,7 @@ class _DatePage extends HookWidget {
 					);
 				})),
 				Flexible(child: HookBuilder(builder: (context) {
-					useListenable(date);
+					useListenable(minutes);
 					return _NumberWheel<int>(
 						options: minutes.value,
 						initial: date.value.minute,
@@ -110,23 +110,34 @@ class _DatePage extends HookWidget {
 		);
 	}
 
-	DateTime _dateWithMonth(DateTime date, DateTime monthObject, ObjectRef<List<int>> days, ObjectRef<List<int>> hours, ObjectRef<List<int>> minutes) {
+	DateTime _dateWithMonth(
+		DateTime date,
+		DateTime monthObject,
+		ValueNotifier<List<int>> days,
+		ValueNotifier<List<int>> hours,
+		ValueNotifier<List<int>> minutes
+	) {
 		days.value = _days(monthObject);
 		final day = date.day.clamp(days.value.first, days.value.last);
 		final dateWithMonth = date.copyWith(year: monthObject.year, month: monthObject.month);
 		return _dateWithDay(dateWithMonth, day, hours, minutes);
 	}
 
-	DateTime _dateWithDay(DateTime date, int day, ObjectRef<List<int>> hours, ObjectRef<List<int>> minutes) {
+	DateTime _dateWithDay(
+		DateTime date,
+		int day,
+		ValueNotifier<List<int>> hours,
+		ValueNotifier<List<int>> minutes
+	) {
 		hours.value = _hours(date.copyWith(day: day, hour: 0, minute: 0));
-		final hour = max(date.hour, hours.value[0]);
+		final hour = max(date.hour, hours.value.first);
 		return _dateWithHour(date.copyWith(day: day), hour, minutes);
 	}
 
-	DateTime _dateWithHour(DateTime date, int hour, ObjectRef<List<int>> minutes) {
+	DateTime _dateWithHour(DateTime date, int hour, ValueNotifier<List<int>> minutes) {
 		final hourObject = date.copyWith(hour: hour, minute: 0);
 		minutes.value = _minutes(hourObject);
-		final minute = max(date.minute, minutes.value[0]);
+		final minute = max(date.minute, minutes.value.first);
 		return hourObject.copyWith(minute: minute);
 	}
 
