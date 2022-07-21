@@ -9,6 +9,7 @@ import 'package:podiinyk/core/domain/types/date_time.dart';
 import 'package:podiinyk/core/presentation/open_page.dart';
 
 
+// think: is it efficient to access DateTime getters multiple times?
 // think: use Riverpod for state management
 class DateField extends HookWidget {
 	const DateField({required this.onPick});
@@ -69,6 +70,7 @@ class _DatePage extends HookWidget {
 				onPick(Date(date.value, hasTime: timeIsIncluded.value));
 			},
 			// think: . and :
+			// think: add the space between the date and the time with SizedBox
 			child: Scaffold(body: Row(children: [
 				const Spacer(),
 				Flexible(child: HookBuilder(builder: (context) {

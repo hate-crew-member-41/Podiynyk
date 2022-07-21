@@ -5,9 +5,11 @@ import '../../../domain/entities/student.dart';
 import '../../../domain/providers/students.dart';
 
 import '../../widgets/entities_list.dart';
+import '../../widgets/entity_tile.dart';
 import '../../widgets/home_section_bar.dart';
 
 import '../section.dart';
+import 'student_page.dart';
 
 
 class StudentsSection extends HomeSection {
@@ -30,7 +32,10 @@ class StudentsSection extends HomeSection {
 			),
 			body: EntitiesList<Student>(
 				students,
-				tile: (student) => ListTile(title: Text(student.fullName))
+				tile: (student) => EntityTile(
+					title: student.fullName,
+					pageBuilder: (context) => StudentPage(student)
+				)
 			)
 		);
 	}

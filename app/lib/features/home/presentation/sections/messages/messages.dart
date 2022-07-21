@@ -5,10 +5,12 @@ import '../../../domain/entities/message.dart';
 import '../../../domain/providers/messages.dart';
 
 import '../../widgets/entities_list.dart';
+import '../../widgets/entity_tile.dart';
 import '../../widgets/home_section_bar.dart';
 
 import '../section.dart';
 import 'message_form.dart';
+import 'message_page.dart';
 
 
 class MessagesSection extends HomeSection {
@@ -31,10 +33,11 @@ class MessagesSection extends HomeSection {
 			),
 			body: EntitiesList<Message>(
 				messages,
-				tile: (message) => ListTile(
-					title: Text(message.name),
-					subtitle: Text(message.author.fullName),
-					trailing: Text(message.date.shortRepr)
+				tile: (message) => EntityTile(
+					title: message.name,
+					subtitle: message.author.fullName,
+					trailing: message.date.shortRepr,
+					pageBuilder: (context) => MessagePage(message)
 				),
 				formBuilder: (context) => const MessageForm()
 			)

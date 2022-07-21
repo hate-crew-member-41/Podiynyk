@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 
-// think: capture common logic
+// think: define HomeSection.build
 abstract class HomeSection extends ConsumerWidget {
 	const HomeSection();
 

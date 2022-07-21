@@ -7,10 +7,12 @@ import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
 
 import '../../widgets/entities_list.dart';
+import '../../widgets/entity_tile.dart';
 import '../../widgets/home_section_bar.dart';
 
 import '../section.dart';
 import 'subject_form.dart';
+import 'subject_page.dart';
 
 
 class SubjectsSection extends HomeSection {
@@ -38,12 +40,11 @@ class SubjectsSection extends HomeSection {
 					subjects,
 					tile: (subject) {
 						final nextEvent = events.firstWhereOrNull((e) => e.subject == subject);
-						final hasEvents = nextEvent != null;
-
-						return ListTile(
-							title: Text(subject.name),
-							subtitle: hasEvents ? Text(nextEvent.name) : null,
-							trailing: hasEvents ? Text(nextEvent.date.shortRepr) : null
+						return EntityTile(
+							title: subject.name,
+							subtitle: nextEvent?.name,
+							trailing: nextEvent?.date.shortRepr,
+							pageBuilder: (context) => SubjectPage(subject)
 						);
 					},
 					formBuilder: (context) => const SubjectForm()

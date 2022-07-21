@@ -16,7 +16,11 @@ import 'option_field.dart';
 
 
 // fix: an error screen appears for a moment the first time the form is opened
+// 		EventForm relies on subjectsProvider to have been accessed
+//		EventsPage reads events from HomeRepository, not subjectsProvider
+// 		fix this after the data layer is improved
 // do: TextField.textInputAction
+// think: define EntityForm
 class EventForm extends HookConsumerWidget {
 	const EventForm();
 

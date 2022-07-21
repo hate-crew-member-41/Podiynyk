@@ -7,6 +7,7 @@ import '../../../domain/providers/events.dart';
 import '../../../domain/providers/info.dart';
 
 import '../../widgets/counted_icon.dart';
+import '../../widgets/entity_tile.dart';
 import '../../widgets/event_form.dart';
 import '../../widgets/event_tile.dart';
 import '../../widgets/home_section_bar.dart';
@@ -14,6 +15,7 @@ import '../../widgets/entities_list.dart';
 
 import '../section.dart';
 import 'info_form.dart';
+import 'info_page.dart';
 
 
 class SeparateSection extends HomeSection {
@@ -45,7 +47,10 @@ class SeparateSection extends HomeSection {
 					body: TabBarView(children: [
 						EntitiesList<Info>(
 							info,
-							tile: (item) => ListTile(title: Text(item.name)),
+							tile: (item) => EntityTile(
+								title: item.name,
+								pageBuilder: (context) => InfoPage(item)
+							),
 							formBuilder: (context) => const InfoForm(),
 						),
 						EntitiesList<Event>(

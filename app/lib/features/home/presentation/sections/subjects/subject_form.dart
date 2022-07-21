@@ -10,7 +10,6 @@ import '../../widgets/option_field.dart';
 
 
 // do: TextField.textInputAction
-// think: capture common logic
 class SubjectForm extends HookConsumerWidget {
 	const SubjectForm();
 
