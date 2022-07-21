@@ -19,7 +19,7 @@ class DateField extends HookWidget {
 	@override
 	Widget build(BuildContext context) {
 		final field = useTextEditingController();
-		final date = useRef(DateTime.now());
+		final date = useRef(Date.now(hasTime: false));
 
 		return GestureDetector(
 			onTap: () => openPage(
@@ -28,7 +28,7 @@ class DateField extends HookWidget {
 					initial: date.value,
 					onPick: (d) {
 						field.text = d.repr;
-						date.value = d.value;
+						date.value = d;
 						onPick(d);
 					}
 				)
@@ -49,7 +49,7 @@ class DateField extends HookWidget {
 class _DatePage extends HookWidget {
 	const _DatePage({required this.initial, required this.onPick});
 
-	final DateTime initial;
+	final Date initial;
 	// think: replace with ObjectRef<Date>
 	final void Function(Date) onPick;
 	static const minuteStep = 5;
@@ -57,17 +57,18 @@ class _DatePage extends HookWidget {
 	@override
 	Widget build(BuildContext context) {
 		final months = _months();
-		final days = useValueNotifier(<int>[]);
-		final hours = useValueNotifier(<int>[]);
-		final minutes = useValueNotifier(<int>[]);
+		final days = useValueNotifier(const <int>[]);
+		final hours = useValueNotifier(const <int>[]);
+		final minutes = useValueNotifier(const <int>[]);
+		final timeIsIncluded = useValueNotifier(initial.hasTime);
 
-		var monthObject = DateTime(initial.year, initial.month).latest(months.first);
-		final date = useRef(_dateWithMonth(initial, monthObject, days, hours, minutes));
+		var monthObject = DateTime(initial.value.year, initial.value.month).latest(months.first);
+		final date = useRef(_dateWithMonth(initial.value, monthObject, days, hours, minutes));
 
 		return GestureDetector(
 			onDoubleTap: () {
 				Navigator.of(context).pop();
-				onPick(Date(date.value));
+				onPick(Date(date.value, hasTime: timeIsIncluded.value));
 			},
 			// think: . and :
 			child: Scaffold(body: Row(children: [
@@ -87,24 +88,38 @@ class _DatePage extends HookWidget {
 					onPick: (month) => date.value = _dateWithMonth(date.value, month, days, hours, minutes)
 				)),
 				const Spacer(),
-				Flexible(child: HookBuilder(builder: (context) {
-					useListenable(hours);
-					return _NumberWheel<int>(
-						options: hours.value,
-						initial: date.value.hour,
-						optionRepr: (hour) => hour.twoDigitRepr,
-						onPick: (hour) => date.value = _dateWithHour(date.value, hour, minutes)
-					);
-				})),
-				Flexible(child: HookBuilder(builder: (context) {
-					useListenable(minutes);
-					return _NumberWheel<int>(
-						options: minutes.value,
-						initial: date.value.minute,
-						optionRepr: (minute) => minute.twoDigitRepr,
-						onPick: (minute) => date.value = date.value.copyWith(minute: minute)
-					);
-				})),
+				Flexible(child: GestureDetector(
+					onVerticalDragDown: (_) => timeIsIncluded.value = true,
+					child: HookBuilder(builder: (context) {
+						useListenable(hours);
+						useListenable(timeIsIncluded);
+						return Opacity(
+							opacity: timeIsIncluded.value ? 1 : .5,
+							child: _NumberWheel<int>(
+								options: hours.value,
+								initial: date.value.hour,
+								optionRepr: (hour) => hour.twoDigitRepr,
+								onPick: (hour) => date.value = _dateWithHour(date.value, hour, minutes)
+							)
+						);
+					})
+				)),
+				Flexible(child: GestureDetector(
+					onVerticalDragDown: (_) => timeIsIncluded.value = true,
+					child: HookBuilder(builder: (context) {
+						useListenable(minutes);
+						useListenable(timeIsIncluded);
+						return Opacity(
+							opacity: timeIsIncluded.value ? 1 : .5,
+							child: _NumberWheel<int>(
+								options: minutes.value,
+								initial: date.value.minute,
+								optionRepr: (minute) => minute.twoDigitRepr,
+								onPick: (minute) => date.value = date.value.copyWith(minute: minute)
+							)
+						);
+					})
+				)),
 				const Spacer()
 			]))
 		);

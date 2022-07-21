@@ -4,9 +4,8 @@ import 'formatted_int.dart';
 class Date implements Comparable {
 	const Date(this.value, {this.hasTime = true});
 
-	Date.now() :
-		value = DateTime.now(),
-		hasTime = true;
+	Date.now({this.hasTime = true}) :
+		value = DateTime.now();
 
 	final DateTime value;
 	final bool hasTime;
