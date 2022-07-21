@@ -9,7 +9,7 @@ import '../../widgets/entities_list.dart';
 import '../../widgets/home_section_bar.dart';
 
 import '../section.dart';
-import 'event_form.dart';
+import '../../widgets/event_form.dart';
 
 
 class EventsSection extends HomeSection {

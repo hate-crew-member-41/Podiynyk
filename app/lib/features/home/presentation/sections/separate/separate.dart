@@ -7,6 +7,7 @@ import '../../../domain/providers/events.dart';
 import '../../../domain/providers/info.dart';
 
 import '../../widgets/counted_icon.dart';
+import '../../widgets/event_form.dart';
 import '../../widgets/event_tile.dart';
 import '../../widgets/home_section_bar.dart';
 import '../../widgets/entities_list.dart';
@@ -49,7 +50,9 @@ class SeparateSection extends HomeSection {
 						),
 						EntitiesList<Event>(
 							events,
-							tile: (event) => EventTile(event)
+							tile: (event) => EventTile(event),
+							// think: imply the subject as none (exclude the subject field)
+							formBuilder: (context) => const EventForm(),
 						)
 					])
 				);

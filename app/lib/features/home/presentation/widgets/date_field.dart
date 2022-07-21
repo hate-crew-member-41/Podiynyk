@@ -43,8 +43,6 @@ class DateField extends HookWidget {
 }
 
 
-// do: make time optional
-// do: provide initial date
 // do: show the name of the selected weekday and month when scrolling
 class _DatePage extends HookWidget {
 	const _DatePage({required this.initial, required this.onPick});
@@ -244,7 +242,10 @@ class _NumberWheel<O> extends StatelessWidget {
 				itemExtent: 56,
 				diameterRatio: 1024,
 				children: [
-					for (final option in options) Text(optionRepr(option))
+					for (final option in options) Text(
+						optionRepr(option),
+						style: const TextStyle(fontSize: 28)
+					)
 				]
 			)
 		);
