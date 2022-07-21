@@ -1,4 +1,4 @@
-import 'formatted_int.dart';
+import 'int.dart';
 
 
 class Date implements Comparable {

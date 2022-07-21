@@ -21,9 +21,12 @@ class EntitiesList<E extends Entity> extends StatelessWidget {
 		if (entities == null) return const Center(child: Icon(Icons.access_time));
 
 		return Scaffold(
-			body: ListView(children: [
-				for (final entity in entities!) tile(entity)
-			]),
+			body: ListView(
+				padding: EdgeInsets.zero,
+				children: [
+					for (final entity in entities!) tile(entity)
+				]
+			),
 			floatingActionButton: formBuilder != null ?
 				FloatingActionButton(
 					onPressed: () => openPage(

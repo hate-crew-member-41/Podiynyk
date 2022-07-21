@@ -18,9 +18,9 @@ class HomeSectionBar extends StatelessWidget implements PreferredSizeWidget {
 	final int? count;
 	final TabBar? tabBar;
 
-	// do: take the values from the theme
 	@override
 	Size get preferredSize {
+		// do: take from the theme
 		double height = 56;
 		if (tabBar != null) height += tabBar!.preferredSize.height;
 		return Size.fromHeight(height);

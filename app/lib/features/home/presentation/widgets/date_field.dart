@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 import 'package:podiinyk/core/domain/types/date.dart';
-import 'package:podiinyk/core/domain/types/formatted_int.dart';
+import 'package:podiinyk/core/domain/types/int.dart';
 import 'package:podiinyk/core/domain/types/date_time.dart';
 import 'package:podiinyk/core/presentation/open_page.dart';
 
@@ -93,8 +93,11 @@ class _DatePage extends HookWidget {
 					child: HookBuilder(builder: (context) {
 						useListenable(hours);
 						useListenable(timeIsIncluded);
-						return Opacity(
+						
+						return AnimatedOpacity(
 							opacity: timeIsIncluded.value ? 1 : .5,
+							// do: take from the theme
+							duration: const Duration(milliseconds: 200),
 							child: _NumberWheel<int>(
 								options: hours.value,
 								initial: date.value.hour,
@@ -109,8 +112,11 @@ class _DatePage extends HookWidget {
 					child: HookBuilder(builder: (context) {
 						useListenable(minutes);
 						useListenable(timeIsIncluded);
-						return Opacity(
+						
+						return AnimatedOpacity(
 							opacity: timeIsIncluded.value ? 1 : .5,
+							// do: take from the theme
+							duration: const Duration(milliseconds: 200),
 							child: _NumberWheel<int>(
 								options: minutes.value,
 								initial: date.value.minute,
