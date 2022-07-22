@@ -14,7 +14,7 @@ import '../domain/entities/subject.dart';
 
 
 // do: failures
-// do: capture common logic
+// do: define addEntity, entities
 // do: prevent unnecessary reads
 class HomeRepository {
 	const HomeRepository();
@@ -35,7 +35,7 @@ class HomeRepository {
 		await Document.subjects.ref.update({
 			subject.id: {
 				Field.name.name: subject.name,
-				Field.isCommon.name: subject.isCommon
+				if (subject.students != null) Field.students.name: subject.students
 			}
 		});
 	}
@@ -87,7 +87,9 @@ class HomeRepository {
 		return snapshot.data()!.entries.map((entry) => Subject(
 			id: entry.key,
 			name: entry.value[Field.name.name],
-			isCommon: entry.value[Field.isCommon.name]
+			students: !entry.value.containsKey(Field.students.name) ?
+				null :
+				List<String>.from(entry.value[Field.students.name])
 		));
 	}
 
@@ -121,8 +123,8 @@ class HomeRepository {
 		final snapshot = await Document.students.ref.get();
 		return snapshot.data()!.entries.map((entry) => Student(
 			id: entry.key,
-			name: entry.value[Field.name.name][0],
-			surname: entry.value[Field.name.name][1]
+			name: (entry.value[Field.name.name] as List<String>).first,
+			surname: (entry.value[Field.name.name] as List<String>).last
 		));
 	}
 }

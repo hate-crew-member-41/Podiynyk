@@ -52,7 +52,8 @@ class EventForm extends HookConsumerWidget {
 					if (subjects.isNotEmpty) OptionField<Subject>(
 						label: 'subject',
 						options: [
-							for (final subject in subjects) MapEntry(subject.name, subject)
+							for (final subject in subjects.where((s) => s.isStudied))
+								MapEntry(subject.name, subject)
 						],
 						onPick: (s) => subject.value = s,
 						isRequired: false

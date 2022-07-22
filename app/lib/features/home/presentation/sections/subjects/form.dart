@@ -27,6 +27,7 @@ class SubjectForm extends HookConsumerWidget {
 						controller: nameField,
 						decoration: const InputDecoration(labelText: 'name')
 					),
+					// think: a switch
 					OptionField<bool>(
 						label: 'type',
 						options: const [
@@ -48,7 +49,7 @@ class SubjectForm extends HookConsumerWidget {
 		ref.read(subjectsProvider.notifier).add(Subject(
 			id: Entity.newId(),
 			name: name,
-			isCommon: isCommon
+			students: isCommon ? null : const []
 		));
 		Navigator.of(context).pop();
 	}
