@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'counted_icon.dart';
 
-
+// think: this makes no sense
 class EntityListsTabBar extends StatelessWidget implements PreferredSizeWidget {
 	const EntityListsTabBar({required this.tabIcons});
 
-	final List<CountedIcon> tabIcons;
+	final List<Widget> tabIcons;
 
 	// do: take from the theme
 	@override

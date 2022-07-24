@@ -10,6 +10,9 @@ class StudentPage extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
-		return Scaffold(body: Center(child: Text(student.fullName)));
+		return Scaffold(body: Align(
+			alignment: Alignment.centerLeft,
+			child: Text(student.fullName)
+		));
 	}
 }

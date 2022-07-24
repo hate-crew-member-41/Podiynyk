@@ -5,6 +5,8 @@ import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
 
+import '../../widgets/action_button.dart';
+import '../../widgets/bars/action_bar.dart';
 import '../../widgets/bars/counted_icon.dart';
 import '../../widgets/bars/entity_lists_tab_bar.dart';
 import '../../widgets/info/list.dart';
@@ -31,19 +33,20 @@ class SubjectPage extends ConsumerWidget {
 			child: Column(
 				crossAxisAlignment: CrossAxisAlignment.start,
 				children: [
-					SafeArea(child: SizedBox(
-						// do: take from the theme
-						height: 56,
-						child: Row(
-							mainAxisAlignment: MainAxisAlignment.end,
-							children: [
-								IconButton(
-									icon: const Icon(Icons.delete),
-									onPressed: () => _delete(context, ref)
-								)
-							]
+					SafeArea(child: ActionBar(children: [
+						if (!isCommon) ActionButton(
+							icon: Icons.local_library,  // Icons.airline_seat_individual_suite
+							action: () {}
+						),
+						ActionButton(
+							icon: Icons.edit,
+							action: () {}
+						),
+						ActionButton(
+							icon: Icons.delete,
+							action: () => _delete(context, ref)
 						)
-					)),
+					])),
 					Text(subject.name),
 					EntityListsTabBar(tabIcons: [
 						CountedIcon(
