@@ -16,6 +16,11 @@ class EventsNotifier extends StateNotifier<List<Event>?> {
 		await repository.addEvent(event);
 		state = state!.toList()..add(event)..sort();
 	}
+
+	Future<void> delete(Event event) async {
+		await repository.deleteEvent(event);
+		state = state!.toList()..remove(event);
+	}
 }
 
 final eventsProvider = StateNotifierProvider<EventsNotifier, List<Event>?>((ref) {

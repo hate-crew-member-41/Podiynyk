@@ -167,6 +167,12 @@ class HomeRepository {
 		));
 	}
 
+	Future<void> deleteEvent(Event event) async {
+		await Document.events.ref.update({
+			event.id: FieldValue.delete()
+		});
+	}
+
 	Future<void> deleteSubject(Subject subject) async {
 		final eventsRef = Document.events.ref;
 		final eventsSnapshot = await eventsRef.get();

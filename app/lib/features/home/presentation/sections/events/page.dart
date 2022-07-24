@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../domain/entities/event.dart';
+import '../../../domain/providers/events.dart';
 
 import '../../widgets/action_button.dart';
 import '../../widgets/bars/action_bar.dart';
@@ -39,11 +41,17 @@ class EventPage extends StatelessWidget {
 					icon: Icons.edit,
 					action: () {}
 				),
-				ActionButton(
+				Consumer(builder: (context, ref, _) => ActionButton(
 					icon: Icons.delete,
-					action: () {}
-				)
+					action: () => _delete(context, ref)
+				))
 			])
 		])));
+	}
+
+	// think: confirmation, rename
+	void _delete(BuildContext context, WidgetRef ref) {
+		ref.read(eventsProvider.notifier).delete(event);
+		Navigator.of(context).pop();
 	}
 }
