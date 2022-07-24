@@ -49,7 +49,7 @@ class SubjectForm extends HookConsumerWidget {
 		ref.read(subjectsProvider.notifier).add(Subject(
 			id: Entity.newId(),
 			name: name,
-			students: isCommon ? null : const []
+			studentIds: isCommon ? null : const []
 		));
 		Navigator.of(context).pop();
 	}

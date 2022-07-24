@@ -23,20 +23,26 @@ final subjectsProvider = StateNotifierProvider<SubjectsNotifier, Iterable<Subjec
 });
 
 
-class SubjectInfoNotifier extends StateNotifier<Iterable<Info>?> {
+class SubjectInfoNotifier extends StateNotifier<SubjectDetails?> {
 	SubjectInfoNotifier(this.subject, {required this.repository}): super(null) {
-		repository.subjectInfo(subject).then((info) => state = info.toList()..sort());
+		repository.subjectDetails(subject).then((details) => state = SubjectDetails(
+			info: details.info.toList()..sort(),
+			students: details.students?.toList()?..sort()
+		));
 	}
 
 	final Subject subject;
 	final HomeRepository repository;
 
-	Future<void> add(Info item) async {
+	Future<void> addInfo(Info item) async {
 		await repository.addSubjectInfo(subject, item);
-		state = [...state!, item]..sort();
+		state = SubjectDetails(
+			info: [...state!.info, item]..sort(),
+			students: state!.students
+		);
 	}
 }
 
-final subjectInfoProvider = StateNotifierProvider.family<SubjectInfoNotifier, Iterable<Info>?, Subject>((ref, subject) {
+final subjectDetailsProviders = StateNotifierProvider.family<SubjectInfoNotifier, SubjectDetails?, Subject>((ref, subject) {
 	return SubjectInfoNotifier(subject, repository: ref.watch(homeRepositoryProvider));
 });

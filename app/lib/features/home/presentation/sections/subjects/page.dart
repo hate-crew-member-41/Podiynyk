@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../domain/entities/student.dart';
 import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
@@ -21,9 +20,8 @@ class SubjectPage extends ConsumerWidget {
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
-		final info = ref.watch(subjectInfoProvider(subject));
+		final details = ref.watch(subjectDetailsProviders(subject));
 		final events = ref.watch(eventsProvider)?.where((e) => e.subject == subject);
-		const students = <Student>[];
 
 		final isCommon = subject.isCommon;
 		final isStudied = subject.isStudied;
@@ -58,7 +56,7 @@ class SubjectPage extends ConsumerWidget {
 					EntityListsTabBar(tabIcons: [
 						CountedIcon(
 							icon: Icons.notes,
-							count: info?.length
+							count: details?.info.length
 						),
 						CountedIcon(
 							icon: Icons.event,
@@ -66,12 +64,12 @@ class SubjectPage extends ConsumerWidget {
 						),
 						if (!isCommon) CountedIcon(
 							icon: Icons.people,
-							count: subject.students!.length
+							count: details?.students!.length
 						)
 					]),
 					Expanded(child: TabBarView(children: [
 						InfoList(
-							info,
+							details?.info,
 							subject: subject,
 							isExtendable: isStudied
 						),
@@ -80,7 +78,7 @@ class SubjectPage extends ConsumerWidget {
 							isExtendable: isStudied,
 							showSubjects: false
 						),
-						if (!isCommon) const StudentList(students)
+						if (!isCommon) StudentList(details?.students)
 					]))
 				]
 			)

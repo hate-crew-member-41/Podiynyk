@@ -36,7 +36,7 @@ class HomeRepository {
 		await Document.subjects.ref.update({
 			subject.id: {
 				Field.name.name: subject.name,
-				if (subject.students != null) Field.students.name: subject.students
+				if (subject.studentIds != null) Field.students.name: subject.studentIds
 			}
 		});
 	}
@@ -97,25 +97,33 @@ class HomeRepository {
 		return snapshot.data()!.entries.map((entry) => Subject(
 			id: entry.key,
 			name: entry.value[Field.name.name],
-			students: !entry.value.containsKey(Field.students.name) ?
+			studentIds: !entry.value.containsKey(Field.students.name) ?
 				null :
 				List<String>.from(entry.value[Field.students.name])
 		));
 	}
 
-	Future<Iterable<Info>> subjectInfo(Subject subject) async {
-		final snapshot = await Document.subjects.ref.collection('details').doc(subject.id).get();
-		final info = Map<String, ObjectMap>.from(snapshot.data()![Field.info.name]);
-		return info.entries.map((entry) => Info(
+	Future<SubjectDetails> subjectDetails(Subject subject) async {
+		late final DocumentSnapshot<ObjectMap> snapshot;
+		Iterable<Student>? students;
+		await Future.wait([
+			Document.subjects.ref
+				.collection('details').doc(subject.id).get()
+				.then((s) => snapshot = s),
+			if (!subject.isCommon) this.students().then((s) => students = s)
+		]);
+
+		final infoMap = Map<String, ObjectMap>.from(snapshot.data()![Field.info.name]);
+		final info = infoMap.entries.map((entry) => Info(
 			id: entry.key,
 			name: entry.value[Field.name.name],
 			content: entry.value[Field.content.name]
 		));
-		// return snapshot.data()![Field.info.name].entries.map((entry) => Info(
-		// 	id: entry.key,
-		// 	name: entry.value[Field.name.name],
-		// 	content: entry.value[Field.content.name]
-		// ));
+
+		return SubjectDetails(
+			info: info,
+			students: students
+		);
 	}
 
 	Future<Iterable<Info>> info() async {
