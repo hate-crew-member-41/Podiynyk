@@ -14,7 +14,10 @@ class Subject extends Entity {
 	final String name;
 	final Iterable<String>? students;
 
-	bool get isStudied => students == null ? true : students!.contains(User.id);
+	// think: rename (isChosen?)
+	bool get isCommon => students == null;
+
+	bool get isStudied => isCommon || students!.contains(User.id);
 
 	@override
 	int compareTo(covariant Subject other) => name.compareTo(other.name);

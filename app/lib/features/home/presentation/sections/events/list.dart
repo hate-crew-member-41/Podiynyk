@@ -24,7 +24,7 @@ class EventsList extends StatelessWidget {
 				trailing: event.date.shortRepr,
 				pageBuilder: (context) => EventPage(event)
 			),
-			formBuilder: (context) => const EventForm(),
+			formBuilder: (context) => const EventForm()
 		);
 	}
 }
