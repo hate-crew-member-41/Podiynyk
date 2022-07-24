@@ -10,8 +10,8 @@ import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
 
-import '../../widgets/date_field.dart';
-import '../../widgets/option_field.dart';
+import '../../widgets/fields/date_field.dart';
+import '../../widgets/fields/option_field.dart';
 
 
 // fix: an error screen appears for a moment the first time the form is opened

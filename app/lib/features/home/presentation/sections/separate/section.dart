@@ -4,13 +4,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../domain/providers/events.dart';
 import '../../../domain/providers/info.dart';
 
-import '../../widgets/counted_icon.dart';
-import '../../widgets/entity_lists_tab_bar.dart';
-import '../../widgets/home_section_bar.dart';
+import '../../widgets/bars/counted_icon.dart';
+import '../../widgets/bars/entity_lists_tab_bar.dart';
+import '../../widgets/bars/home_section_bar.dart';
+import '../../widgets/info/list.dart';
 
 import '../events/list.dart';
 import '../section.dart';
-import 'info_list.dart';
 
 
 class SeparateSection extends HomeSection {

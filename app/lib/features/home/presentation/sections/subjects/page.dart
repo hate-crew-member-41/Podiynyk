@@ -5,11 +5,11 @@ import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
 
-import '../../widgets/counted_icon.dart';
-import '../../widgets/entity_lists_tab_bar.dart';
+import '../../widgets/bars/counted_icon.dart';
+import '../../widgets/bars/entity_lists_tab_bar.dart';
+import '../../widgets/info/list.dart';
 
 import '../events/list.dart';
-import '../separate/info_list.dart';
 import '../students/list.dart';
 
 

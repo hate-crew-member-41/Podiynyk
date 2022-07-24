@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../domain/providers/students.dart';
-import '../../widgets/home_section_bar.dart';
+import '../../widgets/bars/home_section_bar.dart';
 import '../section.dart';
 import 'list.dart';
 

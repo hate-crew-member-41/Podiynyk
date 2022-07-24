@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'widgets/drawer_tile.dart';
-import 'state.dart';
-
 import 'sections/events/section.dart';
 import 'sections/students/section.dart';
 import 'sections/messages/section.dart';
 import 'sections/separate/section.dart';
 import 'sections/subjects/section.dart';
+
+import 'widgets/tiles/drawer_tile.dart';
+import 'state.dart';
 
 
 class Home extends ConsumerWidget {

@@ -4,7 +4,7 @@ import '../../data/repository.dart';
 import '../entities/student.dart';
 
 
-class StudentsNotifier extends StateNotifier<Iterable<Student>?> {
+class StudentsNotifier extends StateNotifier<List<Student>?> {
 	StudentsNotifier({required this.repository}) : super(null) {
 		repository.students().then((students) => state = students.toList()..sort());
 	}
@@ -12,6 +12,6 @@ class StudentsNotifier extends StateNotifier<Iterable<Student>?> {
 	final HomeRepository repository;
 }
 
-final studentsProvider = StateNotifierProvider<StudentsNotifier, Iterable<Student>?>((ref) {
+final studentsProvider = StateNotifierProvider<StudentsNotifier, List<Student>?>((ref) {
 	return StudentsNotifier(repository: ref.watch(homeRepositoryProvider));
 });

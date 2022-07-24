@@ -4,7 +4,7 @@ import '../../data/repository.dart';
 import '../entities/message.dart';
 
 
-class MessagesNotifier extends StateNotifier<Iterable<Message>?> {
+class MessagesNotifier extends StateNotifier<List<Message>?> {
 	MessagesNotifier({required this.repository}) : super(null) {
 		repository.messages().then((messages) => state = messages.toList()..sort());
 	}
@@ -17,6 +17,6 @@ class MessagesNotifier extends StateNotifier<Iterable<Message>?> {
 	}
 }
 
-final messagesProvider = StateNotifierProvider<MessagesNotifier, Iterable<Message>?>((ref) {
+final messagesProvider = StateNotifierProvider<MessagesNotifier, List<Message>?>((ref) {
 	return MessagesNotifier(repository: ref.watch(homeRepositoryProvider));
 });

@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import '../../../domain/entities/info.dart';
 import '../../../domain/entities/subject.dart';
 
-import '../../widgets/entity_list.dart';
-import '../../widgets/entity_tile.dart';
+import '../entity_list.dart';
+import '../tiles/entity_tile.dart';
 
-import 'info_form.dart';
+import 'form.dart';
 import 'page.dart';
 
 

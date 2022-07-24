@@ -4,9 +4,8 @@ import '../../data/repository.dart';
 import '../entities/event.dart';
 
 
-// do: replace Iterable with List
 // think: define EntitiesNotifier
-class EventsNotifier extends StateNotifier<Iterable<Event>?> {
+class EventsNotifier extends StateNotifier<List<Event>?> {
 	EventsNotifier({required this.repository}) : super(null) {
 		repository.events().then((events) => state = events.toList()..sort());
 	}
@@ -19,6 +18,6 @@ class EventsNotifier extends StateNotifier<Iterable<Event>?> {
 	}
 }
 
-final eventsProvider = StateNotifierProvider<EventsNotifier, Iterable<Event>?>((ref) {
+final eventsProvider = StateNotifierProvider<EventsNotifier, List<Event>?>((ref) {
 	return EventsNotifier(repository: ref.watch(homeRepositoryProvider));
 });

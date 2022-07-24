@@ -7,8 +7,8 @@ import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
 
 import '../../widgets/entity_list.dart';
-import '../../widgets/entity_tile.dart';
-import '../../widgets/home_section_bar.dart';
+import '../../widgets/bars/home_section_bar.dart';
+import '../../widgets/tiles/entity_tile.dart';
 
 import '../section.dart';
 
@@ -26,7 +26,7 @@ class SubjectsSection extends HomeSection {
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
-		var subjects = ref.watch(subjectsProvider);
+		Iterable<Subject>? subjects = ref.watch(subjectsProvider);
 		subjects = subjects?.where((s) => s.isStudied)
 			.followedBy(subjects.where((s) => !s.isStudied));
 

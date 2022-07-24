@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-import '../../../../core/presentation/open_page.dart';
+import 'package:podiinyk/core/presentation/open_page.dart';
 
 
 class OptionField<O> extends HookWidget {
@@ -48,14 +48,11 @@ class OptionField<O> extends HookWidget {
 			return;
 		}
 
-		openPage(
-			context: context,
-			builder: (context) => _OptionsPage<O>(
-				options: shown,
-				nullIsShown: nullIsShown,
-				onPick: (repr, option) => _onPick(field, repr, current, option)
-			)
-		);
+		openPage(context: context, builder: (context) => _OptionsPage<O>(
+			options: shown,
+			nullIsShown: nullIsShown,
+			onPick: (repr, option) => _onPick(field, repr, current, option)
+		));
 	}
 
 	void _onPick(TextEditingController field, String repr, ObjectRef<O?> current, O? option) {

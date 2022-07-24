@@ -6,7 +6,7 @@ import '../../../domain/entities/entity.dart';
 import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/subjects.dart';
 
-import '../../widgets/option_field.dart';
+import '../../widgets/fields/option_field.dart';
 
 
 // do: TextField.textInputAction

@@ -5,8 +5,8 @@ import '../../../domain/entities/message.dart';
 import '../../../domain/providers/messages.dart';
 
 import '../../widgets/entity_list.dart';
-import '../../widgets/entity_tile.dart';
-import '../../widgets/home_section_bar.dart';
+import '../../widgets/bars/home_section_bar.dart';
+import '../../widgets/tiles/entity_tile.dart';
 
 import '../section.dart';
 import 'form.dart';

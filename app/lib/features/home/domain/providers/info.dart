@@ -4,7 +4,7 @@ import '../../data/repository.dart';
 import '../entities/info.dart';
 
 
-class InfoNotifier extends StateNotifier<Iterable<Info>?> {
+class InfoNotifier extends StateNotifier<List<Info>?> {
 	InfoNotifier({required this.repository}) : super(null) {
 		repository.info().then((info) => state = info.toList()..sort());
 	}
@@ -17,6 +17,6 @@ class InfoNotifier extends StateNotifier<Iterable<Info>?> {
 	}
 }
 
-final infoProvider = StateNotifierProvider<InfoNotifier, Iterable<Info>?>((ref) {
+final infoProvider = StateNotifierProvider<InfoNotifier, List<Info>?>((ref) {
 	return InfoNotifier(repository: ref.watch(homeRepositoryProvider));
 });

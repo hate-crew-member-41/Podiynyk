@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../domain/entities/event.dart';
 
 import '../../widgets/entity_list.dart';
-import '../../widgets/entity_tile.dart';
+import '../../widgets/tiles/entity_tile.dart';
 
 import 'form.dart';
 import 'page.dart';
