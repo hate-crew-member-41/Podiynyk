@@ -61,7 +61,7 @@ class SubjectPage extends ConsumerWidget {
 					]),
 					Expanded(child: TabBarView(children: [
 						const InfoList(info),
-						EventsList(events),
+						EventList(events, showSubjects: false),
 						if (!isCommon) const StudentList(students)
 					]))
 				]

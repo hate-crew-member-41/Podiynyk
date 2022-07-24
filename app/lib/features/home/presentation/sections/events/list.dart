@@ -9,10 +9,14 @@ import 'form.dart';
 import 'page.dart';
 
 
-class EventsList extends StatelessWidget {
-	const EventsList(this.events);
+class EventList extends StatelessWidget {
+	const EventList(
+		this.events,
+		{this.showSubjects = true}
+	);
 
 	final Iterable<Event>? events;
+	final bool showSubjects;
 
 	@override
 	Widget build(BuildContext context) {
@@ -20,7 +24,7 @@ class EventsList extends StatelessWidget {
 			events,
 			tile: (event) => EntityTile(
 				title: event.name,
-				subtitle: event.subject?.name,
+				subtitle: showSubjects ? event.subject?.name : null,
 				trailing: event.date.shortRepr,
 				pageBuilder: (context) => EventPage(event)
 			),

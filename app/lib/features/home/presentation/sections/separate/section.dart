@@ -39,7 +39,7 @@ class SeparateSection extends HomeSection {
 				),
 				body: TabBarView(children: [
 					InfoList(info),
-					EventsList(events),
+					EventList(events),
 				])
 			)
 		);

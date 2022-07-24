@@ -27,7 +27,7 @@ class EventsSection extends HomeSection {
 				icon: icon,
 				count: events?.length
 			),
-			body: EventsList(events)
+			body: EventList(events)
 		);
 	}
 }
