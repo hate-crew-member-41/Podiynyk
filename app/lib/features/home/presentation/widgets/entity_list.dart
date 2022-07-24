@@ -5,8 +5,8 @@ import 'package:podiinyk/core/presentation/open_page.dart';
 import '../../domain/entities/entity.dart';
 
 
-class EntitiesList<E extends Entity> extends StatelessWidget {
-	const EntitiesList(
+class EntityList<E extends Entity> extends StatelessWidget {
+	const EntityList(
 		this.entities, {
 			required this.tile,
 			this.formBuilder

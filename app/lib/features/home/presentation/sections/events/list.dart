@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../domain/entities/event.dart';
 
-import '../../widgets/entities_list.dart';
+import '../../widgets/entity_list.dart';
 import '../../widgets/entity_tile.dart';
 
 import 'form.dart';
@@ -16,7 +16,7 @@ class EventsList extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
-		return EntitiesList<Event>(
+		return EntityList<Event>(
 			events,
 			tile: (event) => EntityTile(
 				title: event.name,

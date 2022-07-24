@@ -6,7 +6,7 @@ import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
 
-import '../../widgets/entities_list.dart';
+import '../../widgets/entity_list.dart';
 import '../../widgets/entity_tile.dart';
 import '../../widgets/home_section_bar.dart';
 
@@ -38,7 +38,7 @@ class SubjectsSection extends HomeSection {
 				// do: change
 				count: subjects?.length
 			),
-			body: EntitiesList<Subject>(
+			body: EntityList<Subject>(
 				subjects != null && events != null ? subjects : null,
 				tile: (subject) {
 					final nextEvent = events!.firstWhereOrNull((e) => e.subject == subject);

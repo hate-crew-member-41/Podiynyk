@@ -6,6 +6,8 @@ import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/events.dart';
 
 import '../../widgets/counted_icon.dart';
+import '../../widgets/entity_lists_tab_bar.dart';
+
 import '../events/list.dart';
 import '../separate/info_list.dart';
 
@@ -47,18 +49,14 @@ class SubjectPage extends ConsumerWidget {
 						)
 					),
 					Text(subject.name),
-					TabBar(tabs: [
-						Tab(child: CountedIcon(icon: Icons.notes, count: info.length)),
-						Tab(child: CountedIcon(icon: Icons.event, count: events?.length))
+					EntityListsTabBar(tabIcons: [
+						CountedIcon(icon: Icons.notes, count: info.length),
+						CountedIcon(icon: Icons.event, count: events?.length)
 					]),
-					Expanded(
-						child: TabBarView(children: [
-						// Icon(Icons.notes),
-						// Icon(Icons.event),
+					Expanded(child: TabBarView(children: [
 						const InfoList(info),
 						EventsList(events)
-						]),
-					)
+					]))
 				]
 			)
 		));

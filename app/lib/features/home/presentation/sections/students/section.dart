@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../domain/entities/student.dart';
 import '../../../domain/providers/students.dart';
 
-import '../../widgets/entities_list.dart';
+import '../../widgets/entity_list.dart';
 import '../../widgets/entity_tile.dart';
 import '../../widgets/home_section_bar.dart';
 
@@ -30,7 +30,7 @@ class StudentsSection extends HomeSection {
 				icon: icon,
 				count: students?.length
 			),
-			body: EntitiesList<Student>(
+			body: EntityList<Student>(
 				students,
 				tile: (student) => EntityTile(
 					title: student.fullName,

@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../domain/entities/message.dart';
 import '../../../domain/providers/messages.dart';
 
-import '../../widgets/entities_list.dart';
+import '../../widgets/entity_list.dart';
 import '../../widgets/entity_tile.dart';
 import '../../widgets/home_section_bar.dart';
 
@@ -31,7 +31,7 @@ class MessagesSection extends HomeSection {
 				icon: icon,
 				count: messages?.length
 			),
-			body: EntitiesList<Message>(
+			body: EntityList<Message>(
 				messages,
 				tile: (message) => EntityTile(
 					title: message.name,

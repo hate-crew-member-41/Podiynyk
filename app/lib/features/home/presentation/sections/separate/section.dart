@@ -5,11 +5,11 @@ import '../../../domain/providers/events.dart';
 import '../../../domain/providers/info.dart';
 
 import '../../widgets/counted_icon.dart';
+import '../../widgets/entity_lists_tab_bar.dart';
 import '../../widgets/home_section_bar.dart';
 
 import '../events/list.dart';
 import '../section.dart';
-
 import 'info_list.dart';
 
 
@@ -32,11 +32,10 @@ class SeparateSection extends HomeSection {
 				appBar: HomeSectionBar(
 					name: name,
 					icon: icon,
-					tabs: [
-						// do: define a widget
-						Tab(child: CountedIcon(icon: Icons.notes, count: info?.length)),
-						Tab(child: CountedIcon(icon: Icons.event, count: events?.length))
-					]
+					bottom: EntityListsTabBar(tabIcons: [
+						CountedIcon(icon: Icons.notes, count: info?.length),
+						CountedIcon(icon: Icons.event, count: events?.length)
+					])
 				),
 				body: TabBarView(children: [
 					InfoList(info),

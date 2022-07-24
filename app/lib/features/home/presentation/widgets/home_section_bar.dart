@@ -5,24 +5,23 @@ import 'counted_icon.dart';
 
 // think: open the drawer on a tap
 class HomeSectionBar extends StatelessWidget implements PreferredSizeWidget {
-	HomeSectionBar({
+	const HomeSectionBar({
 		required this.name,
 		required this.icon,
 		this.count,
-		List<Tab>? tabs
-	}) :
-		tabBar = tabs == null ? null : TabBar(tabs: tabs);
+		this.bottom
+	});
 
 	final String name;
 	final IconData icon;
 	final int? count;
-	final TabBar? tabBar;
+	final PreferredSizeWidget? bottom;
 
 	@override
 	Size get preferredSize {
 		// do: take from the theme
 		double height = 56;
-		if (tabBar != null) height += tabBar!.preferredSize.height;
+		if (bottom != null) height += bottom!.preferredSize.height;
 		return Size.fromHeight(height);
 	}
 
@@ -36,7 +35,7 @@ class HomeSectionBar extends StatelessWidget implements PreferredSizeWidget {
 					CountedIcon(icon: icon, count: count)
 				]
 			),
-			bottom: tabBar
+			bottom: bottom
 		);
 	}
 }
