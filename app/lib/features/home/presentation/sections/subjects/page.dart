@@ -26,6 +26,7 @@ class SubjectPage extends ConsumerWidget {
 		const students = <Student>[];
 
 		final isCommon = subject.isCommon;
+		final isStudied = subject.isStudied;
 
 		return Scaffold(body: DefaultTabController(
 			length: isCommon ? 2 : 3,
@@ -40,11 +41,11 @@ class SubjectPage extends ConsumerWidget {
 							children: const [
 								Padding(
 									padding: EdgeInsets.only(right: 16),
-									child: Icon(Icons.visibility),
+									child: Icon(Icons.visibility)
 								),
 								Padding(
 									padding: EdgeInsets.only(right: 16),
-									child: Icon(Icons.edit),
+									child: Icon(Icons.edit)
 								),
 								Padding(
 									padding: EdgeInsets.only(right: 16),
@@ -55,13 +56,26 @@ class SubjectPage extends ConsumerWidget {
 					),
 					Text(subject.name),
 					EntityListsTabBar(tabIcons: [
-						CountedIcon(icon: Icons.notes, count: info.length),
-						CountedIcon(icon: Icons.event, count: events?.length),
-						if (!isCommon) CountedIcon(icon: Icons.people, count: subject.students!.length)
+						CountedIcon(
+							icon: Icons.notes,
+							count: info.length
+						),
+						CountedIcon(
+							icon: Icons.event,
+							count: events?.length
+						),
+						if (!isCommon) CountedIcon(
+							icon: Icons.people,
+							count: subject.students!.length
+						)
 					]),
 					Expanded(child: TabBarView(children: [
-						const InfoList(info),
-						EventList(events, showSubjects: false),
+						InfoList(info, isExtendable: isStudied),
+						EventList(
+							events,
+							isExtendable: isStudied,
+							showSubjects: false
+						),
 						if (!isCommon) const StudentList(students)
 					]))
 				]

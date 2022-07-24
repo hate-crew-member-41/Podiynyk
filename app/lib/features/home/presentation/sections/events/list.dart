@@ -11,11 +11,14 @@ import 'page.dart';
 
 class EventList extends StatelessWidget {
 	const EventList(
-		this.events,
-		{this.showSubjects = true}
+		this.events, {
+			this.isExtendable = true,
+			this.showSubjects = true
+		}
 	);
 
 	final Iterable<Event>? events;
+	final bool isExtendable;
 	final bool showSubjects;
 
 	@override
@@ -28,7 +31,7 @@ class EventList extends StatelessWidget {
 				trailing: event.date.shortRepr,
 				pageBuilder: (context) => EventPage(event)
 			),
-			formBuilder: (context) => const EventForm()
+			formBuilder: isExtendable ? (context) => const EventForm() : null
 		);
 	}
 }

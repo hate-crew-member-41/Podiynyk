@@ -123,8 +123,8 @@ class HomeRepository {
 		final snapshot = await Document.students.ref.get();
 		return snapshot.data()!.entries.map((entry) => Student(
 			id: entry.key,
-			name: (entry.value[Field.name.name] as List<String>).first,
-			surname: (entry.value[Field.name.name] as List<String>).last
+			name: (entry.value[Field.name.name]).first,
+			surname: (entry.value[Field.name.name]).last
 		));
 	}
 }

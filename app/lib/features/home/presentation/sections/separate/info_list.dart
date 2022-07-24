@@ -10,9 +10,10 @@ import 'page.dart';
 
 
 class InfoList extends StatelessWidget {
-	const InfoList(this.info);
+	const InfoList(this.info, {this.isExtendable = true});
 
 	final Iterable<Info>? info;
+	final bool isExtendable;
 
 	@override
 	Widget build(BuildContext context) {
@@ -22,7 +23,7 @@ class InfoList extends StatelessWidget {
 				title: item.name,
 				pageBuilder: (context) => InfoPage(item)
 			),
-			formBuilder: (context) => const InfoForm(),
+			formBuilder: isExtendable ? (context) => const InfoForm() : null,
 		);
 	}
 }

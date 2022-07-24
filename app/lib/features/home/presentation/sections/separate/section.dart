@@ -33,8 +33,14 @@ class SeparateSection extends HomeSection {
 					name: name,
 					icon: icon,
 					bottom: EntityListsTabBar(tabIcons: [
-						CountedIcon(icon: Icons.notes, count: info?.length),
-						CountedIcon(icon: Icons.event, count: events?.length)
+						CountedIcon(
+							icon: Icons.notes,
+							count: info?.length
+						),
+						CountedIcon(
+							icon: Icons.event,
+							count: events?.length
+						)
 					])
 				),
 				body: TabBarView(children: [
