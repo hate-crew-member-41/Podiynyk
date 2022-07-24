@@ -14,7 +14,7 @@ class EventsNotifier extends StateNotifier<List<Event>?> {
 
 	Future<void> add(Event event) async {
 		await repository.addEvent(event);
-		state = [...state!, event]..sort();
+		state = state!.toList()..add(event)..sort();
 	}
 }
 

@@ -33,12 +33,18 @@ class HomeRepository {
 	}
 
 	Future<void> addSubject(Subject subject) async {
-		await Document.subjects.ref.update({
-			subject.id: {
-				Field.name.name: subject.name,
-				if (subject.studentIds != null) Field.students.name: subject.studentIds
-			}
-		});
+		final ref = Document.subjects.ref;
+		await Future.wait([
+			ref.update({
+				subject.id: {
+					Field.name.name: subject.name,
+					if (subject.studentIds != null) Field.students.name: subject.studentIds
+				}
+			}),
+			ref.collection('details').doc(subject.id).set({
+				Field.info.name: const <String, ObjectMap>{}
+			})
+		]);
 	}
 
 	Future<void> addSubjectInfo(Subject subject, Info item) async {
@@ -159,6 +165,25 @@ class HomeRepository {
 			name: (entry.value[Field.name.name]).first,
 			surname: (entry.value[Field.name.name]).last
 		));
+	}
+
+	Future<void> deleteSubject(Subject subject) async {
+		final eventsRef = Document.events.ref;
+		final eventsSnapshot = await eventsRef.get();
+		final eventEntries = eventsSnapshot.data()!.entries.where(
+			(e) => e.value[Field.subject.name] == subject.id
+		);
+
+		final subjectsRef = Document.subjects.ref;
+		await Future.wait([
+			subjectsRef.update({
+				subject.id: FieldValue.delete()
+			}),
+			subjectsRef.collection('details').doc(subject.id).delete(),
+			eventsRef.update({
+				for (final entry in eventEntries) entry.key: FieldValue.delete()
+			})
+		]);
 	}
 }
 

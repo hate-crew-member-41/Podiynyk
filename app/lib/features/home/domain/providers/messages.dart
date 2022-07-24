@@ -13,7 +13,7 @@ class MessagesNotifier extends StateNotifier<List<Message>?> {
 
 	Future<void> add(Message message) async {
 		await repository.addMessage(message);
-		state = [...state!, message]..sort();
+		state = state!.toList()..add(message)..sort();
 	}
 }
 

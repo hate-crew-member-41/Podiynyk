@@ -13,7 +13,7 @@ class InfoNotifier extends StateNotifier<List<Info>?> {
 
 	Future<void> add(Info item) async {
 		await repository.addInfo(item);
-		state = [...state!, item]..sort();
+		state = state!.toList()..add(item)..sort();
 	}
 }
 

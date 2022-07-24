@@ -31,27 +31,19 @@ class SubjectPage extends ConsumerWidget {
 			child: Column(
 				crossAxisAlignment: CrossAxisAlignment.start,
 				children: [
-					SizedBox(
+					SafeArea(child: SizedBox(
 						// do: take from the theme
 						height: 56,
 						child: Row(
 							mainAxisAlignment: MainAxisAlignment.end,
-							children: const [
-								Padding(
-									padding: EdgeInsets.only(right: 16),
-									child: Icon(Icons.visibility)
-								),
-								Padding(
-									padding: EdgeInsets.only(right: 16),
-									child: Icon(Icons.edit)
-								),
-								Padding(
-									padding: EdgeInsets.only(right: 16),
-									child: Icon(Icons.delete)
+							children: [
+								IconButton(
+									icon: const Icon(Icons.delete),
+									onPressed: () => _delete(context, ref)
 								)
 							]
 						)
-					),
+					)),
 					Text(subject.name),
 					EntityListsTabBar(tabIcons: [
 						CountedIcon(
@@ -83,5 +75,11 @@ class SubjectPage extends ConsumerWidget {
 				]
 			)
 		));
+	}
+
+	// do: confirmation, rename
+	void _delete(BuildContext context, WidgetRef ref) {
+		ref.read(subjectsProvider.notifier).delete(subject);
+		Navigator.of(context).pop();
 	}
 }
