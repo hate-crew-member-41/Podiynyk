@@ -4,6 +4,7 @@ enum Field {
 	date,
 	hasTime,
 	id,
+	info,
 	name,
 	note,
 	students,

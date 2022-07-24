@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../domain/entities/info.dart';
 import '../../../domain/entities/student.dart';
 import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/events.dart';
+import '../../../domain/providers/subjects.dart';
 
 import '../../widgets/counted_icon.dart';
 import '../../widgets/entity_lists_tab_bar.dart';
@@ -21,7 +21,7 @@ class SubjectPage extends ConsumerWidget {
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
-		const info = <Info>[];
+		final info = ref.watch(subjectInfoProvider(subject));
 		final events = ref.watch(eventsProvider)?.where((e) => e.subject == subject);
 		const students = <Student>[];
 
@@ -58,7 +58,7 @@ class SubjectPage extends ConsumerWidget {
 					EntityListsTabBar(tabIcons: [
 						CountedIcon(
 							icon: Icons.notes,
-							count: info.length
+							count: info?.length
 						),
 						CountedIcon(
 							icon: Icons.event,
@@ -70,7 +70,11 @@ class SubjectPage extends ConsumerWidget {
 						)
 					]),
 					Expanded(child: TabBarView(children: [
-						InfoList(info, isExtendable: isStudied),
+						InfoList(
+							info,
+							subject: subject,
+							isExtendable: isStudied
+						),
 						EventList(
 							events,
 							isExtendable: isStudied,

@@ -4,6 +4,7 @@ import '../../data/repository.dart';
 import '../entities/event.dart';
 
 
+// do: replace Iterable with List
 // think: define EntitiesNotifier
 class EventsNotifier extends StateNotifier<Iterable<Event>?> {
 	EventsNotifier({required this.repository}) : super(null) {

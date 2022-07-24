@@ -14,8 +14,9 @@ import '../domain/entities/subject.dart';
 
 
 // do: failures
-// do: define addEntity, entities
 // do: prevent unnecessary reads
+// do: remove duplication with info (adding, reading)
+// think: define addEntity, entities
 class HomeRepository {
 	const HomeRepository();
 
@@ -36,6 +37,15 @@ class HomeRepository {
 			subject.id: {
 				Field.name.name: subject.name,
 				if (subject.students != null) Field.students.name: subject.students
+			}
+		});
+	}
+
+	Future<void> addSubjectInfo(Subject subject, Info item) async {
+		await Document.subjects.ref.collection('details').doc(subject.id).update({
+			'${Field.info.name}.${item.id}': {
+				Field.name.name: item.name,
+				Field.content.name: item.content
 			}
 		});
 	}
@@ -91,6 +101,21 @@ class HomeRepository {
 				null :
 				List<String>.from(entry.value[Field.students.name])
 		));
+	}
+
+	Future<Iterable<Info>> subjectInfo(Subject subject) async {
+		final snapshot = await Document.subjects.ref.collection('details').doc(subject.id).get();
+		final info = Map<String, ObjectMap>.from(snapshot.data()![Field.info.name]);
+		return info.entries.map((entry) => Info(
+			id: entry.key,
+			name: entry.value[Field.name.name],
+			content: entry.value[Field.content.name]
+		));
+		// return snapshot.data()![Field.info.name].entries.map((entry) => Info(
+		// 	id: entry.key,
+		// 	name: entry.value[Field.name.name],
+		// 	content: entry.value[Field.content.name]
+		// ));
 	}
 
 	Future<Iterable<Info>> info() async {

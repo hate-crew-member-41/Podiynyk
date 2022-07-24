@@ -4,12 +4,16 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../domain/entities/entity.dart';
 import '../../../domain/entities/info.dart';
+import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/info.dart';
+import '../../../domain/providers/subjects.dart';
 
 
 // do: TextField.textInputAction
 class InfoForm extends HookConsumerWidget {
-	const InfoForm();
+	const InfoForm({this.subject});
+
+	final Subject? subject;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
@@ -38,12 +42,20 @@ class InfoForm extends HookConsumerWidget {
 		// do: inform the user
 		if (name.isEmpty || content.isEmpty) return;
 
+		// do: rewrite after defining EntitiesNotifier
 		// think: await to show success or a failure
-		ref.read(infoProvider.notifier).add(Info(
+		final item = Info(
 			id: Entity.newId(),
 			name: name,
 			content: content
-		));
+		);
+		if (subject != null) {
+			ref.read(subjectInfoProvider(subject!).notifier).add(item);
+		}
+		else {
+			ref.read(infoProvider.notifier).add(item);
+		}
+
 		Navigator.of(context).pop();
 	}
 }

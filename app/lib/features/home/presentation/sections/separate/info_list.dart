@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../domain/entities/info.dart';
+import '../../../domain/entities/subject.dart';
 
 import '../../widgets/entity_list.dart';
 import '../../widgets/entity_tile.dart';
@@ -10,9 +11,15 @@ import 'page.dart';
 
 
 class InfoList extends StatelessWidget {
-	const InfoList(this.info, {this.isExtendable = true});
+	const InfoList(
+		this.info, {
+			this.subject,
+			this.isExtendable = true
+		}
+	);
 
 	final Iterable<Info>? info;
+	final Subject? subject;
 	final bool isExtendable;
 
 	@override
@@ -23,7 +30,8 @@ class InfoList extends StatelessWidget {
 				title: item.name,
 				pageBuilder: (context) => InfoPage(item)
 			),
-			formBuilder: isExtendable ? (context) => const InfoForm() : null,
+			formBuilder: isExtendable ?
+				(context) => InfoForm(subject: subject) : null,
 		);
 	}
 }
