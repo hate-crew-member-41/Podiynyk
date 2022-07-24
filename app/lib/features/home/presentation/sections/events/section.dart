@@ -4,7 +4,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../domain/providers/events.dart';
 import '../../widgets/home_section_bar.dart';
 import '../section.dart';
-
 import 'list.dart';
 
 
@@ -18,7 +17,9 @@ class EventsSection extends HomeSection {
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
-		final events = ref.watch(eventsProvider);
+		final events = ref.watch(eventsProvider)?.where(
+			(e) => e.subject == null || e.subject!.isStudied
+		);
 
 		return Scaffold(
 			appBar: HomeSectionBar(
