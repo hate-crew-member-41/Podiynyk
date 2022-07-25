@@ -41,18 +41,12 @@ class SubjectInfoNotifier extends StateNotifier<SubjectDetails?> {
 
 	Future<void> addInfo(Info item) async {
 		await repository.addSubjectInfo(subject, item);
-		state = SubjectDetails(
-			info: state!.info.toList()..add(item)..sort(),
-			students: state!.students
-		);
+		state = state!.withInfo(state!.info.toList()..add(item)..sort());
 	}
 
 	Future<void> deleteInfo(Info item) async {
 		await repository.deleteSubjectInfo(subject, item);
-		state = SubjectDetails(
-			info: state!.info.toList()..remove(item),
-			students: state!.students
-		);
+		state = state!.withInfo(state!.info.toList()..remove(item));
 	}
 }
 

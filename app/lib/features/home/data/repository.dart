@@ -123,6 +123,7 @@ class HomeRepository {
 		final info = infoMap.entries.map((entry) => Info(
 			id: entry.key,
 			name: entry.value[Field.name.name],
+			subject: subject,
 			content: entry.value[Field.content.name]
 		));
 

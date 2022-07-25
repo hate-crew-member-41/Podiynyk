@@ -47,6 +47,7 @@ class InfoForm extends HookConsumerWidget {
 		final item = Info(
 			id: Entity.newId(),
 			name: name,
+			subject: subject,
 			content: content
 		);
 		if (subject != null) {

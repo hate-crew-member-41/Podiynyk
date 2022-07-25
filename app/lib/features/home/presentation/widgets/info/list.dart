@@ -28,7 +28,7 @@ class InfoList extends StatelessWidget {
 			info,
 			tile: (item) => EntityTile(
 				title: item.name,
-				pageBuilder: (context) => InfoPage(item, subject: subject)
+				pageBuilder: (context) => InfoPage(item)
 			),
 			formBuilder: isExtendable ?
 				(context) => InfoForm(subject: subject) : null,

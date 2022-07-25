@@ -2,19 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../domain/entities/info.dart';
-import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/info.dart';
-
 import '../../../domain/providers/subjects.dart';
+
 import '../bars/action_bar.dart';
 import '../bars/action_button.dart';
 
 
 class InfoPage extends StatelessWidget {
-	const InfoPage(this.item, {this.subject});
+	const InfoPage(this.item);
 
 	final Info item;
-	final Subject? subject;
 
 	@override
 	Widget build(BuildContext context) {
@@ -44,8 +42,8 @@ class InfoPage extends StatelessWidget {
 
 	// think: confirmation, rename
 	void _delete(BuildContext context, WidgetRef ref) {
-		if (subject != null) {
-			ref.read(subjectDetailsProviders(subject!).notifier).deleteInfo(item);
+		if (item.subject != null) {
+			ref.read(subjectDetailsProviders(item.subject!).notifier).deleteInfo(item);
 		}
 		else {
 			ref.read(infoProvider.notifier).delete(item);

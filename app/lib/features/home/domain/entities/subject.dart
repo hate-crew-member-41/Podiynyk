@@ -34,4 +34,9 @@ class SubjectDetails {
 
 	final Iterable<Info> info;
 	final Iterable<Student>? students;
+
+	SubjectDetails withInfo(Iterable<Info> info) => SubjectDetails(
+		info: info,
+		students: students
+	);
 }

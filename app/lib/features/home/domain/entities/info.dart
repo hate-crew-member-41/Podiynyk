@@ -1,16 +1,18 @@
 import 'entity.dart';
+import 'subject.dart';
 
 
-// think: add subject to avoid passing it along
 class Info extends Entity {
 	const Info({
 		required String id,
 		required this.name,
+		this.subject,
 		required this.content
 	}) :
 		super(id: id);
 
 	final String name;
+	final Subject? subject;
 	final String content;
 
 	@override
