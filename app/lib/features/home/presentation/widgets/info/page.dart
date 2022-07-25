@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../domain/entities/info.dart';
+import '../../../domain/entities/subject.dart';
+import '../../../domain/providers/info.dart';
 
-import '../action_button.dart';
+import '../../../domain/providers/subjects.dart';
 import '../bars/action_bar.dart';
+import '../bars/action_button.dart';
 
 
 class InfoPage extends StatelessWidget {
-	const InfoPage(this.item);
+	const InfoPage(this.item, {this.subject});
 
 	final Info item;
+	final Subject? subject;
 
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(body: SafeArea(child: Stack(children: [
 			Center(child: ListView(
 				shrinkWrap: true,
-				// do: take the values from the theme
+				// do: take from the theme
 				children: [
 					const SizedBox(height: 56),
 					Text(item.name),
@@ -29,11 +34,22 @@ class InfoPage extends StatelessWidget {
 					icon: Icons.edit,
 					action: () {}
 				),
-				ActionButton(
+				Consumer(builder: (context, ref, _) => ActionButton(
 					icon: Icons.delete,
-					action: () {}
-				)
+					action: () => _delete(context, ref)
+				))
 			])
 		])));
+	}
+
+	// think: confirmation, rename
+	void _delete(BuildContext context, WidgetRef ref) {
+		if (subject != null) {
+			ref.read(subjectDetailsProviders(subject!).notifier).deleteInfo(item);
+		}
+		else {
+			ref.read(infoProvider.notifier).delete(item);
+		}
+		Navigator.of(context).pop();
 	}
 }

@@ -15,6 +15,11 @@ class InfoNotifier extends StateNotifier<List<Info>?> {
 		await repository.addInfo(item);
 		state = state!.toList()..add(item)..sort();
 	}
+
+	Future<void> delete(Info item) async {
+		await repository.deleteInfo(item);
+		state = state!.toList()..remove(item);
+	}
 }
 
 final infoProvider = StateNotifierProvider<InfoNotifier, List<Info>?>((ref) {

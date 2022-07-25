@@ -191,6 +191,18 @@ class HomeRepository {
 			})
 		]);
 	}
+
+	Future<void> deleteSubjectInfo(Subject subject, Info item) async {
+		await Document.subjects.ref.collection('details').doc(subject.id).update({
+			'${Field.info.name}.${item.id}': FieldValue.delete()
+		});
+	}
+
+	Future<void> deleteInfo(Info item) async {
+		await Document.info.ref.update({
+			item.id: FieldValue.delete()
+		});
+	}
 }
 
 final homeRepositoryProvider = Provider<HomeRepository>(

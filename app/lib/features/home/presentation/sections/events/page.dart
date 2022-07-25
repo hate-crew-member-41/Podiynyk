@@ -4,8 +4,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../domain/entities/event.dart';
 import '../../../domain/providers/events.dart';
 
-import '../../widgets/action_button.dart';
 import '../../widgets/bars/action_bar.dart';
+import '../../widgets/bars/action_button.dart';
 
 
 // think: define EntityPage
@@ -19,7 +19,7 @@ class EventPage extends StatelessWidget {
 		return Scaffold(body: SafeArea(child: Stack(children: [
 			Center(child: ListView(
 				shrinkWrap: true,
-				// do: take the values from the theme
+				// do: take from the theme
 				children: [
 					const SizedBox(height: 56),
 					Text(event.name),

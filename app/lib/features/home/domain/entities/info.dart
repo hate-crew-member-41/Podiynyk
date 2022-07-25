@@ -1,6 +1,7 @@
 import 'entity.dart';
 
 
+// think: add subject to avoid passing it along
 class Info extends Entity {
 	const Info({
 		required String id,

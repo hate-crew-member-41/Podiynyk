@@ -15,8 +15,6 @@ class ActionButton extends StatelessWidget {
 		// do: explore the parameters
 		return IconButton(
 			icon: Icon(icon),
-			// do: take from the theme
-			padding: const EdgeInsets.only(right: 16),
 			onPressed: action
 		);
 	}

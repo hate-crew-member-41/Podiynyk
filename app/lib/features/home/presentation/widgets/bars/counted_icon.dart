@@ -15,11 +15,11 @@ class CountedIcon extends StatelessWidget {
 		return Row(
 			mainAxisAlignment: MainAxisAlignment.center,
 			children: [
-				if (count != null) Padding(
+				if (count != null) ...[
+					Text(count.toString()),
 					// do: take from the theme
-					padding: const EdgeInsets.only(right: 16),
-					child: Text(count.toString())
-				),
+					const SizedBox(width: 16)
+				],
 				Icon(icon)
 			]
 		);

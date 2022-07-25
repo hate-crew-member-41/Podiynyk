@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../domain/entities/message.dart';
 
-import '../../widgets/action_button.dart';
 import '../../widgets/bars/action_bar.dart';
+import '../../widgets/bars/action_button.dart';
 
 
 class MessagePage extends StatelessWidget {

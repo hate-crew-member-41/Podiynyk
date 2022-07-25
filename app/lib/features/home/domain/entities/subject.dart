@@ -25,6 +25,7 @@ class Subject extends Entity {
 	int compareTo(covariant Subject other) => name.compareTo(other.name);
 }
 
+// do: define copyWith
 class SubjectDetails {
 	const SubjectDetails({
 		required this.info,

@@ -5,8 +5,8 @@ import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
 
-import '../../widgets/action_button.dart';
 import '../../widgets/bars/action_bar.dart';
+import '../../widgets/bars/action_button.dart';
 import '../../widgets/bars/counted_icon.dart';
 import '../../widgets/bars/entity_lists_tab_bar.dart';
 import '../../widgets/info/list.dart';

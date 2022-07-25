@@ -46,6 +46,14 @@ class SubjectInfoNotifier extends StateNotifier<SubjectDetails?> {
 			students: state!.students
 		);
 	}
+
+	Future<void> deleteInfo(Info item) async {
+		await repository.deleteSubjectInfo(subject, item);
+		state = SubjectDetails(
+			info: state!.info.toList()..remove(item),
+			students: state!.students
+		);
+	}
 }
 
 final subjectDetailsProviders = StateNotifierProvider.family<SubjectInfoNotifier, SubjectDetails?, Subject>((ref, subject) {

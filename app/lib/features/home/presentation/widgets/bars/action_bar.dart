@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 
-// fix: the splashes are offset from the icon
+// do: control the gaps
 class ActionBar extends StatelessWidget {
 	const ActionBar({required this.children});
 
