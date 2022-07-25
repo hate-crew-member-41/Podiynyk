@@ -15,6 +15,11 @@ class MessagesNotifier extends StateNotifier<List<Message>?> {
 		await repository.addMessage(message);
 		state = state!.toList()..add(message)..sort();
 	}
+
+	Future<void> delete(Message message) async {
+		await repository.deleteMessage(message);
+		state = state!.toList()..remove(message);
+	}
 }
 
 final messagesProvider = StateNotifierProvider<MessagesNotifier, List<Message>?>((ref) {

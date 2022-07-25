@@ -204,6 +204,12 @@ class HomeRepository {
 			item.id: FieldValue.delete()
 		});
 	}
+
+	Future<void> deleteMessage(Message message) async {
+		await Document.messages.ref.update({
+			message.id: FieldValue.delete()
+		});
+	}
 }
 
 final homeRepositoryProvider = Provider<HomeRepository>(
