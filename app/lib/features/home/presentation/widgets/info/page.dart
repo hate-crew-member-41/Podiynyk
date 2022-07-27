@@ -28,10 +28,6 @@ class InfoPage extends StatelessWidget {
 				]
 			)),
 			ActionBar(children: [
-				ActionButton(
-					icon: Icons.edit,
-					action: () {}
-				),
 				Consumer(builder: (context, ref, _) => ActionButton(
 					icon: Icons.delete,
 					action: () => _delete(context, ref)

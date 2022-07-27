@@ -9,7 +9,7 @@ An arbitrary username.
 - no way to recover the password
 - a person can create any number of accounts
 
-## **2**
+## 2 (chosen)
 
 An email.
 
@@ -44,7 +44,7 @@ When the event is hidden by the last student.
 ### -
 - not all students may actively use the app
 
-## **3**
+## 3 (chosen)
 
 At midnight of the next day.
 On the last day of the event's life, a request can be made to keep it for 2 more days.
@@ -60,20 +60,33 @@ A subject stores it's students in the details.
 ### -
 - it is impossible to know which subjects are relevant to a user with 1 read
 
-## **2**
+## 2
 
-A subject stores it's students.
+A subject stores it's students' ids.
+
+### -
+
+- the same data is fetched multiple times
+- data that is irrelevant to the user is fetched
+- updating whether the user studies a subject feels wrong
 
 ## 3
 
 A user stores their subjects.
 
 ### -
-- it is impossible to know which students are relevant to a subject with 1 read
+- it is impossible to know which students study a subject with 1 read
 
 ## 4
 
 Subjects are stored per student in the group's students document.
 
 ### -
-- the subject page requires 2 reads
+- this data is irrelevant for the `students` page
+- it takes 2 reads when opening the app to get the user's data
+
+## 5 (chosen)
+
+The combination of the two previous options. Each user stores their subjects.
+For a subject to efficiently know it's students and vice versa,
+this data is gathered together in the group's students document.

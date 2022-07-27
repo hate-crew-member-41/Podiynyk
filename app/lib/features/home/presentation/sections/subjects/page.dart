@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import 'package:podiinyk/core/domain/user.dart';
+
 import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
@@ -26,7 +28,7 @@ class SubjectPage extends ConsumerWidget {
 		final events = ref.watch(eventsProvider)?.where((e) => e.subject == subject);
 
 		final isCommon = subject.isCommon;
-		final isStudied = subject.isStudied;
+		final isStudied = User.studies(subject);
 
 		return Scaffold(body: DefaultTabController(
 			length: isCommon ? 2 : 3,
@@ -36,10 +38,6 @@ class SubjectPage extends ConsumerWidget {
 					SafeArea(child: ActionBar(children: [
 						if (!isCommon) ActionButton(
 							icon: Icons.local_library,  // Icons.airline_seat_individual_suite
-							action: () {}
-						),
-						ActionButton(
-							icon: Icons.edit,
 							action: () {}
 						),
 						ActionButton(

@@ -11,7 +11,7 @@ enum Document {
 	messages,
 	students,
 	subjects;
-	
+
 	DocumentReference<ObjectMap> get ref =>
 		FirebaseFirestore.instance.collection(name).doc(User.groupId);
 }

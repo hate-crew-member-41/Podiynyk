@@ -37,10 +37,6 @@ class EventPage extends StatelessWidget {
 					icon: Icons.done,  // Icons.undo
 					action: () {}
 				),
-				ActionButton(
-					icon: Icons.edit,
-					action: () {}
-				),
 				Consumer(builder: (context, ref, _) => ActionButton(
 					icon: Icons.delete,
 					action: () => _delete(context, ref)

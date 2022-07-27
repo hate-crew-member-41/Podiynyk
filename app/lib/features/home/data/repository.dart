@@ -15,8 +15,8 @@ import '../domain/entities/subject.dart';
 
 // do: failures
 // do: prevent unnecessary reads
-// do: remove duplication with info (adding, reading)
-// think: define addEntity, entities
+// do: remove duplication with info (adding, reading, referencing subject info)
+// think: define addEntity, entities, deleteEntity
 class HomeRepository {
 	const HomeRepository();
 
@@ -38,7 +38,7 @@ class HomeRepository {
 			ref.update({
 				subject.id: {
 					Field.name.name: subject.name,
-					if (subject.studentIds != null) Field.students.name: subject.studentIds
+					Field.isCommon.name: subject.isCommon
 				}
 			}),
 			ref.collection('details').doc(subject.id).set({
@@ -103,9 +103,7 @@ class HomeRepository {
 		return snapshot.data()!.entries.map((entry) => Subject(
 			id: entry.key,
 			name: entry.value[Field.name.name],
-			studentIds: !entry.value.containsKey(Field.students.name) ?
-				null :
-				List<String>.from(entry.value[Field.students.name])
+			isCommon: entry.value[Field.isCommon.name]
 		));
 	}
 
@@ -129,7 +127,7 @@ class HomeRepository {
 
 		return SubjectDetails(
 			info: info,
-			students: students
+			students: students?.where((s) => s.chose(subject))
 		);
 	}
 
@@ -163,8 +161,9 @@ class HomeRepository {
 		final snapshot = await Document.students.ref.get();
 		return snapshot.data()!.entries.map((entry) => Student(
 			id: entry.key,
-			name: (entry.value[Field.name.name]).first,
-			surname: (entry.value[Field.name.name]).last
+			name: entry.value[Field.name.name].first,
+			surname: entry.value[Field.name.name].last,
+			chosenSubjectIds: Set<String>.from(entry.value[Field.subjects.name])
 		));
 	}
 

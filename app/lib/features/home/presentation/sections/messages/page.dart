@@ -30,10 +30,6 @@ class MessagePage extends StatelessWidget {
 				]
 			)),
 			if (message.isByUser) ActionBar(children: [
-				ActionButton(
-					icon: Icons.edit,
-					action: () {}
-				),
 				Consumer(builder: (context, ref, _) => ActionButton(
 					icon: Icons.delete,
 					action: () => _delete(context, ref)

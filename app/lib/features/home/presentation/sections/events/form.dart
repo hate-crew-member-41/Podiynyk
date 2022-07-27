@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiinyk/core/domain/types/date.dart';
+import 'package:podiinyk/core/domain/user.dart';
 
 import '../../../domain/entities/entity.dart';
 import '../../../domain/entities/event.dart';
@@ -18,7 +19,7 @@ import '../../widgets/fields/option_field.dart';
 // 		EventForm relies on subjectsProvider to have been accessed
 //		EventsPage reads events from HomeRepository, not subjectsProvider
 // 		fix this after the data layer is improved
-// do: TextField.textInputAction
+// do: TextField.(textInputAction, multiline)
 // think: define EntityForm
 class EventForm extends HookConsumerWidget {
 	const EventForm();
@@ -52,7 +53,7 @@ class EventForm extends HookConsumerWidget {
 					if (subjects.isNotEmpty) OptionField<Subject>(
 						label: 'subject',
 						options: [
-							for (final subject in subjects.where((s) => s.isStudied))
+							for (final subject in subjects.where((s) => User.studies(s)))
 								MapEntry(subject.name, subject)
 						],
 						onPick: (s) => subject.value = s,

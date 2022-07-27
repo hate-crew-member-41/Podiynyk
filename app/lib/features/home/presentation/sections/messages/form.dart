@@ -47,7 +47,7 @@ class MessageForm extends HookConsumerWidget {
 			id: Entity.newId(),
 			name: name,
 			content: content,
-			author: const Student(id: User.id, name: User.name, surname: User.surname),
+			author: const Student.user(),
 			date: Date.now()
 		));
 		Navigator.of(context).pop();

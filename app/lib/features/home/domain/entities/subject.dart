@@ -1,5 +1,3 @@
-import 'package:podiinyk/core/domain/user.dart';
-
 import 'entity.dart';
 import 'info.dart';
 import 'student.dart';
@@ -9,23 +7,19 @@ class Subject extends Entity {
 	const Subject({
 		required String id,
 		required this.name,
-		required this.studentIds
+		required this.isCommon
 	}) :
 		super(id: id);
 
 	final String name;
-	final Iterable<String>? studentIds;
-
-	// think: rename (isChosen?)
-	bool get isCommon => studentIds == null;
-
-	bool get isStudied => isCommon || studentIds!.contains(User.id);
+	// think: rename (isChosen / isGeneral / isObligatory)
+	final bool isCommon;
 
 	@override
 	int compareTo(covariant Subject other) => name.compareTo(other.name);
 }
 
-// do: define copyWith
+
 class SubjectDetails {
 	const SubjectDetails({
 		required this.info,

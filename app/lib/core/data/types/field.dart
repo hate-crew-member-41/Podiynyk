@@ -5,8 +5,9 @@ enum Field {
 	hasTime,
 	id,
 	info,
+	isCommon,
 	name,
 	note,
-	students,
-	subject
+	subject,
+	subjects
 }

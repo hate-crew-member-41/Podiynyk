@@ -12,15 +12,19 @@ import 'package:podiinyk/core/presentation/open_page.dart';
 // think: is it efficient to access DateTime getters multiple times?
 // think: use Riverpod for state management
 class DateField extends HookWidget {
-	const DateField({required this.onPick});
+	const DateField({
+		this.initial,
+		required this.onPick
+	});
 
+	final Date? initial;
 	// think: replace with ObjectRef<Date>
 	final void Function(Date) onPick;
 
 	@override
 	Widget build(BuildContext context) {
-		final field = useTextEditingController();
-		final date = useRef(Date.now(hasTime: false));
+		final field = useTextEditingController(text: initial?.repr);
+		final date = useRef(initial ?? Date.now(hasTime: false));
 
 		return GestureDetector(
 			onTap: () => openPage(

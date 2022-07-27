@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import 'package:podiinyk/core/domain/user.dart';
+
 import '../../../domain/providers/events.dart';
 import '../../widgets/bars/home_section_bar.dart';
 import '../section.dart';
@@ -18,7 +20,7 @@ class EventsSection extends HomeSection {
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
 		final events = ref.watch(eventsProvider)?.where(
-			(e) => e.subject == null || e.subject!.isStudied
+			(e) => e.subject == null || User.studies(e.subject!)
 		);
 
 		return Scaffold(

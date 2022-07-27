@@ -2,6 +2,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import 'package:podiinyk/core/domain/user.dart';
+
 import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
@@ -27,8 +29,8 @@ class SubjectsSection extends HomeSection {
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
 		Iterable<Subject>? subjects = ref.watch(subjectsProvider);
-		subjects = subjects?.where((s) => s.isStudied)
-			.followedBy(subjects.where((s) => !s.isStudied));
+		subjects = subjects?.where((s) => User.studies(s))
+			.followedBy(subjects.where((s) => !User.studies(s)));
 
 		final events = ref.watch(eventsProvider);
 
@@ -44,7 +46,7 @@ class SubjectsSection extends HomeSection {
 				tile: (subject) {
 					final nextEvent = events!.firstWhereOrNull((e) => e.subject == subject);
 					return Opacity(
-						opacity: subject.isStudied ? 1 : .5,
+						opacity: User.studies(subject) ? 1 : .5,
 						child: EntityTile(
 							title: subject.name,
 							subtitle: nextEvent?.name,
