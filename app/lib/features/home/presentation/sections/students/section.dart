@@ -7,6 +7,7 @@ import '../section.dart';
 import 'list.dart';
 
 
+// think: exclude the user
 class StudentsSection extends HomeSection {
 	const StudentsSection();
 

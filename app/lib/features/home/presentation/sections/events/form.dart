@@ -26,8 +26,8 @@ class EventForm extends HookConsumerWidget {
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
-		// think: create a consumer for the subject field
-		final subjects = ref.watch(subjectsProvider)!;
+		final user = ref.watch(userProvider);
+		final subjects = ref.watch(subjectsProvider)!.where((s) => user.studies(s));
 
 		final nameField = useTextEditingController();
 		final subject = useRef<Subject?>(null);
@@ -53,7 +53,7 @@ class EventForm extends HookConsumerWidget {
 					if (subjects.isNotEmpty) OptionField<Subject>(
 						label: 'subject',
 						options: [
-							for (final subject in subjects.where((s) => User.studies(s)))
+							for (final subject in subjects)
 								MapEntry(subject.name, subject)
 						],
 						onPick: (s) => subject.value = s,

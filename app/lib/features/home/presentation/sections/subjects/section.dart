@@ -28,9 +28,10 @@ class SubjectsSection extends HomeSection {
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
+		final user = ref.watch(userProvider);
 		Iterable<Subject>? subjects = ref.watch(subjectsProvider);
-		subjects = subjects?.where((s) => User.studies(s))
-			.followedBy(subjects.where((s) => !User.studies(s)));
+		subjects = subjects?.where((s) => user.studies(s))
+			.followedBy(subjects.where((s) => !user.studies(s)));
 
 		final events = ref.watch(eventsProvider);
 
@@ -46,7 +47,7 @@ class SubjectsSection extends HomeSection {
 				tile: (subject) {
 					final nextEvent = events!.firstWhereOrNull((e) => e.subject == subject);
 					return Opacity(
-						opacity: User.studies(subject) ? 1 : .5,
+						opacity: user.studies(subject) ? 1 : .5,
 						child: EntityTile(
 							title: subject.name,
 							subtitle: nextEvent?.name,

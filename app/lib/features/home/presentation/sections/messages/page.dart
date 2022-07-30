@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import 'package:podiinyk/core/domain/user.dart';
+
 import '../../../domain/entities/message.dart';
 import '../../../domain/providers/messages.dart';
 
@@ -8,13 +10,13 @@ import '../../widgets/bars/action_bar.dart';
 import '../../widgets/bars/action_button.dart';
 
 
-class MessagePage extends StatelessWidget {
+class MessagePage extends ConsumerWidget {
 	const MessagePage(this.message);
 
 	final Message message;
 
 	@override
-	Widget build(BuildContext context) {
+	Widget build(BuildContext context, WidgetRef ref) {
 		return Scaffold(body: SafeArea(child: Stack(children: [
 			Center(child: ListView(
 				shrinkWrap: true,
@@ -29,7 +31,7 @@ class MessagePage extends StatelessWidget {
 					const SizedBox(height: 56)
 				]
 			)),
-			if (message.isByUser) ActionBar(children: [
+			if (message.author == ref.watch(userProvider)) ActionBar(children: [
 				Consumer(builder: (context, ref, _) => ActionButton(
 					icon: Icons.delete,
 					action: () => _delete(context, ref)

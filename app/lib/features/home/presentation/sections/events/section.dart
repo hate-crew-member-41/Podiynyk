@@ -19,8 +19,9 @@ class EventsSection extends HomeSection {
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
+		final user = ref.watch(userProvider);
 		final events = ref.watch(eventsProvider)?.where(
-			(e) => e.subject == null || User.studies(e.subject!)
+			(e) => e.subject == null || user.studies(e.subject!)
 		);
 
 		return Scaffold(

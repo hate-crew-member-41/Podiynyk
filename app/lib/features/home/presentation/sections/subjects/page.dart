@@ -24,11 +24,13 @@ class SubjectPage extends ConsumerWidget {
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
+		final user = ref.watch(userProvider);
 		final details = ref.watch(subjectDetailsProviders(subject));
 		final events = ref.watch(eventsProvider)?.where((e) => e.subject == subject);
 
 		final isCommon = subject.isCommon;
-		final isStudied = User.studies(subject);
+		final isStudied = user.studies(subject);
+		final students = details?.students?.where((s) => s.id != user.id);
 
 		return Scaffold(body: DefaultTabController(
 			length: isCommon ? 2 : 3,
@@ -36,9 +38,12 @@ class SubjectPage extends ConsumerWidget {
 				crossAxisAlignment: CrossAxisAlignment.start,
 				children: [
 					SafeArea(child: ActionBar(children: [
+						// think: wrap in a Consumer of the userProvider
 						if (!isCommon) ActionButton(
-							icon: Icons.local_library,  // Icons.airline_seat_individual_suite
-							action: () {}
+							icon: isStudied ?
+								Icons.local_library :
+								Icons.airline_seat_individual_suite,
+							action: () => _setIsStudied(ref, !isStudied)
 						),
 						ActionButton(
 							icon: Icons.delete,
@@ -57,9 +62,10 @@ class SubjectPage extends ConsumerWidget {
 						),
 						if (!isCommon) CountedIcon(
 							icon: Icons.people,
-							count: details?.students!.length
+							count: students?.length
 						)
 					]),
+					// think: wrap in a Consumer of the userProvider
 					Expanded(child: TabBarView(children: [
 						InfoList(
 							details?.info,
@@ -71,11 +77,22 @@ class SubjectPage extends ConsumerWidget {
 							isExtendable: isStudied,
 							showSubjects: false
 						),
-						if (!isCommon) StudentList(details?.students)
+						if (!isCommon) StudentList(students)
 					]))
 				]
 			)
 		));
+	}
+
+	void _setIsStudied(WidgetRef ref, bool isStudied) {
+		final userNotifier = ref.read(userProvider.notifier);
+
+		if (isStudied) {
+			userNotifier.setStudied(subject);
+		}
+		else {
+			userNotifier.setUnstudied(subject);
+		}
 	}
 
 	// do: confirmation, rename

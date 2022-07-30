@@ -87,6 +87,6 @@ Subjects are stored per student in the group's students document.
 
 ## 5 (chosen)
 
-The combination of the two previous options. Each user stores their subjects.
-For a subject to efficiently know it's students and vice versa,
-this data is gathered together in the group's students document.
+The combination of the two previous options. Subjects are stored per student in the group's students document.
+To prevent 2 reads when the app is opened, each user's data is duplicated into their document.
+This option is more than 30 times as effective as the previous one.

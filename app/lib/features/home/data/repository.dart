@@ -15,13 +15,17 @@ import '../domain/entities/subject.dart';
 
 // do: failures
 // do: prevent unnecessary reads
+// do: remove duplication with setting subjects studied/unstudied
 // do: remove duplication with info (adding, reading, referencing subject info)
+// think: define DocumentReference _ref(Document)
 // think: define addEntity, entities, deleteEntity
 class HomeRepository {
 	const HomeRepository();
 
+	final groupId = 'groupId';
+
 	Future<void> addEvent(Event event) async {
-		await Document.events.ref.update({
+		await Document.events.ref(groupId).update({
 			event.id: {
 				Field.name.name: event.name,
 				if (event.subject != null) Field.subject.name: event.subject?.id,
@@ -33,7 +37,7 @@ class HomeRepository {
 	}
 
 	Future<void> addSubject(Subject subject) async {
-		final ref = Document.subjects.ref;
+		final ref = Document.subjects.ref(groupId);
 		await Future.wait([
 			ref.update({
 				subject.id: {
@@ -48,7 +52,7 @@ class HomeRepository {
 	}
 
 	Future<void> addSubjectInfo(Subject subject, Info item) async {
-		await Document.subjects.ref.collection('details').doc(subject.id).update({
+		await Document.subjects.ref(groupId).collection('details').doc(subject.id).update({
 			'${Field.info.name}.${item.id}': {
 				Field.name.name: item.name,
 				Field.content.name: item.content
@@ -57,7 +61,7 @@ class HomeRepository {
 	}
 
 	Future<void> addInfo(Info item) async {
-		await Document.info.ref.update({
+		await Document.info.ref(groupId).update({
 			item.id: {
 				Field.name.name: item.name,
 				Field.content.name: item.content
@@ -66,7 +70,7 @@ class HomeRepository {
 	}
 
 	Future<void> addMessage(Message message) async {
-		await Document.messages.ref.update({
+		await Document.messages.ref(groupId).update({
 			message.id: {
 				Field.name.name: message.name,
 				Field.content.name: message.content,
@@ -80,7 +84,7 @@ class HomeRepository {
 		late final DocumentSnapshot<ObjectMap> snapshot;
 		late final Iterable<Subject> subjects;
 		await Future.wait([
-			Document.events.ref.get().then((s) => snapshot = s),
+			Document.events.ref(groupId).get().then((s) => snapshot = s),
 			this.subjects().then((s) => subjects = s)
 		]);
 
@@ -99,7 +103,7 @@ class HomeRepository {
 	}
 
 	Future<Iterable<Subject>> subjects() async {
-		final snapshot = await Document.subjects.ref.get();
+		final snapshot = await Document.subjects.ref(groupId).get();
 		return snapshot.data()!.entries.map((entry) => Subject(
 			id: entry.key,
 			name: entry.value[Field.name.name],
@@ -111,7 +115,7 @@ class HomeRepository {
 		late final DocumentSnapshot<ObjectMap> snapshot;
 		Iterable<Student>? students;
 		await Future.wait([
-			Document.subjects.ref
+			Document.subjects.ref(groupId)
 				.collection('details').doc(subject.id).get()
 				.then((s) => snapshot = s),
 			if (!subject.isCommon) this.students().then((s) => students = s)
@@ -127,12 +131,12 @@ class HomeRepository {
 
 		return SubjectDetails(
 			info: info,
-			students: students?.where((s) => s.chose(subject))
+			students: students?.where((s) => s.studies(subject))
 		);
 	}
 
 	Future<Iterable<Info>> info() async {
-		final snapshot = await Document.info.ref.get();
+		final snapshot = await Document.info.ref(groupId).get();
 		return snapshot.data()!.entries.map((entry) => Info(
 			id: entry.key,
 			name: entry.value[Field.name.name],
@@ -144,7 +148,7 @@ class HomeRepository {
 		late final DocumentSnapshot<ObjectMap> snapshot;
 		late final Iterable<Student> students;
 		await Future.wait([
-			Document.messages.ref.get().then((s) => snapshot = s),
+			Document.messages.ref(groupId).get().then((s) => snapshot = s),
 			this.students().then((s) => students = s)
 		]);
 
@@ -158,7 +162,7 @@ class HomeRepository {
 	}
 
 	Future<Iterable<Student>> students() async {
-		final snapshot = await Document.students.ref.get();
+		final snapshot = await Document.students.ref(groupId).get();
 		return snapshot.data()!.entries.map((entry) => Student(
 			id: entry.key,
 			name: entry.value[Field.name.name].first,
@@ -167,20 +171,42 @@ class HomeRepository {
 		));
 	}
 
+	Future<void> setStudied(Subject subject, {required Student user}) async {
+		await Future.wait([
+			FirebaseFirestore.instance.collection('users').doc(user.id).update({
+				Field.subjects.name: FieldValue.arrayUnion([subject.id])
+			}),
+			Document.students.ref(groupId).update({
+				'${user.id}.${Field.subjects.name}': FieldValue.arrayUnion([subject.id])
+			})
+		]);
+	}
+
+	Future<void> setUnstudied(Subject subject, {required Student user}) async {
+		await Future.wait([
+			FirebaseFirestore.instance.collection('users').doc(user.id).update({
+				Field.subjects.name: FieldValue.arrayRemove([subject.id])
+			}),
+			Document.students.ref(groupId).update({
+				'${user.id}.${Field.subjects.name}': FieldValue.arrayRemove([subject.id])
+			})
+		]);
+	}
+
 	Future<void> deleteEvent(Event event) async {
-		await Document.events.ref.update({
+		await Document.events.ref(groupId).update({
 			event.id: FieldValue.delete()
 		});
 	}
 
 	Future<void> deleteSubject(Subject subject) async {
-		final eventsRef = Document.events.ref;
+		final eventsRef = Document.events.ref(groupId);
 		final eventsSnapshot = await eventsRef.get();
 		final eventEntries = eventsSnapshot.data()!.entries.where(
 			(e) => e.value[Field.subject.name] == subject.id
 		);
 
-		final subjectsRef = Document.subjects.ref;
+		final subjectsRef = Document.subjects.ref(groupId);
 		await Future.wait([
 			subjectsRef.update({
 				subject.id: FieldValue.delete()
@@ -193,19 +219,19 @@ class HomeRepository {
 	}
 
 	Future<void> deleteSubjectInfo(Subject subject, Info item) async {
-		await Document.subjects.ref.collection('details').doc(subject.id).update({
+		await Document.subjects.ref(groupId).collection('details').doc(subject.id).update({
 			'${Field.info.name}.${item.id}': FieldValue.delete()
 		});
 	}
 
 	Future<void> deleteInfo(Info item) async {
-		await Document.info.ref.update({
+		await Document.info.ref(groupId).update({
 			item.id: FieldValue.delete()
 		});
 	}
 
 	Future<void> deleteMessage(Message message) async {
-		await Document.messages.ref.update({
+		await Document.messages.ref(groupId).update({
 			message.id: FieldValue.delete()
 		});
 	}

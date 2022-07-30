@@ -42,12 +42,18 @@ class MessageForm extends HookConsumerWidget {
 		// do: inform the user
 		if (name.isEmpty || content.isEmpty) return;
 
+		final user = ref.read(userProvider);
 		// think: await to show success or a failure
 		ref.read(messagesProvider.notifier).add(Message(
 			id: Entity.newId(),
 			name: name,
 			content: content,
-			author: const Student.user(),
+			author: Student(
+				id: user.id,
+				name: user.name,
+				surname: user.surname,
+				chosenSubjectIds: user.chosenSubjectIds
+			),
 			date: Date.now()
 		));
 		Navigator.of(context).pop();

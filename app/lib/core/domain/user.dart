@@ -1,16 +1,40 @@
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+import 'package:podiinyk/features/home/data/repository.dart';
+import 'package:podiinyk/features/home/domain/entities/student.dart';
 import 'package:podiinyk/features/home/domain/entities/subject.dart';
 
 
-// do: change after authentication
-class User {
-	static const id = 'userId';
-	static const name = 'Name';
-	static const surname = 'Surname';
-	static const groupId = 'groupId';
-	// think: rename
-	static const chosenSubjectIds = <String>{};
+class UserNotifier extends StateNotifier<Student> {
+	UserNotifier({required this.repository}): super(const Student(
+		id: 'userId',
+		name: 'Name',
+		surname: 'Surname',
+		chosenSubjectIds: <String>{}
+	));
 
-	static bool studies(Subject subject) {
-		return subject.isCommon || chosenSubjectIds.contains(subject.id);
+	final HomeRepository repository;
+
+	Future<void> setStudied(Subject subject) async {
+		await repository.setStudied(subject, user: state);
+		_updateStudied(state.chosenSubjectIds.toSet()..add(subject.id));
+	}
+
+	Future<void> setUnstudied(Subject subject) async {
+		await repository.setUnstudied(subject, user: state);
+		_updateStudied(state.chosenSubjectIds.toSet()..remove(subject.id));
+	}
+
+	void _updateStudied(Set<String> ids) {
+		state = Student(
+			id: state.id,
+			name: state.name,
+			surname: state.surname,
+			chosenSubjectIds: ids
+		);
 	}
 }
+
+final userProvider = StateNotifierProvider<UserNotifier, Student>((ref) {
+	return UserNotifier(repository: ref.watch(homeRepositoryProvider));
+});
