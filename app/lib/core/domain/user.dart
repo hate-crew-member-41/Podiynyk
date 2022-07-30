@@ -16,12 +16,12 @@ class UserNotifier extends StateNotifier<Student> {
 	final HomeRepository repository;
 
 	Future<void> setStudied(Subject subject) async {
-		await repository.setStudied(subject, user: state);
+		await repository.setSubjectStudied(subject, user: state);
 		_updateStudied(state.chosenSubjectIds.toSet()..add(subject.id));
 	}
 
 	Future<void> setUnstudied(Subject subject) async {
-		await repository.setUnstudied(subject, user: state);
+		await repository.setSubjectUnstudied(subject, user: state);
 		_updateStudied(state.chosenSubjectIds.toSet()..remove(subject.id));
 	}
 
@@ -35,6 +35,6 @@ class UserNotifier extends StateNotifier<Student> {
 	}
 }
 
-final userProvider = StateNotifierProvider<UserNotifier, Student>((ref) {
-	return UserNotifier(repository: ref.watch(homeRepositoryProvider));
-});
+final userProvider = StateNotifierProvider<UserNotifier, Student>(
+	(ref) => UserNotifier(repository: ref.watch(homeRepositoryProvider))
+);

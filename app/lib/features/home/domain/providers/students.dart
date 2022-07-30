@@ -12,6 +12,6 @@ class StudentsNotifier extends StateNotifier<List<Student>?> {
 	final HomeRepository repository;
 }
 
-final studentsProvider = StateNotifierProvider<StudentsNotifier, List<Student>?>((ref) {
-	return StudentsNotifier(repository: ref.watch(homeRepositoryProvider));
-});
+final studentsProvider = StateNotifierProvider<StudentsNotifier, List<Student>?>(
+	(ref) => StudentsNotifier(repository: ref.watch(homeRepositoryProvider))
+);

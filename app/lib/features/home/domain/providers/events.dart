@@ -23,6 +23,6 @@ class EventsNotifier extends StateNotifier<List<Event>?> {
 	}
 }
 
-final eventsProvider = StateNotifierProvider<EventsNotifier, List<Event>?>((ref) {
-	return EventsNotifier(repository: ref.watch(homeRepositoryProvider));
-});
+final eventsProvider = StateNotifierProvider<EventsNotifier, List<Event>?>(
+	(ref) => EventsNotifier(repository: ref.watch(homeRepositoryProvider))
+);

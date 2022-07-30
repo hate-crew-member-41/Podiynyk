@@ -22,6 +22,6 @@ class MessagesNotifier extends StateNotifier<List<Message>?> {
 	}
 }
 
-final messagesProvider = StateNotifierProvider<MessagesNotifier, List<Message>?>((ref) {
-	return MessagesNotifier(repository: ref.watch(homeRepositoryProvider));
-});
+final messagesProvider = StateNotifierProvider<MessagesNotifier, List<Message>?>(
+	(ref) => MessagesNotifier(repository: ref.watch(homeRepositoryProvider))
+);

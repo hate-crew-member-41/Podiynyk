@@ -22,6 +22,6 @@ class InfoNotifier extends StateNotifier<List<Info>?> {
 	}
 }
 
-final infoProvider = StateNotifierProvider<InfoNotifier, List<Info>?>((ref) {
-	return InfoNotifier(repository: ref.watch(homeRepositoryProvider));
-});
+final infoProvider = StateNotifierProvider<InfoNotifier, List<Info>?>(
+	(ref) => InfoNotifier(repository: ref.watch(homeRepositoryProvider))
+);

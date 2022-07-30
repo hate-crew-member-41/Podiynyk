@@ -23,9 +23,9 @@ class SubjectsNotifier extends StateNotifier<List<Subject>?> {
 	}
 }
 
-final subjectsProvider = StateNotifierProvider<SubjectsNotifier, List<Subject>?>((ref) {
-	return SubjectsNotifier(repository: ref.watch(homeRepositoryProvider));
-});
+final subjectsProvider = StateNotifierProvider<SubjectsNotifier, List<Subject>?>(
+	(ref) => SubjectsNotifier(repository: ref.watch(homeRepositoryProvider))
+);
 
 
 class SubjectInfoNotifier extends StateNotifier<SubjectDetails?> {
@@ -50,6 +50,6 @@ class SubjectInfoNotifier extends StateNotifier<SubjectDetails?> {
 	}
 }
 
-final subjectDetailsProviders = StateNotifierProvider.family<SubjectInfoNotifier, SubjectDetails?, Subject>((ref, subject) {
-	return SubjectInfoNotifier(subject, repository: ref.watch(homeRepositoryProvider));
-});
+final subjectDetailsProviders = StateNotifierProvider.family<SubjectInfoNotifier, SubjectDetails?, Subject>(
+	(ref, subject) => SubjectInfoNotifier(subject, repository: ref.watch(homeRepositoryProvider))
+);

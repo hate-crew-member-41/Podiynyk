@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:podiinyk/core/data/types/document.dart';
 import 'package:podiinyk/core/data/types/field.dart';
 import 'package:podiinyk/core/data/types/object_map.dart';
 import 'package:podiinyk/core/domain/types/date.dart';
@@ -12,20 +11,20 @@ import '../domain/entities/message.dart';
 import '../domain/entities/student.dart';
 import '../domain/entities/subject.dart';
 
+import 'document.dart';
+
 
 // do: failures
 // do: prevent unnecessary reads
-// do: remove duplication with setting subjects studied/unstudied
 // do: remove duplication with info (adding, reading, referencing subject info)
-// think: define DocumentReference _ref(Document)
-// think: define addEntity, entities, deleteEntity
+// think: define addEntity, entities, setSubjectIsStudied, deleteEntity
 class HomeRepository {
 	const HomeRepository();
 
 	final groupId = 'groupId';
 
 	Future<void> addEvent(Event event) async {
-		await Document.events.ref(groupId).update({
+		await _ref(Document.events).update({
 			event.id: {
 				Field.name.name: event.name,
 				if (event.subject != null) Field.subject.name: event.subject?.id,
@@ -37,22 +36,21 @@ class HomeRepository {
 	}
 
 	Future<void> addSubject(Subject subject) async {
-		final ref = Document.subjects.ref(groupId);
 		await Future.wait([
-			ref.update({
+			_ref(Document.subjects).update({
 				subject.id: {
 					Field.name.name: subject.name,
 					Field.isCommon.name: subject.isCommon
 				}
 			}),
-			ref.collection('details').doc(subject.id).set({
+			_subjectDetailsRef(subject).set({
 				Field.info.name: const <String, ObjectMap>{}
 			})
 		]);
 	}
 
 	Future<void> addSubjectInfo(Subject subject, Info item) async {
-		await Document.subjects.ref(groupId).collection('details').doc(subject.id).update({
+		await _subjectDetailsRef(subject).update({
 			'${Field.info.name}.${item.id}': {
 				Field.name.name: item.name,
 				Field.content.name: item.content
@@ -61,7 +59,7 @@ class HomeRepository {
 	}
 
 	Future<void> addInfo(Info item) async {
-		await Document.info.ref(groupId).update({
+		await _ref(Document.info).update({
 			item.id: {
 				Field.name.name: item.name,
 				Field.content.name: item.content
@@ -70,7 +68,7 @@ class HomeRepository {
 	}
 
 	Future<void> addMessage(Message message) async {
-		await Document.messages.ref(groupId).update({
+		await _ref(Document.messages).update({
 			message.id: {
 				Field.name.name: message.name,
 				Field.content.name: message.content,
@@ -84,7 +82,7 @@ class HomeRepository {
 		late final DocumentSnapshot<ObjectMap> snapshot;
 		late final Iterable<Subject> subjects;
 		await Future.wait([
-			Document.events.ref(groupId).get().then((s) => snapshot = s),
+			_ref(Document.events).get().then((s) => snapshot = s),
 			this.subjects().then((s) => subjects = s)
 		]);
 
@@ -103,7 +101,7 @@ class HomeRepository {
 	}
 
 	Future<Iterable<Subject>> subjects() async {
-		final snapshot = await Document.subjects.ref(groupId).get();
+		final snapshot = await _ref(Document.subjects).get();
 		return snapshot.data()!.entries.map((entry) => Subject(
 			id: entry.key,
 			name: entry.value[Field.name.name],
@@ -115,9 +113,7 @@ class HomeRepository {
 		late final DocumentSnapshot<ObjectMap> snapshot;
 		Iterable<Student>? students;
 		await Future.wait([
-			Document.subjects.ref(groupId)
-				.collection('details').doc(subject.id).get()
-				.then((s) => snapshot = s),
+			_subjectDetailsRef(subject).get().then((s) => snapshot = s),
 			if (!subject.isCommon) this.students().then((s) => students = s)
 		]);
 
@@ -136,7 +132,7 @@ class HomeRepository {
 	}
 
 	Future<Iterable<Info>> info() async {
-		final snapshot = await Document.info.ref(groupId).get();
+		final snapshot = await _ref(Document.info).get();
 		return snapshot.data()!.entries.map((entry) => Info(
 			id: entry.key,
 			name: entry.value[Field.name.name],
@@ -148,7 +144,7 @@ class HomeRepository {
 		late final DocumentSnapshot<ObjectMap> snapshot;
 		late final Iterable<Student> students;
 		await Future.wait([
-			Document.messages.ref(groupId).get().then((s) => snapshot = s),
+			_ref(Document.messages).get().then((s) => snapshot = s),
 			this.students().then((s) => students = s)
 		]);
 
@@ -162,7 +158,7 @@ class HomeRepository {
 	}
 
 	Future<Iterable<Student>> students() async {
-		final snapshot = await Document.students.ref(groupId).get();
+		final snapshot = await _ref(Document.students).get();
 		return snapshot.data()!.entries.map((entry) => Student(
 			id: entry.key,
 			name: entry.value[Field.name.name].first,
@@ -171,47 +167,46 @@ class HomeRepository {
 		));
 	}
 
-	Future<void> setStudied(Subject subject, {required Student user}) async {
+	Future<void> setSubjectStudied(Subject subject, {required Student user}) async {
 		await Future.wait([
-			FirebaseFirestore.instance.collection('users').doc(user.id).update({
+			_userRef(user).update({
 				Field.subjects.name: FieldValue.arrayUnion([subject.id])
 			}),
-			Document.students.ref(groupId).update({
+			_ref(Document.students).update({
 				'${user.id}.${Field.subjects.name}': FieldValue.arrayUnion([subject.id])
 			})
 		]);
 	}
 
-	Future<void> setUnstudied(Subject subject, {required Student user}) async {
+	Future<void> setSubjectUnstudied(Subject subject, {required Student user}) async {
 		await Future.wait([
-			FirebaseFirestore.instance.collection('users').doc(user.id).update({
+			_userRef(user).update({
 				Field.subjects.name: FieldValue.arrayRemove([subject.id])
 			}),
-			Document.students.ref(groupId).update({
+			_ref(Document.students).update({
 				'${user.id}.${Field.subjects.name}': FieldValue.arrayRemove([subject.id])
 			})
 		]);
 	}
 
 	Future<void> deleteEvent(Event event) async {
-		await Document.events.ref(groupId).update({
+		await _ref(Document.events).update({
 			event.id: FieldValue.delete()
 		});
 	}
 
 	Future<void> deleteSubject(Subject subject) async {
-		final eventsRef = Document.events.ref(groupId);
+		final eventsRef = _ref(Document.events);
 		final eventsSnapshot = await eventsRef.get();
 		final eventEntries = eventsSnapshot.data()!.entries.where(
 			(e) => e.value[Field.subject.name] == subject.id
 		);
 
-		final subjectsRef = Document.subjects.ref(groupId);
 		await Future.wait([
-			subjectsRef.update({
+			_ref(Document.subjects).update({
 				subject.id: FieldValue.delete()
 			}),
-			subjectsRef.collection('details').doc(subject.id).delete(),
+			_subjectDetailsRef(subject).delete(),
 			eventsRef.update({
 				for (final entry in eventEntries) entry.key: FieldValue.delete()
 			})
@@ -219,21 +214,34 @@ class HomeRepository {
 	}
 
 	Future<void> deleteSubjectInfo(Subject subject, Info item) async {
-		await Document.subjects.ref(groupId).collection('details').doc(subject.id).update({
+		await _subjectDetailsRef(subject).update({
 			'${Field.info.name}.${item.id}': FieldValue.delete()
 		});
 	}
 
 	Future<void> deleteInfo(Info item) async {
-		await Document.info.ref(groupId).update({
+		await _ref(Document.info).update({
 			item.id: FieldValue.delete()
 		});
 	}
 
 	Future<void> deleteMessage(Message message) async {
-		await Document.messages.ref(groupId).update({
+		await _ref(Document.messages).update({
 			message.id: FieldValue.delete()
 		});
+	}
+
+	DocumentReference<ObjectMap> _ref(Document doc) {
+		return FirebaseFirestore.instance.collection(doc.name).doc(groupId);
+	}
+
+	DocumentReference<ObjectMap> _subjectDetailsRef(Subject subject) {
+		return _ref(Document.subjects).collection('details').doc(subject.id);
+	}
+
+	// do: move to a separate core function after authentication
+	DocumentReference<ObjectMap> _userRef(Student user) {
+		return FirebaseFirestore.instance.collection('users').doc(user.id);
 	}
 }
 
