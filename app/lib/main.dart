@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'features/authentication/presentation/authentication.dart';
 import 'features/entering_group/entering_group.dart';
 import 'features/home/presentation/home.dart';
-import 'features/loading/presentation/loading.dart';
+import 'features/loading/loading.dart';
 
 
 void main() async {

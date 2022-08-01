@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+import 'package:podiinyk/main.dart';
 
 import 'sections/events/section.dart';
 import 'sections/students/section.dart';
@@ -24,16 +27,24 @@ class Home extends ConsumerWidget {
 				shrinkWrap: true,
 				// do: arrange
 				// do: take the values from the theme
-				children: const [
+				children: [
 					// think: show today's date instead
-					Icon(Icons.all_inclusive),
-					SizedBox(height: 56),
-					DrawerTile(EventsSection()),
-					DrawerTile(SubjectsSection()),
-					DrawerTile(SeparateSection()),
-					SizedBox(height: 56),
-					DrawerTile(MessagesSection()),
-					DrawerTile(StudentsSection())
+					const Icon(Icons.all_inclusive),
+					const SizedBox(height: 56),
+					const DrawerTile(EventsSection()),
+					const DrawerTile(SubjectsSection()),
+					const DrawerTile(SeparateSection()),
+					const SizedBox(height: 56),
+					const DrawerTile(MessagesSection()),
+					const DrawerTile(StudentsSection()),
+					// do: remove
+					ListTile(
+						title: const Text('sign out'),
+						onTap: () async {
+							await FirebaseAuth.instance.signOut();
+							ref.read(appStateProvider.notifier).state = AppState.auth;
+						}
+					)
 				]
 			))),
 			drawerEdgeDragWidth: 80

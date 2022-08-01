@@ -9,7 +9,7 @@ import 'package:podiinyk/main.dart';
 import 'package:podiinyk/core/data/firebase_options.dart';
 import 'package:podiinyk/core/domain/user.dart';
 
-import '../data/repository.dart';
+import 'package:podiinyk/features/authentication/data/repository.dart';
 
 
 class Loading extends ConsumerWidget {
@@ -28,15 +28,17 @@ class Loading extends ConsumerWidget {
 		await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
 		final authUser = FirebaseAuth.instance.currentUser;
-		final app = ref.read(appStateProvider.notifier);
+		final AppState appState;
 
 		if (authUser != null) {
-			final user = await ref.watch(loadingRepositoryProvider).user(authUser.uid);
+			final user = await ref.watch(authRepositoryProvider).user(authUser.uid);
 			ref.read(initialUserProvider.notifier).state = user;
-			app.state = AppState.home;	
+			appState = AppState.home;	
 		}
 		else {
-			app.state = AppState.auth;
+			appState = AppState.auth;
 		}
+
+		ref.read(appStateProvider.notifier).state = appState;
 	}
 }
