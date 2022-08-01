@@ -19,7 +19,7 @@ import '../../widgets/fields/option_field.dart';
 // 		EventForm relies on subjectsProvider to have been accessed
 //		EventsPage reads events from HomeRepository, not subjectsProvider
 // 		fix this after the data layer is improved
-// do: TextField.(textInputAction, multiline)
+// do: TextField.(textInputType, multiline, textInputAction)
 // think: define EntityForm
 class EventForm extends HookConsumerWidget {
 	const EventForm();

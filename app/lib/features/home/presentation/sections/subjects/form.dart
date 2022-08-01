@@ -9,7 +9,7 @@ import '../../../domain/providers/subjects.dart';
 import '../../widgets/fields/option_field.dart';
 
 
-// do: TextField.textInputAction
+// do: TextField.(textInputType, textInputAction)
 class SubjectForm extends HookConsumerWidget {
 	const SubjectForm();
 

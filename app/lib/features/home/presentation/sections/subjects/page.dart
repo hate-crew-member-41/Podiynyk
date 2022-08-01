@@ -38,6 +38,7 @@ class SubjectPage extends ConsumerWidget {
 				crossAxisAlignment: CrossAxisAlignment.start,
 				children: [
 					SafeArea(child: ActionBar(children: [
+						// do: inform about the Future
 						// think: wrap in a Consumer of the userProvider
 						if (!isCommon) ActionButton(
 							icon: isStudied ?

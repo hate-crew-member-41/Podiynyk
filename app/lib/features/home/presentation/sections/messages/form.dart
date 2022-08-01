@@ -11,7 +11,7 @@ import '../../../domain/entities/student.dart';
 import '../../../domain/providers/messages.dart';
 
 
-// do: TextField.textInputAction
+// do: TextField.(textInputType, multiline, textInputAction)
 class MessageForm extends HookConsumerWidget {
 	const MessageForm();
 
@@ -52,7 +52,7 @@ class MessageForm extends HookConsumerWidget {
 				id: user.id,
 				name: user.name,
 				surname: user.surname,
-				chosenSubjectIds: user.chosenSubjectIds
+				chosenSubjectIds: user.chosenSubjectIds!
 			),
 			date: Date.now()
 		));

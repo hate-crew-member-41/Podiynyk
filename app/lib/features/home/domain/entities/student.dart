@@ -11,16 +11,15 @@ class Student extends Entity {
 	}) :
 		super(id: id);
 
+	// think: rename to first, last
 	final String name;
 	final String surname;
-	// think: remove after the data layer is improved
+	// think: remove after the data layer is improved (only include this in the StudentDetails)
 	final Set<String> chosenSubjectIds;
 
 	String get fullName => '$name $surname';
 
-	bool studies(Subject subject) {
-		return subject.isCommon || chosenSubjectIds.contains(subject.id);
-	}
+	bool chose(Subject subject) => chosenSubjectIds.contains(subject.id);
 
 	@override
 	int compareTo(covariant Student other) => surname.compareTo(other.surname);

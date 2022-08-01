@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:podiinyk/core/presentation/open_page.dart';
 
 
+// think: redefine
 class OptionField<O> extends HookWidget {
 	const OptionField({
 		required this.label,

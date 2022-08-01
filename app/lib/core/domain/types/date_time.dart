@@ -23,7 +23,13 @@ extension DateTimeExtension on DateTime {
 
 	DateTime latest(DateTime other) => other.isAfter(this) ? other : this;
 
-	DateTime copyWith({int? year, int? month, int? day, int? hour, int? minute}) => DateTime(
+	DateTime copyWith({
+		int? year,
+		int? month,
+		int? day,
+		int? hour,
+		int? minute
+	}) => DateTime(
 		year ?? this.year,
 		month ?? this.month,
 		day ?? this.day,

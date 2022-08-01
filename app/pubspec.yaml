@@ -18,7 +18,9 @@ dependencies:
   hooks_riverpod: ^1.0.4
 
   cloud_firestore: ^3.2.1
+  firebase_auth: ^3.6.1
   firebase_core: ^1.19.1
+  google_sign_in: ^5.4.0
 
 dev_dependencies:
   flutter_lints: ^2.0.0

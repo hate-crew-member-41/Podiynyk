@@ -2,6 +2,7 @@ enum Field {
 	author,
 	content,
 	date,
+	groupId,
 	hasTime,
 	id,
 	info,

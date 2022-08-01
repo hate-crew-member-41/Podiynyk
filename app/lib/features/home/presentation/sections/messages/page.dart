@@ -31,7 +31,7 @@ class MessagePage extends ConsumerWidget {
 					const SizedBox(height: 56)
 				]
 			)),
-			if (message.author == ref.watch(userProvider)) ActionBar(children: [
+			if (ref.watch(userProvider).isAuthor(message)) ActionBar(children: [
 				Consumer(builder: (context, ref, _) => ActionButton(
 					icon: Icons.delete,
 					action: () => _delete(context, ref)

@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import 'package:podiinyk/core/data/functions/user_doc_ref.dart';
 import 'package:podiinyk/core/data/types/field.dart';
 import 'package:podiinyk/core/data/types/object_map.dart';
 import 'package:podiinyk/core/domain/types/date.dart';
+import 'package:podiinyk/core/domain/user.dart';
 
 import '../domain/entities/event.dart';
 import '../domain/entities/info.dart';
@@ -19,9 +21,9 @@ import 'document.dart';
 // do: remove duplication with info (adding, reading, referencing subject info)
 // think: define addEntity, entities, setSubjectIsStudied, deleteEntity
 class HomeRepository {
-	const HomeRepository();
+	const HomeRepository({required this.groupId});
 
-	final groupId = 'groupId';
+	final String groupId;
 
 	Future<void> addEvent(Event event) async {
 		await _ref(Document.events).update({
@@ -127,7 +129,7 @@ class HomeRepository {
 
 		return SubjectDetails(
 			info: info,
-			students: students?.where((s) => s.studies(subject))
+			students: students?.where((s) => s.chose(subject))
 		);
 	}
 
@@ -167,9 +169,9 @@ class HomeRepository {
 		));
 	}
 
-	Future<void> setSubjectStudied(Subject subject, {required Student user}) async {
+	Future<void> setSubjectStudied(Subject subject, {required StudentUser user}) async {
 		await Future.wait([
-			_userRef(user).update({
+			userDocRef(user.id).update({
 				Field.subjects.name: FieldValue.arrayUnion([subject.id])
 			}),
 			_ref(Document.students).update({
@@ -178,9 +180,9 @@ class HomeRepository {
 		]);
 	}
 
-	Future<void> setSubjectUnstudied(Subject subject, {required Student user}) async {
+	Future<void> setSubjectUnstudied(Subject subject, {required StudentUser user}) async {
 		await Future.wait([
-			_userRef(user).update({
+			userDocRef(user.id).update({
 				Field.subjects.name: FieldValue.arrayRemove([subject.id])
 			}),
 			_ref(Document.students).update({
@@ -238,13 +240,8 @@ class HomeRepository {
 	DocumentReference<ObjectMap> _subjectDetailsRef(Subject subject) {
 		return _ref(Document.subjects).collection('details').doc(subject.id);
 	}
-
-	// do: move to a separate core function after authentication
-	DocumentReference<ObjectMap> _userRef(Student user) {
-		return FirebaseFirestore.instance.collection('users').doc(user.id);
-	}
 }
 
 final homeRepositoryProvider = Provider<HomeRepository>(
-	(ref) => const HomeRepository()
+	(ref) => HomeRepository(groupId: ref.watch(initialUserProvider)!.groupId!)
 );
