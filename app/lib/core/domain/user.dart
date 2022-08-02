@@ -1,8 +1,9 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:podiinyk/features/home/data/repository.dart';
 import 'package:podiinyk/features/home/domain/entities/message.dart';
 import 'package:podiinyk/features/home/domain/entities/subject.dart';
+
+import '../data/user_repository.dart';
 
 
 class StudentUser {
@@ -25,6 +26,17 @@ class StudentUser {
 	}
 
 	bool isAuthor(Message message) => id == message.author.id;
+
+	StudentUser copyWith({
+		String? groupId,
+		Set<String>? chosenSubjectIds
+	}) => StudentUser(
+		id: id,
+		name: name,
+		surname: surname,
+		groupId: groupId ?? this.groupId,
+		chosenSubjectIds: chosenSubjectIds ?? this.chosenSubjectIds
+	);
 }
 
 
@@ -40,32 +52,43 @@ class UserNotifier extends StateNotifier<StudentUser> {
 	}) :
 		super(initial);
 
-	final HomeRepository repository;
+	final UserRepository repository;
+
+	Future<void> enterNewGroup() async {
+		// do: change
+		final groupId = DateTime.now().microsecondsSinceEpoch.toString();
+		final user = state.copyWith(
+			groupId: groupId,
+			chosenSubjectIds: const <String>{}
+		);
+
+		await repository.initGroup(user: user);
+		state = user;
+	}
 
 	Future<void> setStudied(Subject subject) async {
 		await repository.setSubjectStudied(subject, user: state);
-		_updateStudied(state.chosenSubjectIds!.toSet()..add(subject.id));
+		state = state.copyWith(
+			chosenSubjectIds: state.chosenSubjectIds!.toSet()..add(subject.id)
+		);
 	}
 
 	Future<void> setUnstudied(Subject subject) async {
 		await repository.setSubjectUnstudied(subject, user: state);
-		_updateStudied(state.chosenSubjectIds!.toSet()..remove(subject.id));
+		state = state.copyWith(
+			chosenSubjectIds: state.chosenSubjectIds!.toSet()..remove(subject.id)
+		);
 	}
 
-	void _updateStudied(Set<String> ids) {
-		state = StudentUser(
-			id: state.id,
-			name: state.name,
-			surname: state.surname,
-			groupId: state.groupId,
-			chosenSubjectIds: ids
-		);
+	Future<void> leave() async {
+		await repository.leaveGroup(user: state);
+		state = state.copyWith(groupId: null, chosenSubjectIds: null);
 	}
 }
 
 final userProvider = StateNotifierProvider<UserNotifier, StudentUser>(
 	(ref) => UserNotifier(
 		initial: ref.watch(initialUserProvider)!,
-		repository: ref.watch(homeRepositoryProvider)
+		repository: ref.watch(userRepositoryProvider)
 	)
 );

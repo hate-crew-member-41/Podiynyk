@@ -10,5 +10,5 @@ enum Field {
 	name,
 	note,
 	subject,
-	subjects
+	chosenSubjects
 }

@@ -1,8 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-import 'package:podiinyk/main.dart';
 
 import 'sections/events/section.dart';
 import 'sections/students/section.dart';
@@ -12,6 +9,11 @@ import 'sections/subjects/section.dart';
 
 import 'widgets/tiles/drawer_tile.dart';
 import 'state.dart';
+
+// do: remove
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:podiinyk/core/domain/user.dart';
+import 'package:podiinyk/main.dart';
 
 
 class Home extends ConsumerWidget {
@@ -38,8 +40,18 @@ class Home extends ConsumerWidget {
 					const DrawerTile(MessagesSection()),
 					const DrawerTile(StudentsSection()),
 					// do: remove
+					const SizedBox(height: 56),
 					ListTile(
-						title: const Text('sign out'),
+						leading: const Icon(Icons.business),
+						title: const Text("change group"),
+						onTap: () async {
+							await ref.read(userProvider.notifier).leave();
+							ref.read(appStateProvider.notifier).state = AppState.identification;
+						}
+					),
+					ListTile(
+						leading: const Icon(Icons.compare_arrows),
+						title: const Text("sign out"),
 						onTap: () async {
 							await FirebaseAuth.instance.signOut();
 							ref.read(appStateProvider.notifier).state = AppState.auth;

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:podiinyk/core/data/functions/user_doc_ref.dart';
+import 'package:podiinyk/core/data/types/document.dart';
 import 'package:podiinyk/core/data/types/field.dart';
 import 'package:podiinyk/core/data/types/object_map.dart';
 import 'package:podiinyk/core/domain/types/date.dart';
@@ -12,8 +12,6 @@ import '../domain/entities/info.dart';
 import '../domain/entities/message.dart';
 import '../domain/entities/student.dart';
 import '../domain/entities/subject.dart';
-
-import 'document.dart';
 
 
 // do: failures
@@ -165,30 +163,8 @@ class HomeRepository {
 			id: entry.key,
 			name: entry.value[Field.name.name].first,
 			surname: entry.value[Field.name.name].last,
-			chosenSubjectIds: Set<String>.from(entry.value[Field.subjects.name])
+			chosenSubjectIds: Set<String>.from(entry.value[Field.chosenSubjects.name])
 		));
-	}
-
-	Future<void> setSubjectStudied(Subject subject, {required StudentUser user}) async {
-		await Future.wait([
-			userDocRef(user.id).update({
-				Field.subjects.name: FieldValue.arrayUnion([subject.id])
-			}),
-			_ref(Document.students).update({
-				'${user.id}.${Field.subjects.name}': FieldValue.arrayUnion([subject.id])
-			})
-		]);
-	}
-
-	Future<void> setSubjectUnstudied(Subject subject, {required StudentUser user}) async {
-		await Future.wait([
-			userDocRef(user.id).update({
-				Field.subjects.name: FieldValue.arrayRemove([subject.id])
-			}),
-			_ref(Document.students).update({
-				'${user.id}.${Field.subjects.name}': FieldValue.arrayRemove([subject.id])
-			})
-		]);
 	}
 
 	Future<void> deleteEvent(Event event) async {
@@ -233,9 +209,7 @@ class HomeRepository {
 		});
 	}
 
-	DocumentReference<ObjectMap> _ref(Document doc) {
-		return FirebaseFirestore.instance.collection(doc.name).doc(groupId);
-	}
+	DocumentReference<ObjectMap> _ref(Document document) => document.ref(groupId);
 
 	DocumentReference<ObjectMap> _subjectDetailsRef(Subject subject) {
 		return _ref(Document.subjects).collection('details').doc(subject.id);
@@ -243,5 +217,5 @@ class HomeRepository {
 }
 
 final homeRepositoryProvider = Provider<HomeRepository>(
-	(ref) => HomeRepository(groupId: ref.watch(initialUserProvider)!.groupId!)
+	(ref) => HomeRepository(groupId: ref.watch(userProvider).groupId!)
 );

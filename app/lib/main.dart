@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'features/authentication/presentation/authentication.dart';
-import 'features/entering_group/entering_group.dart';
+import 'features/authentication/authentication.dart';
 import 'features/home/presentation/home.dart';
+import 'features/identification/identification.dart';
 import 'features/loading/loading.dart';
 
 
@@ -15,7 +15,7 @@ void main() async {
 enum AppState {
 	loading,
 	auth,
-	enteringGroup,
+	identification,
 	home
 }
 
@@ -40,8 +40,8 @@ class App extends StatelessWidget {
 						return const Loading();
 					case AppState.auth:
 						return const Authentication();
-					case AppState.enteringGroup:
-						return const EnteringGroup();
+					case AppState.identification:
+						return const Identification();
 					case AppState.home:
 						return const Home();
 				}

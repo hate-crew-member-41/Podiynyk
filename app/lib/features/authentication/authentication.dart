@@ -5,12 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:podiinyk/main.dart';
+import 'package:podiinyk/core/data/user_repository.dart';
 import 'package:podiinyk/core/domain/user.dart';
 
-import '../data/repository.dart';
 
-
-// do: implement signing up with Apple
 // think: show a page with the inferred name after signing up
 class Authentication extends ConsumerWidget {
 	const Authentication();
@@ -26,12 +24,13 @@ class Authentication extends ConsumerWidget {
 					mainAxisAlignment: MainAxisAlignment.spaceAround,
 					children: [
 						TextButton(
-							child: const Text('Google'),
-							onPressed: () => _signInWithGoogle(ref)
+							// fix: block multiple attempts
+							onPressed: () => _signInWithGoogle(ref),
+							child: const Text('Google')
 						),
-						TextButton(
-							child: const Text('Apple'),
-							onPressed: () {}
+						const TextButton(
+							onPressed: null,
+							child: Text('Apple')
 						)
 					]
 				)
@@ -53,26 +52,27 @@ class Authentication extends ConsumerWidget {
 		final cred = await FirebaseAuth.instance.signInWithCredential(authCred);
 
 		final userId = cred.user!.uid;
-		final authRepository = ref.read(authRepositoryProvider);
+		final userRepository = ref.read(userRepositoryProvider);
 		final StudentUser user;
+		final AppState appState;
 
 		if (cred.additionalUserInfo!.isNewUser) {
 			user = StudentUser(
 				id: userId,
 				// do: try to infer the actual values
 				name: account.displayName ?? '',
-				surname: '',
-				// do: remove after EnteringGroup is implemented
-				groupId: 'groupId',
-				chosenSubjectIds: <String>{}
+				surname: ''
 			);
-			await authRepository.initUser(user);
+			await userRepository.initUser(user);
+
+			appState = AppState.identification;
 		}
 		else {
-			user = await authRepository.user(userId);
+			user = await userRepository.user(userId);
+			appState = user.groupId != null ? AppState.home : AppState.identification;
 		}
 
 		ref.read(initialUserProvider.notifier).state = user;
-		ref.read(appStateProvider.notifier).state = AppState.home;
+		ref.read(appStateProvider.notifier).state = appState;
 	}
 }
