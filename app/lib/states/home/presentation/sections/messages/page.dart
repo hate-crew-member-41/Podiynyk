@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:podiinyk/core/domain/user.dart';
+import 'package:podiinyk/core/domain/user/state.dart';
 
 import '../../../domain/entities/message.dart';
 import '../../../domain/providers/messages.dart';

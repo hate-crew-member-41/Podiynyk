@@ -6,7 +6,7 @@ import 'widgets/tiles/drawer_tile.dart';
 
 // do: remove
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:podiinyk/core/domain/user.dart';
+import 'package:podiinyk/core/domain/user/state.dart';
 import 'package:podiinyk/main.dart';
 
 

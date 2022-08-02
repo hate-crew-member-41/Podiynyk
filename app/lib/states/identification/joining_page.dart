@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiinyk/main.dart';
-import 'package:podiinyk/core/domain/user.dart';
+import 'package:podiinyk/core/domain/user/state.dart';
 
 
 class JoiningPage extends HookConsumerWidget {

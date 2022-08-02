@@ -5,7 +5,7 @@ import 'package:podiinyk/core/data/types/document.dart';
 import 'package:podiinyk/core/data/types/field.dart';
 import 'package:podiinyk/core/data/types/object_map.dart';
 import 'package:podiinyk/core/domain/types/date.dart';
-import 'package:podiinyk/core/domain/user.dart';
+import 'package:podiinyk/core/domain/user/state.dart';
 
 import '../domain/entities/event.dart';
 import '../domain/entities/info.dart';

@@ -8,7 +8,7 @@ import 'package:podiinyk/main.dart';
 
 import 'package:podiinyk/core/data/firebase_options.dart';
 import 'package:podiinyk/core/data/user_repository.dart';
-import 'package:podiinyk/core/domain/user.dart';
+import 'package:podiinyk/core/domain/user/state.dart';
 
 
 class Loading extends ConsumerWidget {

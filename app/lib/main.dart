@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'features/authentication/authentication.dart';
-import 'features/home/presentation/home.dart';
-import 'features/identification/identification.dart';
-import 'features/loading/loading.dart';
+import 'states/authentication/authentication.dart';
+import 'states/home/presentation/home.dart';
+import 'states/identification/identification.dart';
+import 'states/loading/loading.dart';
 
 
 void main() async {

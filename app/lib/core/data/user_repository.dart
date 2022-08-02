@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:podiinyk/features/home/domain/entities/subject.dart';
-
-import '../domain/user.dart';
+import 'package:podiinyk/states/home/domain/entities/subject.dart';
+import '../domain/user/user.dart';
 
 import 'types/document.dart';
 import 'types/field.dart';

@@ -5,8 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:podiinyk/main.dart';
+
 import 'package:podiinyk/core/data/user_repository.dart';
-import 'package:podiinyk/core/domain/user.dart';
+import 'package:podiinyk/core/domain/user/state.dart';
+import 'package:podiinyk/core/domain/user/user.dart';
 
 
 // think: show a page with the inferred name after signing up
