@@ -10,20 +10,21 @@ import 'types/field.dart';
 import 'types/object_map.dart';
 
 
+// do: remove duplication
 // do: failures
 class UserRepository {
 	const UserRepository();
 
-	Future<void> initUser(StudentUser user) async {
+	Future<void> initUser(User user) async {
 		await UserRepository._docRef(user.id).set({
 			Field.name.name: [user.name, user.surname]
 		});
 	}
 
-	Future<StudentUser> user(String id) async {
+	Future<User> user(String id) async {
 		final snapshot = await UserRepository._docRef(id).get();
 		final map = snapshot.data()!;
-		return StudentUser(
+		return User(
 			id: id,
 			name: map[Field.name.name].first,
 			surname: map[Field.name.name].last,
@@ -34,7 +35,7 @@ class UserRepository {
 		);
 	}
 
-	Future<void> initGroup({required StudentUser user}) async {
+	Future<void> createGroup({required User user}) async {
 		final groupId = user.groupId!;
 		final chosenSubjectIds = user.chosenSubjectIds!.toList();
 		const emptyMap = <String, ObjectMap>{};
@@ -57,7 +58,24 @@ class UserRepository {
 		]);
 	}
 
-	Future<void> setSubjectStudied(Subject subject, {required StudentUser user}) async {
+	Future<void> joinGroup({required User user}) async {
+		final chosenSubjectIds = user.chosenSubjectIds!.toList();
+
+		await Future.wait([
+			_docRef(user.id).update({
+				Field.groupId.name: user.groupId,
+				Field.chosenSubjects.name: chosenSubjectIds
+			}),
+			Document.students.ref(user.groupId!).update({
+				user.id: {
+					Field.name.name: [user.name, user.surname],
+					Field.chosenSubjects.name: chosenSubjectIds
+				}
+			})
+		]);
+	}
+
+	Future<void> setSubjectStudied(Subject subject, {required User user}) async {
 		await Future.wait<void>([
 			_docRef(user.id).update({
 				Field.chosenSubjects.name: FieldValue.arrayUnion([subject.id])
@@ -68,7 +86,7 @@ class UserRepository {
 		]);
 	}
 
-	Future<void> setSubjectUnstudied(Subject subject, {required StudentUser user}) async {
+	Future<void> setSubjectUnstudied(Subject subject, {required User user}) async {
 		await Future.wait<void>([
 			_docRef(user.id).update({
 				Field.chosenSubjects.name: FieldValue.arrayRemove([subject.id])
@@ -79,7 +97,7 @@ class UserRepository {
 		]);
 	}
 
-	Future<void> leaveGroup({required StudentUser user}) async {
+	Future<void> leaveGroup({required User user}) async {
 		await Future.wait([
 			_docRef(user.id).update({
 				Field.groupId.name: FieldValue.delete(),

@@ -6,8 +6,8 @@ import 'package:podiinyk/features/home/domain/entities/subject.dart';
 import '../data/user_repository.dart';
 
 
-class StudentUser {
-	const StudentUser({
+class User {
+	const User({
 		required this.id,
 		required this.name,
 		required this.surname,
@@ -27,48 +27,57 @@ class StudentUser {
 
 	bool isAuthor(Message message) => id == message.author.id;
 
-	StudentUser copyWith({
-		String? groupId,
-		Set<String>? chosenSubjectIds
-	}) => StudentUser(
+	User copyWith({
+		required String? groupId,
+		required Set<String>? chosenSubjectIds
+	}) => User(
 		id: id,
 		name: name,
 		surname: surname,
-		groupId: groupId ?? this.groupId,
-		chosenSubjectIds: chosenSubjectIds ?? this.chosenSubjectIds
+		groupId: groupId,
+		chosenSubjectIds: chosenSubjectIds
 	);
 }
 
 
-final initialUserProvider = StateProvider<StudentUser?>((ref) {
+final initialUserProvider = StateProvider<User?>((ref) {
 	return null;
 });
 
 
-class UserNotifier extends StateNotifier<StudentUser> {
+class UserNotifier extends StateNotifier<User> {
 	UserNotifier({
-		required StudentUser initial,
+		required User initial,
 		required this.repository
 	}) :
 		super(initial);
 
 	final UserRepository repository;
 
-	Future<void> enterNewGroup() async {
+	Future<void> createGroup() async {
 		// do: change
-		final groupId = DateTime.now().microsecondsSinceEpoch.toString();
+		final id = DateTime.now().microsecondsSinceEpoch.toString();
 		final user = state.copyWith(
-			groupId: groupId,
+			groupId: id,
 			chosenSubjectIds: const <String>{}
 		);
+		await repository.createGroup(user: user);
+		state = user;
+	}
 
-		await repository.initGroup(user: user);
+	Future<void> joinGroup(String id) async {
+		final user = state.copyWith(
+			groupId: id,
+			chosenSubjectIds: const <String>{}
+		);
+		await repository.joinGroup(user: user);
 		state = user;
 	}
 
 	Future<void> setStudied(Subject subject) async {
 		await repository.setSubjectStudied(subject, user: state);
 		state = state.copyWith(
+			groupId: state.groupId,
 			chosenSubjectIds: state.chosenSubjectIds!.toSet()..add(subject.id)
 		);
 	}
@@ -76,6 +85,7 @@ class UserNotifier extends StateNotifier<StudentUser> {
 	Future<void> setUnstudied(Subject subject) async {
 		await repository.setSubjectUnstudied(subject, user: state);
 		state = state.copyWith(
+			groupId: state.groupId,
 			chosenSubjectIds: state.chosenSubjectIds!.toSet()..remove(subject.id)
 		);
 	}
@@ -86,7 +96,7 @@ class UserNotifier extends StateNotifier<StudentUser> {
 	}
 }
 
-final userProvider = StateNotifierProvider<UserNotifier, StudentUser>(
+final userProvider = StateNotifierProvider<UserNotifier, User>(
 	(ref) => UserNotifier(
 		initial: ref.watch(initialUserProvider)!,
 		repository: ref.watch(userRepositoryProvider)

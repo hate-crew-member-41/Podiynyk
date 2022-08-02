@@ -14,10 +14,10 @@ class QuestionPage extends ConsumerWidget {
 
 		return GestureDetector(
 			onLongPress: () {
-				ref.read(userProvider.notifier).enterNewGroup();
+				ref.read(userProvider.notifier).createGroup();
 				page.state = IdentificationPage.sharing;
 			},
-			onDoubleTap: () => page.state = IdentificationPage.entering,
+			onDoubleTap: () => page.state = IdentificationPage.joining,
 			child: Scaffold(body: Column(
 				mainAxisAlignment: MainAxisAlignment.center,
 				crossAxisAlignment: CrossAxisAlignment.start,

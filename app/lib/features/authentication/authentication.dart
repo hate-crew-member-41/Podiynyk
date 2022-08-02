@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:podiinyk/main.dart';
@@ -53,11 +53,11 @@ class Authentication extends ConsumerWidget {
 
 		final userId = cred.user!.uid;
 		final userRepository = ref.read(userRepositoryProvider);
-		final StudentUser user;
+		final User user;
 		final AppState appState;
 
 		if (cred.additionalUserInfo!.isNewUser) {
-			user = StudentUser(
+			user = User(
 				id: userId,
 				// do: try to infer the actual values
 				name: account.displayName ?? '',
@@ -66,10 +66,12 @@ class Authentication extends ConsumerWidget {
 			await userRepository.initUser(user);
 
 			appState = AppState.identification;
+			print('Authentication: new $userId');
 		}
 		else {
 			user = await userRepository.user(userId);
 			appState = user.groupId != null ? AppState.home : AppState.identification;
+			print('Authentication: existing $userId(${user.groupId})');
 		}
 
 		ref.read(initialUserProvider.notifier).state = user;

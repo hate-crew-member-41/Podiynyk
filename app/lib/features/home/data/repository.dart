@@ -14,10 +14,9 @@ import '../domain/entities/student.dart';
 import '../domain/entities/subject.dart';
 
 
-// do: failures
+// do: remove duplication
 // do: prevent unnecessary reads
-// do: remove duplication with info (adding, reading, referencing subject info)
-// think: define addEntity, entities, setSubjectIsStudied, deleteEntity
+// do: failures
 class HomeRepository {
 	const HomeRepository({required this.groupId});
 
@@ -216,6 +215,14 @@ class HomeRepository {
 	}
 }
 
+// fix: when the user leaves the group, HomeRepository updates with groupId = null
+// 		make it only update when groupId != null
+// 		create a separate StateProvider for non-null groupIds ?
 final homeRepositoryProvider = Provider<HomeRepository>(
-	(ref) => HomeRepository(groupId: ref.watch(userProvider).groupId!)
+	// (ref) => HomeRepository(groupId: ref.watch(userProvider).groupId!)
+	(ref) {
+		final groupId = ref.watch(userProvider).groupId;
+		print('HomeRepository($groupId)');
+		return HomeRepository(groupId: groupId!);
+	}
 );

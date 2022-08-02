@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import 'joining_page.dart';
 import 'question_page.dart';
 import 'sharing_page.dart';
 
@@ -9,7 +10,7 @@ import 'sharing_page.dart';
 enum IdentificationPage {
 	question,
 	sharing,
-	entering
+	joining
 }
 
 final identificationPageProvider = StateProvider.autoDispose<IdentificationPage>(
@@ -27,8 +28,8 @@ class Identification extends ConsumerWidget {
 				return const QuestionPage();
 			case IdentificationPage.sharing:
 				return const SharingPage();
-			case IdentificationPage.entering:
-				return const Text("Entering");
+			case IdentificationPage.joining:
+				return const JoiningPage();
 		}
 	}
 }

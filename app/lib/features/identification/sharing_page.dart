@@ -17,7 +17,11 @@ class SharingPage extends ConsumerWidget {
 		if (groupExists) _copyId(user.groupId);
 
 		return GestureDetector(
-			onDoubleTap: () => ref.read(appStateProvider.notifier).state = AppState.home,
+			// onDoubleTap: () => ref.read(appStateProvider.notifier).state = AppState.home,
+			onDoubleTap: () {
+				print('Identification: new ${user.groupId}');
+				ref.read(appStateProvider.notifier).state = AppState.home;
+			},
 			onLongPress: () {
 				if (groupExists) _copyId(user.groupId);
 				// do: inform the user

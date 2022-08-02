@@ -18,9 +18,7 @@ class Loading extends ConsumerWidget {
 	Widget build(BuildContext context, WidgetRef ref) {
 		_initApp(ref);
 
-		return const Scaffold(
-			body: Center(child: Icon(Icons.access_time))
-		);
+		return const Scaffold(body: Center(child: Icon(Icons.access_time)));
 	}
 
 	Future<void> _initApp(WidgetRef ref) async {
@@ -32,12 +30,13 @@ class Loading extends ConsumerWidget {
 		if (authUser != null) {
 			final user = await ref.watch(userRepositoryProvider).user(authUser.uid);
 			ref.read(initialUserProvider.notifier).state = user;
-			appState = AppState.home;	
+			appState = user.groupId != null ? AppState.home : AppState.identification;
 		}
 		else {
 			appState = AppState.auth;
 		}
 
+		print('Loading: ${appState.name}');
 		ref.read(appStateProvider.notifier).state = appState;
 	}
 }
