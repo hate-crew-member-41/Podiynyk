@@ -17,7 +17,6 @@ final identificationPageProvider = StateProvider.autoDispose<IdentificationPage>
 	(ref) => IdentificationPage.question
 );
 
-
 class Identification extends ConsumerWidget {
 	const Identification();
 

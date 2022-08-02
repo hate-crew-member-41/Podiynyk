@@ -4,18 +4,15 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:podiinyk/core/domain/user.dart';
 
 import '../../../domain/providers/events.dart';
-import '../../widgets/bars/home_section_bar.dart';
-import '../section.dart';
+
+import '../../state.dart';
+import '../../widgets/bars/section_bar.dart';
+
 import 'list.dart';
 
 
-class EventsSection extends HomeSection {
+class EventsSection extends ConsumerWidget {
 	const EventsSection();
-
-	@override
-	final String name = "events";
-	@override
-	final IconData icon = Icons.event;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
@@ -25,9 +22,8 @@ class EventsSection extends HomeSection {
 		);
 
 		return Scaffold(
-			appBar: HomeSectionBar(
-				name: name,
-				icon: icon,
+			appBar: SectionBar(
+				section: Section.events,
 				count: events?.length
 			),
 			body: EventList(events)

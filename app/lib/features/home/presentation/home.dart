@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'sections/events/section.dart';
-import 'sections/students/section.dart';
-import 'sections/messages/section.dart';
-import 'sections/separate/section.dart';
-import 'sections/subjects/section.dart';
-
-import 'widgets/tiles/drawer_tile.dart';
 import 'state.dart';
+import 'widgets/tiles/drawer_tile.dart';
 
 // do: remove
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,10 +15,8 @@ class Home extends ConsumerWidget {
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
-		final section = ref.watch(homeStateProvider);
-
 		return Scaffold(
-			body: section,
+			body: ref.watch(homeStateProvider).widget,
 			drawer: Drawer(child: Center(child: ListView(
 				shrinkWrap: true,
 				// do: arrange
@@ -33,12 +25,12 @@ class Home extends ConsumerWidget {
 					// think: show today's date instead
 					const Icon(Icons.all_inclusive),
 					const SizedBox(height: 56),
-					const DrawerTile(EventsSection()),
-					const DrawerTile(SubjectsSection()),
-					const DrawerTile(SeparateSection()),
+					const DrawerTile(Section.events),
+					const DrawerTile(Section.subjects),
+					const DrawerTile(Section.separate),
 					const SizedBox(height: 56),
-					const DrawerTile(MessagesSection()),
-					const DrawerTile(StudentsSection()),
+					const DrawerTile(Section.messages),
+					const DrawerTile(Section.students),
 					// do: remove
 					const SizedBox(height: 56),
 					ListTile(

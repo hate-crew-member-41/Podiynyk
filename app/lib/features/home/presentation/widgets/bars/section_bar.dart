@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../../state.dart';
 import 'counted_icon.dart';
 
 
 // think: open the drawer on a tap
-class HomeSectionBar extends StatelessWidget implements PreferredSizeWidget {
-	const HomeSectionBar({
-		required this.name,
-		required this.icon,
+class SectionBar extends StatelessWidget implements PreferredSizeWidget {
+	const SectionBar({
+		required this.section,
 		this.count,
 		this.bottom
 	});
 
-	final String name;
-	final IconData icon;
+	final Section section;
 	final int? count;
 	final PreferredSizeWidget? bottom;
 
@@ -31,8 +30,8 @@ class HomeSectionBar extends StatelessWidget implements PreferredSizeWidget {
 			title: Row(
 				mainAxisAlignment: MainAxisAlignment.spaceBetween,
 				children: [
-					Text(name),
-					CountedIcon(icon: icon, count: count)
+					Text(section.name),
+					CountedIcon(icon: section.icon, count: count)
 				]
 			),
 			bottom: bottom

@@ -6,20 +6,15 @@ import '../../../domain/providers/info.dart';
 
 import '../../widgets/bars/counted_icon.dart';
 import '../../widgets/bars/entity_lists_tab_bar.dart';
-import '../../widgets/bars/home_section_bar.dart';
+import '../../widgets/bars/section_bar.dart';
 import '../../widgets/info/list.dart';
 
+import '../../state.dart';
 import '../events/list.dart';
-import '../section.dart';
 
 
-class SeparateSection extends HomeSection {
+class SeparateSection extends ConsumerWidget {
 	const SeparateSection();
-
-	@override
-	final String name = "separate";
-	@override
-	final IconData icon = Icons.bubble_chart;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
@@ -29,9 +24,8 @@ class SeparateSection extends HomeSection {
 		return DefaultTabController(
 			length: 2,
 			child: Scaffold(
-				appBar: HomeSectionBar(
-					name: name,
-					icon: icon,
+				appBar: SectionBar(
+					section: Section.separate,
 					bottom: EntityListsTabBar(tabIcons: [
 						CountedIcon(
 							icon: Icons.notes,

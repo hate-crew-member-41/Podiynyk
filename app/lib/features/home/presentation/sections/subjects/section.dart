@@ -9,22 +9,16 @@ import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
 
 import '../../widgets/entity_list.dart';
-import '../../widgets/bars/home_section_bar.dart';
+import '../../widgets/bars/section_bar.dart';
 import '../../widgets/tiles/entity_tile.dart';
 
-import '../section.dart';
-
+import '../../state.dart';
 import 'form.dart';
 import 'page.dart';
 
 
-class SubjectsSection extends HomeSection {
+class SubjectsSection extends ConsumerWidget {
 	const SubjectsSection();
-
-	@override
-	final String name = "subjects";
-	@override
-	final IconData icon = Icons.school;
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
@@ -36,9 +30,8 @@ class SubjectsSection extends HomeSection {
 		final events = ref.watch(eventsProvider);
 
 		return Scaffold(
-			appBar: HomeSectionBar(
-				name: name,
-				icon: icon,
+			appBar: SectionBar(
+				section: Section.subjects,
 				// do: change
 				count: subjects?.length
 			),

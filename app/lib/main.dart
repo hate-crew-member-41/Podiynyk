@@ -21,7 +21,6 @@ enum AppState {
 
 final appStateProvider = StateProvider<AppState>((ref) => AppState.loading);
 
-
 class App extends StatelessWidget {
 	const App();
 
