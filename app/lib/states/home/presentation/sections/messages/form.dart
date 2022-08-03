@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import 'package:podiinyk/core/domain/id.dart';
 import 'package:podiinyk/core/domain/types/date.dart';
 import 'package:podiinyk/core/domain/user/state.dart';
 
-import '../../../domain/entities/entity.dart';
 import '../../../domain/entities/message.dart';
 import '../../../domain/entities/student.dart';
 import '../../../domain/providers/messages.dart';
@@ -45,7 +45,7 @@ class MessageForm extends HookConsumerWidget {
 		final user = ref.read(userProvider);
 		// think: await to show success or a failure
 		ref.read(messagesProvider.notifier).add(Message(
-			id: Entity.newId(),
+			id: newId(user: user),
 			name: name,
 			content: content,
 			author: Student(

@@ -35,7 +35,7 @@ class Home extends ConsumerWidget {
 					const SizedBox(height: 56),
 					ListTile(
 						leading: const Icon(Icons.business),
-						title: const Text("change group"),
+						title: const Text("leave"),
 						onTap: () async {
 							await ref.read(userProvider.notifier).leave();
 							ref.read(appStateProvider.notifier).state = AppState.identification;

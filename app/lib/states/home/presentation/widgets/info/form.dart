@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../domain/entities/entity.dart';
+import 'package:podiinyk/core/domain/id.dart';
+import 'package:podiinyk/core/domain/user/state.dart';
+
 import '../../../domain/entities/info.dart';
 import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/info.dart';
@@ -45,7 +47,7 @@ class InfoForm extends HookConsumerWidget {
 		// do: rewrite after defining EntitiesNotifier
 		// think: await to show success or a failure
 		final item = Info(
-			id: Entity.newId(),
+			id: newId(user: ref.read(userProvider)),
 			name: name,
 			subject: subject,
 			content: content

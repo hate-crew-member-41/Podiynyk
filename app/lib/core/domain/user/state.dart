@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:podiinyk/states/home/domain/entities/subject.dart';
 
 import '../../data/user_repository.dart';
+import '../id.dart';
 import 'user.dart';
 
 
@@ -21,8 +22,7 @@ class UserNotifier extends StateNotifier<User> {
 	final UserRepository repository;
 
 	Future<void> createGroup() async {
-		// do: change
-		final id = DateTime.now().microsecondsSinceEpoch.toString();
+		final id = newId(user: state);
 		final user = state.copyWith(
 			groupId: id,
 			chosenSubjectIds: const <String>{}

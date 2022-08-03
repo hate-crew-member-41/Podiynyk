@@ -34,6 +34,7 @@ class JoiningPage extends HookConsumerWidget {
 		// do: inform the user
 		if (id.isEmpty) return;
 
+		// do: handle non-existent ids
 		// do: inform the user
 		await ref.read(userProvider.notifier).joinGroup(id);
 		print("Identification: existing $id");

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../domain/entities/entity.dart';
+import 'package:podiinyk/core/domain/id.dart';
+import 'package:podiinyk/core/domain/user/state.dart';
+
 import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/subjects.dart';
 
@@ -47,7 +49,7 @@ class SubjectForm extends HookConsumerWidget {
 
 		// think: await to show success or a failure
 		ref.read(subjectsProvider.notifier).add(Subject(
-			id: Entity.newId(),
+			id: newId(user: ref.read(userProvider)),
 			name: name,
 			isCommon: isCommon
 		));

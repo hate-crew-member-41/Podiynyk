@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import 'package:podiinyk/core/domain/id.dart';
 import 'package:podiinyk/core/domain/types/date.dart';
 import 'package:podiinyk/core/domain/user/state.dart';
+import 'package:podiinyk/core/domain/user/user.dart';
 
-import '../../../domain/entities/entity.dart';
 import '../../../domain/entities/event.dart';
 import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/events.dart';
@@ -38,6 +39,7 @@ class EventForm extends HookConsumerWidget {
 			onDoubleTap: () => _handleAdd(
 				context,
 				ref,
+				user,
 				nameField.text,
 				subject.value,
 				date.value,
@@ -72,6 +74,7 @@ class EventForm extends HookConsumerWidget {
 	void _handleAdd(
 		BuildContext context,
 		WidgetRef ref,
+		User user,
 		String name,
 		Subject? subject,
 		Date? date,
@@ -82,7 +85,7 @@ class EventForm extends HookConsumerWidget {
 
 		// think: await to show success or a failure
 		ref.read(eventsProvider.notifier).add(Event(
-			id: Entity.newId(),
+			id: newId(user: user),
 			name: name,
 			subject: subject,
 			date: date,

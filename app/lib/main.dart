@@ -15,6 +15,7 @@ void main() async {
 enum AppState {
 	loading,
 	auth,
+	// think: rename
 	identification,
 	home
 }
