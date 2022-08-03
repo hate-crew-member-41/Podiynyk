@@ -62,8 +62,8 @@ class Authentication extends ConsumerWidget {
 			user = User(
 				id: userId,
 				// do: try to infer the actual values
-				name: account.displayName ?? '',
-				surname: ''
+				firstName: account.displayName ?? '',
+				lastName: ''
 			);
 			await userRepository.initUser(user);
 

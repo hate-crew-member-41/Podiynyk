@@ -160,8 +160,8 @@ class HomeRepository {
 		final snapshot = await _ref(Document.students).get();
 		return snapshot.data()!.entries.map((entry) => Student(
 			id: entry.key,
-			name: entry.value[Field.name.name].first,
-			surname: entry.value[Field.name.name].last,
+			firstName: entry.value[Field.name.name].firstName,
+			lastName: entry.value[Field.name.name].last,
 			chosenSubjectIds: Set<String>.from(entry.value[Field.chosenSubjects.name])
 		));
 	}

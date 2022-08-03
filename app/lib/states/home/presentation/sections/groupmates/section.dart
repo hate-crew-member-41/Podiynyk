@@ -9,9 +9,8 @@ import '../../widgets/bars/section_bar.dart';
 import 'list.dart';
 
 
-// think: exclude the user
-class StudentsSection extends ConsumerWidget {
-	const StudentsSection();
+class GroupmatesSection extends ConsumerWidget {
+	const GroupmatesSection();
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
@@ -22,7 +21,7 @@ class StudentsSection extends ConsumerWidget {
 				section: Section.students,
 				count: students?.length
 			),
-			body: StudentList(students)
+			body: GroupmateList(students)
 		);
 	}
 }

@@ -7,7 +7,6 @@ import 'package:podiinyk/core/domain/types/date.dart';
 import 'package:podiinyk/core/domain/user/state.dart';
 
 import '../../../domain/entities/message.dart';
-import '../../../domain/entities/student.dart';
 import '../../../domain/providers/messages.dart';
 
 
@@ -48,12 +47,7 @@ class MessageForm extends HookConsumerWidget {
 			id: newId(user: user),
 			name: name,
 			content: content,
-			author: Student(
-				id: user.id,
-				name: user.name,
-				surname: user.surname,
-				chosenSubjectIds: user.chosenSubjectIds!
-			),
+			author: user.student,
 			date: Date.now()
 		));
 		Navigator.of(context).pop();

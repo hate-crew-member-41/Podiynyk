@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'sections/events/section.dart';
 import 'sections/messages/section.dart';
 import 'sections/separate/section.dart';
-import 'sections/students/section.dart';
+import 'sections/groupmates/section.dart';
 import 'sections/subjects/section.dart';
 
 
@@ -32,7 +32,7 @@ enum Section {
 	students(
 		name: "group",
 		icon: Icons.people,
-		widget: StudentsSection()
+		widget: GroupmatesSection()
 	);
 
 	const Section({

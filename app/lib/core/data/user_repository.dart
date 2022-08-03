@@ -16,7 +16,7 @@ class UserRepository {
 
 	Future<void> initUser(User user) async {
 		await UserRepository._docRef(user.id).set({
-			Field.name.name: [user.name, user.surname]
+			Field.name.name: [user.firstName, user.lastName]
 		});
 	}
 
@@ -25,8 +25,8 @@ class UserRepository {
 		final map = snapshot.data()!;
 		return User(
 			id: id,
-			name: map[Field.name.name].first,
-			surname: map[Field.name.name].last,
+			firstName: map[Field.name.name].firstName,
+			lastName: map[Field.name.name].last,
 			groupId: map[Field.groupId.name],
 			chosenSubjectIds: map.containsKey(Field.chosenSubjects.name) ?
 				Set<String>.from(map[Field.chosenSubjects.name]) :
@@ -46,7 +46,7 @@ class UserRepository {
 			Document.messages.ref(groupId).set(emptyMap),
 			Document.students.ref(groupId).set({
 				user.id: {
-					Field.name.name: [user.name, user.surname],
+					Field.name.name: [user.firstName, user.lastName],
 					Field.chosenSubjects.name: chosenSubjectIds
 				}
 			}),
@@ -67,7 +67,7 @@ class UserRepository {
 			}),
 			Document.students.ref(user.groupId!).update({
 				user.id: {
-					Field.name.name: [user.name, user.surname],
+					Field.name.name: [user.firstName, user.lastName],
 					Field.chosenSubjects.name: chosenSubjectIds
 				}
 			})

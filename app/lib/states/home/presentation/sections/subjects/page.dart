@@ -14,7 +14,7 @@ import '../../widgets/bars/entity_lists_tab_bar.dart';
 import '../../widgets/info/list.dart';
 
 import '../events/list.dart';
-import '../students/list.dart';
+import '../groupmates/list.dart';
 
 
 class SubjectPage extends ConsumerWidget {
@@ -30,7 +30,7 @@ class SubjectPage extends ConsumerWidget {
 
 		final isCommon = subject.isCommon;
 		final isStudied = user.studies(subject);
-		final students = details?.students?.where((s) => s.id != user.id);
+		final students = details?.students;
 
 		return Scaffold(body: DefaultTabController(
 			length: isCommon ? 2 : 3,
@@ -78,7 +78,7 @@ class SubjectPage extends ConsumerWidget {
 							isExtendable: isStudied,
 							showSubjects: false
 						),
-						if (!isCommon) StudentList(students)
+						if (!isCommon) GroupmateList(students)
 					]))
 				]
 			)
