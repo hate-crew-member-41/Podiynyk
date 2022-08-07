@@ -4,7 +4,7 @@ import '../../state.dart';
 import 'counted_icon.dart';
 
 
-// think: open the drawer on a tap
+// do: open the drawer on a tap
 class SectionBar extends StatelessWidget implements PreferredSizeWidget {
 	const SectionBar({
 		required this.section,

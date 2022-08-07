@@ -5,7 +5,6 @@ import 'state.dart';
 import 'widgets/tiles/drawer_tile.dart';
 
 // do: remove
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:podiinyk/core/domain/user/state.dart';
 import 'package:podiinyk/main.dart';
 
@@ -21,34 +20,17 @@ class Home extends ConsumerWidget {
 				shrinkWrap: true,
 				// do: arrange
 				// do: take the values from the theme
-				children: [
+				children: const [
 					// think: show today's date instead
-					const Icon(Icons.all_inclusive),
-					const SizedBox(height: 56),
-					const DrawerTile(Section.events),
-					const DrawerTile(Section.subjects),
-					const DrawerTile(Section.separate),
-					const SizedBox(height: 56),
-					const DrawerTile(Section.messages),
-					const DrawerTile(Section.students),
-					// do: remove
-					const SizedBox(height: 56),
-					ListTile(
-						leading: const Icon(Icons.business),
-						title: const Text("leave"),
-						onTap: () async {
-							await ref.read(userProvider.notifier).leave();
-							ref.read(appStateProvider.notifier).state = AppState.identification;
-						}
-					),
-					ListTile(
-						leading: const Icon(Icons.compare_arrows),
-						title: const Text("sign out"),
-						onTap: () async {
-							await FirebaseAuth.instance.signOut();
-							ref.read(appStateProvider.notifier).state = AppState.auth;
-						}
-					)
+					Icon(Icons.all_inclusive),
+					SizedBox(height: 56),
+					DrawerTile(Section.events),
+					DrawerTile(Section.subjects),
+					DrawerTile(Section.separate),
+					DrawerTile(Section.messages),
+					SizedBox(height: 56),
+					DrawerTile(Section.students),
+					DrawerTile(Section.settings),
 				]
 			))),
 			drawerEdgeDragWidth: 80

@@ -65,13 +65,13 @@ class Authentication extends ConsumerWidget {
 				firstName: account.displayName ?? '',
 				lastName: ''
 			);
-			await userRepository.initUser(user);
+			await userRepository.initAccount(user);
 
 			appState = AppState.identification;
 			print('Authentication: new $userId');
 		}
 		else {
-			user = await userRepository.user(userId);
+			user = await userRepository.user(id: userId);
 			appState = user.groupId != null ? AppState.home : AppState.identification;
 			print('Authentication: existing $userId(${user.groupId})');
 		}

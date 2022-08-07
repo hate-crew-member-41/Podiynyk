@@ -7,6 +7,7 @@ import '../id.dart';
 import 'user.dart';
 
 
+// do: review
 final initialUserProvider = StateProvider<User?>((ref) {
 	return null;
 });
@@ -56,9 +57,13 @@ class UserNotifier extends StateNotifier<User> {
 		);
 	}
 
-	Future<void> leave() async {
+	Future<void> leaveGroup() async {
 		await repository.leaveGroup(user: state);
 		state = state.copyWith(groupId: null, chosenSubjectIds: null);
+	}
+
+	Future<void> deleteAccount() async {
+		await repository.deleteAccount(state);
 	}
 }
 

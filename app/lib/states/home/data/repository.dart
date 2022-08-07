@@ -158,12 +158,15 @@ class HomeRepository {
 
 	Future<Iterable<Student>> students() async {
 		final snapshot = await _ref(Document.students).get();
-		return snapshot.data()!.entries.map((entry) => Student(
-			id: entry.key,
-			firstName: entry.value[Field.name.name].firstName,
-			lastName: entry.value[Field.name.name].last,
-			chosenSubjectIds: Set<String>.from(entry.value[Field.chosenSubjects.name])
-		));
+		return snapshot.data()!.entries.map((entry) {
+			final name = entry.value[Field.name.name] as List<dynamic>;
+			return Student(
+				id: entry.key,
+				firstName: name.first,
+				lastName: name.last,
+				chosenSubjectIds: Set<String>.from(entry.value[Field.chosenSubjects.name])
+			);
+		});
 	}
 
 	Future<void> deleteEvent(Event event) async {
@@ -208,7 +211,7 @@ class HomeRepository {
 		});
 	}
 
-	DocumentReference<ObjectMap> _ref(Document document) => document.ref(groupId);
+	DocumentReference<ObjectMap> _ref(Document document) => document.ref(groupId: groupId);
 
 	DocumentReference<ObjectMap> _subjectDetailsRef(Subject subject) {
 		return _ref(Document.subjects).collection('details').doc(subject.id);
@@ -217,7 +220,8 @@ class HomeRepository {
 
 // fix: when the user leaves the group, HomeRepository updates with groupId = null
 // 		make it only update when groupId != null
-// 		create a separate StateProvider for non-null groupIds ?
+// 		option: create a separate StateProvider for non-null groupIds
+// 		option: not watch the user but pass the group id to the methods
 final homeRepositoryProvider = Provider<HomeRepository>(
 	// (ref) => HomeRepository(groupId: ref.watch(userProvider).groupId!)
 	(ref) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:podiinyk/main.dart';
@@ -23,12 +23,13 @@ class Loading extends ConsumerWidget {
 
 	Future<void> _initApp(WidgetRef ref) async {
 		await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+		await FirebaseAuth.instance.signOut();
 
 		final authUser = FirebaseAuth.instance.currentUser;
 		final AppState appState;
 
 		if (authUser != null) {
-			final user = await ref.watch(userRepositoryProvider).user(authUser.uid);
+			final user = await ref.watch(userRepositoryProvider).user(id: authUser.uid);
 			ref.read(initialUserProvider.notifier).state = user;
 			appState = user.groupId != null ? AppState.home : AppState.identification;
 		}

@@ -13,4 +13,12 @@ The theme's values could be displayed.
 
 # User
 
-There is a local copy of the user's data.
+## Local copy
+
+There is a local copy of the user's data. This saves a ton of reads.
+
+## Account management
+
+It is possible to manage the account even without the group specified.
+That is, merge the group identification process with Home,
+show the group id form instead of the sections until the group id is given.

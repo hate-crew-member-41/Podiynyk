@@ -29,6 +29,7 @@ class App extends StatelessWidget {
 	Widget build(BuildContext context) {
 		return MaterialApp(
 			title: 'Подійник',
+			// do: remove after theming
 			darkTheme: ThemeData(
 				useMaterial3: true,
 				colorScheme: const ColorScheme.dark(),

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiinyk/states/home/domain/entities/subject.dart';
@@ -14,19 +15,20 @@ import 'types/object_map.dart';
 class UserRepository {
 	const UserRepository();
 
-	Future<void> initUser(User user) async {
+	Future<void> initAccount(User user) async {
 		await UserRepository._docRef(user.id).set({
 			Field.name.name: [user.firstName, user.lastName]
 		});
 	}
 
-	Future<User> user(String id) async {
+	Future<User> user({required String id}) async {
 		final snapshot = await UserRepository._docRef(id).get();
 		final map = snapshot.data()!;
+		final name = map[Field.name.name] as List<dynamic>;
 		return User(
 			id: id,
-			firstName: map[Field.name.name].firstName,
-			lastName: map[Field.name.name].last,
+			firstName: name.first,
+			lastName: name.last,
 			groupId: map[Field.groupId.name],
 			chosenSubjectIds: map.containsKey(Field.chosenSubjects.name) ?
 				Set<String>.from(map[Field.chosenSubjects.name]) :
@@ -40,11 +42,11 @@ class UserRepository {
 		const emptyMap = <String, ObjectMap>{};
 
 		await Future.wait([
-			Document.events.ref(groupId).set(emptyMap),
-			Document.subjects.ref(groupId).set(emptyMap),
-			Document.info.ref(groupId).set(emptyMap),
-			Document.messages.ref(groupId).set(emptyMap),
-			Document.students.ref(groupId).set({
+			Document.events.ref(groupId: groupId).set(emptyMap),
+			Document.subjects.ref(groupId: groupId).set(emptyMap),
+			Document.info.ref(groupId: groupId).set(emptyMap),
+			Document.messages.ref(groupId: groupId).set(emptyMap),
+			Document.students.ref(groupId: groupId).set({
 				user.id: {
 					Field.name.name: [user.firstName, user.lastName],
 					Field.chosenSubjects.name: chosenSubjectIds
@@ -65,7 +67,7 @@ class UserRepository {
 				Field.groupId.name: user.groupId,
 				Field.chosenSubjects.name: chosenSubjectIds
 			}),
-			Document.students.ref(user.groupId!).update({
+			Document.students.ref(groupId: user.groupId!).update({
 				user.id: {
 					Field.name.name: [user.firstName, user.lastName],
 					Field.chosenSubjects.name: chosenSubjectIds
@@ -79,7 +81,7 @@ class UserRepository {
 			_docRef(user.id).update({
 				Field.chosenSubjects.name: FieldValue.arrayUnion([subject.id])
 			}),
-			Document.students.ref(user.groupId!).update({
+			Document.students.ref(groupId: user.groupId!).update({
 				'${user.id}.${Field.chosenSubjects.name}': FieldValue.arrayUnion([subject.id])
 			})
 		]);
@@ -90,7 +92,7 @@ class UserRepository {
 			_docRef(user.id).update({
 				Field.chosenSubjects.name: FieldValue.arrayRemove([subject.id])
 			}),
-			Document.students.ref(user.groupId!).update({
+			Document.students.ref(groupId: user.groupId!).update({
 				'${user.id}.${Field.chosenSubjects.name}': FieldValue.arrayRemove([subject.id])
 			})
 		]);
@@ -102,9 +104,30 @@ class UserRepository {
 				Field.groupId.name: FieldValue.delete(),
 				Field.chosenSubjects.name: FieldValue.delete()
 			}),
-			Document.students.ref(user.groupId!).update({
+			Document.students.ref(groupId: user.groupId!).update({
 				user.id: FieldValue.delete()
 			}),
+		]);
+	}
+
+	// do: change after it is possible to manage the account without the group specified
+	Future<void> deleteAccount(User user) async {
+		final groupId = user.groupId!;
+		// think: keep a local copy of the user's messages to prevent reading them
+		final messagesSnapshot = await Document.messages.ref(groupId: groupId).get();
+		final messageEntries = messagesSnapshot.data()!.entries.where(
+			(entry) => entry.value[Field.author.name] == user.id
+		);
+
+		await Future.wait([
+			FirebaseAuth.instance.currentUser!.delete(),
+			_docRef(user.id).delete(),
+			Document.students.ref(groupId: groupId).update({
+				user.id: FieldValue.delete()
+			}),
+			Document.messages.ref(groupId: groupId).update({
+				for (final entry in messageEntries) entry.key: FieldValue.delete()
+			})
 		]);
 	}
 

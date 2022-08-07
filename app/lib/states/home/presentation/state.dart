@@ -5,6 +5,7 @@ import 'sections/events/section.dart';
 import 'sections/messages/section.dart';
 import 'sections/separate/section.dart';
 import 'sections/groupmates/section.dart';
+import 'sections/settings/section.dart';
 import 'sections/subjects/section.dart';
 
 
@@ -33,6 +34,11 @@ enum Section {
 		name: "group",
 		icon: Icons.people,
 		widget: GroupmatesSection()
+	),
+	settings(
+		name: "me",
+		icon: Icons.person,
+		widget: SettingsSection()
 	);
 
 	const Section({

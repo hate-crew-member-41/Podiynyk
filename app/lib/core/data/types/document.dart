@@ -10,7 +10,7 @@ enum Document {
 	students,
 	subjects;
 
-	DocumentReference<ObjectMap> ref(String groupId) {
+	DocumentReference<ObjectMap> ref({required String groupId}) {
 		return FirebaseFirestore.instance.collection(name).doc(groupId);
 	}
 }
