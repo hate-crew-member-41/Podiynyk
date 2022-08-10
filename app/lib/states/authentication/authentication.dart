@@ -11,7 +11,7 @@ import 'package:podiinyk/core/domain/user/state.dart';
 import 'package:podiinyk/core/domain/user/user.dart';
 
 
-// think: show a page with the inferred name after signing up
+// think: show a page for the initial setup after signing up
 class Authentication extends ConsumerWidget {
 	const Authentication();
 

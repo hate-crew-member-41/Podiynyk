@@ -1,21 +1,20 @@
-import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:podiinyk/main.dart';
 import 'package:podiinyk/core/domain/user/state.dart';
 
 import '../../state.dart';
 import '../../widgets/bars/section_bar.dart';
 
 
-class SettingsSection extends ConsumerWidget {
-	const SettingsSection();
+class MeSection extends ConsumerWidget {
+	const MeSection();
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
 		final user = ref.watch(userProvider);
+		final userNotifier = ref.watch(userProvider.notifier);
 
 		return Scaffold(
 			appBar: const SectionBar(
@@ -30,7 +29,8 @@ class SettingsSection extends ConsumerWidget {
 						title: Text(user.groupId!),
 						trailing: IconButton(
 							icon: const Icon(Icons.backspace),
-							onPressed: () => _leaveGroup(ref)
+							// do: confirmation
+							onPressed: userNotifier.leaveGroup
 						),
 						// do: inform the user
 						onTap: () => Clipboard.setData(ClipboardData(text: user.groupId))
@@ -41,34 +41,18 @@ class SettingsSection extends ConsumerWidget {
 						children: [
 							IconButton(
 								icon: const Icon(Icons.compare_arrows),
-								onPressed: () => _signOut(ref)
+								// do: confirmation
+								onPressed: userNotifier.signOut
 							),
 							IconButton(
 								icon: const Icon(Icons.delete),
-								// do: delete the account
-								onPressed: () => _deleteAccount(ref)
+								// do: confirmation
+								onPressed: userNotifier.deleteAccount
 							)
 						]
 					)
 				]
 			))
 		);
-	}
-
-	Future<void> _leaveGroup(WidgetRef ref) async {
-		await ref.read(userProvider.notifier).leaveGroup();
-		ref.read(appStateProvider.notifier).state = AppState.identification;
-	}
-
-	// think: move appState management from widgets to providers
-	Future<void> _signOut(WidgetRef ref) async {
-		await FirebaseAuth.instance.signOut();
-		ref.read(appStateProvider.notifier).state = AppState.auth;
-	}
-
-	// do: confirmation, rename
-	Future<void> _deleteAccount(WidgetRef ref) async {
-		await ref.read(userProvider.notifier).deleteAccount();
-		ref.read(appStateProvider.notifier).state = AppState.auth;
 	}
 }

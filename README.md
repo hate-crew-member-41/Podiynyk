@@ -1,6 +1,13 @@
 # Подійни́к | Podiinyk
 
-A cross-platform mobile app for Ukrainian students.
+![](design/logo.png)
+
+A minimalistic cross-platform mobile app for Ukrainian students.
+
+The idea is to make it easy to track what's going on, store information,
+move important studying-related messages out of chatting apps, where they are lost.
+
+The tech stack is [Flutter](https://flutter.dev) + [Firebase](https://firebase.google.com).
 
 
 ## How it works

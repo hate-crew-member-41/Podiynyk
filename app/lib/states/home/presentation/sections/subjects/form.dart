@@ -29,7 +29,7 @@ class SubjectForm extends HookConsumerWidget {
 						controller: nameField,
 						decoration: const InputDecoration(labelText: 'name')
 					),
-					// think: a switch
+					// think: an alternative (switch, checkbox, etc.)
 					OptionField<bool>(
 						label: 'type',
 						options: const [
