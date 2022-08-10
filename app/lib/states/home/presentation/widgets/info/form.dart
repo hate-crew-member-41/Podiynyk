@@ -53,7 +53,7 @@ class InfoForm extends HookConsumerWidget {
 			content: content
 		);
 		if (subject != null) {
-			ref.read(subjectDetailsProviders(subject!).notifier).addInfo(item);
+			ref.read(subjectDetailsFamily(subject!).notifier).addInfo(item);
 		}
 		else {
 			ref.read(infoProvider.notifier).add(item);

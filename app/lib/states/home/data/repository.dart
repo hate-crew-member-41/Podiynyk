@@ -169,6 +169,23 @@ class HomeRepository {
 		});
 	}
 
+	Future<StudentDetails> studentDetails(Student student) async {
+		late final DocumentSnapshot<ObjectMap> snapshot;
+		late final Iterable<Subject> subjects;
+		await Future.wait([
+			FirebaseFirestore.instance.collection('users').doc(student.id).get().then((s) => snapshot = s),
+			this.subjects().then((s) => subjects = s)
+		]);
+
+		final map = snapshot.data()!;
+		final subjectIds = map[Field.chosenSubjects.name] as List<dynamic>;
+
+		return StudentDetails(
+			info: map[Field.info.name],
+			subjects: subjects.where((s) => subjectIds.contains(s.id))
+		);
+	}
+
 	Future<void> deleteEvent(Event event) async {
 		await _ref(Document.events).update({
 			event.id: FieldValue.delete()

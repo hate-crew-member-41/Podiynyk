@@ -39,7 +39,7 @@ class InfoPage extends StatelessWidget {
 	// think: confirmation, rename
 	void _delete(BuildContext context, WidgetRef ref) {
 		if (item.subject != null) {
-			ref.read(subjectDetailsProviders(item.subject!).notifier).deleteInfo(item);
+			ref.read(subjectDetailsFamily(item.subject!).notifier).deleteInfo(item);
 		}
 		else {
 			ref.read(infoProvider.notifier).delete(item);

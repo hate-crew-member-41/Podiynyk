@@ -23,3 +23,19 @@ class Student extends Entity {
 	@override
 	int compareTo(covariant Student other) => lastName.compareTo(other.lastName);
 }
+
+
+class StudentDetails {
+	const StudentDetails({
+		this.info,
+		required this.subjects
+	});
+
+	final String? info;
+	final Iterable<Subject> subjects;
+
+	StudentDetails withSubjects(Iterable<Subject> subjects) => StudentDetails(
+		info: info,
+		subjects: subjects
+	);
+}

@@ -23,7 +23,6 @@ class Loading extends ConsumerWidget {
 
 	Future<void> _initApp(WidgetRef ref) async {
 		await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-		await FirebaseAuth.instance.signOut();
 
 		final authUser = FirebaseAuth.instance.currentUser;
 		final AppState appState;

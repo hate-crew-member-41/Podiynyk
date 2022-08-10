@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'state.dart';
 import 'widgets/tiles/drawer_tile.dart';
-
-// do: remove
-import 'package:podiinyk/core/domain/user/state.dart';
-import 'package:podiinyk/main.dart';
+import 'state.dart';
 
 
 class Home extends ConsumerWidget {
