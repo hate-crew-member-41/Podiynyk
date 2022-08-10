@@ -4,7 +4,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:podiinyk/states/home/domain/providers/students.dart';
 
 import '../../../domain/entities/student.dart';
-import '../subjects/list.dart';
 
 
 class StudentPage extends ConsumerWidget {
@@ -22,6 +21,7 @@ class StudentPage extends ConsumerWidget {
 				if (details != null) ...[
 					if (details.info != null) Text(details.info!),
 					// fix: SubjectList is a ListView and a child of another ListView
+					// do: only show if there are chosen subjects
 					// SubjectList(details.subjects, showNextEvent: false)
 				]
 			]
