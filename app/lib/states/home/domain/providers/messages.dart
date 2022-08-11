@@ -6,18 +6,23 @@ import '../entities/message.dart';
 
 class MessagesNotifier extends StateNotifier<List<Message>?> {
 	MessagesNotifier({required this.repository}) : super(null) {
-		repository.messages().then((messages) => state = messages.toList()..sort());
+		if (repository != null) _init();
 	}
 
-	final HomeRepository repository;
+	final HomeRepository? repository;
+
+	Future<void> _init() async {
+		final messages = await repository!.messages();
+		state = messages.toList()..sort();
+	}
 
 	Future<void> add(Message message) async {
-		await repository.addMessage(message);
+		await repository!.addMessage(message);
 		state = state!.toList()..add(message)..sort();
 	}
 
 	Future<void> delete(Message message) async {
-		await repository.deleteMessage(message);
+		await repository!.deleteMessage(message);
 		state = state!.toList()..remove(message);
 	}
 }

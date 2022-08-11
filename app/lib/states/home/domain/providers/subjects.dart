@@ -7,18 +7,23 @@ import '../entities/subject.dart';
 
 class SubjectsNotifier extends StateNotifier<List<Subject>?> {
 	SubjectsNotifier({required this.repository}) : super(null) {
-		repository.subjects().then((subjects) => state = subjects.toList()..sort());
+		if (repository != null) _init();
 	}
 
-	final HomeRepository repository;
+	final HomeRepository? repository;
+
+	Future<void> _init() async {
+		final subjects = await repository!.subjects();
+		state = subjects.toList()..sort();
+	}
 
 	Future<void> add(Subject subject) async {
-		await repository.addSubject(subject);
+		await repository!.addSubject(subject);
 		state = state!.toList()..add(subject)..sort();
 	}
 
 	Future<void> delete(Subject subject) async {
-		await repository.deleteSubject(subject);
+		await repository!.deleteSubject(subject);
 		state = state!.toList()..remove(subject);
 	}
 }
@@ -30,14 +35,14 @@ final subjectsProvider = StateNotifierProvider<SubjectsNotifier, List<Subject>?>
 
 class SubjectDetailsNotifier extends StateNotifier<SubjectDetails?> {
 	SubjectDetailsNotifier(this.subject, {required this.repository}) : super(null) {
-		_init();
+		if (repository != null) _init();
 	}
 
 	final Subject subject;
-	final HomeRepository repository;
+	final HomeRepository? repository;
 
 	Future<void> _init() async {
-		final details = await repository.subjectDetails(subject);
+		final details = await repository!.subjectDetails(subject);
 		state = SubjectDetails(
 			info: details.info.toList()..sort(),
 			students: details.students?.toList()?..sort()
@@ -45,12 +50,12 @@ class SubjectDetailsNotifier extends StateNotifier<SubjectDetails?> {
 	}
 
 	Future<void> addInfo(Info item) async {
-		await repository.addSubjectInfo(subject, item);
+		await repository!.addSubjectInfo(subject, item);
 		state = state!.withInfo(state!.info.toList()..add(item)..sort());
 	}
 
 	Future<void> deleteInfo(Info item) async {
-		await repository.deleteSubjectInfo(subject, item);
+		await repository!.deleteSubjectInfo(subject, item);
 		state = state!.withInfo(state!.info.toList()..remove(item));
 	}
 }

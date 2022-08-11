@@ -9,6 +9,8 @@ import 'types/document.dart';
 import 'types/field.dart';
 import 'types/object_map.dart';
 
+import 'user_doc_ref.dart';
+
 
 // do: remove duplication
 // do: failures
@@ -16,13 +18,13 @@ class UserRepository {
 	const UserRepository();
 
 	Future<void> initAccount(User user) async {
-		await UserRepository._docRef(user.id).set({
+		await userDocRef(user.id).set({
 			Field.name.name: [user.firstName, user.lastName]
 		});
 	}
 
 	Future<User> user({required String id}) async {
-		final snapshot = await UserRepository._docRef(id).get();
+		final snapshot = await userDocRef(id).get();
 		final map = snapshot.data()!;
 		final name = map[Field.name.name] as List<dynamic>;
 		return User(
@@ -42,17 +44,17 @@ class UserRepository {
 		const emptyMap = <String, ObjectMap>{};
 
 		await Future.wait([
-			Document.events.ref(groupId: groupId).set(emptyMap),
-			Document.subjects.ref(groupId: groupId).set(emptyMap),
-			Document.info.ref(groupId: groupId).set(emptyMap),
-			Document.messages.ref(groupId: groupId).set(emptyMap),
-			Document.students.ref(groupId: groupId).set({
+			Document.events.ref(groupId).set(emptyMap),
+			Document.subjects.ref(groupId).set(emptyMap),
+			Document.info.ref(groupId).set(emptyMap),
+			Document.messages.ref(groupId).set(emptyMap),
+			Document.students.ref(groupId).set({
 				user.id: {
 					Field.name.name: [user.firstName, user.lastName],
 					Field.chosenSubjects.name: chosenSubjectIds
 				}
 			}),
-			_docRef(user.id).update({
+			userDocRef(user.id).update({
 				Field.groupId.name: groupId,
 				Field.chosenSubjects.name: chosenSubjectIds
 			})
@@ -63,11 +65,11 @@ class UserRepository {
 		final chosenSubjectIds = user.chosenSubjectIds!.toList();
 
 		await Future.wait([
-			_docRef(user.id).update({
+			userDocRef(user.id).update({
 				Field.groupId.name: user.groupId,
 				Field.chosenSubjects.name: chosenSubjectIds
 			}),
-			Document.students.ref(groupId: user.groupId!).update({
+			Document.students.ref(user.groupId!).update({
 				user.id: {
 					Field.name.name: [user.firstName, user.lastName],
 					Field.chosenSubjects.name: chosenSubjectIds
@@ -78,10 +80,10 @@ class UserRepository {
 
 	Future<void> setSubjectStudied(Subject subject, {required User user}) async {
 		await Future.wait<void>([
-			_docRef(user.id).update({
+			userDocRef(user.id).update({
 				Field.chosenSubjects.name: FieldValue.arrayUnion([subject.id])
 			}),
-			Document.students.ref(groupId: user.groupId!).update({
+			Document.students.ref(user.groupId!).update({
 				'${user.id}.${Field.chosenSubjects.name}': FieldValue.arrayUnion([subject.id])
 			})
 		]);
@@ -89,10 +91,10 @@ class UserRepository {
 
 	Future<void> setSubjectUnstudied(Subject subject, {required User user}) async {
 		await Future.wait<void>([
-			_docRef(user.id).update({
+			userDocRef(user.id).update({
 				Field.chosenSubjects.name: FieldValue.arrayRemove([subject.id])
 			}),
-			Document.students.ref(groupId: user.groupId!).update({
+			Document.students.ref(user.groupId!).update({
 				'${user.id}.${Field.chosenSubjects.name}': FieldValue.arrayRemove([subject.id])
 			})
 		]);
@@ -100,11 +102,11 @@ class UserRepository {
 
 	Future<void> leaveGroup({required User user}) async {
 		await Future.wait([
-			_docRef(user.id).update({
+			userDocRef(user.id).update({
 				Field.groupId.name: FieldValue.delete(),
 				Field.chosenSubjects.name: FieldValue.delete()
 			}),
-			Document.students.ref(groupId: user.groupId!).update({
+			Document.students.ref(user.groupId!).update({
 				user.id: FieldValue.delete()
 			}),
 		]);
@@ -113,26 +115,22 @@ class UserRepository {
 	// do: change after it is possible to manage the account without the group specified
 	Future<void> deleteAccount(User user) async {
 		final groupId = user.groupId!;
-		// think: keep a local copy of the user's messages to prevent reading them
-		final messagesSnapshot = await Document.messages.ref(groupId: groupId).get();
+		final messagesSnapshot = await Document.messages.ref(groupId).get();
 		final messageEntries = messagesSnapshot.data()!.entries.where(
 			(entry) => entry.value[Field.author.name] == user.id
 		);
 
 		await Future.wait([
+			// fix: guarantee a recent sign in
 			FirebaseAuth.instance.currentUser!.delete(),
-			_docRef(user.id).delete(),
-			Document.students.ref(groupId: groupId).update({
+			userDocRef(user.id).delete(),
+			Document.students.ref(groupId).update({
 				user.id: FieldValue.delete()
 			}),
-			Document.messages.ref(groupId: groupId).update({
+			Document.messages.ref(groupId).update({
 				for (final entry in messageEntries) entry.key: FieldValue.delete()
 			})
 		]);
-	}
-
-	static DocumentReference<ObjectMap> _docRef(String id) {
-		return FirebaseFirestore.instance.collection('users').doc(id);
 	}
 }
 

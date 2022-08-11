@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:podiinyk/core/data/types/document.dart';
 import 'package:podiinyk/core/data/types/field.dart';
 import 'package:podiinyk/core/data/types/object_map.dart';
+import 'package:podiinyk/core/data/user_doc_ref.dart';
 import 'package:podiinyk/core/domain/types/date.dart';
 import 'package:podiinyk/core/domain/user/state.dart';
 
@@ -173,7 +174,7 @@ class HomeRepository {
 		late final DocumentSnapshot<ObjectMap> snapshot;
 		late final Iterable<Subject> subjects;
 		await Future.wait([
-			FirebaseFirestore.instance.collection('users').doc(student.id).get().then((s) => snapshot = s),
+			userDocRef(student.id).get().then((s) => snapshot = s),
 			this.subjects().then((s) => subjects = s)
 		]);
 
@@ -228,22 +229,14 @@ class HomeRepository {
 		});
 	}
 
-	DocumentReference<ObjectMap> _ref(Document document) => document.ref(groupId: groupId);
+	DocumentReference<ObjectMap> _ref(Document document) => document.ref(groupId);
 
 	DocumentReference<ObjectMap> _subjectDetailsRef(Subject subject) {
 		return _ref(Document.subjects).collection('details').doc(subject.id);
 	}
 }
 
-// fix: when the user leaves the group, HomeRepository updates with groupId = null
-// 		make it only update when groupId != null
-// 		option: create a separate StateProvider for non-null groupIds
-// 		option: not watch the user but pass the group id to the methods
-final homeRepositoryProvider = Provider<HomeRepository>(
-	// (ref) => HomeRepository(groupId: ref.watch(userProvider).groupId!)
-	(ref) {
-		final groupId = ref.watch(userProvider).groupId;
-		print('HomeRepository($groupId)');
-		return HomeRepository(groupId: groupId!);
-	}
-);
+final homeRepositoryProvider = Provider<HomeRepository?>((ref) {
+	final groupId = ref.watch(userProvider).groupId;
+	return groupId != null ? HomeRepository(groupId: groupId) : null;
+});

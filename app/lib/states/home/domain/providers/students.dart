@@ -5,8 +5,15 @@ import '../entities/student.dart';
 
 
 class StudentsNotifier extends StateNotifier<List<Student>?> {
-	StudentsNotifier({required HomeRepository repository}) : super(null) {
-		repository.students().then((students) => state = students.toList()..sort());
+	StudentsNotifier({required this.repository}) : super(null) {
+		if (repository != null) _init();
+	}
+
+	final HomeRepository? repository;
+
+	Future<void> _init() async {
+		final students = await repository!.students();
+		state = students.toList()..sort();
 	}
 }
 
@@ -17,14 +24,14 @@ final studentsProvider = StateNotifierProvider<StudentsNotifier, List<Student>?>
 
 class StudentDetailsNotifier extends StateNotifier<StudentDetails?> {
 	StudentDetailsNotifier(this.student, {required this.repository}) : super(null) {
-		_init();
+		if (repository != null) _init();
 	}
 
 	final Student student;
-	final HomeRepository repository;
+	final HomeRepository? repository;
 
 	Future<void> _init() async {
-		final details = await repository.studentDetails(student);
+		final details = await repository!.studentDetails(student);
 		state = details.withSubjects(details.subjects.toList()..sort());
 	}
 }

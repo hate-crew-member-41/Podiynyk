@@ -9,7 +9,6 @@ import '../id.dart';
 import 'user.dart';
 
 
-// do: review
 final initialUserProvider = StateProvider<User?>((ref) {
 	return null;
 });
@@ -79,17 +78,9 @@ class UserNotifier extends StateNotifier<User> {
 }
 
 final userProvider = StateNotifierProvider<UserNotifier, User>(
-	// (ref) => UserNotifier(
-	// 	initial: ref.watch(initialUserProvider)!,
-	// 	repository: ref.watch(userRepositoryProvider),
-	// 	appController: ref.watch(appStateProvider.notifier)
-	// )
-	(ref) {
-		print('UserNotifier');
-		return UserNotifier(
-			initial: ref.watch(initialUserProvider)!,
-			repository: ref.watch(userRepositoryProvider),
-			appStateController: ref.watch(appStateProvider.notifier)
-		);
-	}
+	(ref) => UserNotifier(
+		initial: ref.watch(initialUserProvider)!,
+		repository: ref.watch(userRepositoryProvider),
+		appStateController: ref.watch(appStateProvider.notifier)
+	)
 );
