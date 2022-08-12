@@ -79,39 +79,21 @@ class UserRepository {
 		]);
 	}
 
-	Future<void> setSubjectStudied(Subject subject, {required User user}) async {
-		await Future.wait([
-			userDocRef(user.id).update({
-				Field.chosenSubjects.name: FieldValue.arrayUnion([subject.id])
-			}),
-			Document.students.ref(user.groupId!).update({
-				'${user.id}.${Field.chosenSubjects.name}': FieldValue.arrayUnion([subject.id])
-			})
-		]);
-	}
-
-	Future<void> setSubjectUnstudied(Subject subject, {required User user}) async {
-		await Future.wait([
-			userDocRef(user.id).update({
-				Field.chosenSubjects.name: FieldValue.arrayRemove([subject.id])
-			}),
-			Document.students.ref(user.groupId!).update({
-				'${user.id}.${Field.chosenSubjects.name}': FieldValue.arrayRemove([subject.id])
-			})
-		]);
-	}
-
 	Future<void> update(User user) async {
 		final name = [user.firstName, user.lastName];
+		final chosenSubjectIds = user.chosenSubjectIds?.toList();
+		final hasGroup = user.groupId != null;
 
 		await Future.wait([
 			userDocRef(user.id).update({
 				Field.name.name: name,
-				if (user.info != null) Field.info.name: user.info,
+				Field.info.name: user.info,
+				if (hasGroup) Field.chosenSubjects.name: chosenSubjectIds
 			}),
-			// think: do not update the group's students document unless the name has changed
+			// think: do not update if only the info has changed
 			Document.students.ref(user.groupId!).update({
-				'${user.id}.${Field.name.name}': name
+				'${user.id}.${Field.name.name}': name,
+				if (hasGroup) '${user.id}.${Field.chosenSubjects.name}': chosenSubjectIds
 			})
 		]);
 	}
