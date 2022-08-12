@@ -31,6 +31,7 @@ class UserRepository {
 			id: id,
 			firstName: name.first,
 			lastName: name.last,
+			info: map[Field.info.name],
 			groupId: map[Field.groupId.name],
 			chosenSubjectIds: map.containsKey(Field.chosenSubjects.name) ?
 				Set<String>.from(map[Field.chosenSubjects.name]) :
@@ -79,7 +80,7 @@ class UserRepository {
 	}
 
 	Future<void> setSubjectStudied(Subject subject, {required User user}) async {
-		await Future.wait<void>([
+		await Future.wait([
 			userDocRef(user.id).update({
 				Field.chosenSubjects.name: FieldValue.arrayUnion([subject.id])
 			}),
@@ -90,12 +91,27 @@ class UserRepository {
 	}
 
 	Future<void> setSubjectUnstudied(Subject subject, {required User user}) async {
-		await Future.wait<void>([
+		await Future.wait([
 			userDocRef(user.id).update({
 				Field.chosenSubjects.name: FieldValue.arrayRemove([subject.id])
 			}),
 			Document.students.ref(user.groupId!).update({
 				'${user.id}.${Field.chosenSubjects.name}': FieldValue.arrayRemove([subject.id])
+			})
+		]);
+	}
+
+	Future<void> update(User user) async {
+		final name = [user.firstName, user.lastName];
+
+		await Future.wait([
+			userDocRef(user.id).update({
+				Field.name.name: name,
+				if (user.info != null) Field.info.name: user.info,
+			}),
+			// think: do not update the group's students document unless the name has changed
+			Document.students.ref(user.groupId!).update({
+				'${user.id}.${Field.name.name}': name
 			})
 		]);
 	}

@@ -14,6 +14,7 @@ class EventPage extends StatelessWidget {
 
 	final Event event;
 
+	// think: remove the Stack
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(body: SafeArea(child: Stack(children: [

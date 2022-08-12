@@ -14,6 +14,7 @@ final initialUserProvider = StateProvider<User?>((ref) {
 });
 
 
+// do: be consistent with passing the current or the updated User to HomeRepository
 class UserNotifier extends StateNotifier<User> {
 	UserNotifier({
 		required User initial,
@@ -28,6 +29,7 @@ class UserNotifier extends StateNotifier<User> {
 	Future<void> createGroup() async {
 		final id = newId(user: state);
 		final user = state.copyWith(
+			info: state.info,
 			groupId: id,
 			chosenSubjectIds: const <String>{}
 		);
@@ -37,6 +39,7 @@ class UserNotifier extends StateNotifier<User> {
 
 	Future<void> joinGroup(String id) async {
 		final user = state.copyWith(
+			info: state.info,
 			groupId: id,
 			chosenSubjectIds: const <String>{}
 		);
@@ -44,25 +47,41 @@ class UserNotifier extends StateNotifier<User> {
 		state = user;
 	}
 
+	// think: merge with this.update
 	Future<void> setStudied(Subject subject) async {
 		await repository.setSubjectStudied(subject, user: state);
 		state = state.copyWith(
+			info: state.info,
 			groupId: state.groupId,
 			chosenSubjectIds: state.chosenSubjectIds!.toSet()..add(subject.id)
 		);
 	}
 
+	// think: merge with this.update
 	Future<void> setUnstudied(Subject subject) async {
 		await repository.setSubjectUnstudied(subject, user: state);
 		state = state.copyWith(
+			info: state.info,
 			groupId: state.groupId,
 			chosenSubjectIds: state.chosenSubjectIds!.toSet()..remove(subject.id)
 		);
 	}
 
+	Future<void> update({String? firstName, String? lastName, required String? info}) async {
+		final user = state.copyWith(
+			firstName: firstName,
+			lastName: lastName,
+			info: info,
+			groupId: state.groupId,
+			chosenSubjectIds: state.chosenSubjectIds
+		);
+		await repository.update(user);
+		state = user;
+	}
+
 	Future<void> leaveGroup() async {
 		await repository.leaveGroup(user: state);
-		state = state.copyWith(groupId: null, chosenSubjectIds: null);
+		state = state.copyWith(info: state.info, groupId: null, chosenSubjectIds: null);
 		appStateController.state = AppState.identification;
 	}
 

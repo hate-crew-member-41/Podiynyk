@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'sections/events/section.dart';
-import 'sections/me/section.dart';
+import 'sections/user/section.dart';
 import 'sections/messages/section.dart';
 import 'sections/separate/section.dart';
 import 'sections/groupmates/section.dart';
@@ -38,7 +38,7 @@ enum Section {
 	settings(
 		name: "me",
 		icon: Icons.person,
-		widget: MeSection()
+		widget: UserSection()
 	);
 
 	const Section({

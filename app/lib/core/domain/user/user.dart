@@ -8,6 +8,7 @@ class User {
 		required this.id,
 		required this.firstName,
 		required this.lastName,
+		this.info,
 		this.groupId,
 		this.chosenSubjectIds
 	});
@@ -15,6 +16,7 @@ class User {
 	final String id;
 	final String firstName;
 	final String lastName;
+	final String? info;
 	final String? groupId;
 	final Set<String>? chosenSubjectIds;
 
@@ -32,12 +34,16 @@ class User {
 	bool isAuthor(Message message) => id == message.author.id;
 
 	User copyWith({
+		String? firstName,
+		String? lastName,
+		required String? info,
 		required String? groupId,
 		required Set<String>? chosenSubjectIds
 	}) => User(
 		id: id,
-		firstName: firstName,
-		lastName: lastName,
+		firstName: firstName ?? this.firstName,
+		lastName: lastName ?? this.lastName,
+		info: info,
 		groupId: groupId,
 		chosenSubjectIds: chosenSubjectIds
 	);
