@@ -35,7 +35,7 @@ class EventPage extends ConsumerWidget {
 			ActionBar(children: [
 				ActionButton(
 					icon: isRelevant ? Icons.check : Icons.undo,
-					action: () => _toggleIsRelevant(ref, isRelevant)
+					action: () => ref.read(userProvider.notifier).toggleEventIsRelevant(event)
 				),
 				Consumer(builder: (context, ref, _) => ActionButton(
 					icon: Icons.delete,
@@ -43,17 +43,6 @@ class EventPage extends ConsumerWidget {
 				))
 			])
 		])));
-	}
-
-	Future<void> _toggleIsRelevant(WidgetRef ref, bool isRelevant) async {
-		final userNotifier = ref.read(userProvider.notifier);
-
-		if (isRelevant) {
-			userNotifier.setIrrelevant(event);
-		}
-		else {
-			userNotifier.setRelevant(event);
-		}
 	}
 
 	// think: confirmation, rename

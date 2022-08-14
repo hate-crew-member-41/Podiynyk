@@ -30,8 +30,8 @@ class UserNotifier extends StateNotifier<User> {
 		final user = state.copyWith(
 			info: state.info,
 			groupId: id,
-			irrelevantEventIds: const <String>{},
-			chosenSubjectIds: const <String>{}
+			irrelevantEventIds: <String>{},
+			chosenSubjectIds: <String>{}
 		);
 		await repository.createGroup(user: user);
 		state = user;
@@ -41,38 +41,46 @@ class UserNotifier extends StateNotifier<User> {
 		final user = state.copyWith(
 			info: state.info,
 			groupId: id,
-			irrelevantEventIds: const <String>{},
-			chosenSubjectIds: const <String>{}
+			irrelevantEventIds: <String>{},
+			chosenSubjectIds: <String>{}
 		);
 		await repository.joinGroup(user: user);
 		state = user;
 	}
 
-	// do: define toggleEventIsRelevant, toggleSubjectIsStudied
+	Future<void> toggleEventIsRelevant(Event event) async {
+		final ids = state.irrelevantEventIds!;
 
-	Future<void> setIrrelevant(Event event) => _update(
-		info: state.info,
-		irrelevantEventIds: state.irrelevantEventIds!.toSet()..add(event.id),
-		chosenSubjectIds: state.chosenSubjectIds
-	);
+		if (state.eventIsRelevant(event)) {
+			ids.add(event.id);
+		}
+		else {
+			ids.remove(event.id);
+		}
 
-	Future<void> setRelevant(Event event) => _update(
-		info: state.info,
-		irrelevantEventIds: state.irrelevantEventIds!.toSet()..remove(event.id),
-		chosenSubjectIds: state.chosenSubjectIds
-	);
+		await _update(
+			info: state.info,
+			irrelevantEventIds: ids,
+			chosenSubjectIds: state.chosenSubjectIds
+		);
+	}
 
-	Future<void> setStudied(Subject subject) => _update(
-		info: state.info,
-		irrelevantEventIds: state.irrelevantEventIds,
-		chosenSubjectIds: state.chosenSubjectIds!.toSet()..add(subject.id)
-	);
+	Future<void> toggleSubjectIsStudied(Subject subject) async {
+		final ids = state.chosenSubjectIds!;
 
-	Future<void> setUnstudied(Subject subject) => _update(
-		info: state.info,
-		irrelevantEventIds: state.irrelevantEventIds,
-		chosenSubjectIds: state.chosenSubjectIds!.toSet()..remove(subject.id)
-	);
+		if (!state.studies(subject)) {
+			ids.add(subject.id);
+		}
+		else {
+			ids.remove(subject.id);
+		}
+
+		await _update(
+			info: state.info,
+			irrelevantEventIds: state.irrelevantEventIds,
+			chosenSubjectIds: ids
+		);
+	}
 
 	Future<void> update({String? firstName, String? lastName, required String? info}) => _update(
 		firstName: firstName,

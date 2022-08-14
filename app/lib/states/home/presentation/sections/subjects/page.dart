@@ -45,7 +45,7 @@ class SubjectPage extends ConsumerWidget {
 								Icons.local_library :
 								Icons.airline_seat_individual_suite,
 							// do: inform about the Future
-							action: () => _toggleIsStudied(ref, isStudied)
+							action: () => ref.read(userProvider.notifier).toggleSubjectIsStudied(subject)
 						),
 						ActionButton(
 							icon: Icons.delete,
@@ -83,17 +83,6 @@ class SubjectPage extends ConsumerWidget {
 				]
 			)
 		));
-	}
-
-	Future<void> _toggleIsStudied(WidgetRef ref, bool isStudied) async {
-		final userNotifier = ref.read(userProvider.notifier);
-
-		if (!isStudied) {
-			await userNotifier.setStudied(subject);
-		}
-		else {
-			await userNotifier.setUnstudied(subject);
-		}
 	}
 
 	// do: confirmation, deleting all, rename
