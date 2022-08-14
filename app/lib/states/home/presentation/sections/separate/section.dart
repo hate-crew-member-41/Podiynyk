@@ -32,7 +32,7 @@ class SeparateSection extends ConsumerWidget {
 							count: info?.length
 						),
 						CountedIcon(
-							icon: Icons.event,
+							icon: Section.events.icon,
 							count: events?.length
 						)
 					])

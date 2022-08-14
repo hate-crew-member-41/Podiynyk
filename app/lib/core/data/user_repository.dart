@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:podiinyk/states/home/domain/entities/subject.dart';
 import '../domain/user/user.dart';
 
 import 'types/document.dart';
@@ -26,16 +25,19 @@ class UserRepository {
 	Future<User> user({required String id}) async {
 		final snapshot = await userDocRef(id).get();
 		final map = snapshot.data()!;
+
 		final name = map[Field.name.name] as List<dynamic>;
+		final groupId = map[Field.groupId.name];
+		final hasGroup = groupId != null;
+
 		return User(
 			id: id,
 			firstName: name.first,
 			lastName: name.last,
 			info: map[Field.info.name],
-			groupId: map[Field.groupId.name],
-			chosenSubjectIds: map.containsKey(Field.chosenSubjects.name) ?
-				Set<String>.from(map[Field.chosenSubjects.name]) :
-				null
+			groupId: groupId,
+			irrelevantEventIds: hasGroup ? Set<String>.from(map[Field.irrelevantEvents.name]) : null,
+			chosenSubjectIds: hasGroup ? Set<String>.from(map[Field.chosenSubjects.name]) : null
 		);
 	}
 
@@ -45,6 +47,11 @@ class UserRepository {
 		const emptyMap = <String, ObjectMap>{};
 
 		await Future.wait([
+			userDocRef(user.id).update({
+				Field.groupId.name: groupId,
+				Field.irrelevantEvents.name: user.irrelevantEventIds!.toList(),
+				Field.chosenSubjects.name: chosenSubjectIds
+			}),
 			Document.events.ref(groupId).set(emptyMap),
 			Document.subjects.ref(groupId).set(emptyMap),
 			Document.info.ref(groupId).set(emptyMap),
@@ -54,10 +61,6 @@ class UserRepository {
 					Field.name.name: [user.firstName, user.lastName],
 					Field.chosenSubjects.name: chosenSubjectIds
 				}
-			}),
-			userDocRef(user.id).update({
-				Field.groupId.name: groupId,
-				Field.chosenSubjects.name: chosenSubjectIds
 			})
 		]);
 	}
@@ -68,6 +71,7 @@ class UserRepository {
 		await Future.wait([
 			userDocRef(user.id).update({
 				Field.groupId.name: user.groupId,
+				Field.irrelevantEvents.name: user.irrelevantEventIds!.toList(),
 				Field.chosenSubjects.name: chosenSubjectIds
 			}),
 			Document.students.ref(user.groupId!).update({
@@ -88,9 +92,10 @@ class UserRepository {
 			userDocRef(user.id).update({
 				Field.name.name: name,
 				Field.info.name: user.info,
+				if (hasGroup) Field.irrelevantEvents.name: user.irrelevantEventIds!.toList(),
 				if (hasGroup) Field.chosenSubjects.name: chosenSubjectIds
 			}),
-			// think: do not update if only the info has changed
+			// think: do not update if User.name and User.chosenSubjectIds have not changed
 			Document.students.ref(user.groupId!).update({
 				'${user.id}.${Field.name.name}': name,
 				if (hasGroup) '${user.id}.${Field.chosenSubjects.name}': chosenSubjectIds
@@ -102,6 +107,7 @@ class UserRepository {
 		await Future.wait([
 			userDocRef(user.id).update({
 				Field.groupId.name: FieldValue.delete(),
+				Field.irrelevantEvents.name: FieldValue.delete(),
 				Field.chosenSubjects.name: FieldValue.delete()
 			}),
 			Document.students.ref(user.groupId!).update({

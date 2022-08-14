@@ -19,12 +19,10 @@ class InfoPage extends StatelessWidget {
 		return Scaffold(body: SafeArea(child: Stack(children: [
 			Center(child: ListView(
 				shrinkWrap: true,
-				// do: take from the theme
+				
 				children: [
-					const SizedBox(height: 56),
 					Text(item.name),
 					Text(item.content),
-					const SizedBox(height: 56)
 				]
 			)),
 			ActionBar(children: [

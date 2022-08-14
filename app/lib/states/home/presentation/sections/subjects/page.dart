@@ -7,6 +7,8 @@ import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
 
+import '../../state.dart';
+
 import '../../widgets/bars/action_bar.dart';
 import '../../widgets/bars/action_button.dart';
 import '../../widgets/bars/counted_icon.dart';
@@ -38,13 +40,12 @@ class SubjectPage extends ConsumerWidget {
 				crossAxisAlignment: CrossAxisAlignment.start,
 				children: [
 					SafeArea(child: ActionBar(children: [
-						// do: inform about the Future
-						// think: wrap in a Consumer of the userProvider
 						if (!isCommon) ActionButton(
 							icon: isStudied ?
 								Icons.local_library :
 								Icons.airline_seat_individual_suite,
-							action: () => _setIsStudied(ref, !isStudied)
+							// do: inform about the Future
+							action: () => _toggleIsStudied(ref, isStudied)
 						),
 						ActionButton(
 							icon: Icons.delete,
@@ -58,7 +59,7 @@ class SubjectPage extends ConsumerWidget {
 							count: details?.info.length
 						),
 						CountedIcon(
-							icon: Icons.event,
+							icon: Section.events.icon,
 							count: events?.length
 						),
 						if (!isCommon) CountedIcon(
@@ -66,7 +67,6 @@ class SubjectPage extends ConsumerWidget {
 							count: students?.length
 						)
 					]),
-					// think: wrap in a Consumer of the userProvider
 					Expanded(child: TabBarView(children: [
 						InfoList(
 							details?.info,
@@ -85,19 +85,20 @@ class SubjectPage extends ConsumerWidget {
 		));
 	}
 
-	void _setIsStudied(WidgetRef ref, bool isStudied) {
+	Future<void> _toggleIsStudied(WidgetRef ref, bool isStudied) async {
 		final userNotifier = ref.read(userProvider.notifier);
 
-		if (isStudied) {
-			userNotifier.setStudied(subject);
+		if (!isStudied) {
+			await userNotifier.setStudied(subject);
 		}
 		else {
-			userNotifier.setUnstudied(subject);
+			await userNotifier.setUnstudied(subject);
 		}
 	}
 
-	// do: confirmation, rename
+	// do: confirmation, deleting all, rename
 	void _delete(BuildContext context, WidgetRef ref) {
+		// think: await
 		ref.read(subjectsProvider.notifier).delete(subject);
 		Navigator.of(context).pop();
 	}

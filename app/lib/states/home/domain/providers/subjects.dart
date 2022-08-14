@@ -5,6 +5,7 @@ import '../entities/info.dart';
 import '../entities/subject.dart';
 
 
+// think: define studiedSubjects, unstudiedSubjects
 class SubjectsNotifier extends StateNotifier<List<Subject>?> {
 	SubjectsNotifier({required this.repository}) : super(null) {
 		if (repository != null) _init();

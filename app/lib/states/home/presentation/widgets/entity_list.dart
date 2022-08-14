@@ -33,6 +33,7 @@ class EntityList<E extends Entity> extends StatelessWidget {
 						context: context,
 						builder: (context) => formBuilder!(context)
 					),
+					// think: show the icon of the current section
 					child: const Icon(Icons.add)
 				) :
 				null

@@ -15,11 +15,7 @@ class CountedIcon extends StatelessWidget {
 		return Row(
 			mainAxisAlignment: MainAxisAlignment.center,
 			children: [
-				if (count != null) ...[
-					Text(count.toString()),
-					// do: take from the theme
-					const SizedBox(width: 16)
-				],
+				if (count != null) Text(count.toString()),
 				Icon(icon)
 			]
 		);

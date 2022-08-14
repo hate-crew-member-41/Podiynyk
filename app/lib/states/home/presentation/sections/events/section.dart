@@ -24,7 +24,7 @@ class EventsSection extends ConsumerWidget {
 		return Scaffold(
 			appBar: SectionBar(
 				section: Section.events,
-				count: events?.length
+				count: events?.where(user.eventIsRelevant).length
 			),
 			body: EventList(events)
 		);

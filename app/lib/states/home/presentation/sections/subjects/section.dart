@@ -20,6 +20,7 @@ class SubjectsSection extends ConsumerWidget {
 	Widget build(BuildContext context, WidgetRef ref) {
 		final user = ref.watch(userProvider);
 		Iterable<Subject>? subjects = ref.watch(subjectsProvider);
+		// do: move the logic to SubjectList
 		subjects = subjects?.where((s) => user.studies(s))
 			.followedBy(subjects.where((s) => !user.studies(s)));
 

@@ -20,15 +20,11 @@ class MessagePage extends ConsumerWidget {
 		return Scaffold(body: SafeArea(child: Stack(children: [
 			Center(child: ListView(
 				shrinkWrap: true,
-				// do: take the values from the theme
 				children: [
-					const SizedBox(height: 56),
 					Text(message.name),
 					Text(message.author.fullName),
 					Text(message.date.repr),
-					const SizedBox(height: 56),
 					Text(message.content),
-					const SizedBox(height: 56)
 				]
 			)),
 			if (ref.watch(userProvider).isAuthor(message)) ActionBar(children: [
@@ -42,6 +38,7 @@ class MessagePage extends ConsumerWidget {
 
 	// think: confirmation, rename
 	void _delete(BuildContext context, WidgetRef ref) {
+		// think: await
 		ref.read(messagesProvider.notifier).delete(message);
 		Navigator.of(context).pop();
 	}

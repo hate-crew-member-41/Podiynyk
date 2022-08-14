@@ -14,17 +14,12 @@ class Home extends ConsumerWidget {
 			body: ref.watch(homeStateProvider).widget,
 			drawer: Drawer(child: Center(child: ListView(
 				shrinkWrap: true,
-				// do: arrange
-				// do: take the values from the theme
 				children: const [
-					// think: show today's date instead
 					Icon(Icons.all_inclusive),
-					SizedBox(height: 56),
 					DrawerTile(Section.events),
 					DrawerTile(Section.subjects),
 					DrawerTile(Section.separate),
 					DrawerTile(Section.messages),
-					SizedBox(height: 56),
 					DrawerTile(Section.students),
 					DrawerTile(Section.settings),
 				]

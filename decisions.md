@@ -9,7 +9,7 @@ An arbitrary username.
 - no way to recover the password
 - a person can create any number of accounts
 
-## 2 (chosen)
+## 2
 
 An email.
 
@@ -26,9 +26,12 @@ A phone number.
 ### -
 - it appears there is no free solution
 
+## 4
+
+None. Authentication is done with Google or Apple.
+
 
 # When is an event deleted?
-
 
 ## 1
 
@@ -51,7 +54,6 @@ On the last day of the event's life, a request can be made to keep it for 2 more
 
 
 # How is students-to-subjects relation stored?
-
 
 ## 1
 

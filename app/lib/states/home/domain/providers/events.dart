@@ -4,6 +4,7 @@ import '../../data/repository.dart';
 import '../entities/event.dart';
 
 
+// think: define relevantEvents, irrelevantEvents
 // think: define EntitiesNotifier
 class EventsNotifier extends StateNotifier<List<Event>?> {
 	EventsNotifier({required this.repository}) : super(null) {
