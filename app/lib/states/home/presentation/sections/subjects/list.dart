@@ -28,11 +28,15 @@ class SubjectList extends ConsumerWidget {
 
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
-		final user = ref.watch(userProvider);
 		final dataIsPresent = subjects != null && (events != null || showNextEvent == false);
 
+		final user = ref.watch(userProvider);
+		final split = subjects?.where(user.studies).followedBy(
+			subjects!.where((s) => !user.studies(s))
+		);
+
 		return EntityList<Subject>(
-			dataIsPresent ? subjects : null,
+			dataIsPresent ? split : null,
 			tile: (subject) {
 				final nextEvent = events?.firstWhereOrNull((e) => e.subject == subject);
 				return Opacity(

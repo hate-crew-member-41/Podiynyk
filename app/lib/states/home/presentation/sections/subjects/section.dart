@@ -3,7 +3,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:podiinyk/core/domain/user/state.dart';
 
-import '../../../domain/entities/subject.dart';
 import '../../../domain/providers/events.dart';
 import '../../../domain/providers/subjects.dart';
 
@@ -19,18 +18,14 @@ class SubjectsSection extends ConsumerWidget {
 	@override
 	Widget build(BuildContext context, WidgetRef ref) {
 		final user = ref.watch(userProvider);
-		Iterable<Subject>? subjects = ref.watch(subjectsProvider);
-		// do: move the logic to SubjectList
-		subjects = subjects?.where((s) => user.studies(s))
-			.followedBy(subjects.where((s) => !user.studies(s)));
-
+		final subjects = ref.watch(subjectsProvider);
 		final events = ref.watch(eventsProvider);
 
 		return Scaffold(
 			appBar: SectionBar(
 				section: Section.subjects,
-				// do: change
-				count: subjects?.length
+				// think: also display the number of unstudied subjects
+				count: subjects?.where(user.studies).length
 			),
 			body: SubjectList(subjects, events: events)
 		);
