@@ -5,12 +5,14 @@ app/build
 app/analysis_options.yaml
 app/lib/**/firebase_options.dart
 
+design/icons
+decisions/
+
 # VS Code related
 .vscode/
 
 # Miscellaneous
 *.drawio
-*.xlsx
 *.class
 *.log
 *.pyc

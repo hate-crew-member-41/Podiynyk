@@ -35,6 +35,7 @@ class EventPage extends ConsumerWidget {
 			ActionBar(children: [
 				ActionButton(
 					icon: isRelevant ? Icons.check : Icons.undo,
+					// do: inform about the Future
 					action: () => ref.read(userProvider.notifier).toggleEventIsRelevant(event)
 				),
 				Consumer(builder: (context, ref, _) => ActionButton(

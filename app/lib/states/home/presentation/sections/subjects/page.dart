@@ -34,7 +34,7 @@ class SubjectPage extends ConsumerWidget {
 		final isStudied = user.studies(subject);
 		final students = details?.students;
 
-		return Scaffold(body: DefaultTabController(
+		return ScaffoldMessenger(child: Scaffold(body: DefaultTabController(
 			length: isCommon ? 2 : 3,
 			child: Column(
 				crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,14 +43,14 @@ class SubjectPage extends ConsumerWidget {
 						if (!isCommon) ActionButton(
 							icon: isStudied ?
 								Icons.local_library :
-								Icons.airline_seat_individual_suite,
+								Icons.hotel,
 							// do: inform about the Future
 							action: () => ref.read(userProvider.notifier).toggleSubjectIsStudied(subject)
 						),
-						ActionButton(
+						Builder(builder: (context) => ActionButton(
 							icon: Icons.delete,
-							action: () => _delete(context, ref)
-						)
+							action: () => _showDeletingOptions(context, ref)
+						))
 					])),
 					Text(subject.name),
 					EntityListsTabBar(tabIcons: [
@@ -82,13 +82,36 @@ class SubjectPage extends ConsumerWidget {
 					]))
 				]
 			)
-		));
+		)));
 	}
 
-	// do: confirmation, deleting all, rename
+	// think: turn the "clear" option to "delete multiple"
+	void _showDeletingOptions(BuildContext context, WidgetRef ref) {
+		final snackBar = SnackBar(content: Row(
+			mainAxisAlignment: MainAxisAlignment.spaceAround,
+			children: [
+				IconButton(
+					icon: const Icon(Icons.delete),
+					onPressed: () => _delete(context, ref)
+				),
+				IconButton(
+					icon: const Icon(Icons.delete_sweep),
+					onPressed: () => _clear(context, ref)
+				)
+			]
+		));
+		ScaffoldMessenger.of(context).showSnackBar(snackBar);
+	}
+
 	void _delete(BuildContext context, WidgetRef ref) {
 		// think: await
 		ref.read(subjectsProvider.notifier).delete(subject);
+		Navigator.of(context).pop();
+	}
+
+	void _clear(BuildContext context, WidgetRef ref) {
+		// think: await
+		ref.read(subjectsProvider.notifier).clear();
 		Navigator.of(context).pop();
 	}
 }

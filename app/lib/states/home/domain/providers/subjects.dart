@@ -1,16 +1,23 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../data/repository.dart';
+
 import '../entities/info.dart';
 import '../entities/subject.dart';
+
+import 'events.dart';
 
 
 // think: define studiedSubjects, unstudiedSubjects
 class SubjectsNotifier extends StateNotifier<List<Subject>?> {
-	SubjectsNotifier({required this.repository}) : super(null) {
+	SubjectsNotifier({
+		required this.eventsNotifier,
+		required this.repository
+	}) : super(null) {
 		if (repository != null) _init();
 	}
 
+	final EventsNotifier eventsNotifier;
 	final HomeRepository? repository;
 
 	Future<void> _init() async {
@@ -26,11 +33,21 @@ class SubjectsNotifier extends StateNotifier<List<Subject>?> {
 	Future<void> delete(Subject subject) async {
 		await repository!.deleteSubject(subject);
 		state = state!.toList()..remove(subject);
+		eventsNotifier.removeSubjectEvents(subject);
+	}
+
+	Future<void> clear() async {
+		await repository!.clearSubjects();
+		state = const <Subject>[];
+		eventsNotifier.removeAllSubjectEvents();
 	}
 }
 
 final subjectsProvider = StateNotifierProvider<SubjectsNotifier, List<Subject>?>(
-	(ref) => SubjectsNotifier(repository: ref.watch(homeRepositoryProvider))
+	(ref) => SubjectsNotifier(
+		eventsNotifier: ref.watch(eventsProvider.notifier),
+		repository: ref.watch(homeRepositoryProvider),
+	)
 );
 
 

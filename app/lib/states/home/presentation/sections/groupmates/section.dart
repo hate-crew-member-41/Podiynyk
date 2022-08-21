@@ -18,7 +18,7 @@ class GroupmatesSection extends ConsumerWidget {
 
 		return Scaffold(
 			appBar: SectionBar(
-				section: Section.students,
+				section: Section.groupmates,
 				count: students?.length
 			),
 			body: GroupmateList(students)

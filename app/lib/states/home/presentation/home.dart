@@ -20,7 +20,7 @@ class Home extends ConsumerWidget {
 					DrawerTile(Section.subjects),
 					DrawerTile(Section.separate),
 					DrawerTile(Section.messages),
-					DrawerTile(Section.students),
+					DrawerTile(Section.groupmates),
 					DrawerTile(Section.settings),
 				]
 			))),

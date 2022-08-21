@@ -16,12 +16,22 @@ The theme's values could be displayed.
 
 It is possible to add multiple subjects at once.
 
+## Schedule
+
+It is possible to add the time schedule.
+
 
 # User
 
 ## Local copy
 
 There is a local copy of the user's data. This saves a ton of reads.
+
+## Sync on demand
+
+The user is only updated in cloud when the change is visible to others,
+or when the user does it explicitly. It is unnecessary to update the cloud every time the user marks
+an event as done.This makes the whole project twice as cheap to maintain.
 
 ## Account management
 

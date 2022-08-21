@@ -2,6 +2,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../data/repository.dart';
 import '../entities/event.dart';
+import '../entities/subject.dart';
 
 
 // think: define relevantEvents, irrelevantEvents
@@ -26,6 +27,14 @@ class EventsNotifier extends StateNotifier<List<Event>?> {
 	Future<void> delete(Event event) async {
 		await repository!.deleteEvent(event);
 		state = state!.toList()..remove(event);
+	}
+
+	void removeSubjectEvents(Subject subject) {
+		state = state!.toList()..removeWhere((e) => e.subject == subject);
+	}
+
+	void removeAllSubjectEvents() {
+		state = state!.toList()..removeWhere((e) => e.subject != null);
 	}
 }
 

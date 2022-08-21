@@ -30,9 +30,9 @@ enum Section {
 		icon: Icons.chat,
 		widget: MessagesSection()
 	),
-	students(
-		name: "group",
-		icon: Icons.people,
+	groupmates(
+		name: "groupmates",
+		icon: Icons.groups,
 		widget: GroupmatesSection()
 	),
 	settings(

@@ -193,6 +193,7 @@ class HomeRepository {
 		});
 	}
 
+	// think: also delete from chosenSubjects
 	Future<void> deleteSubject(Subject subject) async {
 		final eventsRef = _ref(Document.events);
 		final eventsSnapshot = await eventsRef.get();
@@ -205,6 +206,21 @@ class HomeRepository {
 				subject.id: FieldValue.delete()
 			}),
 			_subjectDetailsRef(subject).delete(),
+			eventsRef.update({
+				for (final entry in eventEntries) entry.key: FieldValue.delete()
+			})
+		]);
+	}
+
+	Future<void> clearSubjects() async {
+		final eventsRef = _ref(Document.events);
+		final eventsSnapshot = await eventsRef.get();
+		final eventEntries = eventsSnapshot.data()!.entries.where(
+			(e) => e.value[Field.subject.name] != null
+		);
+
+		await Future.wait([
+			_ref(Document.subjects).set({}),
 			eventsRef.update({
 				for (final entry in eventEntries) entry.key: FieldValue.delete()
 			})

@@ -33,7 +33,8 @@ class App extends StatelessWidget {
 			darkTheme: ThemeData(
 				useMaterial3: true,
 				colorScheme: const ColorScheme.dark(),
-				canvasColor: const Color(0xff1a1a1a)
+				canvasColor: const Color(0xff1a1a1a),
+				snackBarTheme: const SnackBarThemeData(backgroundColor: Color(0xff333333))
 			),
 			home: Consumer(builder: (context, ref, _) {
 				switch (ref.watch(appStateProvider)) {

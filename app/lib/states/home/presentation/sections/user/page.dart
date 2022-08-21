@@ -29,7 +29,7 @@ class UserPage extends ConsumerWidget {
 				ListTile(
 					title: Text(user.groupId!),
 					trailing: IconButton(
-						icon: const Icon(Icons.backspace),
+						icon: const Icon(Icons.clear),
 						// do: confirmation
 						onPressed: userNotifier.leaveGroup
 					),
@@ -40,12 +40,12 @@ class UserPage extends ConsumerWidget {
 					mainAxisAlignment: MainAxisAlignment.spaceAround,
 					children: [
 						IconButton(
-							icon: const Icon(Icons.compare_arrows),
+							icon: const Icon(Icons.logout),
 							// do: confirmation
 							onPressed: userNotifier.signOut
 						),
 						IconButton(
-							icon: const Icon(Icons.delete),
+							icon: const Icon(Icons.person_off),
 							// do: confirmation
 							onPressed: userNotifier.deleteAccount
 						)
